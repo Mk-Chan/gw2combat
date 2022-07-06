@@ -1,0 +1,3 @@
+spdlog
+entt
+nlohmann-json

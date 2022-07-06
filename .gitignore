@@ -1,0 +1,41 @@
+# CMake
+cmake-init_entities-*/
+init_entities/
+build/
+
+# Tools
+tools/
+
+# IDEs and Editors
+.idea/
+.vscode/
+.lvimrc
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
