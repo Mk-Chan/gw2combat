@@ -52,15 +52,13 @@ void game_loop() {
         run_systems(ctx);
 
         for (auto&& [entity] : ctx.registry.view<component::downstate>().each()) {
-            spdlog::info("entity: {} is downstate!", static_cast<std::uint32_t>(entity));
+            spdlog::info("tick: {}, entity: {} is downstate!",
+                         ctx.current_tick,
+                         static_cast<std::uint32_t>(entity));
             goto loop_end;
         }
 
         ctx.current_tick += ctx.tick_rate;
-
-        if (ctx.current_tick == 4000) {
-            //break;
-        }
     }
 loop_end:
     return;

@@ -8,8 +8,10 @@
 #include "gw2combat/component/boon/might.hpp"
 #include "gw2combat/component/boon/quickness.hpp"
 #include "gw2combat/component/boon/resolution.hpp"
+#include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/effective_attributes.hpp"
 #include "gw2combat/component/outgoing_damage.hpp"
+#include "gw2combat/component/profession/guardian/trait/fiery_wrath.hpp"
 #include "gw2combat/component/successfully_cast_skill.hpp"
 #include "gw2combat/component/targeting.hpp"
 
@@ -34,8 +36,17 @@ void outgoing_strike_damage_calculation(context& ctx) {
         [&](const entt::entity entity,
             const component::successfully_cast_skill& successfully_cast_skill,
             const component::effective_attributes& effective_attributes) {
+            auto targeting_ptr = ctx.registry.try_get<component::targeting>(entity);
+
             double damage_coefficient =
                 get_damage_coefficient_by_skill(successfully_cast_skill.skill_);
+
+            bool has_fiery_wrath = ctx.registry.any_of<component::fiery_wrath>(entity);
+            bool target_is_burning = targeting_ptr != nullptr &&
+                                     ctx.registry.any_of<component::burning>(targeting_ptr->entity);
+            double fiery_wrath_multiplier =
+                1.0 + (has_fiery_wrath * target_is_burning *
+                       component::fiery_wrath::strike_damage_increase_pct);
 
             auto [aegis_ptr, might_ptr, fury_ptr, quickness_ptr, resolution_ptr] =
                 ctx.registry.try_get<component::aegis,
@@ -46,12 +57,13 @@ void outgoing_strike_damage_calculation(context& ctx) {
             unsigned int boon_count = (aegis_ptr != nullptr) + (might_ptr != nullptr) +
                                       (fury_ptr != nullptr) + (quickness_ptr != nullptr) +
                                       (resolution_ptr != nullptr);
+            double inspired_virtues_multiplier = 1.0 + (boon_count * 0.01);
 
             auto calculate_dmg = [&](unsigned int weapon_strength) {
                 return (1.0 + (0.05 + 0.03 + 0.1 + 0.2)) *  // force + impact + retribution + uc
                        (1.0 + (0.05)) *                     // scholar
-                       (1.0 + (boon_count * 0.01)) *        // inspired virtues
-                       (1.0 + (0.07)) *                     // fiery wrath
+                       inspired_virtues_multiplier *        // inspired virtues
+                       fiery_wrath_multiplier *             // fiery wrath
                        (1.0 + (0.05)) *                     // symbolic exposure
                        (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
                                   (effective_attributes.critical_damage_pct / 100.0 - 1.0)) *

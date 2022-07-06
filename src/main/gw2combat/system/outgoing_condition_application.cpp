@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 
 #include "gw2combat/component/condition/burning.hpp"
+#include "gw2combat/component/effective_attributes.hpp"
 #include "gw2combat/component/profession/guardian/virtue_of_justice.hpp"
 #include "gw2combat/component/targeting.hpp"
 
@@ -17,8 +18,16 @@ void outgoing_condition_application(context& ctx) {
                 if (target_ptr) {
                     auto& burning = ctx.registry.get_or_emplace<component::burning>(
                         target_ptr->entity, component::burning{});
-                    // Condition duration?
-                    burning.stacks.emplace(effect{entity, ctx.current_tick + tick_t{2'000}});
+                    burning.stacks.emplace(effect{
+                        entity,
+                        ctx.current_tick +
+                            tick_t{
+                                2'000 *
+                                (unsigned int)(1.0 +
+                                               ctx.registry
+                                                       .get<component::effective_attributes>(entity)
+                                                       .condition_duration_pct /
+                                                   100.0)}});
                 }
             }
         });

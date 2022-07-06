@@ -54,9 +54,12 @@ add_executable(
     gw2combat
 
     src/main/gw2combat/main.cpp
+
+    src/main/gw2combat/effect.hpp
     src/main/gw2combat/types.hpp
     src/main/gw2combat/entity.hpp src/main/gw2combat/entity.cpp
     src/main/gw2combat/game_loop.hpp src/main/gw2combat/game_loop.cpp
+    src/main/gw2combat/iterable_priority_queue.hpp
 
     src/main/gw2combat/component/character_input.hpp
     src/main/gw2combat/component/static_attributes.hpp
@@ -77,6 +80,9 @@ add_executable(
     src/main/gw2combat/component/boon/aegis.hpp
     src/main/gw2combat/component/condition/vulnerability.hpp
     src/main/gw2combat/component/condition/burning.hpp
+    src/main/gw2combat/component/condition_tick_status.hpp
+    src/main/gw2combat/component/profession/guardian/virtue_of_justice.hpp
+    src/main/gw2combat/component/profession/guardian/trait/fiery_wrath.hpp
 
     src/main/gw2combat/system/system.hpp
     src/main/gw2combat/system/character_command.cpp
@@ -90,7 +96,10 @@ add_executable(
     src/main/gw2combat/system/update_combat_stats.cpp
     src/main/gw2combat/system/downstate_detection.cpp
     src/main/gw2combat/system/accumulate_skill_cast_ticks.cpp
-    src/main/gw2combat/iterable_priority_queue.hpp src/main/gw2combat/effect.hpp src/main/gw2combat/component/condition_tick_status.hpp src/main/gw2combat/system/process_condition_tick.cpp src/main/gw2combat/system/incoming_condition_damage_calculation.cpp src/main/gw2combat/system/outgoing_condition_application.cpp src/main/gw2combat/component/profession/guardian/virtue_of_justice.hpp)
+    src/main/gw2combat/system/process_condition_tick.cpp
+    src/main/gw2combat/system/incoming_condition_damage_calculation.cpp
+    src/main/gw2combat/system/outgoing_condition_application.cpp
+)
 target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 
 # gw2combat_test
