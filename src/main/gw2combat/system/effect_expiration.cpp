@@ -13,6 +13,26 @@
 
 namespace gw2combat::system {
 
+template <class Effect>
+void relax_multi_stack_effect(context& ctx, entt::entity entity, Effect* effect_ptr) {
+    if (effect_ptr) {
+        while (!effect_ptr->stacks.empty() &&
+               ctx.current_tick > effect_ptr->stacks.top().end_time) {
+            effect_ptr->stacks.pop();
+        }
+        if (effect_ptr->stacks.empty()) {
+            ctx.registry.remove<Effect>(entity);
+        }
+    }
+}
+
+template <class Effect>
+void relax_single_stack_effect(context& ctx, entt::entity entity, Effect* effect_ptr) {
+    if (effect_ptr && ctx.current_tick > effect_ptr->stack.end_time) {
+        ctx.registry.remove<Effect>(entity);
+    }
+}
+
 void effect_expiration(context& ctx) {
     ctx.registry.view<component::character_input>().each([&](const entt::entity entity,
                                                              const component::character_input&) {
@@ -23,50 +43,18 @@ void effect_expiration(context& ctx) {
         auto resolution = ctx.registry.try_get<component::resolution>(entity);
         auto aegis = ctx.registry.try_get<component::aegis>(entity);
 
-        if (might) {
-            while (!might->stacks.empty() && ctx.current_tick > might->stacks.top().end_time) {
-                might->stacks.pop();
-            }
-            if (might->stacks.empty()) {
-                ctx.registry.remove<component::might>(entity);
-            }
-        }
-        if (fury) {
-        }
-        if (fury && ctx.current_tick > fury->stack.end_time) {
-            ctx.registry.remove<component::fury>(entity);
-        }
-        if (quickness && ctx.current_tick > quickness->stack.end_time) {
-            ctx.registry.remove<component::quickness>(entity);
-        }
-        if (resolution && ctx.current_tick > resolution->stack.end_time) {
-            ctx.registry.remove<component::resolution>(entity);
-        }
-        if (aegis && ctx.current_tick > aegis->stack.end_time) {
-            ctx.registry.remove<component::aegis>(entity);
-        }
+        relax_multi_stack_effect<component::might>(ctx, entity, might);
+        relax_single_stack_effect<component::fury>(ctx, entity, fury);
+        relax_single_stack_effect<component::quickness>(ctx, entity, quickness);
+        relax_single_stack_effect<component::resolution>(ctx, entity, resolution);
+        relax_single_stack_effect<component::aegis>(ctx, entity, aegis);
 
         // Conditions
         auto vulnerability = ctx.registry.try_get<component::vulnerability>(entity);
         auto burning = ctx.registry.try_get<component::burning>(entity);
 
-        if (vulnerability) {
-            while (!vulnerability->stacks.empty() &&
-                   ctx.current_tick > vulnerability->stacks.top().end_time) {
-                vulnerability->stacks.pop();
-            }
-            if (vulnerability->stacks.empty()) {
-                ctx.registry.remove<component::vulnerability>(entity);
-            }
-        }
-        if (burning) {
-            while (!burning->stacks.empty() && ctx.current_tick > burning->stacks.top().end_time) {
-                burning->stacks.pop();
-            }
-            if (burning->stacks.empty()) {
-                ctx.registry.remove<component::burning>(entity);
-            }
-        }
+        relax_multi_stack_effect<component::vulnerability>(ctx, entity, vulnerability);
+        relax_multi_stack_effect<component::burning>(ctx, entity, burning);
     });
 }
 
