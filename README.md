@@ -11,4 +11,6 @@ git clone --recurse-submodules https://github.com/Mk-Chan/gw2combat
 ./build/debug/gw2combat
 ```
 
+- Currently only runs basic raid core-guard greatsword-only aa-chain only benchmark
+
 ### Documentation in progress
