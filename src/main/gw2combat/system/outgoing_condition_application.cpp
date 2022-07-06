@@ -18,16 +18,14 @@ void outgoing_condition_application(context& ctx) {
                 if (target_ptr) {
                     auto& burning = ctx.registry.get_or_emplace<component::burning>(
                         target_ptr->entity, component::burning{});
+                    double condition_duration_multiplier =
+                        (1.0 + ctx.registry.get<component::effective_attributes>(entity)
+                                       .condition_duration_pct /
+                                   100.0);
                     burning.stacks.emplace(effect{
                         entity,
                         ctx.current_tick +
-                            tick_t{
-                                2'000 *
-                                (unsigned int)(1.0 +
-                                               ctx.registry
-                                                       .get<component::effective_attributes>(entity)
-                                                       .condition_duration_pct /
-                                                   100.0)}});
+                            tick_t{(unsigned int)(2'000.0 * condition_duration_multiplier)}});
                 }
             }
         });
