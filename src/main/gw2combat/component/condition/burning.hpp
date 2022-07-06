@@ -7,6 +7,7 @@
 namespace gw2combat::component {
 
 struct burning {
+    double buffered_damage = 0.0;
     iterable_priority_queue<effect> stacks;
 };
 
