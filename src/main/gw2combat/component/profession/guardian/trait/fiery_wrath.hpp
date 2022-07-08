@@ -4,7 +4,7 @@
 namespace gw2combat::component {
 
 struct fiery_wrath {
-    constexpr static double strike_damage_increase_pct = 0.07;
+    constexpr static double strike_damage_increase_if_target_burning = 0.07;
 };
 
 }  // namespace gw2combat::component

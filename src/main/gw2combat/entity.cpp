@@ -12,7 +12,14 @@
 #include "gw2combat/component/condition/vulnerability.hpp"
 #include "gw2combat/component/condition_tick_status.hpp"
 #include "gw2combat/component/dynamic_attributes.hpp"
+#include "gw2combat/component/gear/rune/rune_scholar.hpp"
+#include "gw2combat/component/gear/sigil/sigil_force.hpp"
+#include "gw2combat/component/gear/sigil/sigil_impact.hpp"
 #include "gw2combat/component/profession/guardian/trait/fiery_wrath.hpp"
+#include "gw2combat/component/profession/guardian/trait/inspired_virtue.hpp"
+#include "gw2combat/component/profession/guardian/trait/retribution.hpp"
+#include "gw2combat/component/profession/guardian/trait/symbolic_exposure.hpp"
+#include "gw2combat/component/profession/guardian/trait/unscathed_contender.hpp"
 #include "gw2combat/component/profession/guardian/virtue_of_justice.hpp"
 #include "gw2combat/component/static_attributes.hpp"
 #include "gw2combat/component/targeting.hpp"
@@ -81,6 +88,13 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
         component::virtue_of_justice{.consecutive_successful_hits = 0,
                                      .apply_burning_on_tick = tick_t{3'000'000'000}});
     registry.emplace<component::fiery_wrath>(entity);
+    registry.emplace<component::inspired_virtue>(entity);
+    registry.emplace<component::retribution>(entity);
+    registry.emplace<component::symbolic_exposure>(entity);
+    registry.emplace<component::unscathed_contender>(entity);
+    registry.emplace<component::sigil_force>(entity);
+    registry.emplace<component::sigil_impact>(entity);
+    registry.emplace<component::rune_scholar>(entity);
 
     registry.emplace<component::character_input>(
         entity, component::character_input{component::character_input::command{0}, tick_t{0}});
