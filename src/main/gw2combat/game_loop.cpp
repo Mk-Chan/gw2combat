@@ -7,7 +7,6 @@
 #include "system/system.hpp"
 
 #include "component/outgoing_damage.hpp"
-#include "gw2combat/component/combat_stats.hpp"
 #include "gw2combat/component/downstate.hpp"
 #include "gw2combat/component/effective_attributes.hpp"
 #include "gw2combat/component/effective_incoming_damage.hpp"
@@ -31,7 +30,7 @@ void run_systems(system::context& ctx) {
     system::process_condition_tick(ctx);
     system::character_command(ctx);
     system::accumulate_skill_cast_ticks(ctx);
-    system::character_animation(ctx);
+    system::perform_animation(ctx);
     system::effect_expiration(ctx);
     system::effective_attributes_calculation(ctx);
     system::outgoing_strike_damage_calculation(ctx);

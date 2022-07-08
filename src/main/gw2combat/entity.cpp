@@ -7,7 +7,6 @@
 #include "gw2combat/component/boon/might.hpp"
 #include "gw2combat/component/boon/quickness.hpp"
 #include "gw2combat/component/boon/resolution.hpp"
-#include "gw2combat/component/character_input.hpp"
 #include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/condition/vulnerability.hpp"
 #include "gw2combat/component/condition_tick_status.hpp"
@@ -15,6 +14,7 @@
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
 #include "gw2combat/component/gear/sigil/sigil_impact.hpp"
+#include "gw2combat/component/is_character.hpp"
 #include "gw2combat/component/profession/guardian/trait/fiery_wrath.hpp"
 #include "gw2combat/component/profession/guardian/trait/inspired_virtue.hpp"
 #include "gw2combat/component/profession/guardian/trait/retribution.hpp"
@@ -30,6 +30,8 @@ std::unique_ptr<entt::entity> singleton_entity;
 
 entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
     auto entity = registry.create();
+
+    registry.emplace<component::is_character>(entity);
 
     auto viper_armor_rest_zerk_crit_food =
         component::static_attributes{.power = 3004,
@@ -96,9 +98,6 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
     registry.emplace<component::sigil_impact>(entity);
     registry.emplace<component::rune_scholar>(entity);
 
-    registry.emplace<component::character_input>(
-        entity, component::character_input{component::character_input::command{0}, tick_t{0}});
-
     {  // NOTE: Setting up some default boons for testing
         registry.emplace<component::might>(entity, component::might{});
         for (int i = 0; i < 25; ++i) {
@@ -121,14 +120,13 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
 entt::entity build_medium_kitty_golem(entt::registry& registry) {
     auto entity = registry.create();
 
+    registry.emplace<component::is_character>(entity);
+
     registry.emplace<component::static_attributes>(
         entity,
         component::static_attributes{
             0, 0, 0, 0, 0, 0, 0, 0, 0, 2597, 0.0, 0.0, 0.0, 0.0, 4'000'000});
     registry.emplace<component::dynamic_attributes>(entity, component::dynamic_attributes{0, 0, 0});
-
-    registry.emplace<component::character_input>(
-        entity, component::character_input{component::character_input::command{0}, tick_t{0}});
 
     {  // NOTE: Setting up some default conditions for testing
         registry.emplace<component::vulnerability>(entity, component::vulnerability{});

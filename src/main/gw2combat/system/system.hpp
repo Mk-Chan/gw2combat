@@ -16,7 +16,7 @@ struct context {
 
 extern void combat_detection(context&);
 extern void effective_attributes_calculation(context&);
-extern void character_animation(context&);
+extern void perform_animation(context&);
 extern void character_command(context&);
 extern void effect_expiration(context&);
 extern void outgoing_strike_damage_calculation(context&);

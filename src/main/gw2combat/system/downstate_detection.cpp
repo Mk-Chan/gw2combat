@@ -15,7 +15,7 @@ void downstate_detection(context& ctx) {
                 spdlog::info("entity: {}, now in downstate", static_cast<std::uint32_t>(entity));
             } else {
                 ctx.registry.remove<component::downstate>(entity);
-                //spdlog::info("entity: {}, not in downstate", static_cast<std::uint32_t>(entity));
+                // spdlog::info("entity: {}, not in downstate", static_cast<std::uint32_t>(entity));
             }
         });
 }

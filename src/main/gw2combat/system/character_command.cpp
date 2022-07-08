@@ -2,29 +2,67 @@
 
 #include "system.hpp"
 
-#include "gw2combat/component/character_input.hpp"
+#include "gw2combat/component/animation.hpp"
+#include "gw2combat/component/is_character.hpp"
 
 namespace gw2combat::system {
 
 void character_command(context& ctx) {
-    ctx.registry.view<component::character_input>().each(
-        [&](const entt::entity entity, component::character_input& character_input) {
-            character_input.input_bitset = component::character_input::command::NOTHING;
-            character_input.received_at = ctx.current_tick;
+    ctx.registry.view<component::is_character>().each([&](const entt::entity entity) {
+        auto& animation = ctx.registry.get_or_emplace<component::animation>(
+            entity,
+            component::animation{.current_state = component::animation::IDLE,
+                                 .start_tick = ctx.current_tick,
+                                 .accumulated_ticks = tick_t{0},
+                                 .required_ticks_for_completion = tick_t{1000}});
 
-            // TODO: Read the input command here. Following is testing code
-            //       Currently just spamming 1 every tick
-            if (entity == entt::entity{1}) {
-                character_input.input_bitset = component::character_input::make_command(
-                    {component::character_input::command::WEAPON_SKILL_1});
-                character_input.received_at = ctx.current_tick;
+        bool is_animation_locked = true;
+        if (animation.accumulated_ticks >= animation.required_ticks_for_completion ||
+            animation.current_state == component::animation::IDLE) {
+            is_animation_locked = false;
+        }
+
+        // If 1 is pressed, swap to it only if idle or previous animation ended
+        if (entity == entt::entity{1}) {
+            if (!is_animation_locked) {
+                // If 1 is pressed and previous animation was aa2 and has ended, queue aa3
+                if (animation.current_state ==
+                    component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_2) {
+                    animation.current_state =
+                        component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_3;
+                    animation.start_tick = ctx.current_tick;
+                    animation.accumulated_ticks = tick_t{0};
+                    animation.required_ticks_for_completion = tick_t{600};
+                }
+                // If 1 is pressed and previous animation was aa1 and has ended, queue aa2
+                else if (animation.current_state ==
+                         component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_1) {
+                    animation.current_state =
+                        component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_2;
+                    animation.start_tick = ctx.current_tick;
+                    animation.accumulated_ticks = tick_t{0};
+                    animation.required_ticks_for_completion = tick_t{870};
+                }
+                // If previous state was idle (or actually any skill other than aa-chain skill),
+                // queue aa1
+                else {
+                    animation.current_state =
+                        component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_1;
+                    animation.start_tick = ctx.current_tick;
+                    animation.accumulated_ticks = tick_t{0};
+                    animation.required_ticks_for_completion = tick_t{1'020};
+                }
             }
-
-            //spdlog::info("entity: {}, received at tick: {}, character_input_bitset: {}",
-            //             static_cast<std::uint32_t>(entity),
-            //             character_input.received_at,
-            //             static_cast<std::uint32_t>(character_input.input_bitset));
-        });
+        } else {
+            // Loop idle animation
+            if (animation.current_state != component::animation::IDLE && !is_animation_locked) {
+                animation.current_state = component::animation::state::IDLE;
+                animation.start_tick = ctx.current_tick;
+                animation.accumulated_ticks = tick_t{0};
+                animation.required_ticks_for_completion = tick_t{1'000};
+            }
+        }
+    });
 }
 
 }  // namespace gw2combat::system

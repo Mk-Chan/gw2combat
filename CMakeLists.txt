@@ -60,7 +60,7 @@ add_executable(
 
     src/main/gw2combat/system/character_command.cpp
     src/main/gw2combat/system/effective_attributes_calculation.cpp
-    src/main/gw2combat/system/character_animation.cpp
+    src/main/gw2combat/system/perform_animation.cpp
     src/main/gw2combat/system/effect_expiration.cpp
     src/main/gw2combat/system/outgoing_strike_damage_calculation.cpp
     src/main/gw2combat/system/combat_detection.cpp

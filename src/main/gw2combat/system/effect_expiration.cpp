@@ -7,9 +7,9 @@
 #include "gw2combat/component/boon/might.hpp"
 #include "gw2combat/component/boon/quickness.hpp"
 #include "gw2combat/component/boon/resolution.hpp"
-#include "gw2combat/component/character_input.hpp"
 #include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/condition/vulnerability.hpp"
+#include "gw2combat/component/is_character.hpp"
 
 namespace gw2combat::system {
 
@@ -36,19 +36,18 @@ void relax_single_stack_effect(context& ctx, entt::entity entity) {
 }
 
 void effect_expiration(context& ctx) {
-    ctx.registry.view<component::character_input>().each(
-        [&](const entt::entity entity, const component::character_input&) {
-            // Boons
-            relax_multi_stack_effect<component::might>(ctx, entity);
-            relax_single_stack_effect<component::fury>(ctx, entity);
-            relax_single_stack_effect<component::quickness>(ctx, entity);
-            relax_single_stack_effect<component::resolution>(ctx, entity);
-            relax_single_stack_effect<component::aegis>(ctx, entity);
+    ctx.registry.view<component::is_character>().each([&](const entt::entity entity) {
+        // Boons
+        relax_multi_stack_effect<component::might>(ctx, entity);
+        relax_single_stack_effect<component::fury>(ctx, entity);
+        relax_single_stack_effect<component::quickness>(ctx, entity);
+        relax_single_stack_effect<component::resolution>(ctx, entity);
+        relax_single_stack_effect<component::aegis>(ctx, entity);
 
-            // Conditions
-            relax_multi_stack_effect<component::vulnerability>(ctx, entity);
-            relax_multi_stack_effect<component::burning>(ctx, entity);
-        });
+        // Conditions
+        relax_multi_stack_effect<component::vulnerability>(ctx, entity);
+        relax_multi_stack_effect<component::burning>(ctx, entity);
+    });
 }
 
 }  // namespace gw2combat::system

@@ -9,6 +9,6 @@ struct condition_tick_status {
     bool apply_condition_damage;
 };
 
-}
+}  // namespace gw2combat::component
 
 #endif  // GW2COMBAT_COMPONENT_TICK_STATUS_HPP

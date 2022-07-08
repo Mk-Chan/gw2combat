@@ -48,30 +48,30 @@ void effective_attributes_calculation(context& ctx) {
                 effective_attributes.critical_chance_pct += 25;
             }
 
-            //spdlog::info(
-            //    "entity: {}, effective_attributes: {}",
-            //    static_cast<std::uint32_t>(entity),
-            //    nlohmann::json{
-            //        {"power", effective_attributes.power},
-            //        //{"precision", effective_attributes.precision},
-            //        //{"toughness", effective_attributes.toughness},
-            //        //{"vitality", effective_attributes.vitality},
-            //        //{"concentration", effective_attributes.concentration},
-            //        //{"condition_damage", effective_attributes.condition_damage},
-            //        //{"expertise", effective_attributes.expertise},
-            //        //{"ferocity", effective_attributes.ferocity},
-            //        //{"healing_power", effective_attributes.healing_power},
-            //        {"armor", effective_attributes.armor},
-            //        //{"boon_duration_pct", effective_attributes.boon_duration_pct},
-            //        {"critical_chance_pct", effective_attributes.critical_chance_pct},
-            //        {"critical_damage_pct", effective_attributes.critical_damage_pct},
-            //        //{"condition_duration_pct", effective_attributes.condition_duration_pct},
-            //        //{"health", effective_attributes.health},
-            //        {"weapon_strength", effective_attributes.weapon_strength},
-            //        //{"endurance", effective_attributes.endurance},
-            //        //{"endurance_gain_pct", effective_attributes.endurance_gain_pct},
-            //    }
-            //        .dump());
+            // spdlog::info(
+            //     "entity: {}, effective_attributes: {}",
+            //     static_cast<std::uint32_t>(entity),
+            //     nlohmann::json{
+            //         {"power", effective_attributes.power},
+            //         //{"precision", effective_attributes.precision},
+            //         //{"toughness", effective_attributes.toughness},
+            //         //{"vitality", effective_attributes.vitality},
+            //         //{"concentration", effective_attributes.concentration},
+            //         //{"condition_damage", effective_attributes.condition_damage},
+            //         //{"expertise", effective_attributes.expertise},
+            //         //{"ferocity", effective_attributes.ferocity},
+            //         //{"healing_power", effective_attributes.healing_power},
+            //         {"armor", effective_attributes.armor},
+            //         //{"boon_duration_pct", effective_attributes.boon_duration_pct},
+            //         {"critical_chance_pct", effective_attributes.critical_chance_pct},
+            //         {"critical_damage_pct", effective_attributes.critical_damage_pct},
+            //         //{"condition_duration_pct", effective_attributes.condition_duration_pct},
+            //         //{"health", effective_attributes.health},
+            //         {"weapon_strength", effective_attributes.weapon_strength},
+            //         //{"endurance", effective_attributes.endurance},
+            //         //{"endurance_gain_pct", effective_attributes.endurance_gain_pct},
+            //     }
+            //         .dump());
         });
 }
 
