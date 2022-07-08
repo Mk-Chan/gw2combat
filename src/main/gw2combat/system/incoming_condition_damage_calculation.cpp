@@ -5,6 +5,7 @@
 #include <spdlog/spdlog.h>
 
 #include "gw2combat/component/condition/burning.hpp"
+#include "gw2combat/component/condition/vulnerability.hpp"
 #include "gw2combat/component/condition_tick_status.hpp"
 #include "gw2combat/component/effective_attributes.hpp"
 #include "gw2combat/component/effective_incoming_damage.hpp"
@@ -35,7 +36,15 @@ void incoming_condition_damage_calculation(context& ctx) {
             auto& effective_incoming_damage =
                 ctx.registry.get_or_emplace<component::effective_incoming_damage>(
                     entity, component::effective_incoming_damage{0});
-            effective_incoming_damage.value += (unsigned int)std::round(burning.buffered_damage);
+            double vulnerability_multiplier = [&]() {
+                auto vulnerability_ptr = ctx.registry.try_get<component::vulnerability>(entity);
+                if (vulnerability_ptr == nullptr) {
+                    return 1.0;
+                }
+                return 1.0 + ((double)(vulnerability_ptr->stacks.size()) * 0.01);
+            }();
+            effective_incoming_damage.value +=
+                (unsigned int)std::round(burning.buffered_damage * vulnerability_multiplier);
 
             spdlog::info("entity: {}, incoming condition damage: {}, effective incoming damage: {}",
                          static_cast<std::uint32_t>(entity),

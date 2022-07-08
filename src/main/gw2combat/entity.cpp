@@ -148,7 +148,7 @@ void init_entities(entt::registry& registry) {
 
     // FIXME: Maybe make a golem boon/condi provider entity later for cleaner code
     registry.emplace<component::static_attributes>(
-        *singleton_entity, component::static_attributes{.condition_damage = 211});
+        *singleton_entity, component::static_attributes{.condition_damage = 0});
     registry.emplace<component::dynamic_attributes>(*singleton_entity,
                                                     component::dynamic_attributes{});
     registry.emplace<component::condition_tick_status>(*singleton_entity,
