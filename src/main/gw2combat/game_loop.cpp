@@ -11,6 +11,7 @@
 #include "gw2combat/component/effective_attributes.hpp"
 #include "gw2combat/component/effective_incoming_damage.hpp"
 #include "gw2combat/component/incoming_damage.hpp"
+#include "gw2combat/component/pulse_condition.hpp"
 #include "gw2combat/component/successfully_cast_skill.hpp"
 
 namespace gw2combat {
@@ -20,14 +21,16 @@ void clear_temporary_components(system::context& ctx) {
                        component::incoming_damage,
                        component::effective_incoming_damage,
                        component::effective_attributes,
-                       component::successfully_cast_skill>();
+                       component::successfully_cast_skill,
+                       component::pulse_condition>();
 }
 
 void run_systems(system::context& ctx) {
     clear_temporary_components(ctx);
 
     system::combat_detection(ctx);
-    system::process_condition_tick(ctx);
+    system::check_if_is_condition_pulse_tick(ctx);
+    system::update_animation_lock_state(ctx);
     system::character_command(ctx);
     system::accumulate_skill_cast_ticks(ctx);
     system::perform_animation(ctx);

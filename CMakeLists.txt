@@ -69,9 +69,10 @@ add_executable(
     src/main/gw2combat/system/update_combat_stats.cpp
     src/main/gw2combat/system/downstate_detection.cpp
     src/main/gw2combat/system/accumulate_skill_cast_ticks.cpp
-    src/main/gw2combat/system/process_condition_tick.cpp
+    src/main/gw2combat/system/check_if_is_condition_pulse.cpp
     src/main/gw2combat/system/incoming_condition_damage_calculation.cpp
     src/main/gw2combat/system/outgoing_condition_application.cpp
+    src/main/gw2combat/system/update_animation_lock_state.cpp
 )
 target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 

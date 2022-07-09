@@ -9,7 +9,6 @@
 #include "gw2combat/component/boon/resolution.hpp"
 #include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/condition/vulnerability.hpp"
-#include "gw2combat/component/condition_tick_status.hpp"
 #include "gw2combat/component/dynamic_attributes.hpp"
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
@@ -139,24 +138,28 @@ entt::entity build_medium_kitty_golem(entt::registry& registry) {
     return entity;
 }
 
+entt::entity build_golem_boon_condi_provider(entt::registry& registry) {
+    auto golem_boon_condi_provider = registry.create();
+
+    registry.emplace<component::static_attributes>(
+        golem_boon_condi_provider, component::static_attributes{.condition_damage = 0});
+    registry.emplace<component::dynamic_attributes>(golem_boon_condi_provider,
+                                                    component::dynamic_attributes{});
+
+    return golem_boon_condi_provider;
+}
+
 void init_entities(entt::registry& registry) {
     singleton_entity = std::make_unique<entt::entity>(registry.create());
     auto player1 = build_core_guard_no_gear_no_traits_gs(registry);
     auto golem = build_medium_kitty_golem(registry);
-
-    // FIXME: Maybe make a golem boon/condi provider entity later for cleaner code
-    registry.emplace<component::static_attributes>(
-        *singleton_entity, component::static_attributes{.condition_damage = 0});
-    registry.emplace<component::dynamic_attributes>(*singleton_entity,
-                                                    component::dynamic_attributes{});
-    registry.emplace<component::condition_tick_status>(*singleton_entity,
-                                                       component::condition_tick_status{tick_t{0}});
+    auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 
     // NOTE: Hardcoded for testing
     registry.emplace<component::targeting>(player1, component::targeting{golem});
     auto& burning = registry.emplace<component::burning>(golem, component::burning{});
     for (int i = 0; i < 1; ++i) {
-        burning.stacks.emplace(effect{*singleton_entity, 3500000});
+        burning.stacks.emplace(effect{golem_boon_condi_provider, 3500000});
     }
 }
 

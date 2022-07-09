@@ -25,9 +25,10 @@ extern void incoming_strike_damage_calculation(context& ctx);
 extern void update_combat_stats(context& ctx);
 extern void downstate_detection(context& ctx);
 extern void accumulate_skill_cast_ticks(context& ctx);
-extern void process_condition_tick(context& ctx);
+extern void check_if_is_condition_pulse_tick(context& is_condition_pulse);
 extern void incoming_condition_damage_calculation(context& ctx);
 extern void outgoing_condition_application(context& ctx);
+extern void update_animation_lock_state(context& ctx);
 
 }  // namespace gw2combat::system
 

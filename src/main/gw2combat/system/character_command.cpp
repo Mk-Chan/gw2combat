@@ -3,28 +3,23 @@
 #include "system.hpp"
 
 #include "gw2combat/component/animation.hpp"
+#include "gw2combat/component/is_animation_locked.hpp"
 #include "gw2combat/component/is_character.hpp"
 
 namespace gw2combat::system {
 
 void character_command(context& ctx) {
-    ctx.registry.view<component::is_character>().each([&](const entt::entity entity) {
-        auto& animation = ctx.registry.get_or_emplace<component::animation>(
-            entity,
-            component::animation{.current_state = component::animation::IDLE,
-                                 .start_tick = ctx.current_tick,
-                                 .accumulated_ticks = tick_t{0},
-                                 .required_ticks_for_completion = tick_t{1000}});
+    ctx.registry.view<component::is_character>(entt::exclude<component::is_animation_locked>)
+        .each([&](const entt::entity entity) {
+            auto& animation = ctx.registry.get_or_emplace<component::animation>(
+                entity,
+                component::animation{.current_state = component::animation::IDLE,
+                                     .start_tick = ctx.current_tick,
+                                     .accumulated_ticks = tick_t{0},
+                                     .required_ticks_for_completion = tick_t{1000}});
 
-        bool is_animation_locked = true;
-        if (animation.accumulated_ticks >= animation.required_ticks_for_completion ||
-            animation.current_state == component::animation::IDLE) {
-            is_animation_locked = false;
-        }
-
-        // If 1 is pressed, swap to it only if idle or previous animation ended
-        if (entity == entt::entity{1}) {
-            if (!is_animation_locked) {
+            // For player 1, loop aa-chain
+            if (entity == entt::entity{1}) {
                 // If 1 is pressed and previous animation was aa2 and has ended, queue aa3
                 if (animation.current_state ==
                     component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_2) {
@@ -53,16 +48,14 @@ void character_command(context& ctx) {
                     animation.required_ticks_for_completion = tick_t{1'020};
                 }
             }
-        } else {
-            // Loop idle animation
-            if (animation.current_state != component::animation::IDLE && !is_animation_locked) {
+            // For every other character, loop idle animation
+            else {
                 animation.current_state = component::animation::state::IDLE;
                 animation.start_tick = ctx.current_tick;
                 animation.accumulated_ticks = tick_t{0};
                 animation.required_ticks_for_completion = tick_t{1'000};
             }
-        }
-    });
+        });
 }
 
 }  // namespace gw2combat::system
