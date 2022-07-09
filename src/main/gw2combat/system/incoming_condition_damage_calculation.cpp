@@ -15,7 +15,7 @@ namespace gw2combat::system {
 void incoming_condition_damage_calculation(context& ctx) {
     ctx.registry.view<component::burning>().each([&](const entt::entity entity,
                                                      component::burning& burning) {
-        // NOTE: There might issues here, perhaps effective attributes are only calculated at the
+        // NOTE: There might be issues here, perhaps effective attributes are only calculated at the
         //       condition pulse tick
         double burning_damage_per_stack_per_second =
             131.0 * (double)burning.stacks.size() +
