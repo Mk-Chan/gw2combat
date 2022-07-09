@@ -7,7 +7,16 @@
 namespace gw2combat::component {
 
 struct burning {
-    double buffered_damage = 0.0;
+    burning() : buffered_damage(0.0), stacks() {
+    }
+    burning(entt::entity source, size_t num_stacks, tick_t end_tick)
+        : buffered_damage(0.0), stacks() {
+        for (size_t i = 0; i < num_stacks; ++i) {
+            stacks.emplace(effect{source, end_tick});
+        }
+    }
+
+    double buffered_damage;
     iterable_priority_queue<effect> stacks;
 };
 

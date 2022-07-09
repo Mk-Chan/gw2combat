@@ -18,7 +18,7 @@ void relax_multi_stack_effect(context& ctx, entt::entity entity) {
     Effect* effect_ptr = ctx.registry.template try_get<Effect>(entity);
     if (effect_ptr) {
         while (!effect_ptr->stacks.empty() &&
-               ctx.current_tick > effect_ptr->stacks.top().end_time) {
+               ctx.current_tick > effect_ptr->stacks.top().end_tick) {
             effect_ptr->stacks.pop();
         }
         if (effect_ptr->stacks.empty()) {
@@ -30,7 +30,7 @@ void relax_multi_stack_effect(context& ctx, entt::entity entity) {
 template <class Effect>
 void relax_single_stack_effect(context& ctx, entt::entity entity) {
     Effect* effect_ptr = ctx.registry.template try_get<Effect>(entity);
-    if (effect_ptr && ctx.current_tick > effect_ptr->stack.end_time) {
+    if (effect_ptr && ctx.current_tick > effect_ptr->stack.end_tick) {
         ctx.registry.remove<Effect>(entity);
     }
 }

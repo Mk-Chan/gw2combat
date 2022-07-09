@@ -1,4 +1,4 @@
-#include "system.hpp"
+#include "gw2combat/system/system.hpp"
 
 #include <numeric>
 
@@ -12,7 +12,7 @@
 
 namespace gw2combat::system {
 
-void incoming_condition_damage_calculation(context& ctx) {
+void burning_damage_calculation(context& ctx) {
     ctx.registry.view<component::burning>().each([&](const entt::entity entity,
                                                      component::burning& burning) {
         // NOTE: There might be issues here, perhaps effective attributes are only calculated at the

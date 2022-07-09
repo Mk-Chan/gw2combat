@@ -7,6 +7,14 @@
 namespace gw2combat::component {
 
 struct might {
+    might() : stacks() {
+    }
+    might(entt::entity source, size_t num_stacks, tick_t end_tick) : stacks() {
+        for (size_t i = 0; i < num_stacks; ++i) {
+            stacks.emplace(effect{source, end_tick});
+        }
+    }
+
     iterable_priority_queue<effect> stacks;
 };
 

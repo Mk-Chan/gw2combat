@@ -1,6 +1,6 @@
 #include <spdlog/spdlog.h>
 
-#include "system.hpp"
+#include "gw2combat/system/system.hpp"
 
 #include "gw2combat/component/boon/aegis.hpp"
 #include "gw2combat/component/boon/fury.hpp"
@@ -14,37 +14,42 @@
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
 #include "gw2combat/component/gear/sigil/sigil_impact.hpp"
-#include "gw2combat/component/outgoing_damage.hpp"
+#include "gw2combat/component/outgoing_strike_damage.hpp"
 #include "gw2combat/component/profession/guardian/trait/fiery_wrath.hpp"
 #include "gw2combat/component/profession/guardian/trait/inspired_virtue.hpp"
 #include "gw2combat/component/profession/guardian/trait/retribution.hpp"
 #include "gw2combat/component/profession/guardian/trait/symbolic_exposure.hpp"
 #include "gw2combat/component/profession/guardian/trait/unscathed_contender.hpp"
-#include "gw2combat/component/successfully_cast_skill.hpp"
+#include "gw2combat/component/successful_skill_cast.hpp"
 #include "gw2combat/component/targeting.hpp"
 
 namespace gw2combat::system {
 
-double get_damage_coefficient_by_skill(component::successfully_cast_skill::skill skill) {
+double get_damage_coefficient_by_skill(component::successful_skill_cast::skill skill) {
     // TODO: Make a nicer implementation for this by storing all the relevant entity-based
     //       information together in 1 place
-    if (skill == component::successfully_cast_skill::skill::SKILL_GUARDIAN_GREATSWORD_1_1) {
+    if (skill == component::successful_skill_cast::skill::SKILL_GUARDIAN_GREATSWORD_1_1) {
         return 0.8;
-    } else if (skill == component::successfully_cast_skill::skill::SKILL_GUARDIAN_GREATSWORD_1_2) {
+    } else if (skill == component::successful_skill_cast::skill::SKILL_GUARDIAN_GREATSWORD_1_2) {
         return 0.8;
-    } else if (skill == component::successfully_cast_skill::skill::SKILL_GUARDIAN_GREATSWORD_1_3) {
+    } else if (skill == component::successful_skill_cast::skill::SKILL_GUARDIAN_GREATSWORD_1_3) {
         return 1.2;
     } else {
         return 0;
     }
 }
 
-void outgoing_strike_damage_calculation(context& ctx) {
-    ctx.registry.view<component::successfully_cast_skill, component::effective_attributes>().each(
+void outgoing_strike_calculations(context& ctx) {
+    ctx.registry.view<component::successful_skill_cast, component::effective_attributes>().each(
         [&](const entt::entity entity,
-            const component::successfully_cast_skill& successfully_cast_skill,
+            const component::successful_skill_cast& successfully_cast_skill,
             const component::effective_attributes& effective_attributes) {
             auto combat_stats_ptr = ctx.registry.try_get<component::combat_stats>(entity);
+
+            // TODO: Arrange all these gear/trait modifiers into relevant locations in codebase,
+            //       perhaps have a component for holding current strike modifiers with a bucket
+            //       based multiply-aggregation system to calculate
+            //       effective_strike_damage_multiplier.
             double scholar_rune_multiplier = 1.0;
             if (combat_stats_ptr) {
                 bool has_scholar_rune = ctx.registry.any_of<component::rune_scholar>(entity);
@@ -128,8 +133,10 @@ void outgoing_strike_damage_calculation(context& ctx) {
             };
 
             unsigned int avg_weapon_strength = 1100;
-            ctx.registry.emplace_or_replace<component::outgoing_damage>(
-                entity, component::outgoing_damage{calculate_dmg(avg_weapon_strength)});
+            auto& outgoing_strike_damage =
+                ctx.registry.get_or_emplace<component::outgoing_strike_damage>(entity);
+            outgoing_strike_damage.strikes.emplace_back(
+                strike{entity, calculate_dmg(avg_weapon_strength)});
 
             // NOTE: Logging purposes only
             unsigned int min_weapon_strength = 1045;

@@ -30,8 +30,6 @@ std::unique_ptr<entt::entity> singleton_entity;
 entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
     auto entity = registry.create();
 
-    registry.emplace<component::is_character>(entity);
-
     auto viper_armor_rest_zerk_crit_food =
         component::static_attributes{.power = 3004,
                                      .precision = 2032,
@@ -86,8 +84,7 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
 
     registry.emplace<component::virtue_of_justice>(
         entity,
-        component::virtue_of_justice{.consecutive_successful_hits = 0,
-                                     .apply_burning_on_tick = tick_t{3'000'000'000}});
+        component::virtue_of_justice{3});
     registry.emplace<component::fiery_wrath>(entity);
     registry.emplace<component::inspired_virtue>(entity);
     registry.emplace<component::retribution>(entity);
@@ -97,21 +94,7 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
     registry.emplace<component::sigil_impact>(entity);
     registry.emplace<component::rune_scholar>(entity);
 
-    {  // NOTE: Setting up some default boons for testing
-        registry.emplace<component::might>(entity, component::might{});
-        for (int i = 0; i < 25; ++i) {
-            registry.get<component::might>(entity).stacks.emplace(
-                effect{entity, tick_t{9'000'000}});
-        }
-        registry.emplace<component::fury>(entity,
-                                          component::fury{effect{entity, tick_t{9'000'000}}});
-        registry.emplace<component::quickness>(
-            entity, component::quickness{effect{entity, tick_t{9'000'000}}});
-        registry.emplace<component::resolution>(
-            entity, component::resolution{effect{entity, tick_t{9'000'000}}});
-        registry.emplace<component::aegis>(entity,
-                                           component::aegis{effect{entity, tick_t{9'000'000}}});
-    }
+    registry.emplace<component::is_character>(entity);
 
     return entity;
 }
@@ -119,21 +102,13 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
 entt::entity build_medium_kitty_golem(entt::registry& registry) {
     auto entity = registry.create();
 
-    registry.emplace<component::is_character>(entity);
-
     registry.emplace<component::static_attributes>(
         entity,
         component::static_attributes{
             0, 0, 0, 0, 0, 0, 0, 0, 0, 2597, 0.0, 0.0, 0.0, 0.0, 4'000'000});
     registry.emplace<component::dynamic_attributes>(entity, component::dynamic_attributes{0, 0, 0});
 
-    {  // NOTE: Setting up some default conditions for testing
-        registry.emplace<component::vulnerability>(entity, component::vulnerability{});
-        for (int i = 0; i < 25; ++i) {
-            registry.get<component::vulnerability>(entity).stacks.emplace(
-                effect{entity, tick_t{9'000'000}});
-        }
-    }
+    registry.emplace<component::is_character>(entity);
 
     return entity;
 }
@@ -155,12 +130,23 @@ void init_entities(entt::registry& registry) {
     auto golem = build_medium_kitty_golem(registry);
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 
-    // NOTE: Hardcoded for testing
+    // NOTE: Default boons for testing
+    registry.emplace<component::might>(player1, component::might{player1, 25, 35'000'000});
+    registry.emplace<component::fury>(player1,
+                                      component::fury{effect{player1, tick_t{35'000'000}}});
+    registry.emplace<component::quickness>(
+        player1, component::quickness{effect{player1, tick_t{35'000'000}}});
+    registry.emplace<component::resolution>(
+        player1, component::resolution{effect{player1, tick_t{35'000'000}}});
+    registry.emplace<component::aegis>(player1,
+                                       component::aegis{effect{player1, tick_t{35'000'000}}});
     registry.emplace<component::targeting>(player1, component::targeting{golem});
-    auto& burning = registry.emplace<component::burning>(golem, component::burning{});
-    for (int i = 0; i < 1; ++i) {
-        burning.stacks.emplace(effect{golem_boon_condi_provider, 3500000});
-    }
+    // registry.remove<component::is_character>(player1);  // Disable player1
+
+    auto& burning = registry.emplace<component::burning>(
+        golem, component::burning{golem_boon_condi_provider, 1, 35'000'000});
+    registry.emplace<component::vulnerability>(
+        golem, component::vulnerability{golem_boon_condi_provider, 25, 35'000'000});
 }
 
 }  // namespace gw2combat

@@ -1,14 +1,13 @@
 #include "system.hpp"
 
 #include <spdlog/spdlog.h>
-#include <nlohmann/json.hpp>
 
 #include "gw2combat/component/combat_stats.hpp"
 #include "gw2combat/component/effective_incoming_damage.hpp"
 
 namespace gw2combat::system {
 
-void update_combat_stats(context& ctx) {
+void update_health(context& ctx) {
     // TODO: Change this to take incoming_damage_history instead which persists across N ticks
     //       so that we can defer updates to combat_stats and process them at a greater interval
     //       than once per tick. Also implement incoming healing and incoming_healing_history later.
@@ -21,13 +20,8 @@ void update_combat_stats(context& ctx) {
             } else {
                 combat_stats.health -= effective_incoming_damage.value;
             }
-            spdlog::info("entity: {}, combat_stats: {}",
-                         static_cast<std::uint32_t>(entity),
-                         nlohmann::json{
-                             {"health", combat_stats.health},
-                             {"endurance", combat_stats.endurance},
-                         }
-                             .dump());
+            spdlog::info(
+                "entity: {}, health: {}", static_cast<std::uint32_t>(entity), combat_stats.health);
         });
 }
 

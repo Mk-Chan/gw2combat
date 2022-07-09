@@ -60,19 +60,20 @@ add_executable(
 
     src/main/gw2combat/system/character_command.cpp
     src/main/gw2combat/system/effective_attributes_calculation.cpp
-    src/main/gw2combat/system/perform_animation.cpp
     src/main/gw2combat/system/effect_expiration.cpp
-    src/main/gw2combat/system/outgoing_strike_damage_calculation.cpp
+    src/main/gw2combat/system/damage/outgoing_strike_calculations.cpp
+    src/main/gw2combat/system/damage/incoming_strike_detection.cpp
+    src/main/gw2combat/system/damage/strike_damage_calculation.cpp
+    src/main/gw2combat/system/damage/burning_damage_calculation.cpp
+    src/main/gw2combat/system/damage/incoming_condition_application.cpp
     src/main/gw2combat/system/combat_detection.cpp
-    src/main/gw2combat/system/incoming_strike_damage_detection.cpp
-    src/main/gw2combat/system/incoming_strike_damage_calculation.cpp
-    src/main/gw2combat/system/update_combat_stats.cpp
+    src/main/gw2combat/system/update_health.cpp
     src/main/gw2combat/system/downstate_detection.cpp
     src/main/gw2combat/system/accumulate_skill_cast_ticks.cpp
     src/main/gw2combat/system/check_if_is_condition_pulse.cpp
-    src/main/gw2combat/system/incoming_condition_damage_calculation.cpp
-    src/main/gw2combat/system/outgoing_condition_application.cpp
     src/main/gw2combat/system/update_animation_lock_state.cpp
+
+    src/main/gw2combat/system/profession/guardian/virtue_of_justice.cpp
 )
 target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 

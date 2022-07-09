@@ -1,4 +1,4 @@
-#include "system.hpp"
+#include "gw2combat/system/system.hpp"
 
 #include <numeric>
 
@@ -7,23 +7,23 @@
 #include "gw2combat/component/condition/vulnerability.hpp"
 #include "gw2combat/component/effective_attributes.hpp"
 #include "gw2combat/component/effective_incoming_damage.hpp"
-#include "gw2combat/component/incoming_damage.hpp"
+#include "gw2combat/component/incoming_strike_damage.hpp"
 
 namespace gw2combat::system {
 
 // NOTE: Easily optimized with some group-by logic if required
-void incoming_strike_damage_calculation(context& ctx) {
-    ctx.registry.view<component::incoming_damage, component::effective_attributes>().each(
+void strike_damage_calculation(context& ctx) {
+    ctx.registry.view<component::incoming_strike_damage, component::effective_attributes>().each(
         [&](const entt::entity entity,
-            const component::incoming_damage& incoming_damage,
+            const component::incoming_strike_damage& incoming_damage,
             const component::effective_attributes& effective_attributes) {
-            double accumulated_incoming_damage = std::accumulate(
-                incoming_damage.damage_data_vec.begin(),
-                incoming_damage.damage_data_vec.end(),
-                0.0,
-                [&](const double accumulated, const component::incoming_damage::damage_data& next) {
-                    return accumulated + next.value;
-                });
+            double accumulated_incoming_damage =
+                std::accumulate(incoming_damage.strikes.begin(),
+                                incoming_damage.strikes.end(),
+                                0.0,
+                                [&](const double accumulated, const strike& next) {
+                                    return accumulated + next.damage;
+                                });
 
             double vulnerability_multiplier = [&]() {
                 auto vulnerability_ptr = ctx.registry.try_get<component::vulnerability>(entity);

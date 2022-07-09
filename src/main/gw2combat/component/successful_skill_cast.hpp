@@ -1,11 +1,11 @@
-#ifndef GW2COMBAT_COMPONENT_SUCCESSFULLY_CAST_SKILL_HPP
-#define GW2COMBAT_COMPONENT_SUCCESSFULLY_CAST_SKILL_HPP
+#ifndef GW2COMBAT_COMPONENT_SUCCESSFUL_SKILL_CAST_HPP
+#define GW2COMBAT_COMPONENT_SUCCESSFUL_SKILL_CAST_HPP
 
 #include <cstdint>
 
 namespace gw2combat::component {
 
-struct successfully_cast_skill {
+struct successful_skill_cast {
     enum class skill : std::uint32_t
     {
         NOTHING,
@@ -18,4 +18,4 @@ struct successfully_cast_skill {
 
 }  // namespace gw2combat::component
 
-#endif  // GW2COMBAT_COMPONENT_SUCCESSFULLY_CAST_SKILL_HPP
+#endif  // GW2COMBAT_COMPONENT_SUCCESSFUL_SKILL_CAST_HPP
