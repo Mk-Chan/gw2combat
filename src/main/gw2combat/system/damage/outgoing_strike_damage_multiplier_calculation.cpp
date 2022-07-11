@@ -1,6 +1,6 @@
-#include <spdlog/spdlog.h>
-
 #include "gw2combat/system/system.hpp"
+
+#include <entt/entt.hpp>
 
 #include "gw2combat/component/boon/aegis.hpp"
 #include "gw2combat/component/boon/fury.hpp"
@@ -14,56 +14,34 @@
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
 #include "gw2combat/component/gear/sigil/sigil_impact.hpp"
-#include "gw2combat/component/outgoing_strike_damage.hpp"
+#include "gw2combat/component/outgoing_strike_damage_multiplier.hpp"
 #include "gw2combat/component/profession/guardian/trait/fiery_wrath.hpp"
 #include "gw2combat/component/profession/guardian/trait/inspired_virtue.hpp"
 #include "gw2combat/component/profession/guardian/trait/retribution.hpp"
 #include "gw2combat/component/profession/guardian/trait/symbolic_exposure.hpp"
 #include "gw2combat/component/profession/guardian/trait/unscathed_contender.hpp"
-#include "gw2combat/component/successful_skill_cast.hpp"
 #include "gw2combat/component/targeting.hpp"
 
 namespace gw2combat::system {
 
-double get_damage_coefficient_by_skill(component::successful_skill_cast::skill skill) {
-    // TODO: Make a nicer implementation for this by storing all the relevant entity-based
-    //       information together in 1 place
-    if (skill == component::successful_skill_cast::skill::SKILL_GUARDIAN_GREATSWORD_1_1) {
-        return 0.8;
-    } else if (skill == component::successful_skill_cast::skill::SKILL_GUARDIAN_GREATSWORD_1_2) {
-        return 0.8;
-    } else if (skill == component::successful_skill_cast::skill::SKILL_GUARDIAN_GREATSWORD_1_3) {
-        return 1.2;
-    } else {
-        return 0;
-    }
-}
-
-void outgoing_strike_calculations(context& ctx) {
-    ctx.registry.view<component::successful_skill_cast, component::effective_attributes>().each(
+void outgoing_strike_damage_multiplier_calculation(context& ctx) {
+    ctx.registry.view<component::effective_attributes, component::combat_stats>().each(
         [&](const entt::entity entity,
-            const component::successful_skill_cast& successfully_cast_skill,
-            const component::effective_attributes& effective_attributes) {
-            auto combat_stats_ptr = ctx.registry.try_get<component::combat_stats>(entity);
-
-            // TODO: Arrange all these gear/trait modifiers into relevant locations in codebase,
-            //       perhaps have a component for holding current strike modifiers with a bucket
-            //       based multiply-aggregation system to calculate
-            //       effective_strike_damage_multiplier.
+            const component::effective_attributes& effective_attributes,
+            const component::combat_stats& combat_stats) {
             double scholar_rune_multiplier = 1.0;
-            if (combat_stats_ptr) {
-                bool has_scholar_rune = ctx.registry.any_of<component::rune_scholar>(entity);
-                bool is_above_90pct_health =
-                    combat_stats_ptr->health > (effective_attributes.max_health * 0.90);
-                scholar_rune_multiplier +=
-                    has_scholar_rune * is_above_90pct_health *
-                    component::rune_scholar::strike_damage_increase_if_above_90pct_health;
-            }
+            bool has_scholar_rune = ctx.registry.any_of<component::rune_scholar>(entity);
+            bool is_above_90pct_health =
+                combat_stats.health > (effective_attributes.max_health * 0.90);
+            scholar_rune_multiplier +=
+                has_scholar_rune * is_above_90pct_health *
+                component::rune_scholar::strike_damage_increase_if_above_90pct_health;
 
             bool has_force_sigil = ctx.registry.any_of<component::sigil_force>(entity);
-            bool has_impact_sigil = ctx.registry.any_of<component::sigil_impact>(entity);
             double force_sigil_addend =
                 has_force_sigil * component::sigil_force::strike_damage_increase;
+
+            bool has_impact_sigil = ctx.registry.any_of<component::sigil_impact>(entity);
             double impact_sigil_addend =
                 has_impact_sigil * component::sigil_impact::strike_damage_increase;
 
@@ -117,37 +95,20 @@ void outgoing_strike_calculations(context& ctx) {
                 1.0 + (inspired_virtue_is_traited * boon_count *
                        component::inspired_virtue::strike_damage_increase_per_boon);
 
+            double addends_multiplier = (1.0 + (force_sigil_addend + impact_sigil_addend +
+                                                retribution_addend + unscathed_contender_addend));
+
             double critical_hit_multiplier =
                 (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
                            (effective_attributes.critical_damage_pct / 100.0 - 1.0));
-            double damage_coefficient =
-                get_damage_coefficient_by_skill(successfully_cast_skill.skill_);
 
-            double addends_multiplier = (1.0 + (force_sigil_addend + impact_sigil_addend +
-                                                retribution_addend + unscathed_contender_addend));
-            auto calculate_dmg = [&](unsigned int weapon_strength) {
-                return addends_multiplier * scholar_rune_multiplier * inspired_virtue_multiplier *
-                       fiery_wrath_multiplier * symbolic_exposure_multiplier *
-                       critical_hit_multiplier * weapon_strength * effective_attributes.power *
-                       damage_coefficient;
-            };
-
-            unsigned int avg_weapon_strength = 1100;
-            auto& outgoing_strike_damage =
-                ctx.registry.get_or_emplace<component::outgoing_strike_damage>(entity);
-            outgoing_strike_damage.strikes.emplace_back(
-                strike{entity, calculate_dmg(avg_weapon_strength)});
-
-            // NOTE: Logging purposes only
-            unsigned int min_weapon_strength = 1045;
-            unsigned int max_weapon_strength = 1155;
-            spdlog::info("current tick: {}", ctx.current_tick);
-            spdlog::info(
-                "source: {}, assuming 2597 armor, 25 vuln, min_dmg: {}, avg_dmg: {}, max_dmg: {}",
-                static_cast<std::uint32_t>(entity),
-                calculate_dmg(min_weapon_strength) * 1.25 / 2597,
-                calculate_dmg(avg_weapon_strength) * 1.25 / 2597,
-                calculate_dmg(max_weapon_strength) * 1.25 / 2597);
+            unsigned int weapon_strength = 1100;
+            ctx.registry.emplace<component::outgoing_strike_damage_multiplier>(
+                entity,
+                component::outgoing_strike_damage_multiplier{
+                    addends_multiplier * scholar_rune_multiplier * inspired_virtue_multiplier *
+                    fiery_wrath_multiplier * symbolic_exposure_multiplier *
+                    critical_hit_multiplier * effective_attributes.power * weapon_strength});
         });
 }
 

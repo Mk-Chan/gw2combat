@@ -2,58 +2,61 @@
 
 #include "system.hpp"
 
+#include "gw2combat/skills.hpp"
+
 #include "gw2combat/component/animation.hpp"
 #include "gw2combat/component/is_animation_locked.hpp"
 #include "gw2combat/component/is_character.hpp"
 
 namespace gw2combat::system {
 
+static inline size_t skill_idx = 0;
+static inline std::array skills_in_order{skills::GUARDIAN_GREATSWORD_2,
+
+                                         skills::GUARDIAN_GREATSWORD_1_1,
+                                         skills::GUARDIAN_GREATSWORD_1_2,
+                                         skills::GUARDIAN_GREATSWORD_1_3,
+
+                                         skills::GUARDIAN_GREATSWORD_1_1,
+                                         skills::GUARDIAN_GREATSWORD_1_2,
+                                         skills::GUARDIAN_GREATSWORD_1_3,
+
+                                         skills::GUARDIAN_GREATSWORD_1_1,
+                                         skills::GUARDIAN_GREATSWORD_1_2,
+                                         skills::GUARDIAN_GREATSWORD_1_3,
+
+                                         skills::GUARDIAN_GREATSWORD_1_1,
+                                         skills::GUARDIAN_GREATSWORD_1_2,
+                                         skills::GUARDIAN_GREATSWORD_1_3};
+
 void character_command(context& ctx) {
     ctx.registry.view<component::is_character>(entt::exclude<component::is_animation_locked>)
         .each([&](const entt::entity entity) {
             auto& animation = ctx.registry.get_or_emplace<component::animation>(
                 entity,
-                component::animation{.current_state = component::animation::IDLE,
+                component::animation{.name = component::animation::IDLE,
                                      .start_tick = ctx.current_tick,
-                                     .accumulated_ticks = tick_t{0},
-                                     .required_ticks_for_completion = tick_t{1000}});
+                                     .required_ticks_for_completion = skills::IDLE.cast_duration});
 
             // For player 1, loop aa-chain
             if (entity == entt::entity{1}) {
-                // If 1 is pressed and previous animation was aa2 and has ended, queue aa3
-                if (animation.current_state ==
-                    component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_2) {
-                    animation.current_state =
-                        component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_3;
-                    animation.start_tick = ctx.current_tick;
-                    animation.accumulated_ticks = tick_t{0};
-                    animation.required_ticks_for_completion = tick_t{600};
-                }
-                // If 1 is pressed and previous animation was aa1 and has ended, queue aa2
-                else if (animation.current_state ==
-                         component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_1) {
-                    animation.current_state =
-                        component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_2;
-                    animation.start_tick = ctx.current_tick;
-                    animation.accumulated_ticks = tick_t{0};
-                    animation.required_ticks_for_completion = tick_t{870};
-                }
-                // If previous state was idle (or actually any skill other than aa-chain skill),
-                // queue aa1
-                else {
-                    animation.current_state =
-                        component::animation::state::CAST_SKILL_GUARDIAN_GREATSWORD_1_1;
-                    animation.start_tick = ctx.current_tick;
-                    animation.accumulated_ticks = tick_t{0};
-                    animation.required_ticks_for_completion = tick_t{1'020};
-                }
+                auto next_skill = skills_in_order[skill_idx];
+                ctx.registry.replace<component::animation>(
+                    entity,
+                    component::animation{
+                        .name = next_skill.name,
+                        .start_tick = ctx.current_tick,
+                        .required_ticks_for_completion = next_skill.cast_duration});
+                skill_idx = (skill_idx + 1) % skills_in_order.size();
             }
             // For every other character, loop idle animation
             else {
-                animation.current_state = component::animation::state::IDLE;
-                animation.start_tick = ctx.current_tick;
-                animation.accumulated_ticks = tick_t{0};
-                animation.required_ticks_for_completion = tick_t{1'000};
+                ctx.registry.replace<component::animation>(
+                    entity,
+                    component::animation{
+                        .name = component::animation::IDLE,
+                        .start_tick = ctx.current_tick,
+                        .required_ticks_for_completion = skills::IDLE.cast_duration});
             }
         });
 }

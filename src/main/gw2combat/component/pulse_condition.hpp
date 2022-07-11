@@ -5,7 +5,9 @@
 
 namespace gw2combat::component {
 
-struct pulse_condition {};
+struct pulse_condition {
+    constexpr static inline tick_t pulse_rate = 1'000;
+};
 
 }  // namespace gw2combat::component
 

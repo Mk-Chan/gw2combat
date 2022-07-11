@@ -1,19 +1,13 @@
 #ifndef GW2COMBAT_COMPONENT_SUCCESSFUL_SKILL_CAST_HPP
 #define GW2COMBAT_COMPONENT_SUCCESSFUL_SKILL_CAST_HPP
 
-#include <cstdint>
+#include "gw2combat/skills.hpp"
 
 namespace gw2combat::component {
 
 struct successful_skill_cast {
-    enum class skill : std::uint32_t
-    {
-        NOTHING,
-        SKILL_GUARDIAN_GREATSWORD_1_1,
-        SKILL_GUARDIAN_GREATSWORD_1_2,
-        SKILL_GUARDIAN_GREATSWORD_1_3,
-    };
-    skill skill_;
+    skills::skill skill;
+    tick_t skill_cast_end;
 };
 
 }  // namespace gw2combat::component

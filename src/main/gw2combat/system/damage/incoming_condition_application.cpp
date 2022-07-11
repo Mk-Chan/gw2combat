@@ -18,7 +18,7 @@ void incoming_condition_application(context& ctx) {
                     auto& target_burning = ctx.registry.get_or_emplace<component::burning>(
                         targeting_ptr->entity, component::burning{});
                     for (auto& burning_effect : outgoing_condition_application.burning_effects) {
-                        target_burning.stacks.push(burning_effect);
+                        target_burning.stacks.push_back(burning_effect);
                     }
                     spdlog::info("tick: {}, added {} burning effects, target: {}",
                                  ctx.current_tick,

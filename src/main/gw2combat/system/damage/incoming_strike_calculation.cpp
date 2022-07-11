@@ -41,10 +41,12 @@ void strike_damage_calculation(context& ctx) {
                     entity, component::effective_incoming_damage{0});
             effective_incoming_damage.value += incoming_strike_damage;
 
-            spdlog::info("entity: {}, incoming strike damage: {}, effective incoming damage: {}",
-                         static_cast<std::uint32_t>(entity),
-                         incoming_strike_damage,
-                         effective_incoming_damage.value);
+            spdlog::info(
+                "tick: {}, entity: {}, incoming strike damage: {}, effective incoming damage: {}",
+                ctx.current_tick,
+                static_cast<std::uint32_t>(entity),
+                incoming_strike_damage,
+                effective_incoming_damage.value);
         });
 }
 

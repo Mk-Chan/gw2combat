@@ -82,9 +82,7 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
         component::dynamic_attributes{
             .weapon_strength = 1100, .max_endurance = 100, .endurance_gain_pct = 0});
 
-    registry.emplace<component::virtue_of_justice>(
-        entity,
-        component::virtue_of_justice{3});
+    registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{3});
     registry.emplace<component::fiery_wrath>(entity);
     registry.emplace<component::inspired_virtue>(entity);
     registry.emplace<component::retribution>(entity);
@@ -131,22 +129,20 @@ void init_entities(entt::registry& registry) {
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 
     // NOTE: Default boons for testing
-    registry.emplace<component::might>(player1, component::might{player1, 25, 35'000'000});
-    registry.emplace<component::fury>(player1,
-                                      component::fury{effect{player1, tick_t{35'000'000}}});
-    registry.emplace<component::quickness>(
-        player1, component::quickness{effect{player1, tick_t{35'000'000}}});
-    registry.emplace<component::resolution>(
-        player1, component::resolution{effect{player1, tick_t{35'000'000}}});
-    registry.emplace<component::aegis>(player1,
-                                       component::aegis{effect{player1, tick_t{35'000'000}}});
+    registry.emplace<component::might>(player1, component::might{player1, 25, 0, 35'000'000});
+    registry.emplace<component::fury>(player1, component::fury{effect{player1, 0, 35'000'000}});
+    registry.emplace<component::quickness>(player1,
+                                           component::quickness{effect{player1, 0, 35'000'000}});
+    registry.emplace<component::resolution>(player1,
+                                            component::resolution{effect{player1, 0, 35'000'000}});
+    registry.emplace<component::aegis>(player1, component::aegis{effect{player1, 0, 35'000'000}});
     registry.emplace<component::targeting>(player1, component::targeting{golem});
     // registry.remove<component::is_character>(player1);  // Disable player1
 
     auto& burning = registry.emplace<component::burning>(
-        golem, component::burning{golem_boon_condi_provider, 1, 35'000'000});
+        golem, component::burning{golem_boon_condi_provider, 1, 0, 35'000'000});
     registry.emplace<component::vulnerability>(
-        golem, component::vulnerability{golem_boon_condi_provider, 25, 35'000'000});
+        golem, component::vulnerability{golem_boon_condi_provider, 25, 0, 35'000'000});
 }
 
 }  // namespace gw2combat

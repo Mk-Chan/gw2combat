@@ -60,18 +60,22 @@ add_executable(
 
     src/main/gw2combat/system/character_command.cpp
     src/main/gw2combat/system/effective_attributes_calculation.cpp
-    src/main/gw2combat/system/effect_expiration.cpp
-    src/main/gw2combat/system/damage/outgoing_strike_calculations.cpp
-    src/main/gw2combat/system/damage/incoming_strike_detection.cpp
-    src/main/gw2combat/system/damage/strike_damage_calculation.cpp
-    src/main/gw2combat/system/damage/burning_damage_calculation.cpp
-    src/main/gw2combat/system/damage/incoming_condition_application.cpp
+    src/main/gw2combat/system/check_effect_expirations.cpp
+    src/main/gw2combat/system/expire_effects.cpp
     src/main/gw2combat/system/combat_detection.cpp
     src/main/gw2combat/system/update_health.cpp
     src/main/gw2combat/system/downstate_detection.cpp
-    src/main/gw2combat/system/accumulate_skill_cast_ticks.cpp
     src/main/gw2combat/system/check_if_is_condition_pulse.cpp
-    src/main/gw2combat/system/update_animation_lock_state.cpp
+    src/main/gw2combat/system/update_animation_state.cpp
+
+    src/main/gw2combat/system/damage/outgoing_condition_damage_multiplier_calculation.cpp
+    src/main/gw2combat/system/damage/outgoing_strike_damage_multiplier_calculation.cpp
+    src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast.cpp
+    src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_casting_skill_no_after_cast.cpp
+    src/main/gw2combat/system/damage/incoming_strike_detection.cpp
+    src/main/gw2combat/system/damage/incoming_condition_application.cpp
+    src/main/gw2combat/system/damage/burning_damage_calculation.cpp
+    src/main/gw2combat/system/damage/incoming_strike_calculation.cpp
 
     src/main/gw2combat/system/profession/guardian/virtue_of_justice.cpp
 )

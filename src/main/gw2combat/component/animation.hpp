@@ -5,22 +5,20 @@
 
 #include "gw2combat/types.hpp"
 
+using namespace entt::literals;
+
 namespace gw2combat::component {
 
 struct animation {
-    // TODO: make a better implementation for animation later
-    enum state : std::uint32_t
-    {
-        IDLE,
-        CAST_SKILL_GUARDIAN_GREATSWORD_1_1,
-        CAST_SKILL_GUARDIAN_GREATSWORD_1_2,
-        CAST_SKILL_GUARDIAN_GREATSWORD_1_3,
-    };
+    constexpr static inline entt::hashed_string IDLE = "idle"_hs;
 
-    state current_state;
+    [[nodiscard]] constexpr inline tick_t end_tick(bool has_quickness) const {
+        return start_tick + required_ticks_for_completion[has_quickness];
+    }
+
+    entt::hashed_string name;
     tick_t start_tick;
-    tick_t accumulated_ticks;
-    tick_t required_ticks_for_completion;
+    std::array<tick_t, 2> required_ticks_for_completion;
 };
 
 }  // namespace gw2combat::component

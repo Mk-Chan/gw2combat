@@ -24,14 +24,12 @@ void virtue_of_justice(context& ctx) {
                     virtue_of_justice.number_of_ticks_for_burning_application;
                 double condition_duration_multiplier =
                     (1.0 + effective_attributes.condition_duration_pct / 100.0);
-                tick_t condition_end_tick =
-                    ctx.current_tick +
-                    tick_t{(unsigned int)(2'000.0 * condition_duration_multiplier)};
+                auto duration = tick_t{(unsigned int)(2'000.0 * condition_duration_multiplier)};
 
                 auto& outgoing_condition_application =
                     ctx.registry.get_or_emplace<component::outgoing_condition_application>(entity);
                 outgoing_condition_application.append_burning_effects(
-                    effect{entity, condition_end_tick}, 1);
+                    effect{entity, ctx.current_tick, duration}, 1);
 
                 spdlog::info("tick: {}, entity: {}, outgoing burning from virtue_of_justice",
                              ctx.current_tick,

@@ -9,11 +9,10 @@ namespace gw2combat {
 
 struct effect {
     entt::entity source;
-    tick_t end_tick;
-
-    static inline bool compare_by_remaining_duration(effect& left, effect& right) {
-        return left.end_tick > right.end_tick;
-    }
+    tick_t start_tick;
+    tick_t duration;
+    tick_t last_ticked = 0;
+    bool is_expired = false;
 };
 
 }  // namespace gw2combat
