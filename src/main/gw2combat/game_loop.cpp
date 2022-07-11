@@ -44,9 +44,9 @@ void run_systems(system::context& ctx) {
     system::outgoing_strike_damage_multiplier_calculation(ctx);
     system::calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(ctx);
     system::calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(ctx);
+    system::incoming_strike_detection(ctx);
     system::virtue_of_justice(ctx);
     system::incoming_condition_application(ctx);
-    system::incoming_strike_detection(ctx);
     system::burning_damage_calculation(ctx);
     system::strike_damage_calculation(ctx);
     system::update_health(ctx);
