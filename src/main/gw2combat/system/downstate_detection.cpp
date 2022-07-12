@@ -2,8 +2,8 @@
 
 #include <spdlog/spdlog.h>
 
-#include "gw2combat/component/combat_stats.hpp"
-#include "gw2combat/component/downstate.hpp"
+#include "gw2combat/component/character/combat_stats.hpp"
+#include "gw2combat/component/character/downstate.hpp"
 
 namespace gw2combat::system {
 

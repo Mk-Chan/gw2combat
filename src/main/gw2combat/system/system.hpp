@@ -14,24 +14,33 @@ struct context {
     entt::registry& registry;
 };
 
-extern void combat_detection(context&);
-extern void effective_attributes_calculation(context&);
-extern void character_command(context&);
-extern void check_effect_expirations(context&);
-extern void expire_effects(context&);
-extern void virtue_of_justice(context&);
-extern void incoming_condition_application(context&);
-extern void outgoing_condition_damage_multiplier_calculation(context&);
-extern void outgoing_strike_damage_multiplier_calculation(context&);
-extern void calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(context&);
-extern void calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(context&);
-extern void incoming_strike_detection(context&);
-extern void strike_damage_calculation(context&);
-extern void update_health(context&);
-extern void downstate_detection(context&);
-extern void check_if_is_condition_pulse_tick(context&);
-extern void burning_damage_calculation(context&);
-extern void update_animation_state(context&);
+extern void incoming_condition_application(context& ctx);
+extern void incoming_strike_detection(context& ctx);
+
+extern void incoming_strike_damage_multiplier_calculation(context& ctx);
+extern void incoming_condition_damage_multiplier_calculation(context& ctx);
+extern void outgoing_condition_damage_multiplier_calculation(context& ctx);
+extern void outgoing_strike_damage_multiplier_calculation(context& ctx);
+
+extern void calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(context& ctx);
+extern void calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(context& ctx);
+
+extern void incoming_strike_damage_calculation(context& ctx);
+extern void pulse_conditions(context& ctx);
+
+extern void virtue_of_justice(context& ctx);
+extern void shield_of_wrath(context& ctx);
+
+extern void expire_damaging_effects(context& ctx);
+extern void expire_non_damaging_effects(context& ctx);
+
+extern void combat_detection(context& ctx);
+extern void effective_attributes_calculation(context& ctx);
+extern void character_command(context& ctx);
+extern void perform_instant_cast_skills(context& ctx);
+extern void update_health(context& ctx);
+extern void downstate_detection(context& ctx);
+extern void update_animation_state(context& ctx);
 
 }  // namespace gw2combat::system
 

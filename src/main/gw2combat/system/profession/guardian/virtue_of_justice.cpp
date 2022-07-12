@@ -2,11 +2,11 @@
 
 #include <spdlog/spdlog.h>
 
-#include "gw2combat/component/combat_stats.hpp"
-#include "gw2combat/component/effective_attributes.hpp"
-#include "gw2combat/component/outgoing_condition_application.hpp"
-#include "gw2combat/component/profession/guardian/virtue_of_justice.hpp"
-#include "gw2combat/component/targeting.hpp"
+#include "gw2combat/component/character/combat_stats.hpp"
+#include "gw2combat/component/character/effective_attributes.hpp"
+#include "gw2combat/component/character/targeting.hpp"
+#include "gw2combat/component/damage/outgoing_condition_application.hpp"
+#include "gw2combat/component/profession/virtue_of_justice.hpp"
 
 namespace gw2combat::system {
 

@@ -5,9 +5,9 @@
 
 #include "gw2combat/component/boon/fury.hpp"
 #include "gw2combat/component/boon/might.hpp"
-#include "gw2combat/component/dynamic_attributes.hpp"
-#include "gw2combat/component/effective_attributes.hpp"
-#include "gw2combat/component/static_attributes.hpp"
+#include "gw2combat/component/character/dynamic_attributes.hpp"
+#include "gw2combat/component/character/effective_attributes.hpp"
+#include "gw2combat/component/character/static_attributes.hpp"
 
 namespace gw2combat::system {
 

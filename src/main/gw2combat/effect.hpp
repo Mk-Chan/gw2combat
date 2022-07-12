@@ -8,11 +8,13 @@
 namespace gw2combat {
 
 struct effect {
+    [[nodiscard]] bool is_expired(tick_t current_tick) const {
+        return current_tick >= start_tick + duration;
+    }
+
     entt::entity source;
     tick_t start_tick;
     tick_t duration;
-    tick_t last_ticked = 0;
-    bool is_expired = false;
 };
 
 }  // namespace gw2combat

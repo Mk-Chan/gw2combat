@@ -7,21 +7,21 @@
 #include "gw2combat/component/boon/might.hpp"
 #include "gw2combat/component/boon/quickness.hpp"
 #include "gw2combat/component/boon/resolution.hpp"
+#include "gw2combat/component/character/dynamic_attributes.hpp"
+#include "gw2combat/component/character/is_character.hpp"
+#include "gw2combat/component/character/static_attributes.hpp"
+#include "gw2combat/component/character/targeting.hpp"
 #include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/condition/vulnerability.hpp"
-#include "gw2combat/component/dynamic_attributes.hpp"
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
 #include "gw2combat/component/gear/sigil/sigil_impact.hpp"
-#include "gw2combat/component/is_character.hpp"
-#include "gw2combat/component/profession/guardian/trait/fiery_wrath.hpp"
-#include "gw2combat/component/profession/guardian/trait/inspired_virtue.hpp"
-#include "gw2combat/component/profession/guardian/trait/retribution.hpp"
-#include "gw2combat/component/profession/guardian/trait/symbolic_exposure.hpp"
-#include "gw2combat/component/profession/guardian/trait/unscathed_contender.hpp"
-#include "gw2combat/component/profession/guardian/virtue_of_justice.hpp"
-#include "gw2combat/component/static_attributes.hpp"
-#include "gw2combat/component/targeting.hpp"
+#include "gw2combat/component/profession/virtue_of_justice.hpp"
+#include "gw2combat/component/traits/guardian/fiery_wrath.hpp"
+#include "gw2combat/component/traits/guardian/inspired_virtue.hpp"
+#include "gw2combat/component/traits/guardian/retribution.hpp"
+#include "gw2combat/component/traits/guardian/symbolic_exposure.hpp"
+#include "gw2combat/component/traits/guardian/unscathed_contender.hpp"
 
 namespace gw2combat {
 
@@ -80,7 +80,7 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
     registry.emplace<component::dynamic_attributes>(
         entity,
         component::dynamic_attributes{
-            .weapon_strength = 1100, .max_endurance = 100, .endurance_gain_pct = 0});
+            .weapon_strength = 1100, .max_endurance = 100});
 
     registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{3});
     registry.emplace<component::fiery_wrath>(entity);
@@ -101,10 +101,8 @@ entt::entity build_medium_kitty_golem(entt::registry& registry) {
     auto entity = registry.create();
 
     registry.emplace<component::static_attributes>(
-        entity,
-        component::static_attributes{
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 2597, 0.0, 0.0, 0.0, 0.0, 4'000'000});
-    registry.emplace<component::dynamic_attributes>(entity, component::dynamic_attributes{0, 0, 0});
+        entity, component::static_attributes{.armor = 2597, .max_health = 4'000'000});
+    registry.emplace<component::dynamic_attributes>(entity);
 
     registry.emplace<component::is_character>(entity);
 
@@ -112,14 +110,15 @@ entt::entity build_medium_kitty_golem(entt::registry& registry) {
 }
 
 entt::entity build_golem_boon_condi_provider(entt::registry& registry) {
-    auto golem_boon_condi_provider = registry.create();
+    auto entity = registry.create();
 
     registry.emplace<component::static_attributes>(
-        golem_boon_condi_provider, component::static_attributes{.condition_damage = 0});
-    registry.emplace<component::dynamic_attributes>(golem_boon_condi_provider,
-                                                    component::dynamic_attributes{});
+        entity, component::static_attributes{.condition_damage = 0});
+    registry.emplace<component::dynamic_attributes>(entity);
 
-    return golem_boon_condi_provider;
+    registry.emplace<component::is_character>(entity);
+
+    return entity;
 }
 
 void init_entities(entt::registry& registry) {

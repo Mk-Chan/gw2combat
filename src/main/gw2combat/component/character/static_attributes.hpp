@@ -24,7 +24,7 @@ struct static_attributes {
     double critical_chance_pct;
     double critical_damage_pct;
     double condition_duration_pct;
-    unsigned int max_health;
+    unsigned int max_health = 1;
 };
 
 }  // namespace gw2combat::component

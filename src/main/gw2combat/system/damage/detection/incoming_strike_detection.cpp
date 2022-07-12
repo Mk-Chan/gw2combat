@@ -1,9 +1,9 @@
 #include "gw2combat/system/system.hpp"
 
-#include "gw2combat/component/combat_stats.hpp"
-#include "gw2combat/component/incoming_strike_damage.hpp"
-#include "gw2combat/component/outgoing_strike_damage.hpp"
-#include "gw2combat/component/targeting.hpp"
+#include "gw2combat/component/character/combat_stats.hpp"
+#include "gw2combat/component/character/targeting.hpp"
+#include "gw2combat/component/damage/incoming_strike_damage.hpp"
+#include "gw2combat/component/damage/outgoing_strike_damage.hpp"
 
 namespace gw2combat::system {
 

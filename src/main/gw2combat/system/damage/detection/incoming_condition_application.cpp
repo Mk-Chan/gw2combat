@@ -2,9 +2,9 @@
 
 #include "gw2combat/system/system.hpp"
 
+#include "gw2combat/component/character/targeting.hpp"
 #include "gw2combat/component/condition/burning.hpp"
-#include "gw2combat/component/outgoing_condition_application.hpp"
-#include "gw2combat/component/targeting.hpp"
+#include "gw2combat/component/damage/outgoing_condition_application.hpp"
 
 namespace gw2combat::system {
 

@@ -1,10 +1,10 @@
 #include "gw2combat/system/system.hpp"
 
-#include "gw2combat/component/animation.hpp"
+#include "gw2combat/component/animation/animation.hpp"
 #include "gw2combat/component/boon/quickness.hpp"
-#include "gw2combat/component/channeling_skill.hpp"
-#include "gw2combat/component/outgoing_strike_damage.hpp"
-#include "gw2combat/component/outgoing_strike_damage_multiplier.hpp"
+#include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
+#include "gw2combat/component/damage/outgoing_strike_damage.hpp"
+#include "gw2combat/component/skills/channeling_skill.hpp"
 
 namespace gw2combat::system {
 

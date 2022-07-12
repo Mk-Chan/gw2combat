@@ -1,9 +1,9 @@
 #include "system.hpp"
 
-#include "gw2combat/component/combat_stats.hpp"
-#include "gw2combat/component/dynamic_attributes.hpp"
-#include "gw2combat/component/is_character.hpp"
-#include "gw2combat/component/static_attributes.hpp"
+#include "gw2combat/component/character/combat_stats.hpp"
+#include "gw2combat/component/character/dynamic_attributes.hpp"
+#include "gw2combat/component/character/is_character.hpp"
+#include "gw2combat/component/character/static_attributes.hpp"
 
 namespace gw2combat::system {
 

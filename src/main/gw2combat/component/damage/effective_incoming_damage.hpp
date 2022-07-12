@@ -4,7 +4,7 @@
 namespace gw2combat::component {
 
 struct effective_incoming_damage {
-    unsigned int value;
+    double value = 0.0;
 };
 
 }  // namespace gw2combat::component

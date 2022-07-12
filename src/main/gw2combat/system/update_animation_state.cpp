@@ -4,11 +4,11 @@
 
 #include "gw2combat/skills.hpp"
 
-#include "gw2combat/component/animation.hpp"
+#include "gw2combat/component/animation/animation.hpp"
+#include "gw2combat/component/animation/is_animation_locked.hpp"
 #include "gw2combat/component/boon/quickness.hpp"
-#include "gw2combat/component/channeling_skill.hpp"
-#include "gw2combat/component/is_animation_locked.hpp"
-#include "gw2combat/component/successful_skill_cast.hpp"
+#include "gw2combat/component/skills/channeling_skill.hpp"
+#include "gw2combat/component/skills/successful_skill_cast.hpp"
 
 namespace gw2combat::system {
 

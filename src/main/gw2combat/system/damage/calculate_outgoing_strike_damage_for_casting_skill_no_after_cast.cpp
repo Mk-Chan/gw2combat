@@ -4,10 +4,10 @@
 
 #include "gw2combat/system/system.hpp"
 
-#include "gw2combat/component/outgoing_strike_damage.hpp"
-#include "gw2combat/component/outgoing_strike_damage_multiplier.hpp"
-#include "gw2combat/component/successful_skill_cast.hpp"
-#include "gw2combat/component/targeting.hpp"
+#include "gw2combat/component/character/targeting.hpp"
+#include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
+#include "gw2combat/component/damage/outgoing_strike_damage.hpp"
+#include "gw2combat/component/skills/successful_skill_cast.hpp"
 
 namespace gw2combat::system {
 
