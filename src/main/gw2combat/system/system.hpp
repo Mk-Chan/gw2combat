@@ -6,12 +6,15 @@
 #include "gw2combat/entity.hpp"
 #include "gw2combat/types.hpp"
 
+#include "gw2combat/rotation.hpp"
+
 namespace gw2combat::system {
 
 struct context {
     tick_t current_tick;
     tick_t tick_rate;
     entt::registry& registry;
+    std::optional<predetermined_rotation> predetermined_rotation = std::nullopt;
 };
 
 extern void incoming_condition_application(context& ctx);
@@ -41,6 +44,8 @@ extern void perform_instant_cast_skills(context& ctx);
 extern void update_health(context& ctx);
 extern void downstate_detection(context& ctx);
 extern void update_animation_state(context& ctx);
+
+extern void run_systems(system::context& ctx);
 
 }  // namespace gw2combat::system
 

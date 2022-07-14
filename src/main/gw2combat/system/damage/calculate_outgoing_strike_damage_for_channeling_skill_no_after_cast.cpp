@@ -23,9 +23,10 @@ void calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(context
                    skill.type == skills::skill::type::CHANNELING_WITH_AFTER_CAST);
 
             bool has_quickness = ctx.registry.any_of<component::quickness>(entity);
-            auto skill_hit_rate =
-                animation.required_ticks_for_completion[has_quickness] / skill.hits;
+            tick_t skill_hit_rate =
+                animation.skill.cast_duration[has_quickness] / skill.hits;
             bool skill_hits_this_tick =
+                ctx.current_tick == 0 ||
                 ctx.current_tick >= channeling_skill.last_hit_tick + skill_hit_rate;
             if (skill_hits_this_tick) {
                 channeling_skill.last_hit_tick = ctx.current_tick;

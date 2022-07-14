@@ -14,7 +14,7 @@ namespace gw2combat::system {
 
 extern double calculate_burning_damage(
     context& ctx,
-    const component::burning& burning,
+    const effect& burning_effect,
     tick_t ticks_to_consider = component::pulse_conditions::pulse_rate);
 
 }  // namespace gw2combat::system

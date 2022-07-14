@@ -1,3 +1,4 @@
 spdlog
 entt
 nlohmann-json
+rapidcsv

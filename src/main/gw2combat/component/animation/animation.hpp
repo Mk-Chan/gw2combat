@@ -10,15 +10,12 @@ using namespace entt::literals;
 namespace gw2combat::component {
 
 struct animation {
-    constexpr static inline entt::hashed_string IDLE = "idle"_hs;
-
     [[nodiscard]] constexpr inline tick_t end_tick(bool has_quickness) const {
-        return start_tick + required_ticks_for_completion[has_quickness];
+        return start_tick + (skill.cast_duration[has_quickness] / skill.hits) * skill.hits;
     }
 
-    entt::hashed_string name;
+    skills::skill skill;
     tick_t start_tick;
-    std::array<tick_t, 2> required_ticks_for_completion;
 };
 
 }  // namespace gw2combat::component

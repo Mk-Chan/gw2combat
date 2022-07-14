@@ -42,6 +42,7 @@ void effective_attributes_calculation(context& ctx) {
             auto might_ptr = ctx.registry.try_get<component::might>(entity);
             if (might_ptr != nullptr) {
                 effective_attributes.power += might_ptr->stacks.size() * 30;
+                effective_attributes.condition_damage += might_ptr->stacks.size() * 30;
             }
             bool has_fury = ctx.registry.any_of<component::fury>(entity);
             if (has_fury) {

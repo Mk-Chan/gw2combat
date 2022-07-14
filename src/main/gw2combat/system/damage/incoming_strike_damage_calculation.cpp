@@ -4,8 +4,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include "gw2combat/component/character/effective_attributes.hpp"
-#include "gw2combat/component/condition/vulnerability.hpp"
 #include "gw2combat/component/damage/effective_incoming_damage.hpp"
 #include "gw2combat/component/damage/incoming_strike_damage.hpp"
 #include "gw2combat/component/damage/multipliers/incoming_strike_damage_multiplier.hpp"
@@ -34,12 +32,10 @@ void incoming_strike_damage_calculation(context& ctx) {
                 ctx.registry.get_or_emplace<component::effective_incoming_damage>(entity);
             effective_incoming_damage.value += effective_strike_damage;
 
-            spdlog::info(
-                "tick: {}, entity: {}, incoming strike damage: {}, effective incoming damage: {}",
-                ctx.current_tick,
-                static_cast<std::uint32_t>(entity),
-                effective_strike_damage,
-                effective_incoming_damage.value);
+            spdlog::info("tick: {}, entity: {}, incoming strike damage: {}",
+                         ctx.current_tick,
+                         static_cast<std::uint32_t>(entity),
+                         effective_strike_damage);
         });
 }
 

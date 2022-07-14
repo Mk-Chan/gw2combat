@@ -20,6 +20,9 @@ void perform_instant_cast_skills(context& ctx) {
                                                    skill.damage_start_after_cast_end});
                 }
             }
+
+            // Remove buffered skills after consumption
+            ctx.registry.remove<component::instant_cast_skills>(entity);
         });
 }
 

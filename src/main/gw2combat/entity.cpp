@@ -27,7 +27,7 @@ namespace gw2combat {
 
 std::unique_ptr<entt::entity> singleton_entity;
 
-entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
+entt::entity build_player1(entt::registry& registry) {
     auto entity = registry.create();
 
     auto viper_armor_rest_zerk_crit_food =
@@ -78,9 +78,7 @@ entt::entity build_core_guard_no_gear_no_traits_gs(entt::registry& registry) {
                                                   .max_health = 14615};
     registry.emplace<component::static_attributes>(entity, full_zerk);
     registry.emplace<component::dynamic_attributes>(
-        entity,
-        component::dynamic_attributes{
-            .weapon_strength = 1100, .max_endurance = 100});
+        entity, component::dynamic_attributes{.weapon_strength = 1100, .max_endurance = 100});
 
     registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{3});
     registry.emplace<component::fiery_wrath>(entity);
@@ -123,7 +121,7 @@ entt::entity build_golem_boon_condi_provider(entt::registry& registry) {
 
 void init_entities(entt::registry& registry) {
     singleton_entity = std::make_unique<entt::entity>(registry.create());
-    auto player1 = build_core_guard_no_gear_no_traits_gs(registry);
+    auto player1 = build_player1(registry);
     auto golem = build_medium_kitty_golem(registry);
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 

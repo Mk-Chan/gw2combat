@@ -13,32 +13,22 @@ namespace gw2combat::system {
 
 void pulse_conditions(context& ctx) {
     if (ctx.current_tick % component::pulse_conditions::pulse_rate == 0) {
+        // TODO: Unnecessary component, put the value in it somewhere else and delete
         ctx.registry.emplace<component::pulse_conditions>(*singleton_entity);
-        spdlog::info("tick: {}, pulsing condition damage", ctx.current_tick);
 
-        ctx.registry.view<component::incoming_condition_damage_multiplier, component::burning>()
-            .each([&](const entt::entity entity,
-                      const component::incoming_condition_damage_multiplier&
-                          incoming_condition_damage_multiplier,
-                      const component::burning& burning) {
-                double effective_burning_damage = calculate_burning_damage(ctx, burning) *
-                                                  incoming_condition_damage_multiplier.multiplier;
+        ctx.registry.view<component::burning>().each(
+            [&](const entt::entity entity, component::burning& burning) {
+                for (effect& effect : burning.stacks) {
+                    auto& buffered_condition_damage =
+                        ctx.registry.get_or_emplace<component::buffered_condition_damage>(entity);
+                    buffered_condition_damage.value += calculate_burning_damage(
+                        ctx, effect, ctx.current_tick - effect.last_damaging_tick);
 
-                auto& effective_incoming_damage =
-                    ctx.registry.get_or_emplace<component::effective_incoming_damage>(entity);
-                effective_incoming_damage.value += effective_burning_damage;
-
-                spdlog::info(
-                    "entity: {}, stacks: {}, incoming condition damage: {}, effective incoming "
-                    "damage: "
-                    "{}",
-                    static_cast<std::uint32_t>(entity),
-                    burning.stacks.size(),
-                    effective_burning_damage,
-                    effective_incoming_damage.value);
+                    effect.last_damaging_tick = ctx.current_tick;
+                }
             });
 
-        // Apply and reset any buffered condition damage from partial applications
+        // Apply and reset any buffered condition damage
         ctx.registry
             .view<component::incoming_condition_damage_multiplier,
                   component::buffered_condition_damage>()
@@ -56,7 +46,8 @@ void pulse_conditions(context& ctx) {
                 effective_incoming_damage.value += effective_buffered_condition_damage;
 
                 ctx.registry.remove<component::buffered_condition_damage>(entity);
-                spdlog::info("entity: {}, taking buffered condition damage: {}",
+                spdlog::info("tick: {}, entity: {}, incoming condition damage: {}",
+                             ctx.current_tick,
                              static_cast<std::uint32_t>(entity),
                              effective_buffered_condition_damage);
             });

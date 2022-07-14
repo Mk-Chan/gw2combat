@@ -7,7 +7,6 @@ namespace gw2combat::component {
 
 struct channeling_skill {
     skills::skill skill;
-    tick_t start_tick;
     tick_t last_hit_tick;
 };
 

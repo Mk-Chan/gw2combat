@@ -12,7 +12,7 @@ void downstate_detection(context& ctx) {
         [&](const entt::entity entity, const component::combat_stats& combat_stats) {
             if (combat_stats.health == 0) {
                 ctx.registry.emplace_or_replace<component::downstate>(entity);
-                spdlog::info("entity: {}, now in downstate", static_cast<std::uint32_t>(entity));
+                // spdlog::info("entity: {}, now in downstate", static_cast<std::uint32_t>(entity));
             } else {
                 ctx.registry.remove<component::downstate>(entity);
                 // spdlog::info("entity: {}, not in downstate", static_cast<std::uint32_t>(entity));
