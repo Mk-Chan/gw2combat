@@ -19,9 +19,9 @@ void update_animation_state(context& ctx) {
         bool has_quickness = ctx.registry.any_of<component::quickness>(entity);
         if (skill == skills::IDLE) {
             ctx.registry.remove<component::is_animation_locked>(entity);
-            if (entity == entt::entity{1}) {
-                spdlog::info("tick: {}, idle", ctx.current_tick);
-            }
+            //if (entity == entt::entity{1}) {
+            //    spdlog::info("tick: {}, idle", ctx.current_tick);
+            //}
         } else if (ctx.current_tick >= animation.end_tick(has_quickness)) {
             spdlog::info("tick: {}, finished casting: {}", ctx.current_tick, skill.name);
             ctx.registry.remove<component::is_animation_locked>(entity);

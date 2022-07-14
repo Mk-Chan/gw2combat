@@ -7,15 +7,13 @@
 #include "gw2combat/component/damage/effective_incoming_damage.hpp"
 #include "gw2combat/component/damage/multipliers/incoming_condition_damage_multiplier.hpp"
 #include "gw2combat/component/damage/pulse_conditions.hpp"
+#include "gw2combat/component/skills/guardian/binding_blade.hpp"
 #include "gw2combat/system/damage/calculation/condition_damage_calculations.hpp"
 
 namespace gw2combat::system {
 
 void pulse_conditions(context& ctx) {
-    if (ctx.current_tick % component::pulse_conditions::pulse_rate == 0) {
-        // TODO: Unnecessary component, put the value in it somewhere else and delete
-        ctx.registry.emplace<component::pulse_conditions>(*singleton_entity);
-
+    if (ctx.registry.any_of<component::pulse_conditions>(*singleton_entity)) {
         ctx.registry.view<component::burning>().each(
             [&](const entt::entity entity, component::burning& burning) {
                 for (effect& effect : burning.stacks) {
@@ -26,6 +24,18 @@ void pulse_conditions(context& ctx) {
 
                     effect.last_damaging_tick = ctx.current_tick;
                 }
+            });
+        // Special handling for binding blade since it bypasses all damage modifiers
+        ctx.registry.view<component::binding_blade>().each(
+            [&](const entt::entity entity, component::binding_blade& binding_blade) {
+                effect& effect = binding_blade.stack;
+                auto& buffered_condition_damage =
+                    ctx.registry.get_or_emplace<component::buffered_condition_damage>(entity);
+                buffered_condition_damage.unaffected_by_incoming_multiplier_value +=
+                    calculate_binding_blade_damage(
+                        ctx, effect, ctx.current_tick - effect.last_damaging_tick);
+
+                effect.last_damaging_tick = ctx.current_tick;
             });
 
         // Apply and reset any buffered condition damage
@@ -38,7 +48,8 @@ void pulse_conditions(context& ctx) {
                       component::buffered_condition_damage& buffered_condition_damage) {
                 double effective_buffered_condition_damage =
                     buffered_condition_damage.value *
-                    incoming_condition_damage_multiplier.multiplier;
+                        incoming_condition_damage_multiplier.multiplier +
+                    buffered_condition_damage.unaffected_by_incoming_multiplier_value;
 
                 auto& effective_incoming_damage =
                     ctx.registry.get_or_emplace<component::effective_incoming_damage>(

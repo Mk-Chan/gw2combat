@@ -23,11 +23,10 @@ void calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(context& c
                 return;
             }
 
-            double damage_coefficient = skill.damage_coefficient;
             auto& outgoing_strike_damage =
-                ctx.registry.emplace<component::outgoing_strike_damage>(entity);
-            outgoing_strike_damage.strikes.emplace_back(
-                strike{entity, outgoing_strike_damage_multiplier.multiplier * damage_coefficient});
+                ctx.registry.get_or_emplace<component::outgoing_strike_damage>(entity);
+            outgoing_strike_damage.strikes.emplace_back(strike{
+                entity, outgoing_strike_damage_multiplier.multiplier * skill.damage_coefficient});
         });
 }
 

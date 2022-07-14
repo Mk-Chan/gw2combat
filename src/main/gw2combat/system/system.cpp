@@ -35,6 +35,10 @@ void clear_temporary_components(system::context& ctx) {
 void run_systems(system::context& ctx) {
     clear_temporary_components(ctx);
 
+    if (ctx.current_tick % component::pulse_conditions::pulse_rate == 0) {
+        ctx.registry.emplace<component::pulse_conditions>(*singleton_entity);
+    }
+
     system::combat_detection(ctx);
 
     system::character_command(ctx);
@@ -48,6 +52,7 @@ void run_systems(system::context& ctx) {
     system::outgoing_strike_damage_multiplier_calculation(ctx);
 
     system::perform_instant_cast_skills(ctx);
+    system::perform_successful_skill_cast_after_cast_effects(ctx);
     system::shield_of_wrath(ctx);
 
     system::calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(ctx);

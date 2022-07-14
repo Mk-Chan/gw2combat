@@ -12,7 +12,7 @@ void perform_instant_cast_skills(context& ctx) {
     ctx.registry.view<component::instant_cast_skills>().each(
         [&](const entt::entity entity, const component::instant_cast_skills& instant_cast_skills) {
             for (const skills::skill& skill : instant_cast_skills.skills) {
-                if (skill == skills::GUARDIAN_FOCUS_5) {
+                if (skill.name == "Shield of Wrath"_hs) {
                     spdlog::info("tick: {}, casting {}", ctx.current_tick, skill.name);
                     ctx.registry.emplace<component::shield_of_wrath>(
                         entity,

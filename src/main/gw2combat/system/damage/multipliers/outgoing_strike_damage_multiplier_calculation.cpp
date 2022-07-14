@@ -3,6 +3,7 @@
 #include <entt/entt.hpp>
 
 #include "gw2combat/component/boon/aegis.hpp"
+#include "gw2combat/component/boon/alacrity.hpp"
 #include "gw2combat/component/boon/fury.hpp"
 #include "gw2combat/component/boon/might.hpp"
 #include "gw2combat/component/boon/quickness.hpp"
@@ -45,6 +46,7 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
             bool has_might = ctx.registry.any_of<component::might>(entity);
             bool has_fury = ctx.registry.any_of<component::fury>(entity);
             bool has_quickness = ctx.registry.any_of<component::quickness>(entity);
+            bool has_alacrity = ctx.registry.any_of<component::alacrity>(entity);
             bool has_resolution = ctx.registry.any_of<component::resolution>(entity);
 
             double scholar_rune_multiplier = 1.0;
@@ -88,7 +90,7 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
             }
 
             unsigned int boon_count =
-                has_aegis + has_might + has_fury + has_quickness + has_resolution;
+                has_aegis + has_might + has_fury + has_quickness + has_alacrity + has_resolution;
             double inspired_virtue_multiplier =
                 1.0 + (inspired_virtue_is_traited * boon_count *
                        component::inspired_virtue::strike_damage_increase_per_boon);
@@ -100,13 +102,12 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
                 (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
                            (effective_attributes.critical_damage_pct / 100.0 - 1.0));
 
+            double final_multiplier =
+                addends_multiplier * scholar_rune_multiplier * inspired_virtue_multiplier *
+                fiery_wrath_multiplier * symbolic_exposure_multiplier * critical_hit_multiplier *
+                effective_attributes.power * effective_attributes.weapon_strength;
             ctx.registry.emplace<component::outgoing_strike_damage_multiplier>(
-                entity,
-                component::outgoing_strike_damage_multiplier{
-                    addends_multiplier * scholar_rune_multiplier * inspired_virtue_multiplier *
-                    fiery_wrath_multiplier * symbolic_exposure_multiplier *
-                    critical_hit_multiplier * effective_attributes.power *
-                    effective_attributes.weapon_strength});
+                entity, component::outgoing_strike_damage_multiplier{final_multiplier});
         });
 }
 

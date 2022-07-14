@@ -3,6 +3,7 @@
 #include "gw2combat/effect.hpp"
 
 #include "gw2combat/component/boon/aegis.hpp"
+#include "gw2combat/component/boon/alacrity.hpp"
 #include "gw2combat/component/boon/fury.hpp"
 #include "gw2combat/component/boon/might.hpp"
 #include "gw2combat/component/boon/quickness.hpp"
@@ -130,13 +131,15 @@ void init_entities(entt::registry& registry) {
     registry.emplace<component::fury>(player1, component::fury{effect{player1, 0, 35'000'000}});
     registry.emplace<component::quickness>(player1,
                                            component::quickness{effect{player1, 0, 35'000'000}});
+    registry.emplace<component::alacrity>(player1,
+                                          component::alacrity{effect{player1, 0, 35'000'000}});
     registry.emplace<component::resolution>(player1,
                                             component::resolution{effect{player1, 0, 35'000'000}});
     registry.emplace<component::aegis>(player1, component::aegis{effect{player1, 0, 35'000'000}});
     registry.emplace<component::targeting>(player1, component::targeting{golem});
     // registry.remove<component::is_character>(player1);  // Disable player1
 
-    auto& burning = registry.emplace<component::burning>(
+    registry.emplace<component::burning>(
         golem, component::burning{golem_boon_condi_provider, 1, 0, 35'000'000});
     registry.emplace<component::vulnerability>(
         golem, component::vulnerability{golem_boon_condi_provider, 25, 0, 35'000'000});

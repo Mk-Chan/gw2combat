@@ -58,6 +58,7 @@ add_executable(
     src/main/gw2combat/game_loop.cpp
 
     src/main/gw2combat/entity.cpp
+    src/main/gw2combat/skills.cpp
     src/main/gw2combat/rotation.cpp
 
     src/main/gw2combat/system/system.cpp
@@ -70,6 +71,7 @@ add_executable(
     src/main/gw2combat/system/damage/pulse_conditions.cpp
     src/main/gw2combat/system/update_animation_state.cpp
     src/main/gw2combat/system/perform_instant_cast_skills.cpp
+    src/main/gw2combat/system/perform_successful_skill_cast_after_cast_effects.cpp
 
     src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
     src/main/gw2combat/system/damage/detection/incoming_condition_application.cpp
@@ -80,6 +82,7 @@ add_executable(
     src/main/gw2combat/system/damage/multipliers/outgoing_strike_damage_multiplier_calculation.cpp
 
     src/main/gw2combat/system/damage/calculation/burning.cpp
+    src/main/gw2combat/system/damage/calculation/binding_blade.cpp
 
     src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast.cpp
     src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_casting_skill_no_after_cast.cpp
@@ -100,6 +103,7 @@ add_executable(
     src/test/gw2combat/game_loop.cpp
 
     src/main/gw2combat/entity.cpp
+    src/main/gw2combat/skills.cpp
     src/main/gw2combat/rotation.cpp
 
     src/main/gw2combat/system/system.cpp
@@ -112,6 +116,7 @@ add_executable(
     src/main/gw2combat/system/damage/pulse_conditions.cpp
     src/main/gw2combat/system/update_animation_state.cpp
     src/main/gw2combat/system/perform_instant_cast_skills.cpp
+    src/main/gw2combat/system/perform_successful_skill_cast_after_cast_effects.cpp
 
     src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
     src/main/gw2combat/system/damage/detection/incoming_condition_application.cpp
@@ -122,6 +127,7 @@ add_executable(
     src/main/gw2combat/system/damage/multipliers/outgoing_strike_damage_multiplier_calculation.cpp
 
     src/main/gw2combat/system/damage/calculation/burning.cpp
+    src/main/gw2combat/system/damage/calculation/binding_blade.cpp
 
     src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast.cpp
     src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_casting_skill_no_after_cast.cpp

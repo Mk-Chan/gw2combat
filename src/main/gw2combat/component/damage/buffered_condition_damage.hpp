@@ -5,6 +5,7 @@ namespace gw2combat::component {
 
 struct buffered_condition_damage {
     double value = 0.0;
+    double unaffected_by_incoming_multiplier_value = 0.0;
 };
 
 }  // namespace gw2combat::component

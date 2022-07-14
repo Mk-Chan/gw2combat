@@ -40,10 +40,12 @@ extern void expire_non_damaging_effects(context& ctx);
 extern void combat_detection(context& ctx);
 extern void effective_attributes_calculation(context& ctx);
 extern void character_command(context& ctx);
-extern void perform_instant_cast_skills(context& ctx);
 extern void update_health(context& ctx);
 extern void downstate_detection(context& ctx);
 extern void update_animation_state(context& ctx);
+
+extern void perform_instant_cast_skills(context& ctx);
+extern void perform_successful_skill_cast_after_cast_effects(context& ctx);
 
 extern void run_systems(system::context& ctx);
 

@@ -13,6 +13,7 @@ struct outgoing_condition_application {
     }
 
     std::vector<effect> burning_effects;
+    std::optional<effect> binding_blade_effect = std::nullopt;
 };
 
 }  // namespace gw2combat::component

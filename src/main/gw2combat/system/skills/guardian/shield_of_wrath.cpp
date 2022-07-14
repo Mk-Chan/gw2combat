@@ -18,7 +18,8 @@ void shield_of_wrath(context& ctx) {
                       outgoing_strike_damage_multiplier,
                   const component::shield_of_wrath& shield_of_wrath) {
             if (ctx.current_tick >= shield_of_wrath.end_tick) {
-                double damage_coefficient = skills::GUARDIAN_FOCUS_5.damage_coefficient;
+                double damage_coefficient =
+                    skills::get_by_name("Shield of Wrath"_hs).damage_coefficient;
                 auto& outgoing_strike_damage =
                     ctx.registry.get_or_emplace<component::outgoing_strike_damage>(entity);
                 outgoing_strike_damage.strikes.emplace_back(strike{
