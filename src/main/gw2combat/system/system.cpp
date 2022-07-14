@@ -48,8 +48,8 @@ void run_systems(system::context& ctx) {
     system::outgoing_condition_damage_multiplier_calculation(ctx);
     system::outgoing_strike_damage_multiplier_calculation(ctx);
 
-    // system::perform_instant_cast_skills(ctx);
-    // system::shield_of_wrath(ctx);
+    system::perform_instant_cast_skills(ctx);
+    system::shield_of_wrath(ctx);
 
     system::calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(ctx);
     system::calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(ctx);
