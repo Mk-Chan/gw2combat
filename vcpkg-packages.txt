@@ -2,3 +2,4 @@ spdlog
 entt
 nlohmann-json
 rapidcsv
+catch2
