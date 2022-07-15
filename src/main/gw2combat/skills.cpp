@@ -60,7 +60,7 @@ constexpr static inline skill SWORD_OF_JUSTICE_ATTACK{.name = "Sword of Justice 
                                                       .type = skill::type::CHANNELING_NO_AFTER_CAST,
                                                       .cast_duration = {1600, 1600},
                                                       .hits = 4,
-                                                      .damage_coefficient = 0.72};
+                                                      .damage_coefficient = 0.452};
 
 std::vector<skill> ALL_SKILLS{GUARDIAN_GREATSWORD_1_1,
                               GUARDIAN_GREATSWORD_1_2,

@@ -100,7 +100,7 @@ entt::entity build_medium_kitty_golem(entt::registry& registry) {
     auto entity = registry.create();
 
     registry.emplace<component::static_attributes>(
-        entity, component::static_attributes{.armor = 2597, .max_health = 4'000'000});
+        entity, component::static_attributes{.armor = 2597, .max_health = 1'000'000});
     registry.emplace<component::dynamic_attributes>(entity);
 
     registry.emplace<component::is_character>(entity);
