@@ -19,7 +19,7 @@ void calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(context& c
                       outgoing_strike_damage_multiplier,
                   const component::successful_skill_cast& successful_skill_cast) {
             skills::skill skill = successful_skill_cast.skill;
-            if (skill.type == skills::skill::type::CHANNELING_NO_AFTER_CAST) {
+            if (skill.type == skills::skill::type::CHANNELING_NO_AFTER_CAST || skill.hits == 0) {
                 return;
             }
 

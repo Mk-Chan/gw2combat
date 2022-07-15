@@ -19,12 +19,10 @@ void calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(context
                   const component::animation& animation,
                   component::channeling_skill& channeling_skill) {
             skills::skill skill = channeling_skill.skill;
-            assert(skill.type == skills::skill::type::CHANNELING_NO_AFTER_CAST ||
-                   skill.type == skills::skill::type::CHANNELING_WITH_AFTER_CAST);
+            assert(skill.type == skills::skill::type::CHANNELING_NO_AFTER_CAST);
 
             bool has_quickness = ctx.registry.any_of<component::quickness>(entity);
-            tick_t skill_hit_rate =
-                animation.skill.cast_duration[has_quickness] / skill.hits;
+            tick_t skill_hit_rate = animation.skill.cast_duration[has_quickness] / skill.hits;
             bool skill_hits_this_tick =
                 ctx.current_tick == 0 ||
                 ctx.current_tick >= channeling_skill.last_hit_tick + skill_hit_rate;
@@ -32,7 +30,7 @@ void calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(context
                 channeling_skill.last_hit_tick = ctx.current_tick;
 
                 auto& outgoing_strike_damage =
-                    ctx.registry.emplace<component::outgoing_strike_damage>(entity);
+                    ctx.registry.get_or_emplace<component::outgoing_strike_damage>(entity);
                 outgoing_strike_damage.strikes.emplace_back(strike{
                     entity,
                     outgoing_strike_damage_multiplier.multiplier * skill.damage_coefficient});

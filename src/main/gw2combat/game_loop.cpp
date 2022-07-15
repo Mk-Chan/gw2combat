@@ -7,6 +7,7 @@
 
 #include "system/system.hpp"
 
+#include "gw2combat/component/animation/animation.hpp"
 #include "gw2combat/component/character/downstate.hpp"
 #include "gw2combat/component/no_more_rotation.hpp"
 
@@ -20,7 +21,7 @@ void game_loop() {
     system::context ctx{tick_t{0}, tick_t{1}, registry, std::make_optional(rotation)};
 
     bool reported_downstate = false;
-    while (!ctx.registry.any_of<component::no_more_rotation>(*singleton_entity)) {
+    while (true) {
         run_systems(ctx);
 
         for (auto&& [entity] : ctx.registry.view<component::downstate>().each()) {

@@ -7,10 +7,12 @@ namespace gw2combat::component {
 
 struct virtue_of_justice {
     explicit virtue_of_justice(unsigned int number_of_ticks_for_burning_application)
-        : number_of_ticks_for_burning_application(number_of_ticks_for_burning_application),
+        : num_hits(0),
+          number_of_ticks_for_burning_application(number_of_ticks_for_burning_application),
           next_burning_application_hit_count(number_of_ticks_for_burning_application) {
     }
 
+    unsigned int num_hits;
     unsigned int number_of_ticks_for_burning_application;
     unsigned int next_burning_application_hit_count;
 };

@@ -14,6 +14,7 @@
 #include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/condition/vulnerability.hpp"
 #include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
+#include "gw2combat/component/damage/outgoing_damage_source.hpp"
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
 #include "gw2combat/component/gear/sigil/sigil_impact.hpp"
@@ -108,6 +109,15 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
                 effective_attributes.power * effective_attributes.weapon_strength;
             ctx.registry.emplace<component::outgoing_strike_damage_multiplier>(
                 entity, component::outgoing_strike_damage_multiplier{final_multiplier});
+        });
+    ctx.registry.view<component::outgoing_damage_source>().each(
+        [&](const entt::entity entity,
+            const component::outgoing_damage_source& outgoing_damage_source) {
+            auto source_entity = outgoing_damage_source.source;
+            auto& source_outgoing_strike_damage_multiplier =
+                ctx.registry.get<component::outgoing_strike_damage_multiplier>(source_entity);
+            ctx.registry.emplace<component::outgoing_strike_damage_multiplier>(
+                entity, source_outgoing_strike_damage_multiplier);
         });
 }
 

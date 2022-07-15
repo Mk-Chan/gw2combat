@@ -18,7 +18,7 @@ void combat_detection(context& ctx) {
             ctx.registry.emplace_or_replace<component::combat_stats>(
                 entity,
                 component::combat_stats{
-                    static_attributes.max_health, dynamic_attributes.max_endurance, 0});
+                    static_attributes.max_health, dynamic_attributes.max_endurance});
         });
 }
 

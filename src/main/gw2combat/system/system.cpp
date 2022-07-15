@@ -54,6 +54,7 @@ void run_systems(system::context& ctx) {
     system::perform_instant_cast_skills(ctx);
     system::perform_successful_skill_cast_after_cast_effects(ctx);
     system::shield_of_wrath(ctx);
+    system::sword_of_justice(ctx);
 
     system::calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(ctx);
     system::calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(ctx);

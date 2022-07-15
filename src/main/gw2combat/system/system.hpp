@@ -33,6 +33,7 @@ extern void pulse_conditions(context& ctx);
 
 extern void virtue_of_justice(context& ctx);
 extern void shield_of_wrath(context& ctx);
+extern void sword_of_justice(context& ctx);
 
 extern void expire_damaging_effects(context& ctx);
 extern void expire_non_damaging_effects(context& ctx);

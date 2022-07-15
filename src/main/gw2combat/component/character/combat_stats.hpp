@@ -6,7 +6,6 @@ namespace gw2combat::component {
 struct combat_stats {
     unsigned int health;
     unsigned int endurance;
-    unsigned int num_hits;
 };
 
 }  // namespace gw2combat::component
