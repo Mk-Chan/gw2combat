@@ -11,6 +11,9 @@ namespace gw2combat::component {
 
 struct animation {
     [[nodiscard]] constexpr inline tick_t end_tick(bool has_quickness) const {
+        if (!skill.hits) {
+            return start_tick + skill.cast_duration[has_quickness];
+        }
         return start_tick + (skill.cast_duration[has_quickness] / skill.hits) * skill.hits;
     }
 

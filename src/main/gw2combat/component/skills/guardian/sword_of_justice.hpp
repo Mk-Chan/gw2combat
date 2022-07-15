@@ -8,7 +8,7 @@
 namespace gw2combat::component {
 
 struct sword_of_justice {
-    constexpr static inline tick_t damage_start_after_spawn = 649;
+    constexpr static inline tick_t damage_start_after_spawn = 650;
     constexpr static inline tick_t duration = 2'250;
 
     entt::entity source;

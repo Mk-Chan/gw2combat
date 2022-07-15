@@ -27,7 +27,7 @@ void character_command(context& ctx) {
             if (entity == entt::entity{1}) {
                 if (!ctx.predetermined_rotation ||
                     rotation_idx >= ctx.predetermined_rotation->skill_casts.size()) {
-                    ctx.registry.emplace<component::no_more_rotation>(*singleton_entity);
+                    ctx.registry.emplace_or_replace<component::no_more_rotation>(*singleton_entity);
                     return;
                 }
 
