@@ -25,13 +25,12 @@ void character_command(context& ctx) {
 
             // For player 1, loop rotation
             if (entity == entt::entity{1}) {
-                if (!ctx.predetermined_rotation ||
-                    rotation_idx >= ctx.predetermined_rotation->skill_casts.size()) {
+                if (!ctx.rotation || rotation_idx >= ctx.rotation->skill_casts.size()) {
                     ctx.registry.emplace_or_replace<component::no_more_rotation>(*singleton_entity);
                     return;
                 }
 
-                auto& skill_casts = ctx.predetermined_rotation->skill_casts;
+                auto& skill_casts = ctx.rotation->skill_casts;
                 auto next_skill_cast = skill_casts[rotation_idx];
                 auto next_skill = next_skill_cast.skill;
                 auto cast_time = next_skill_cast.cast_time;

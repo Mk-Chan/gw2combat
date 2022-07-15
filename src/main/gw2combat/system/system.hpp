@@ -14,7 +14,7 @@ struct context {
     tick_t current_tick;
     tick_t tick_rate;
     entt::registry& registry;
-    std::optional<predetermined_rotation> predetermined_rotation = std::nullopt;
+    std::optional<predetermined_rotation> rotation = std::nullopt;
 };
 
 extern void incoming_condition_application(context& ctx);

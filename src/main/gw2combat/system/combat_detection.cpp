@@ -17,8 +17,8 @@ void combat_detection(context& ctx) {
             // NOTE: Currently just perpetually puts and keeps the character entities in combat
             ctx.registry.emplace_or_replace<component::combat_stats>(
                 entity,
-                component::combat_stats{
-                    static_attributes.max_health, dynamic_attributes.max_endurance});
+                component::combat_stats{static_attributes.max_health,
+                                        dynamic_attributes.max_endurance});
         });
 }
 
