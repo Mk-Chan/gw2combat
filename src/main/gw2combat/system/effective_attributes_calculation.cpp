@@ -35,7 +35,6 @@ void effective_attributes_calculation(context& ctx) {
                         .critical_damage_pct = static_attributes.critical_damage_pct,
                         .condition_duration_pct = static_attributes.condition_duration_pct,
                         .max_health = static_attributes.max_health,
-                        .weapon_strength = dynamic_attributes.weapon_strength,
                         .endurance = dynamic_attributes.max_endurance,
                         .endurance_gain_pct = dynamic_attributes.endurance_gain_pct});
 

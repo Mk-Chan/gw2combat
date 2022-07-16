@@ -6,6 +6,7 @@
 #include "entt/entt.hpp"
 
 #include "types.hpp"
+#include "weapon.hpp"
 
 using namespace entt::literals;
 
@@ -33,15 +34,16 @@ struct skill {
     unsigned int hits;
     std::array<unsigned int, 2> cooldown;  // no-alacrity = 0, alacrity = 1
     double damage_coefficient;
+    std::optional<weapon> weapon = std::make_optional(EMPTY_HANDED);
 };
 
-constexpr static inline skill IDLE{.name = "Idle"_hs,
-                                   .type = skill::type::CASTING_NO_AFTER_CAST,
-                                   .cast_duration = {1000, 1000},
-                                   .damage_start_after_cast_end = 0,
-                                   .damage_duration = 0,
-                                   .hits = 0,
-                                   .damage_coefficient = 0.0};
+static inline skill IDLE{.name = "Idle"_hs,
+                         .type = skill::type::CASTING_NO_AFTER_CAST,
+                         .cast_duration = {1000, 1000},
+                         .damage_start_after_cast_end = 0,
+                         .damage_duration = 0,
+                         .hits = 0,
+                         .damage_coefficient = 0.0};
 
 extern std::vector<skill> ALL_SKILLS;
 

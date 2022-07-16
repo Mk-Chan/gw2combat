@@ -99,6 +99,7 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
             double addends_multiplier = (1.0 + (force_sigil_addend + impact_sigil_addend +
                                                 retribution_addend + unscathed_contender_addend));
 
+            // TODO: Move this out into another thing
             double critical_hit_multiplier =
                 (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
                            (effective_attributes.critical_damage_pct / 100.0 - 1.0));
@@ -106,7 +107,7 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
             double final_multiplier =
                 addends_multiplier * scholar_rune_multiplier * inspired_virtue_multiplier *
                 fiery_wrath_multiplier * symbolic_exposure_multiplier * critical_hit_multiplier *
-                effective_attributes.power * effective_attributes.weapon_strength;
+                effective_attributes.power;
             ctx.registry.emplace<component::outgoing_strike_damage_multiplier>(
                 entity, component::outgoing_strike_damage_multiplier{final_multiplier});
         });

@@ -26,7 +26,6 @@ struct effective_attributes {
     unsigned int max_health;
 
     // Dynamic attributes
-    unsigned int weapon_strength;
     unsigned int endurance;
     double endurance_gain_pct;
 };

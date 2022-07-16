@@ -4,7 +4,6 @@
 namespace gw2combat::component {
 
 struct dynamic_attributes {
-    unsigned int weapon_strength;
     unsigned int max_endurance;
     double endurance_gain_pct;
 };

@@ -79,7 +79,7 @@ entt::entity build_player1(entt::registry& registry) {
                                                   .max_health = 14615};
     registry.emplace<component::static_attributes>(entity, full_zerk);
     registry.emplace<component::dynamic_attributes>(
-        entity, component::dynamic_attributes{.weapon_strength = 1100, .max_endurance = 100});
+        entity, component::dynamic_attributes{.max_endurance = 100});
 
     registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{3});
     registry.emplace<component::fiery_wrath>(entity);
