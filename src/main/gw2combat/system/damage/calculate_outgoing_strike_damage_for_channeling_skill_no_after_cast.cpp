@@ -15,8 +15,6 @@
 
 namespace gw2combat::system {
 
-double symbol_damage = 0.0;
-
 void calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(context& ctx) {
     ctx.registry
         .view<component::outgoing_strike_damage_multiplier,
@@ -57,9 +55,6 @@ void calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(context
                         additional_multiplier +=
                             component::symbolic_power::symbol_strike_damage_increase;
                     }
-                    symbol_damage += outgoing_strike_damage_multiplier.multiplier *
-                                     skill.damage_coefficient * additional_multiplier *
-                                     skill.weapon.weapon_strength();
                 }
 
                 auto& outgoing_strike_damage =
