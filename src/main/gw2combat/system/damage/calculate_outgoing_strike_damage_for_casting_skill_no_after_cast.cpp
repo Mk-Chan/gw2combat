@@ -28,7 +28,7 @@ void calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(context& c
             outgoing_strike_damage.strikes.emplace_back(
                 strike{entity,
                        outgoing_strike_damage_multiplier.multiplier * skill.damage_coefficient *
-                           skill.weapon->weapon_strength()});
+                           skill.weapon.weapon_strength()});
         });
 }
 

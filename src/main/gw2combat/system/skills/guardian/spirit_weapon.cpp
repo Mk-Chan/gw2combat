@@ -8,31 +8,27 @@
 #include "gw2combat/component/animation/is_animation_locked.hpp"
 #include "gw2combat/component/character/targeting.hpp"
 #include "gw2combat/component/damage/outgoing_damage_source.hpp"
-#include "gw2combat/component/skills/guardian/sword_of_justice.hpp"
+#include "gw2combat/component/skills/guardian/spirit_weapon.hpp"
 
 namespace gw2combat::system {
 
-void sword_of_justice(context& ctx) {
-    ctx.registry.view<component::sword_of_justice>().each(
-        [&](const entt::entity entity, const component::sword_of_justice& sword_of_justice) {
+void spirit_weapon(context& ctx) {
+    ctx.registry.view<component::spirit_weapon>().each(
+        [&](const entt::entity entity, const component::spirit_weapon& spirit_weapon) {
             if (ctx.current_tick >=
-                sword_of_justice.start_tick + component::sword_of_justice::duration) {
+                spirit_weapon.start_tick + spirit_weapon.skill.cast_duration[0]) {
                 ctx.registry.destroy(entity);
-                spdlog::info("tick: {}, entity: {}, sword of justice disappeared",
+                spdlog::info("tick: {}, entity: {}, spirit weapon disappeared",
                              ctx.current_tick,
                              static_cast<std::uint32_t>(entity));
             } else if (ctx.current_tick >=
-                           sword_of_justice.start_tick +
-                               component::sword_of_justice::damage_start_after_spawn &&
+                           spirit_weapon.start_tick + spirit_weapon.skill.damage_start &&
                        !ctx.registry.any_of<component::is_animation_locked>(entity)) {
-                auto sword_of_justice_attack_skill =
-                    skills::get_by_name("Sword of Justice Attack"_hs);
-
                 ctx.registry.emplace<component::outgoing_damage_source>(
-                    entity, component::outgoing_damage_source{sword_of_justice.source});
+                    entity, component::outgoing_damage_source{spirit_weapon.source});
                 ctx.registry.emplace<component::animation>(
-                    entity, component::animation{sword_of_justice_attack_skill, ctx.current_tick});
-                spdlog::info("tick: {}, entity: {}, sword of justice started attacking",
+                    entity, component::animation{spirit_weapon.skill, ctx.current_tick});
+                spdlog::info("tick: {}, entity: {}, spirit weapon started attacking",
                              ctx.current_tick,
                              static_cast<std::uint32_t>(entity));
             }

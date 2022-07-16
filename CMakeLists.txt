@@ -92,7 +92,8 @@ add_executable(
     src/main/gw2combat/system/profession/guardian/virtue_of_justice.cpp
 
     src/main/gw2combat/system/skills/guardian/shield_of_wrath.cpp
-    src/main/gw2combat/system/skills/guardian/sword_of_justice.cpp
+    src/main/gw2combat/system/skills/guardian/spirit_weapon.cpp
+    src/main/gw2combat/system/skills/guardian/symbol.cpp
 )
 target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 target_include_directories(gw2combat PRIVATE ${RAPIDCSV_INCLUDE_DIRS})
@@ -138,7 +139,8 @@ add_executable(
     src/main/gw2combat/system/profession/guardian/virtue_of_justice.cpp
 
     src/main/gw2combat/system/skills/guardian/shield_of_wrath.cpp
-    src/main/gw2combat/system/skills/guardian/sword_of_justice.cpp
+    src/main/gw2combat/system/skills/guardian/spirit_weapon.cpp
+    src/main/gw2combat/system/skills/guardian/symbol.cpp
 )
 target_link_libraries(gw2combat_test PRIVATE Catch2::Catch2WithMain fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 ###

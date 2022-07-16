@@ -8,18 +8,18 @@
 #include "gw2combat/component/boon/quickness.hpp"
 #include "gw2combat/component/boon/resolution.hpp"
 #include "gw2combat/component/character/is_character.hpp"
-#include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/condition/vulnerability.hpp"
+#include "gw2combat/component/traits/guardian/symbolic_avenger.hpp"
 
 namespace gw2combat::system {
 
 template <class Effect>
-void expire_multi_stack_effect(context& ctx, entt::entity entity) {
+void expire_multi_stack_effect(context& ctx, entt::entity entity, bool remove_if_empty = true) {
     Effect* effect_ptr = ctx.registry.template try_get<Effect>(entity);
     if (effect_ptr) {
         std::vector<effect>& stacks = effect_ptr->stacks;
         std::erase_if(stacks, [&](effect& effect) { return effect.is_expired(ctx.current_tick); });
-        if (stacks.empty()) {
+        if (stacks.empty() && remove_if_empty) {
             ctx.registry.template remove<Effect>(entity);
         }
     }
@@ -44,6 +44,9 @@ void expire_non_damaging_effects(context& ctx) {
 
         // Conditions
         expire_multi_stack_effect<component::vulnerability>(ctx, entity);
+
+        // Unique effects
+        expire_multi_stack_effect<component::symbolic_avenger>(ctx, entity, false);
     });
 }
 

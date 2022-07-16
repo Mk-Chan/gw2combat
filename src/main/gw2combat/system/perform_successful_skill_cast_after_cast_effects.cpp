@@ -3,7 +3,8 @@
 #include <spdlog/spdlog.h>
 
 #include "gw2combat/component/damage/outgoing_condition_application.hpp"
-#include "gw2combat/component/skills/guardian/sword_of_justice.hpp"
+#include "gw2combat/component/skills/guardian/spirit_weapon.hpp"
+#include "gw2combat/component/skills/guardian/symbol.hpp"
 #include "gw2combat/component/skills/successful_skill_cast.hpp"
 
 namespace gw2combat::system {
@@ -26,9 +27,20 @@ void perform_successful_skill_cast_after_cast_effects(context& ctx) {
                 spdlog::info("tick: {}, outgoing binding blade", ctx.current_tick);
             } else if (skill.name == "Sword of Justice"_hs) {
                 auto sword_of_justice_entity = ctx.registry.create();
-                ctx.registry.emplace<component::sword_of_justice>(
-                    sword_of_justice_entity, component::sword_of_justice{entity, ctx.current_tick});
+                ctx.registry.emplace<component::spirit_weapon>(
+                    sword_of_justice_entity,
+                    component::spirit_weapon{entity,
+                                             ctx.current_tick,
+                                             skills::get_by_name("Sword of Justice Attack"_hs)});
                 spdlog::info("tick: {}, created sword of justice", ctx.current_tick);
+            } else if (skill.name == "Symbol of Resolution"_hs) {
+                auto symbol_of_resolution_entity = ctx.registry.create();
+                ctx.registry.emplace<component::symbol>(
+                    symbol_of_resolution_entity,
+                    component::symbol{entity,
+                                      ctx.current_tick,
+                                      skills::get_by_name("Symbol of Resolution Attack"_hs)});
+                spdlog::info("tick: {}, created symbol of resolution", ctx.current_tick);
             }
         });
 }

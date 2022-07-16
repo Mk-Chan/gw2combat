@@ -1,6 +1,7 @@
 #include "gw2combat/system/system.hpp"
 
 #include <entt/entt.hpp>
+#include <spdlog/spdlog.h>
 
 #include "gw2combat/component/boon/aegis.hpp"
 #include "gw2combat/component/boon/alacrity.hpp"
@@ -21,6 +22,7 @@
 #include "gw2combat/component/traits/guardian/fiery_wrath.hpp"
 #include "gw2combat/component/traits/guardian/inspired_virtue.hpp"
 #include "gw2combat/component/traits/guardian/retribution.hpp"
+#include "gw2combat/component/traits/guardian/symbolic_avenger.hpp"
 #include "gw2combat/component/traits/guardian/symbolic_exposure.hpp"
 #include "gw2combat/component/traits/guardian/unscathed_contender.hpp"
 
@@ -49,6 +51,14 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
             bool has_quickness = ctx.registry.any_of<component::quickness>(entity);
             bool has_alacrity = ctx.registry.any_of<component::alacrity>(entity);
             bool has_resolution = ctx.registry.any_of<component::resolution>(entity);
+
+            double symbolic_avenger_addend = 0.0;
+            auto symbolic_avenger_ptr = ctx.registry.try_get<component::symbolic_avenger>(entity);
+            if (symbolic_avenger_ptr) {
+                symbolic_avenger_addend +=
+                    std::min((double)symbolic_avenger_ptr->stacks.size(), 5.0) *
+                    component::symbolic_avenger::strike_damage_increase_per_stack;
+            }
 
             double scholar_rune_multiplier = 1.0;
             bool is_above_90pct_health =
@@ -96,18 +106,19 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
                 1.0 + (inspired_virtue_is_traited * boon_count *
                        component::inspired_virtue::strike_damage_increase_per_boon);
 
-            double addends_multiplier = (1.0 + (force_sigil_addend + impact_sigil_addend +
-                                                retribution_addend + unscathed_contender_addend));
+            double addends_multiplier =
+                (1.0 + (force_sigil_addend + impact_sigil_addend + retribution_addend +
+                        unscathed_contender_addend + symbolic_avenger_addend));
 
             // TODO: Move this out into another thing
             double critical_hit_multiplier =
                 (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
                            (effective_attributes.critical_damage_pct / 100.0 - 1.0));
 
-            double final_multiplier =
-                addends_multiplier * scholar_rune_multiplier * inspired_virtue_multiplier *
-                fiery_wrath_multiplier * symbolic_exposure_multiplier * critical_hit_multiplier *
-                effective_attributes.power;
+            double final_multiplier = addends_multiplier * scholar_rune_multiplier *
+                                      inspired_virtue_multiplier * fiery_wrath_multiplier *
+                                      symbolic_exposure_multiplier * critical_hit_multiplier *
+                                      effective_attributes.power;
             ctx.registry.emplace<component::outgoing_strike_damage_multiplier>(
                 entity, component::outgoing_strike_damage_multiplier{final_multiplier});
         });

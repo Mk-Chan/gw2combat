@@ -21,7 +21,9 @@
 #include "gw2combat/component/traits/guardian/fiery_wrath.hpp"
 #include "gw2combat/component/traits/guardian/inspired_virtue.hpp"
 #include "gw2combat/component/traits/guardian/retribution.hpp"
+#include "gw2combat/component/traits/guardian/symbolic_avenger.hpp"
 #include "gw2combat/component/traits/guardian/symbolic_exposure.hpp"
+#include "gw2combat/component/traits/guardian/symbolic_power.hpp"
 #include "gw2combat/component/traits/guardian/unscathed_contender.hpp"
 
 namespace gw2combat {
@@ -85,7 +87,9 @@ entt::entity build_player1(entt::registry& registry) {
     registry.emplace<component::fiery_wrath>(entity);
     registry.emplace<component::inspired_virtue>(entity);
     registry.emplace<component::retribution>(entity);
+    registry.emplace<component::symbolic_power>(entity);
     registry.emplace<component::symbolic_exposure>(entity);
+    registry.emplace<component::symbolic_avenger>(entity);
     registry.emplace<component::unscathed_contender>(entity);
     registry.emplace<component::sigil_force>(entity);
     registry.emplace<component::sigil_impact>(entity);

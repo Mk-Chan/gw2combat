@@ -17,7 +17,7 @@ void perform_instant_cast_skills(context& ctx) {
                     ctx.registry.emplace<component::shield_of_wrath>(
                         entity,
                         component::shield_of_wrath{ctx.current_tick +
-                                                   skill.damage_start_after_cast_end});
+                                                   skill.damage_start});
                 }
             }
 

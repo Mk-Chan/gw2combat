@@ -29,19 +29,17 @@ struct skill {
     entt::hashed_string name;
     type type;
     std::array<unsigned int, 2> cast_duration;  // no-quickness = 0, quickness = 1
-    unsigned int damage_start_after_cast_end;   // maybe array of size 2 for quickness?
-    unsigned int damage_duration;
+    unsigned int damage_start;                  // maybe array of size 2 for quickness?
     unsigned int hits;
     std::array<unsigned int, 2> cooldown;  // no-alacrity = 0, alacrity = 1
     double damage_coefficient;
-    std::optional<weapon> weapon = std::make_optional(EMPTY_HANDED);
+    weapon weapon = EMPTY_HANDED;
 };
 
 static inline skill IDLE{.name = "Idle"_hs,
                          .type = skill::type::CASTING_NO_AFTER_CAST,
                          .cast_duration = {1000, 1000},
-                         .damage_start_after_cast_end = 0,
-                         .damage_duration = 0,
+                         .damage_start = 0,
                          .hits = 0,
                          .damage_coefficient = 0.0};
 
