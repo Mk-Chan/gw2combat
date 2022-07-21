@@ -2,8 +2,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include "gw2combat/skills.hpp"
-
 #include "gw2combat/component/animation/animation.hpp"
 #include "gw2combat/component/animation/is_animation_locked.hpp"
 #include "gw2combat/component/character/targeting.hpp"
