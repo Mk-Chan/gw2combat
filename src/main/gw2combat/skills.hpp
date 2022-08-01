@@ -52,7 +52,7 @@ struct skill {
     std::vector<skill> child_entity_skills;
     std::vector<skill_tag> tags;
 
-    constexpr inline bool operator==(const skill& rhs) const {
+    inline bool operator==(const skill& rhs) const {
         return this->name == rhs.name;
     }
 };
