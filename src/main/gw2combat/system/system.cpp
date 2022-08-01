@@ -1,6 +1,10 @@
 #include "system.hpp"
 
+#include "gw2combat/component/character/dynamic_attributes.hpp"
 #include "gw2combat/component/character/effective_attributes.hpp"
+#include "gw2combat/component/character/is_actor.hpp"
+#include "gw2combat/component/character/static_attributes.hpp"
+#include "gw2combat/component/character/targeting.hpp"
 #include "gw2combat/component/damage/effective_incoming_damage.hpp"
 #include "gw2combat/component/damage/incoming_strike_damage.hpp"
 #include "gw2combat/component/damage/multipliers/incoming_condition_damage_multiplier.hpp"
@@ -10,69 +14,79 @@
 #include "gw2combat/component/damage/outgoing_condition_application.hpp"
 #include "gw2combat/component/damage/outgoing_strike_damage.hpp"
 #include "gw2combat/component/damage/pulse_conditions.hpp"
-#include "gw2combat/component/skills/successful_skill_cast.hpp"
+#include "gw2combat/component/skills/instant_cast_skills.hpp"
+#include "gw2combat/component/skills/normal_cast_skill.hpp"
+#include "gw2combat/system/staged/profession_systems.hpp"
+#include "gw2combat/system/staged/skill_systems.hpp"
+#include "gw2combat/system/staged/trait_systems.hpp"
 
 namespace gw2combat::system {
 
-void clear_temporary_components(system::context& ctx) {
-    ctx.registry.clear<component::effective_attributes,
+void clear_temporary_components(registry_t& registry) {
+    registry.clear<component::effective_attributes,
+                   component::incoming_strike_damage_multiplier,
+                   component::incoming_condition_damage_multiplier,
+                   component::outgoing_strike_damage_multiplier,
+                   component::outgoing_condition_damage_multiplier,
 
-                       component::incoming_strike_damage_multiplier,
-                       component::incoming_condition_damage_multiplier,
-                       component::outgoing_strike_damage_multiplier,
-                       component::outgoing_condition_damage_multiplier,
+                   component::outgoing_strike_damage,
+                   component::outgoing_condition_application,
 
-                       component::outgoing_strike_damage,
-                       component::outgoing_condition_application,
-
-                       component::incoming_strike_damage,
-                       component::effective_incoming_damage,
-
-                       component::successful_skill_cast,
-                       component::pulse_conditions>();
+                   component::incoming_strike_damage,
+                   component::effective_incoming_damage>();
+    registry.ctx().erase<component::pulse_conditions>();
 }
 
-void run_systems(system::context& ctx) {
-    clear_temporary_components(ctx);
+template <combat_stage stage>
+void run_staged_systems(registry_t& registry, tick_t current_tick) {
+    system::virtue_of_justice<stage>(registry, current_tick);
 
-    if (ctx.current_tick % component::pulse_conditions::pulse_rate == 0) {
-        ctx.registry.emplace<component::pulse_conditions>(*singleton_entity);
+    system::symbolic_avenger<stage>(registry, current_tick);
+    system::symbolic_power<stage>(registry, current_tick);
+
+    system::on_hit_effect_applications<stage>(registry, current_tick);
+}
+
+void run_systems(registry_t& registry, tick_t current_tick) {
+    clear_temporary_components(registry);
+
+    if (current_tick % component::pulse_conditions::pulse_rate == 0) {
+        registry.ctx().emplace<component::pulse_conditions>();
     }
 
-    system::combat_detection(ctx);
+    system::combat_detection(registry, current_tick);
 
-    system::character_command(ctx);
-    system::update_animation_state(ctx);
+    system::effective_attributes_calculation(registry, current_tick);
+    system::incoming_strike_damage_multiplier_calculation(registry, current_tick);
+    system::incoming_condition_damage_multiplier_calculation(registry, current_tick);
+    system::outgoing_condition_damage_multiplier_calculation(registry, current_tick);
+    system::outgoing_strike_damage_multiplier_calculation(registry, current_tick);
 
-    system::effective_attributes_calculation(ctx);
+    system::expire_non_damaging_effects(registry, current_tick);
+    system::expire_damaging_effects(registry, current_tick);
 
-    system::incoming_strike_damage_multiplier_calculation(ctx);
-    system::incoming_condition_damage_multiplier_calculation(ctx);
-    system::outgoing_condition_damage_multiplier_calculation(ctx);
-    system::outgoing_strike_damage_multiplier_calculation(ctx);
+    system::character_command(registry, current_tick);
+    system::cast_skills(registry, current_tick);
 
-    system::perform_instant_cast_skills(ctx);
-    system::perform_successful_skill_cast_after_cast_effects(ctx);
-    system::symbol(ctx);
-    system::shield_of_wrath(ctx);
-    system::spirit_weapon(ctx);
+    run_staged_systems<combat_stage::BEFORE_OUTGOING_STRIKE_BUFFERING>(registry, current_tick);
 
-    system::calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(ctx);
-    system::calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(ctx);
+    system::incoming_strike_detection(registry, current_tick);
 
-    system::incoming_strike_detection(ctx);
+    run_staged_systems<combat_stage::AFTER_OUTGOING_STRIKE_BUFFERING>(registry, current_tick);
+    run_staged_systems<combat_stage::BEFORE_INCOMING_STRIKE_DAMAGE_CALCULATION>(registry,
+                                                                                current_tick);
 
-    system::virtue_of_justice(ctx);
+    system::incoming_strike_damage_calculation(registry, current_tick);
 
-    system::incoming_condition_application(ctx);
+    run_staged_systems<combat_stage::AFTER_INCOMING_STRIKE_DAMAGE_CALCULATION>(registry,
+                                                                               current_tick);
 
-    system::expire_damaging_effects(ctx);
-    system::pulse_conditions(ctx);
-    system::incoming_strike_damage_calculation(ctx);
+    system::incoming_condition_application(registry, current_tick);
+    system::pulse_conditions(registry, current_tick);
 
-    system::update_health(ctx);
-    system::expire_non_damaging_effects(ctx);
-    system::downstate_detection(ctx);
+    system::update_health(registry, current_tick);
+    system::downstate_detection(registry, current_tick);
+    system::destroy_after_rotation_entities(registry, current_tick);
 }
 
 }  // namespace gw2combat::system

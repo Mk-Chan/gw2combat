@@ -2,48 +2,60 @@
 
 #include "gw2combat/system/system.hpp"
 
-#include "gw2combat/component/boon/aegis.hpp"
-#include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/damage/buffered_condition_damage.hpp"
 
-#include "gw2combat/component/skills/guardian/binding_blade.hpp"
-#include "gw2combat/system/damage/calculation/condition_damage_calculations.hpp"
+#include "gw2combat/component/effect_components.hpp"
 
 namespace gw2combat::system {
 
-void expire_damaging_effects(context& ctx) {
-    ctx.registry.view<component::burning>().each([&](const entt::entity entity,
-                                                     component::burning& burning) {
-        for (effect& effect : burning.stacks) {
-            if (!effect.is_expired(ctx.current_tick)) {
-                continue;
-            }
+template <typename EffectComponent>
+void buffer_damage_for_end_of_life_effect(
+    registry_t& registry,
+    tick_t current_tick,
+    entity_t entity,
+    effects::effect<typename EffectComponent::effect_type> effect) {
+    if (effect.is_expired(current_tick)) {
+        auto& buffered_condition_damage =
+            registry.get_or_emplace<component::buffered_condition_damage>(entity);
 
-            auto& buffered_condition_damage =
-                ctx.registry.get_or_emplace<component::buffered_condition_damage>(entity);
-            buffered_condition_damage.value +=
-                calculate_burning_damage(ctx, effect, ctx.current_tick - effect.last_damaging_tick);
+        if constexpr (std::is_same_v<decltype(effect), effects::binding_blade>) {
+            buffered_condition_damage.unaffected_by_incoming_multiplier_value +=
+                effect.damage_calculation(registry, current_tick);
+        } else {
+            buffered_condition_damage.value += effect.damage_calculation(registry, current_tick);
         }
-        std::erase_if(burning.stacks,
-                      [&](effect& effect) { return effect.is_expired(ctx.current_tick); });
-        if (burning.stacks.empty()) {
-            ctx.registry.remove<component::burning>(entity);
-        }
-    });
-    // Special handling for binding blade since it bypasses all damage modifiers
-    ctx.registry.view<component::binding_blade>().each(
-        [&](const entt::entity entity, component::binding_blade& binding_blade) {
-            effect& effect = binding_blade.stack;
-            if (effect.is_expired(ctx.current_tick)) {
-                auto& buffered_condition_damage =
-                    ctx.registry.get_or_emplace<component::buffered_condition_damage>(entity);
-                buffered_condition_damage.unaffected_by_incoming_multiplier_value +=
-                    calculate_binding_blade_damage(
-                        ctx, effect, ctx.current_tick - effect.last_damaging_tick);
 
-                ctx.registry.remove<component::binding_blade>(entity);
+        effect.update_last_damaging_tick(current_tick);
+    }
+}
+
+template <typename EffectComponent>
+void buffer_damage_and_expire_end_of_life_effects(registry_t& registry, tick_t current_tick) {
+    registry.template view<EffectComponent>().each(
+        [&](entity_t entity, EffectComponent& effect_component) {
+            effect_component.effect.for_each(
+                registry,
+                current_tick,
+                entity,
+                buffer_damage_for_end_of_life_effect<typename EffectComponent::effect_type>);
+
+            if constexpr (std::is_same_v<
+                              decltype(effect_component.effect),
+                              effects::stacking_effect<typename EffectComponent::effect_type>>) {
+                effect_component.effect.remove_expired_effects(current_tick);
+                if (effect_component.effect.num_stacks() == 0) {
+                    registry.remove<EffectComponent>(entity);
+                }
+            } else if (effect_component.effect.is_expired(current_tick)) {
+                registry.remove<EffectComponent>(entity);
             }
         });
+}
+
+void expire_damaging_effects(registry_t& registry, tick_t current_tick) {
+    buffer_damage_and_expire_end_of_life_effects<component::burning>(registry, current_tick);
+    buffer_damage_and_expire_end_of_life_effects<component::bleeding>(registry, current_tick);
+    buffer_damage_and_expire_end_of_life_effects<component::binding_blade>(registry, current_tick);
 }
 
 }  // namespace gw2combat::system

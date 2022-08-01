@@ -1,58 +1,108 @@
 #ifndef GW2COMBAT_SKILL_HPP
 #define GW2COMBAT_SKILL_HPP
 
-#include "fmt/format.h"
+#include <optional>
+#include <string>
 
-#include "entt/entt.hpp"
-
+#include "effects.hpp"
 #include "types.hpp"
 #include "weapon.hpp"
 
-using namespace entt::literals;
-
 namespace gw2combat::skills {
 
+enum class skill_tag : std::uint32_t
+{
+    WHIRL,
+    LEAP,
+    BLAST,
+
+    LIGHT_FIELD,
+
+    SYMBOL,
+    SPIRIT_WEAPON,
+};
+
+enum class applied_effect_type : std::uint32_t
+{
+    BURNING,
+
+    BINDING_BLADE,
+};
+
+enum class applied_effect_direction : std::uint8_t
+{
+    OUTGOING,
+    // INCOMING,  // TODO: implement an incoming effects component
+};
+
+struct effect_application {
+    applied_effect_type effect_type;
+    applied_effect_direction effect_direction;
+    size_t num_stacks;
+    tick_t duration;
+};
+
 struct skill {
-    enum class type : std::uint32_t
-    {
-        INSTANT_CAST,
-        CASTING_NO_AFTER_CAST,
-        CASTING_WITH_AFTER_CAST,
-        CHANNELING_NO_AFTER_CAST,
-        CHANNELING_WITH_AFTER_CAST,
-    };
+    std::string name;
+    weapon_type weapon_type;
+    double damage_coefficient;
+    std::array<tick_t, 2> cast_duration;
+    std::array<std::vector<tick_t>, 2> hit_on_tick_list;
+    std::vector<effect_application> on_hit_effect_applications;
+    std::vector<skill> child_entity_skills;
+    std::vector<skill_tag> tags;
 
     constexpr inline bool operator==(const skill& rhs) const {
         return this->name == rhs.name;
     }
-
-    entt::hashed_string name;
-    type type;
-    std::array<unsigned int, 2> cast_duration;  // no-quickness = 0, quickness = 1
-    unsigned int damage_start;                  // maybe array of size 2 for quickness?
-    unsigned int hits;
-    std::array<unsigned int, 2> cooldown;  // no-alacrity = 0, alacrity = 1
-    double damage_coefficient;
-    weapon weapon = EMPTY_HANDED;
 };
 
-static inline skill IDLE{.name = "Idle"_hs,
-                         .type = skill::type::CASTING_NO_AFTER_CAST,
-                         .cast_duration = {1000, 1000},
-                         .damage_start = 0,
-                         .hits = 0,
-                         .damage_coefficient = 0.0};
+struct skills_db {
+    void init(const std::string& path);
+    [[nodiscard]] std::optional<skill> get_by_name(const std::string& name) const;
 
-extern std::vector<skill> ALL_SKILLS;
+    std::vector<skill> skills;
+};
 
-static inline skills::skill get_by_name(const entt::hashed_string name) {
-    for (auto& skill : ALL_SKILLS) {
-        if (name == skill.name) {
-            return skill;
-        }
-    }
-    throw std::invalid_argument(fmt::format("skill name {} not found!", name.data()));
-}
+extern skills_db SKILLS_DB;
+
+NLOHMANN_JSON_SERIALIZE_ENUM(skill_tag,
+                             {
+                                 {skill_tag::WHIRL, "WHIRL"},
+                                 {skill_tag::LEAP, "LEAP"},
+                                 {skill_tag::BLAST, "BLAST"},
+
+                                 {skill_tag::LIGHT_FIELD, "LIGHT_FIELD"},
+
+                                 {skill_tag::SYMBOL, "SYMBOL"},
+                                 {skill_tag::SPIRIT_WEAPON, "SPIRIT_WEAPON"},
+                             })
+NLOHMANN_JSON_SERIALIZE_ENUM(applied_effect_type,
+                             {
+                                 {applied_effect_type::BURNING, "BURNING"},
+                                 {applied_effect_type::BINDING_BLADE, "BINDING_BLADE"},
+                             })
+NLOHMANN_JSON_SERIALIZE_ENUM(applied_effect_direction,
+                             {
+                                 {applied_effect_direction::OUTGOING, "OUTGOING"},
+                                 //{applied_effect_direction::INCOMING, "INCOMING"},
+                             })
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(effect_application,
+                                   effect_type,
+                                   effect_direction,
+                                   num_stacks,
+                                   duration)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(skill,
+                                   name,
+                                   weapon_type,
+                                   damage_coefficient,
+                                   cast_duration,
+                                   hit_on_tick_list,
+                                   on_hit_effect_applications,
+                                   child_entity_skills,
+                                   tags)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(skills_db, skills)
 
 }  // namespace gw2combat::skills
 

@@ -7,7 +7,7 @@
 
 namespace gw2combat {
 
-predetermined_rotation read_scraped_simple_rotation(const std::string& path) {
+std::vector<skill_cast> read_scraped_simple_rotation(const std::string& path) {
     const auto file_path = std::filesystem::path(path);
     std::ifstream ifstream{file_path, std::ios::in};
     const auto file_size = std::filesystem::file_size(file_path);
@@ -19,33 +19,29 @@ predetermined_rotation read_scraped_simple_rotation(const std::string& path) {
     std::stringstream csv_stream{csv};
     rapidcsv::Document doc{csv_stream};
 
-    predetermined_rotation predetermined_rotation;
-    int cast_duration_accumulated_error = 0;
+    std::vector<skill_cast> rotation;
+
+    int offset;
     for (size_t i = 0; i < doc.GetRowCount(); ++i) {
         std::vector<std::string> row = doc.GetRow<std::string>(i);
-        skills::skill skill = skills::get_by_name(entt::hashed_string{row[0].c_str()});
+        auto skill_opt = skills::SKILLS_DB.get_by_name(row[0]);
+        if (!skill_opt) {
+            spdlog::error("unable to parse skill: {}", row[0]);
+        }
+        auto skill = *skill_opt;
         int cast_time = (int)(std::stod(std::string{std::string_view{row[1]}.substr(7).substr(
                                   0, row[1].size() - 8)}) *
                               1'000);
-        int cast_duration_in_csv =
-            std::stoi(std::string{std::string_view{row[2]}.substr(6).substr(0, row[2].size() - 8)});
 
         if (i == 0) {
-            predetermined_rotation.offset = -cast_time;
+            offset = -cast_time;
         }
-        predetermined_rotation.skill_casts.push_back(
-            skill_cast{tick_t(cast_time + predetermined_rotation.offset),
-                       tick_t(cast_duration_in_csv),
-                       skill});
-
-        cast_duration_accumulated_error += cast_duration_in_csv - (int)skill.cast_duration[1];
+        rotation.push_back(skill_cast{tick_t(cast_time + offset), skill});
     }
-    spdlog::info("cast_duration_error: {}", cast_duration_accumulated_error);
-
-    return predetermined_rotation;
+    return rotation;
 }
 
-extern predetermined_rotation read_rotation(const std::string& path) {
+extern std::vector<skill_cast> read_rotation(const std::string& path) {
     return read_scraped_simple_rotation(path);
 }
 

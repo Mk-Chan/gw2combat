@@ -1,63 +1,50 @@
 #include "gw2combat/system/system.hpp"
 
-#include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
 
-#include "gw2combat/component/boon/aegis.hpp"
-#include "gw2combat/component/boon/alacrity.hpp"
-#include "gw2combat/component/boon/fury.hpp"
-#include "gw2combat/component/boon/might.hpp"
-#include "gw2combat/component/boon/quickness.hpp"
-#include "gw2combat/component/boon/resolution.hpp"
 #include "gw2combat/component/character/combat_stats.hpp"
 #include "gw2combat/component/character/effective_attributes.hpp"
 #include "gw2combat/component/character/targeting.hpp"
-#include "gw2combat/component/condition/burning.hpp"
-#include "gw2combat/component/condition/vulnerability.hpp"
 #include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
 #include "gw2combat/component/damage/outgoing_damage_source.hpp"
+#include "gw2combat/component/effect_components.hpp"
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
 #include "gw2combat/component/gear/sigil/sigil_impact.hpp"
-#include "gw2combat/component/traits/guardian/fiery_wrath.hpp"
-#include "gw2combat/component/traits/guardian/inspired_virtue.hpp"
-#include "gw2combat/component/traits/guardian/retribution.hpp"
-#include "gw2combat/component/traits/guardian/symbolic_avenger.hpp"
-#include "gw2combat/component/traits/guardian/symbolic_exposure.hpp"
-#include "gw2combat/component/traits/guardian/unscathed_contender.hpp"
+#include "gw2combat/component/trait_components.hpp"
 
 namespace gw2combat::system {
 
-void outgoing_strike_damage_multiplier_calculation(context& ctx) {
-    ctx.registry.view<component::effective_attributes, component::combat_stats>().each(
-        [&](const entt::entity entity,
+void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t) {
+    registry.view<component::effective_attributes, component::combat_stats>().each(
+        [&](entity_t entity,
             const component::effective_attributes& effective_attributes,
             const component::combat_stats& combat_stats) {
-            bool has_scholar_rune = ctx.registry.any_of<component::rune_scholar>(entity);
-            bool has_force_sigil = ctx.registry.any_of<component::sigil_force>(entity);
-            bool has_impact_sigil = ctx.registry.any_of<component::sigil_impact>(entity);
-            bool retribution_is_traited = ctx.registry.any_of<component::retribution>(entity);
+            bool has_scholar_rune = registry.any_of<component::rune_scholar>(entity);
+            bool has_force_sigil = registry.any_of<component::sigil_force>(entity);
+            bool has_impact_sigil = registry.any_of<component::sigil_impact>(entity);
+            bool retribution_is_traited = registry.any_of<component::retribution>(entity);
             bool unscathed_contender_is_traited =
-                ctx.registry.any_of<component::unscathed_contender>(entity);
-            bool fiery_wrath_is_traited = ctx.registry.any_of<component::fiery_wrath>(entity);
+                registry.any_of<component::unscathed_contender>(entity);
+            bool fiery_wrath_is_traited = registry.any_of<component::fiery_wrath>(entity);
             bool symbolic_exposure_is_traited =
-                ctx.registry.any_of<component::symbolic_exposure>(entity);
-            bool inspired_virtue_is_traited =
-                ctx.registry.any_of<component::inspired_virtue>(entity);
+                registry.any_of<component::symbolic_exposure>(entity);
+            bool inspired_virtue_is_traited = registry.any_of<component::inspired_virtue>(entity);
 
-            bool has_aegis = ctx.registry.any_of<component::aegis>(entity);
-            bool has_might = ctx.registry.any_of<component::might>(entity);
-            bool has_fury = ctx.registry.any_of<component::fury>(entity);
-            bool has_quickness = ctx.registry.any_of<component::quickness>(entity);
-            bool has_alacrity = ctx.registry.any_of<component::alacrity>(entity);
-            bool has_resolution = ctx.registry.any_of<component::resolution>(entity);
+            bool has_aegis = registry.any_of<component::aegis>(entity);
+            bool has_might = registry.any_of<component::might>(entity);
+            bool has_fury = registry.any_of<component::fury>(entity);
+            bool has_quickness = registry.any_of<component::quickness>(entity);
+            bool has_alacrity = registry.any_of<component::alacrity>(entity);
+            bool has_resolution = registry.any_of<component::resolution>(entity);
 
             double symbolic_avenger_addend = 0.0;
-            auto symbolic_avenger_ptr = ctx.registry.try_get<component::symbolic_avenger>(entity);
+            auto symbolic_avenger_ptr =
+                registry.try_get<component::symbolic_avenger_effect>(entity);
             if (symbolic_avenger_ptr) {
                 symbolic_avenger_addend +=
-                    std::min((double)symbolic_avenger_ptr->stacks.size(), 5.0) *
-                    component::symbolic_avenger::strike_damage_increase_per_stack;
+                    std::min((double)symbolic_avenger_ptr->effect.num_stacks(), 5.0) *
+                    component::symbolic_avenger_trait::strike_damage_increase_per_stack;
             }
 
             double scholar_rune_multiplier = 1.0;
@@ -83,16 +70,15 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
 
             double fiery_wrath_multiplier = 1.0;
             double symbolic_exposure_multiplier = 1.0;
-            auto targeting_ptr = ctx.registry.try_get<component::targeting>(entity);
+            auto targeting_ptr = registry.try_get<component::targeting>(entity);
             if (targeting_ptr) {
-                bool target_is_burning =
-                    ctx.registry.any_of<component::burning>(targeting_ptr->entity);
+                bool target_is_burning = registry.any_of<component::burning>(targeting_ptr->entity);
                 fiery_wrath_multiplier +=
                     fiery_wrath_is_traited * target_is_burning *
                     component::fiery_wrath::strike_damage_increase_if_target_burning;
 
                 bool target_is_vulnerable =
-                    ctx.registry.any_of<component::vulnerability>(targeting_ptr->entity);
+                    registry.any_of<component::vulnerability>(targeting_ptr->entity);
                 symbolic_exposure_multiplier +=
                     symbolic_exposure_is_traited * target_is_vulnerable *
                     component::symbolic_exposure::strike_damage_increase_if_target_vulnerable;
@@ -110,25 +96,19 @@ void outgoing_strike_damage_multiplier_calculation(context& ctx) {
                 (1.0 + (force_sigil_addend + impact_sigil_addend + retribution_addend +
                         unscathed_contender_addend + symbolic_avenger_addend));
 
-            // TODO: Move this out into another thing
-            double critical_hit_multiplier =
-                (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
-                           (effective_attributes.critical_damage_pct / 100.0 - 1.0));
-
             double final_multiplier = addends_multiplier * scholar_rune_multiplier *
                                       inspired_virtue_multiplier * fiery_wrath_multiplier *
-                                      symbolic_exposure_multiplier * critical_hit_multiplier *
-                                      effective_attributes.power;
-            ctx.registry.emplace<component::outgoing_strike_damage_multiplier>(
+                                      symbolic_exposure_multiplier * effective_attributes.power;
+            registry.emplace<component::outgoing_strike_damage_multiplier>(
                 entity, component::outgoing_strike_damage_multiplier{final_multiplier});
         });
-    ctx.registry.view<component::outgoing_damage_source>().each(
-        [&](const entt::entity entity,
-            const component::outgoing_damage_source& outgoing_damage_source) {
-            auto source_entity = outgoing_damage_source.source;
+    registry.view<component::outgoing_damage_source>().each(
+        [&](entity_t entity, const component::outgoing_damage_source& outgoing_damage_source) {
+            auto damage_source_entity =
+                utils::get_damage_source_entity(outgoing_damage_source.source, registry);
             auto& source_outgoing_strike_damage_multiplier =
-                ctx.registry.get<component::outgoing_strike_damage_multiplier>(source_entity);
-            ctx.registry.emplace<component::outgoing_strike_damage_multiplier>(
+                registry.get<component::outgoing_strike_damage_multiplier>(damage_source_entity);
+            registry.emplace<component::outgoing_strike_damage_multiplier>(
                 entity, source_outgoing_strike_damage_multiplier);
         });
 }

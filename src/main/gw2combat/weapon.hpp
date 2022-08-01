@@ -5,27 +5,32 @@
 
 namespace gw2combat {
 
-struct weapon {
-    enum class type : std::uint32_t
-    {
-        EMPTY_HANDED,
-        GREATSWORD,
-        SWORD,
-        FOCUS,
-    };
-
-    [[nodiscard]] inline double weapon_strength() const {
-        return (weapon_strength_[0] + weapon_strength_[1]) / 2.0;
-    }
-
-    type type;
-    double weapon_strength_[2];  // low = 0, high = 1
+enum class weapon_type : std::uint32_t
+{
+    EMPTY_HANDED,
+    GREATSWORD,
+    SWORD,
+    FOCUS,
 };
 
-static inline weapon EMPTY_HANDED{weapon::type::EMPTY_HANDED, {656, 725}};
-static inline weapon GREATSWORD{weapon::type::GREATSWORD, {1045, 1155}};
-static inline weapon SWORD{weapon::type::SWORD, {950, 1050}};
-static inline weapon FOCUS{weapon::type::FOCUS, {873, 927}};
+NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
+                             {
+                                 {weapon_type::EMPTY_HANDED, "EMPTY_HANDED"},
+                                 {weapon_type::GREATSWORD, "GREATSWORD"},
+                                 {weapon_type::SWORD, "SWORD"},
+                                 {weapon_type::FOCUS, "FOCUS"},
+                             })
+
+static inline std::unordered_map<weapon_type, std::array<int, 2>> weapon_type_to_strength_range_map{
+    {weapon_type::EMPTY_HANDED, {656, 725}},
+    {weapon_type::GREATSWORD, {1045, 1155}},
+    {weapon_type::SWORD, {950, 1050}},
+    {weapon_type::FOCUS, {873, 927}}};
+
+static inline double weapon_strength(weapon_type type) {
+    auto& range = weapon_type_to_strength_range_map.at(type);
+    return (range[0] + range[1]) / 2.0;
+}
 
 }  // namespace gw2combat
 

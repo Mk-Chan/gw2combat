@@ -1,36 +1,23 @@
 #include "entity.hpp"
 
-#include "gw2combat/effect.hpp"
+#include "gw2combat/effects.hpp"
 
-#include "gw2combat/component/boon/aegis.hpp"
-#include "gw2combat/component/boon/alacrity.hpp"
-#include "gw2combat/component/boon/fury.hpp"
-#include "gw2combat/component/boon/might.hpp"
-#include "gw2combat/component/boon/quickness.hpp"
-#include "gw2combat/component/boon/resolution.hpp"
 #include "gw2combat/component/character/dynamic_attributes.hpp"
-#include "gw2combat/component/character/is_character.hpp"
+#include "gw2combat/component/character/is_actor.hpp"
+#include "gw2combat/component/character/rotation.hpp"
 #include "gw2combat/component/character/static_attributes.hpp"
 #include "gw2combat/component/character/targeting.hpp"
-#include "gw2combat/component/condition/burning.hpp"
-#include "gw2combat/component/condition/vulnerability.hpp"
+#include "gw2combat/component/effect_components.hpp"
+#include "gw2combat/component/gear/rune/rune_balthazar.hpp"
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
 #include "gw2combat/component/gear/sigil/sigil_impact.hpp"
-#include "gw2combat/component/profession/virtue_of_justice.hpp"
-#include "gw2combat/component/traits/guardian/fiery_wrath.hpp"
-#include "gw2combat/component/traits/guardian/inspired_virtue.hpp"
-#include "gw2combat/component/traits/guardian/retribution.hpp"
-#include "gw2combat/component/traits/guardian/symbolic_avenger.hpp"
-#include "gw2combat/component/traits/guardian/symbolic_exposure.hpp"
-#include "gw2combat/component/traits/guardian/symbolic_power.hpp"
-#include "gw2combat/component/traits/guardian/unscathed_contender.hpp"
+#include "gw2combat/component/profession_components.hpp"
+#include "gw2combat/component/trait_components.hpp"
 
 namespace gw2combat {
 
-std::unique_ptr<entt::entity> singleton_entity;
-
-entt::entity build_player1(entt::registry& registry) {
+entity_t build_player1(registry_t& registry) {
     auto entity = registry.create();
 
     auto viper_armor_rest_zerk_crit_food =
@@ -89,64 +76,78 @@ entt::entity build_player1(entt::registry& registry) {
     registry.emplace<component::retribution>(entity);
     registry.emplace<component::symbolic_power>(entity);
     registry.emplace<component::symbolic_exposure>(entity);
-    registry.emplace<component::symbolic_avenger>(entity);
+    registry.emplace<component::symbolic_avenger_trait>(entity);
     registry.emplace<component::unscathed_contender>(entity);
     registry.emplace<component::sigil_force>(entity);
     registry.emplace<component::sigil_impact>(entity);
     registry.emplace<component::rune_scholar>(entity);
 
-    registry.emplace<component::is_character>(entity);
+    registry.emplace<component::is_actor>(entity);
+    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player1"_hs);
 
     return entity;
 }
 
-entt::entity build_medium_kitty_golem(entt::registry& registry) {
+entity_t build_medium_kitty_golem(entt::registry& registry) {
     auto entity = registry.create();
 
     registry.emplace<component::static_attributes>(
         entity, component::static_attributes{.armor = 2597, .max_health = 1'000'000});
     registry.emplace<component::dynamic_attributes>(entity);
 
-    registry.emplace<component::is_character>(entity);
+    registry.emplace<component::is_actor>(entity);
+    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "medium_kitty_golem"_hs);
 
     return entity;
 }
 
-entt::entity build_golem_boon_condi_provider(entt::registry& registry) {
+entity_t build_golem_boon_condi_provider(entt::registry& registry) {
     auto entity = registry.create();
 
     registry.emplace<component::static_attributes>(
         entity, component::static_attributes{.condition_damage = 0});
     registry.emplace<component::dynamic_attributes>(entity);
 
-    registry.emplace<component::is_character>(entity);
+    registry.emplace<component::is_actor>(entity);
+    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity),
+                                                     "golem_boon_condi_provider"_hs);
 
     return entity;
 }
 
 void init_entities(entt::registry& registry) {
-    singleton_entity = std::make_unique<entt::entity>(registry.create());
     auto player1 = build_player1(registry);
     auto golem = build_medium_kitty_golem(registry);
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 
     // NOTE: Default boons for testing
-    registry.emplace<component::might>(player1, component::might{player1, 25, 0, 35'000'000});
-    registry.emplace<component::fury>(player1, component::fury{effect{player1, 0, 35'000'000}});
-    registry.emplace<component::quickness>(player1,
-                                           component::quickness{effect{player1, 0, 35'000'000}});
-    registry.emplace<component::alacrity>(player1,
-                                          component::alacrity{effect{player1, 0, 35'000'000}});
-    registry.emplace<component::resolution>(player1,
-                                            component::resolution{effect{player1, 0, 35'000'000}});
-    registry.emplace<component::aegis>(player1, component::aegis{effect{player1, 0, 35'000'000}});
+    using namespace effects;
+    std::vector<skill_cast> player1_rotation = read_rotation("src/main/resources/rotation.csv");
+    registry.emplace<component::rotation>(player1, component::rotation{player1_rotation});
+    registry.emplace<component::aegis>(
+        player1, component::aegis{aegis{golem_boon_condi_provider, 0, 1'000'000'000}});
+    registry.emplace<component::alacrity>(
+        player1, component::alacrity{alacrity{golem_boon_condi_provider, 0, 1'000'000'000}});
+    registry.emplace<component::fury>(
+        player1, component::fury{fury{golem_boon_condi_provider, 0, 1'000'000'000}});
+    registry.emplace<component::might>(player1,
+                                       component::might{stacking_effect<might>{
+                                           golem_boon_condi_provider, 25, 0, 1'000'000'000, 25}});
+    registry.emplace<component::quickness>(
+        player1, component::quickness{quickness{golem_boon_condi_provider, 0, 1'000'000'000}});
+    registry.emplace<component::resolution>(
+        player1, component::resolution{resolution{golem_boon_condi_provider, 0, 1'000'000'000}});
+
     registry.emplace<component::targeting>(player1, component::targeting{golem});
     // registry.remove<component::is_character>(player1);  // Disable player1
 
-    registry.emplace<component::burning>(
-        golem, component::burning{golem_boon_condi_provider, 1, 0, 35'000'000});
+    registry.emplace<component::burning>(golem,
+                                         component::burning{stacking_effect<burning>{
+                                             golem_boon_condi_provider, 1, 0, 1'000'000'000}});
     registry.emplace<component::vulnerability>(
-        golem, component::vulnerability{golem_boon_condi_provider, 25, 0, 35'000'000});
+        golem,
+        component::vulnerability{
+            stacking_effect<vulnerability>{golem_boon_condi_provider, 25, 0, 1'000'000'000, 25}});
 }
 
 }  // namespace gw2combat

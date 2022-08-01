@@ -6,7 +6,7 @@
 namespace gw2combat::component {
 
 struct targeting {
-    entt::entity entity;
+    entity_t entity;
 };
 
 }  // namespace gw2combat::component

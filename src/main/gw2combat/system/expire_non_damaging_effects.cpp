@@ -2,52 +2,36 @@
 
 #include "system.hpp"
 
-#include "gw2combat/component/boon/aegis.hpp"
-#include "gw2combat/component/boon/fury.hpp"
-#include "gw2combat/component/boon/might.hpp"
-#include "gw2combat/component/boon/quickness.hpp"
-#include "gw2combat/component/boon/resolution.hpp"
-#include "gw2combat/component/character/is_character.hpp"
-#include "gw2combat/component/condition/vulnerability.hpp"
-#include "gw2combat/component/traits/guardian/symbolic_avenger.hpp"
+#include "gw2combat/component/effect_components.hpp"
 
 namespace gw2combat::system {
 
-template <class Effect>
-void expire_multi_stack_effect(context& ctx, entt::entity entity, bool remove_if_empty = true) {
-    Effect* effect_ptr = ctx.registry.template try_get<Effect>(entity);
-    if (effect_ptr) {
-        std::vector<effect>& stacks = effect_ptr->stacks;
-        std::erase_if(stacks, [&](effect& effect) { return effect.is_expired(ctx.current_tick); });
-        if (stacks.empty() && remove_if_empty) {
-            ctx.registry.template remove<Effect>(entity);
-        }
-    }
+template <typename EffectComponent>
+void expire_end_of_life_effects(registry_t& registry, tick_t current_tick) {
+    registry.view<EffectComponent>().each(
+        [&](entity_t entity, EffectComponent& effect_component) {
+            if constexpr (std::is_same_v<
+                              decltype(effect_component.effect),
+                              effects::stacking_effect<typename EffectComponent::effect_type>>) {
+                effect_component.effect.remove_expired_effects(current_tick);
+                if (effect_component.effect.num_stacks() == 0) {
+                    registry.remove<EffectComponent>(entity);
+                }
+            } else if (effect_component.effect.is_expired(current_tick)) {
+                registry.remove<EffectComponent>(entity);
+            }
+        });
 }
 
-template <class Effect>
-void expire_single_stack_effect(context& ctx, entt::entity entity) {
-    Effect* effect_ptr = ctx.registry.template try_get<Effect>(entity);
-    if (effect_ptr && effect_ptr->stack.is_expired(ctx.current_tick)) {
-        ctx.registry.template remove<Effect>(entity);
-    }
-}
+void expire_non_damaging_effects(registry_t& registry, tick_t current_tick) {
+    expire_end_of_life_effects<component::aegis>(registry, current_tick);
+    expire_end_of_life_effects<component::alacrity>(registry, current_tick);
+    expire_end_of_life_effects<component::fury>(registry, current_tick);
+    expire_end_of_life_effects<component::might>(registry, current_tick);
+    expire_end_of_life_effects<component::quickness>(registry, current_tick);
+    expire_end_of_life_effects<component::resolution>(registry, current_tick);
 
-void expire_non_damaging_effects(context& ctx) {
-    ctx.registry.view<component::is_character>().each([&](const entt::entity entity) {
-        // Boons
-        expire_multi_stack_effect<component::might>(ctx, entity);
-        expire_single_stack_effect<component::fury>(ctx, entity);
-        expire_single_stack_effect<component::quickness>(ctx, entity);
-        expire_single_stack_effect<component::resolution>(ctx, entity);
-        expire_single_stack_effect<component::aegis>(ctx, entity);
-
-        // Conditions
-        expire_multi_stack_effect<component::vulnerability>(ctx, entity);
-
-        // Unique effects
-        expire_multi_stack_effect<component::symbolic_avenger>(ctx, entity, false);
-    });
+    expire_end_of_life_effects<component::vulnerability>(registry, current_tick);
 }
 
 }  // namespace gw2combat::system

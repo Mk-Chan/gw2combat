@@ -1,55 +1,41 @@
 #ifndef GW2COMBAT_SYSTEM_SYSTEM_HPP
 #define GW2COMBAT_SYSTEM_SYSTEM_HPP
 
-#include <entt/entt.hpp>
-
-#include "gw2combat/entity.hpp"
 #include "gw2combat/types.hpp"
-
-#include "gw2combat/rotation.hpp"
+#include "gw2combat/utilities.hpp"
 
 namespace gw2combat::system {
 
-struct context {
-    tick_t current_tick;
-    tick_t tick_rate;
-    entt::registry& registry;
-    std::optional<predetermined_rotation> rotation = std::nullopt;
-};
+extern void run_systems(registry_t& registry, tick_t current_tick);
 
-extern void incoming_condition_application(context& ctx);
-extern void incoming_strike_detection(context& ctx);
+extern void combat_detection(registry_t& registry, tick_t current_tick);
 
-extern void incoming_strike_damage_multiplier_calculation(context& ctx);
-extern void incoming_condition_damage_multiplier_calculation(context& ctx);
-extern void outgoing_condition_damage_multiplier_calculation(context& ctx);
-extern void outgoing_strike_damage_multiplier_calculation(context& ctx);
+extern void character_command(registry_t& registry, tick_t current_tick);
+extern void cast_skills(registry_t& registry, tick_t current_tick);
 
-extern void calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast(context& ctx);
-extern void calculate_outgoing_strike_damage_for_casting_skill_no_after_cast(context& ctx);
+extern void incoming_condition_application(registry_t& registry, tick_t current_tick);
+extern void incoming_strike_detection(registry_t& registry, tick_t current_tick);
 
-extern void incoming_strike_damage_calculation(context& ctx);
-extern void pulse_conditions(context& ctx);
+extern void incoming_strike_damage_multiplier_calculation(registry_t& registry,
+                                                          tick_t current_tick);
+extern void incoming_condition_damage_multiplier_calculation(registry_t& registry,
+                                                             tick_t current_tick);
+extern void outgoing_condition_damage_multiplier_calculation(registry_t& registry,
+                                                             tick_t current_tick);
+extern void outgoing_strike_damage_multiplier_calculation(registry_t& registry,
+                                                          tick_t current_tick);
 
-extern void virtue_of_justice(context& ctx);
-extern void shield_of_wrath(context& ctx);
-extern void spirit_weapon(context& ctx);
-extern void symbol(context& ctx);
+extern void incoming_strike_damage_calculation(registry_t& registry, tick_t current_tick);
+extern void pulse_conditions(registry_t& registry, tick_t current_tick);
 
-extern void expire_damaging_effects(context& ctx);
-extern void expire_non_damaging_effects(context& ctx);
+extern void expire_damaging_effects(registry_t& registry, tick_t current_tick);
+extern void expire_non_damaging_effects(registry_t& registry, tick_t current_tick);
 
-extern void combat_detection(context& ctx);
-extern void effective_attributes_calculation(context& ctx);
-extern void character_command(context& ctx);
-extern void update_health(context& ctx);
-extern void downstate_detection(context& ctx);
-extern void update_animation_state(context& ctx);
+extern void effective_attributes_calculation(registry_t& registry, tick_t current_tick);
+extern void update_health(registry_t& registry, tick_t current_tick);
+extern void downstate_detection(registry_t& registry, tick_t current_tick);
 
-extern void perform_instant_cast_skills(context& ctx);
-extern void perform_successful_skill_cast_after_cast_effects(context& ctx);
-
-extern void run_systems(system::context& ctx);
+extern void destroy_after_rotation_entities(registry_t& registry, tick_t current_tick);
 
 }  // namespace gw2combat::system
 

@@ -6,17 +6,11 @@
 namespace gw2combat {
 
 struct skill_cast {
-    tick_t cast_time;
-    tick_t cast_duration;
+    tick_t cast_time{0};
     skills::skill skill;
 };
 
-struct predetermined_rotation {
-    int offset;
-    std::vector<skill_cast> skill_casts;
-};
-
-extern predetermined_rotation read_rotation(const std::string& path);
+extern std::vector<skill_cast> read_rotation(const std::string& path);
 
 }  // namespace gw2combat
 

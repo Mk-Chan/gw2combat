@@ -1,13 +1,11 @@
 #ifndef GW2COMBAT_ENTITY_HPP
 #define GW2COMBAT_ENTITY_HPP
 
-#include <entt/entt.hpp>
+#include "types.hpp"
 
 namespace gw2combat {
 
-extern std::unique_ptr<entt::entity> singleton_entity;
-
-extern void init_entities(entt::registry& registry);
+extern void init_entities(registry_t& registry);
 
 }  // namespace gw2combat
 

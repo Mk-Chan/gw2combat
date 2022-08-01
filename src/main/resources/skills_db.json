@@ -1,0 +1,167 @@
+{
+  "skills": [
+    {
+      "name": "Strike",
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.8,
+      "cast_duration": [600, 400],
+      "hit_on_tick_list": [[600], [400]],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": []
+    }, {
+      "name": "Vengeful Strike",
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.8,
+      "cast_duration": [840, 600],
+      "hit_on_tick_list": [[840], [600]],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": []
+    }, {
+      "name": "Wrathful Strike",
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 1.2,
+      "cast_duration": [1000, 675],
+      "hit_on_tick_list": [[1000], [675]],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": []
+    }, {
+      "name": "Whirling Wrath",
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.4125,
+      "cast_duration": [2002, 1470],
+      "hit_on_tick_list": [
+        [0, 154, 308, 462, 616, 770, 924, 1078, 1232, 1386, 1540, 1694, 1848, 2002],
+        [0, 113, 226, 339, 452, 565, 678, 791, 904, 1017, 1130, 1243, 1356, 1470]
+      ],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": ["WHIRL"]
+    }, {
+      "name": "Leap of Faith",
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 1.25,
+      "cast_duration": [1000, 720],
+      "hit_on_tick_list": [[1000], [720]],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": ["LEAP"]
+    }, {
+      "name": "Binding Blade",
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 1.0,
+      "cast_duration": [720, 475],
+      "hit_on_tick_list": [[720], [475]],
+      "on_hit_effect_applications": [{
+        "effect_type": "BINDING_BLADE",
+        "num_stacks": 1,
+        "duration": 10000,
+        "effect_direction": "OUTGOING"
+      }],
+      "child_entity_skills": [],
+      "tags": ["WHIRL"]
+    },
+    {
+      "name": "Symbol of Resolution",
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.0,
+      "cast_duration": [360, 240],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Symbol of Resolution Attack",
+          "weapon_type": "GREATSWORD",
+          "damage_coefficient": 0.6,
+          "cast_duration": [4000, 4000],
+          "hit_on_tick_list": [
+            [0, 1000, 2000, 3000, 4000],
+            [0, 1000, 2000, 3000, 4000]
+          ],
+          "on_hit_effect_applications": [],
+          "child_entity_skills": [],
+          "tags": ["SYMBOL", "LIGHT_FIELD"]
+        }
+      ],
+      "tags": []
+    },
+    {
+      "name": "Shield of Wrath",
+      "weapon_type": "FOCUS",
+      "damage_coefficient": 0.0,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Shield of Wrath Attack",
+          "weapon_type": "FOCUS",
+          "damage_coefficient": 2.5,
+          "cast_duration": [4000, 4000],
+          "hit_on_tick_list": [[4000], [4000]],
+          "on_hit_effect_applications": [],
+          "child_entity_skills": [],
+          "tags": []
+        }
+      ],
+      "tags": ["BLAST"]
+    },
+    {
+      "name": "Sword of Justice",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [900, 600],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Sword of Justice Attack",
+          "weapon_type": "EMPTY_HANDED",
+          "damage_coefficient": 0.72,
+          "cast_duration": [1850, 1850],
+          "hit_on_tick_list": [
+            [650, 1050, 1450, 1850],
+            [650, 1050, 1450, 1850]
+          ],
+          "on_hit_effect_applications": [],
+          "child_entity_skills": [],
+          "tags": ["SPIRIT_WEAPON"]
+        }
+      ],
+      "tags": []
+    },
+    {
+      "name": "Purging Flames",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [480, 320],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Purging Flames Attack",
+          "weapon_type": "EMPTY_HANDED",
+          "damage_coefficient": 0.2,
+          "cast_duration": [5000, 5000],
+          "hit_on_tick_list": [
+            [0, 1000, 2000, 3000, 4000, 5000],
+            [0, 1000, 2000, 3000, 4000, 5000]
+          ],
+          "on_hit_effect_applications": [
+            {
+              "effect_type": "BURNING",
+              "num_stacks": 1,
+              "duration": 4000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "child_entity_skills": [],
+          "tags": ["CONSECRATION"]
+        }
+      ],
+      "tags": []
+    }
+  ]
+}

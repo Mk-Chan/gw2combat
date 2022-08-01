@@ -3,41 +3,46 @@
 #include "gw2combat/system/system.hpp"
 
 #include "gw2combat/component/character/targeting.hpp"
-#include "gw2combat/component/condition/burning.hpp"
 #include "gw2combat/component/damage/outgoing_condition_application.hpp"
-#include "gw2combat/component/skills/guardian/binding_blade.hpp"
+#include "gw2combat/component/effect_components.hpp"
 
 namespace gw2combat::system {
 
-void incoming_condition_application(context& ctx) {
-    ctx.registry.view<component::outgoing_condition_application>().each(
-        [&](const entt::entity entity,
+void incoming_condition_application(registry_t& registry, tick_t current_tick) {
+    registry.view<component::targeting, component::outgoing_condition_application>().each(
+        [&](const component::targeting& targeting,
             const component::outgoing_condition_application& outgoing_condition_application) {
-            auto targeting_ptr = ctx.registry.try_get<component::targeting>(entity);
-            if (targeting_ptr) {
-                if (!outgoing_condition_application.burning_effects.empty()) {
-                    auto& target_burning = ctx.registry.get_or_emplace<component::burning>(
-                        targeting_ptr->entity, component::burning{});
-                    for (auto& burning_effect : outgoing_condition_application.burning_effects) {
-                        target_burning.stacks.push_back(burning_effect);
-                    }
-                    spdlog::info("tick: {}, added {} burning effects, target: {}",
-                                 ctx.current_tick,
-                                 outgoing_condition_application.burning_effects.size(),
-                                 static_cast<std::uint32_t>(targeting_ptr->entity));
+            if (!outgoing_condition_application.burning_effects.empty()) {
+                auto& target_burning = registry.get_or_emplace<component::burning>(
+                    targeting.entity, component::burning{});
+                for (auto& burning_effect : outgoing_condition_application.burning_effects) {
+                    target_burning.effect.add(burning_effect);
                 }
-                if (outgoing_condition_application.binding_blade_effect) {
-                    ctx.registry.emplace_or_replace<component::binding_blade>(
-                        targeting_ptr->entity,
-                        component::binding_blade{
-                            *outgoing_condition_application.binding_blade_effect});
-                    spdlog::info("tick: {}, added binding blade effects, target: {}, duration: {}",
-                                 ctx.current_tick,
-                                 static_cast<std::uint32_t>(targeting_ptr->entity),
-                                 outgoing_condition_application.binding_blade_effect->duration);
-                }
-                // NOTE: Bleeding, torment, confusion etc...
+                spdlog::info("tick: {}, entity: {}, added {} burning effects",
+                             current_tick,
+                             utils::get_name(targeting.entity, registry),
+                             outgoing_condition_application.burning_effects.size());
             }
+            if (!outgoing_condition_application.bleeding_effects.empty()) {
+                auto& target_bleeding = registry.get_or_emplace<component::bleeding>(
+                    targeting.entity, component::bleeding{});
+                for (auto& bleeding_effect : outgoing_condition_application.bleeding_effects) {
+                    target_bleeding.effect.add(bleeding_effect);
+                }
+                spdlog::info("tick: {}, entity: {}, added {} bleeding effects",
+                             current_tick,
+                             utils::get_name(targeting.entity, registry),
+                             outgoing_condition_application.bleeding_effects.size());
+            }
+            if (outgoing_condition_application.binding_blade_effect) {
+                registry.emplace_or_replace<component::binding_blade>(
+                    targeting.entity,
+                    component::binding_blade{*outgoing_condition_application.binding_blade_effect});
+                spdlog::info("tick: {}, entity: {}, added binding blade effect",
+                             current_tick,
+                             utils::get_name(targeting.entity, registry));
+            }
+            // NOTE: Torment, confusion etc...
         });
 }
 

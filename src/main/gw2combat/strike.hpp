@@ -1,15 +1,15 @@
 #ifndef GW2COMBAT_STRIKE_DAMAGE_HPP
 #define GW2COMBAT_STRIKE_DAMAGE_HPP
 
-#include <entt/entt.hpp>
-
-#include "types.hpp"
+#include "gw2combat/skills.hpp"
 
 namespace gw2combat {
 
 struct strike {
-    entt::entity source;
-    double damage;
+    entity_t source;
+    double outgoing_strike_damage_multiplier;
+    double critical_hit_multiplier;
+    skills::skill skill;
 };
 
 }  // namespace gw2combat

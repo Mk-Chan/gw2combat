@@ -3,40 +3,42 @@
 #include <spdlog/spdlog.h>
 
 #include "entity.hpp"
-#include "rotation.hpp"
-
+#include "skills.hpp"
 #include "system/system.hpp"
 
-#include "gw2combat/component/animation/animation.hpp"
 #include "gw2combat/component/character/downstate.hpp"
-#include "gw2combat/component/no_more_rotation.hpp"
+#include "gw2combat/component/character/is_actor.hpp"
+#include "gw2combat/component/skills/normal_cast_skill.hpp"
 
 namespace gw2combat {
 
 void game_loop() {
-    entt::registry registry;
-    predetermined_rotation rotation = read_rotation("src/test/resources/rotation.csv");
+    skills::SKILLS_DB.init("src/main/resources/skills_db.json");
+    // spdlog::info("{}", nlohmann::json{skills::SKILLS_DB}.dump());
+    // return;
+
+    registry_t registry;
 
     init_entities(registry);
-    system::context ctx{tick_t{0}, tick_t{1}, registry, std::make_optional(rotation)};
 
+    tick_t current_tick{0};
     bool reported_downstate = false;
     while (true) {
-        run_systems(ctx);
+        system::run_systems(registry, current_tick);
 
-        for (auto&& [entity] : ctx.registry.view<component::downstate>().each()) {
+        for (auto&& [entity] : registry.view<component::downstate>().each()) {
             spdlog::info("tick: {}, entity: {} is downstate!",
-                         ctx.current_tick,
-                         static_cast<std::uint32_t>(entity));
+                         current_tick,
+                         utils::get_name(entity, registry));
             reported_downstate = true;
         }
         if (reported_downstate) {
             break;
         }
 
-        ctx.current_tick += ctx.tick_rate;
+        current_tick += tick_t{1};
     }
-    spdlog::info("tick: {}, done!", ctx.current_tick);
+    spdlog::info("tick: {}, done!", current_tick);
 }
 
 }  // namespace gw2combat

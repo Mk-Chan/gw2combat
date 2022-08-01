@@ -7,14 +7,14 @@
 
 namespace gw2combat::system {
 
-void downstate_detection(context& ctx) {
-    ctx.registry.view<component::combat_stats>().each(
-        [&](const entt::entity entity, const component::combat_stats& combat_stats) {
+void downstate_detection(registry_t& registry, tick_t current_tick) {
+    registry.view<component::combat_stats>().each(
+        [&](entity_t entity, const component::combat_stats& combat_stats) {
             if (combat_stats.health == 0) {
-                ctx.registry.emplace_or_replace<component::downstate>(entity);
+                registry.emplace_or_replace<component::downstate>(entity);
                 // spdlog::info("entity: {}, now in downstate", static_cast<std::uint32_t>(entity));
             } else {
-                ctx.registry.remove<component::downstate>(entity);
+                registry.remove<component::downstate>(entity);
                 // spdlog::info("entity: {}, not in downstate", static_cast<std::uint32_t>(entity));
             }
         });

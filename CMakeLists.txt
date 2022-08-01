@@ -69,9 +69,6 @@ add_executable(
     src/main/gw2combat/system/update_health.cpp
     src/main/gw2combat/system/downstate_detection.cpp
     src/main/gw2combat/system/damage/pulse_conditions.cpp
-    src/main/gw2combat/system/update_animation_state.cpp
-    src/main/gw2combat/system/perform_instant_cast_skills.cpp
-    src/main/gw2combat/system/perform_successful_skill_cast_after_cast_effects.cpp
 
     src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
     src/main/gw2combat/system/damage/detection/incoming_condition_application.cpp
@@ -81,66 +78,13 @@ add_executable(
     src/main/gw2combat/system/damage/multipliers/outgoing_condition_damage_multiplier_calculation.cpp
     src/main/gw2combat/system/damage/multipliers/outgoing_strike_damage_multiplier_calculation.cpp
 
-    src/main/gw2combat/system/damage/calculation/burning.cpp
-    src/main/gw2combat/system/damage/calculation/binding_blade.cpp
-
-    src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast.cpp
-    src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_casting_skill_no_after_cast.cpp
     src/main/gw2combat/system/damage/incoming_strike_damage_calculation.cpp
     src/main/gw2combat/system/damage/expire_damaging_effects.cpp
 
-    src/main/gw2combat/system/profession/guardian/virtue_of_justice.cpp
-
-    src/main/gw2combat/system/skills/guardian/shield_of_wrath.cpp
-    src/main/gw2combat/system/skills/guardian/spirit_weapon.cpp
-    src/main/gw2combat/system/skills/guardian/symbol.cpp
-)
+    src/main/gw2combat/system/cast_skills.cpp
+    src/main/gw2combat/system/staged/trait_systems.hpp
+    src/main/gw2combat/system/destroy_after_rotation_entities.cpp
+    src/main/gw2combat/system/staged/skill_systems.hpp src/main/gw2combat/component/trait_components.hpp)
 target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 target_include_directories(gw2combat PRIVATE ${RAPIDCSV_INCLUDE_DIRS})
-
-# gw2combat_test
-add_executable(
-    gw2combat_test
-
-    src/test/gw2combat/game_loop.cpp
-
-    src/main/gw2combat/entity.cpp
-    src/main/gw2combat/skills.cpp
-    src/main/gw2combat/rotation.cpp
-
-    src/main/gw2combat/system/system.cpp
-    src/main/gw2combat/system/character_command.cpp
-    src/main/gw2combat/system/effective_attributes_calculation.cpp
-    src/main/gw2combat/system/expire_non_damaging_effects.cpp
-    src/main/gw2combat/system/combat_detection.cpp
-    src/main/gw2combat/system/update_health.cpp
-    src/main/gw2combat/system/downstate_detection.cpp
-    src/main/gw2combat/system/damage/pulse_conditions.cpp
-    src/main/gw2combat/system/update_animation_state.cpp
-    src/main/gw2combat/system/perform_instant_cast_skills.cpp
-    src/main/gw2combat/system/perform_successful_skill_cast_after_cast_effects.cpp
-
-    src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
-    src/main/gw2combat/system/damage/detection/incoming_condition_application.cpp
-
-    src/main/gw2combat/system/damage/multipliers/incoming_strike_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/incoming_condition_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/outgoing_condition_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/outgoing_strike_damage_multiplier_calculation.cpp
-
-    src/main/gw2combat/system/damage/calculation/burning.cpp
-    src/main/gw2combat/system/damage/calculation/binding_blade.cpp
-
-    src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_channeling_skill_no_after_cast.cpp
-    src/main/gw2combat/system/damage/calculate_outgoing_strike_damage_for_casting_skill_no_after_cast.cpp
-    src/main/gw2combat/system/damage/incoming_strike_damage_calculation.cpp
-    src/main/gw2combat/system/damage/expire_damaging_effects.cpp
-
-    src/main/gw2combat/system/profession/guardian/virtue_of_justice.cpp
-
-    src/main/gw2combat/system/skills/guardian/shield_of_wrath.cpp
-    src/main/gw2combat/system/skills/guardian/spirit_weapon.cpp
-    src/main/gw2combat/system/skills/guardian/symbol.cpp
-)
-target_link_libraries(gw2combat_test PRIVATE Catch2::Catch2WithMain fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 ###

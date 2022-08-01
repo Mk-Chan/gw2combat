@@ -23,6 +23,8 @@ struct effective_attributes {
     double critical_chance_pct;
     double critical_damage_pct;
     double condition_duration_pct;
+    // NOTE: Add other specific-condition durations as well
+    double burning_duration_pct;
     unsigned int max_health;
 
     // Dynamic attributes

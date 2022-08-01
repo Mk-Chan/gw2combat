@@ -7,12 +7,12 @@
 
 namespace gw2combat::system {
 
-void update_health(context& ctx) {
+void update_health(registry_t& registry, tick_t current_tick) {
     // TODO: Change this to take incoming_damage_history instead which persists across N ticks
     //       so that we can defer updates to combat_stats and process them at a greater interval
     //       than once per tick. Also implement incoming healing and incoming_healing_history later.
-    ctx.registry.view<component::effective_incoming_damage, component::combat_stats>().each(
-        [&](const entt::entity entity,
+    registry.view<component::effective_incoming_damage, component::combat_stats>().each(
+        [&](entity_t entity,
             const component::effective_incoming_damage& effective_incoming_damage,
             component::combat_stats& combat_stats) {
             auto rounded_effective_incoming_damage =
@@ -22,8 +22,10 @@ void update_health(context& ctx) {
             } else {
                 combat_stats.health -= rounded_effective_incoming_damage;
             }
-            spdlog::info(
-                "entity: {}, health: {}", static_cast<std::uint32_t>(entity), combat_stats.health);
+            spdlog::info("tick: {}, entity: {}, health: {}",
+                         current_tick,
+                         utils::get_name(entity, registry),
+                         combat_stats.health);
         });
 }
 
