@@ -11,6 +11,7 @@ git clone --recurse-submodules https://github.com/Mk-Chan/gw2combat
 ./build/debug/gw2combat
 ```
 
-- Currently only runs basic raid core-guard greatsword-only aa-chain only benchmark
+- Configure skills in src/main/resources/skills_db.json (instructions soon)
+- Configure rotation in src/main/resources/rotation.csv (only configured skills will work)
 
 ### Documentation in progress
