@@ -7,6 +7,8 @@
       "cast_duration": [600, 400],
       "hit_on_tick_list": [[600], [400]],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "tags": []
     }, {
@@ -16,6 +18,8 @@
       "cast_duration": [840, 600],
       "hit_on_tick_list": [[840], [600]],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "tags": []
     }, {
@@ -25,6 +29,8 @@
       "cast_duration": [1000, 675],
       "hit_on_tick_list": [[1000], [675]],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "tags": []
     }, {
@@ -37,8 +43,10 @@
         [0, 113, 226, 339, 452, 565, 678, 791, 904, 1017, 1130, 1243, 1356, 1470]
       ],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [],
-      "tags": ["WHIRL"]
+      "tags": ["WHIRL_FINISHER"]
     }, {
       "name": "Leap of Faith",
       "weapon_type": "GREATSWORD",
@@ -46,22 +54,28 @@
       "cast_duration": [1000, 720],
       "hit_on_tick_list": [[1000], [720]],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [],
-      "tags": ["LEAP"]
+      "tags": ["LEAP_FINISHER"]
     }, {
       "name": "Binding Blade",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 1.0,
       "cast_duration": [720, 475],
       "hit_on_tick_list": [[720], [475]],
-      "on_hit_effect_applications": [{
-        "effect_type": "BINDING_BLADE",
-        "num_stacks": 1,
-        "duration": 10000,
-        "effect_direction": "OUTGOING"
-      }],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BINDING_BLADE",
+          "num_stacks": 1,
+          "duration": 10000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [],
-      "tags": ["WHIRL"]
+      "tags": ["WHIRL_FINISHER"]
     },
     {
       "name": "Symbol of Resolution",
@@ -70,6 +84,8 @@
       "cast_duration": [360, 240],
       "hit_on_tick_list": [[], []],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [
         {
           "name": "Symbol of Resolution Attack",
@@ -81,6 +97,8 @@
             [0, 1000, 2000, 3000, 4000]
           ],
           "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
           "child_entity_skills": [],
           "tags": ["SYMBOL", "LIGHT_FIELD"]
         }
@@ -94,6 +112,8 @@
       "cast_duration": [0, 0],
       "hit_on_tick_list": [[], []],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [
         {
           "name": "Shield of Wrath Attack",
@@ -102,11 +122,13 @@
           "cast_duration": [4000, 4000],
           "hit_on_tick_list": [[4000], [4000]],
           "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
           "child_entity_skills": [],
           "tags": []
         }
       ],
-      "tags": ["BLAST"]
+      "tags": ["BLAST_FINISHER"]
     },
     {
       "name": "Sword of Justice",
@@ -115,6 +137,8 @@
       "cast_duration": [900, 600],
       "hit_on_tick_list": [[], []],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [
         {
           "name": "Sword of Justice Attack",
@@ -126,6 +150,8 @@
             [650, 1050, 1450, 1850]
           ],
           "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
           "child_entity_skills": [],
           "tags": ["SPIRIT_WEAPON"]
         }
@@ -139,6 +165,8 @@
       "cast_duration": [480, 320],
       "hit_on_tick_list": [[], []],
       "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
       "child_entity_skills": [
         {
           "name": "Purging Flames Attack",
@@ -157,8 +185,45 @@
               "effect_direction": "OUTGOING"
             }
           ],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
           "child_entity_skills": [],
           "tags": ["CONSECRATION"]
+        }
+      ],
+      "tags": []
+    },
+    {
+      "name": "Zealot's Flame",
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.0,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Zealot's Flame Pulse",
+          "weapon_type": "TORCH",
+          "damage_coefficient": 0.0,
+          "cast_duration": [3000, 3000],
+          "hit_on_tick_list": [[], []],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [
+            [0, 1000, 2000, 3000],
+            [0, 1000, 2000, 3000]
+          ],
+          "on_pulse_effect_applications": [
+            {
+              "effect_type": "BURNING",
+              "num_stacks": 1,
+              "duration": 3000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "child_entity_skills": [],
+          "tags": []
         }
       ],
       "tags": []

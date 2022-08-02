@@ -5,7 +5,8 @@
 
 #include "types.hpp"
 
-#include "gw2combat/component/damage/outgoing_damage_source.hpp"
+#include "effects.hpp"
+#include "gw2combat/component/damage/source_entity.hpp"
 
 namespace gw2combat::utils {
 
@@ -16,19 +17,45 @@ namespace gw2combat::utils {
     return std::string{registry.ctx().at<entt::hashed_string>(to_u32(entity)).data()};
 }
 
-[[nodiscard]] static inline entity_t get_damage_source_entity(entity_t entity,
-                                                              registry_t& registry) {
+[[nodiscard]] static inline entity_t get_source_entity(entity_t entity, registry_t& registry) {
     entity_t current_entity = entity;
     while (true) {
         auto outgoing_damage_source_ptr =
-            registry.try_get<component::outgoing_damage_source>(current_entity);
+            registry.try_get<component::source_entity>(current_entity);
         if (outgoing_damage_source_ptr == nullptr) {
             break;
         }
 
-        current_entity = outgoing_damage_source_ptr->source;
+        current_entity = outgoing_damage_source_ptr->entity;
     }
     return current_entity;
+}
+
+[[nodiscard]] static inline double get_critical_hit_multiplier(
+    const component::effective_attributes& effective_attributes) {
+    return (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
+                      (effective_attributes.critical_damage_pct / 100.0 - 1.0));
+}
+
+[[nodiscard]] static inline tick_t get_effective_condition_duration(
+    tick_t duration,
+    effects::applied_effect_type effect_type,
+    const component::effective_attributes& effective_attributes) {
+    auto calc = [&](double special_condition_duration_pct) {
+        return tick_t{(unsigned int)((double)duration *
+                                     (1.0 + std::max(effective_attributes.condition_duration_pct,
+                                                     special_condition_duration_pct) /
+                                                100.0))};
+    };
+
+    switch (effect_type) {
+        case effects::applied_effect_type::BURNING:
+            return calc(effective_attributes.burning_duration_pct);
+        case effects::applied_effect_type::BLEEDING:
+            return calc(effective_attributes.bleeding_duration_pct);
+        case effects::applied_effect_type::BINDING_BLADE:
+            return tick_t{duration};
+    }
 }
 
 static inline int critical_chance_pct_to_precision(double critical_chance_pct) {

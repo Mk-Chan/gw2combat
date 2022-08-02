@@ -16,9 +16,9 @@ void symbolic_power(registry_t& registry, tick_t current_tick) {
 
     registry.view<component::outgoing_strike_damage>().each(
         [&](entity_t entity, component::outgoing_strike_damage& outgoing_strike_damage) {
-            auto damage_source_entity = utils::get_damage_source_entity(entity, registry);
+            auto source_entity = utils::get_source_entity(entity, registry);
             bool is_symbolic_power_traited =
-                registry.template any_of<component::symbolic_power>(damage_source_entity);
+                registry.template any_of<component::symbolic_power>(source_entity);
             if (is_symbolic_power_traited) {
                 for (strike& strike : outgoing_strike_damage.strikes) {
                     bool is_symbol_strike =
@@ -48,14 +48,13 @@ void symbolic_avenger(registry_t& registry, tick_t current_tick) {
                               strike.skill.tags.end(),
                               skills::skill_tag::SYMBOL) != strike.skill.tags.end();
                 if (is_symbol_strike) {
-                    auto damage_source_entity =
-                        utils::get_damage_source_entity(strike.source, registry);
-                    if (registry.any_of<component::symbolic_avenger_trait>(damage_source_entity)) {
+                    auto source_entity = utils::get_source_entity(strike.source, registry);
+                    if (registry.any_of<component::symbolic_avenger_trait>(source_entity)) {
                         auto& symbolic_avenger_effect =
                             registry.get_or_emplace<component::symbolic_avenger_effect>(
-                                damage_source_entity);
+                                source_entity);
                         symbolic_avenger_effect.effect.add(
-                            effects::symbolic_avenger{damage_source_entity, current_tick, 15'000});
+                            effects::symbolic_avenger{source_entity, current_tick, 15'000});
                     }
                 }
             }

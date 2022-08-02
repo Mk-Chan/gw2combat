@@ -4,7 +4,7 @@
 
 #include "gw2combat/component/character/is_actor.hpp"
 #include "gw2combat/component/damage/multipliers/outgoing_condition_damage_multiplier.hpp"
-#include "gw2combat/component/damage/outgoing_damage_source.hpp"
+#include "gw2combat/component/damage/source_entity.hpp"
 #include "gw2combat/component/gear/sigil/sigil_bursting.hpp"
 
 namespace gw2combat::system {
@@ -20,12 +20,11 @@ void outgoing_condition_damage_multiplier_calculation(registry_t& registry, tick
         .each([&](entity_t entity) {
             registry.emplace<component::outgoing_condition_damage_multiplier>(entity);
         });
-    registry.view<component::outgoing_damage_source>().each(
-        [&](entity_t entity, const component::outgoing_damage_source& outgoing_damage_source) {
-            auto damage_source_entity =
-                utils::get_damage_source_entity(outgoing_damage_source.source, registry);
+    registry.view<component::source_entity>().each(
+        [&](entity_t entity, const component::source_entity& outgoing_damage_source) {
+            auto source_entity = utils::get_source_entity(outgoing_damage_source.entity, registry);
             auto& source_outgoing_condition_damage_multiplier =
-                registry.get<component::outgoing_condition_damage_multiplier>(damage_source_entity);
+                registry.get<component::outgoing_condition_damage_multiplier>(source_entity);
             registry.emplace_or_replace<component::outgoing_condition_damage_multiplier>(
                 entity, source_outgoing_condition_damage_multiplier);
         });

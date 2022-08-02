@@ -6,7 +6,7 @@
 #include "gw2combat/component/character/effective_attributes.hpp"
 #include "gw2combat/component/character/targeting.hpp"
 #include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
-#include "gw2combat/component/damage/outgoing_damage_source.hpp"
+#include "gw2combat/component/damage/source_entity.hpp"
 #include "gw2combat/component/effect_components.hpp"
 #include "gw2combat/component/gear/rune/rune_scholar.hpp"
 #include "gw2combat/component/gear/sigil/sigil_force.hpp"
@@ -102,12 +102,11 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             registry.emplace<component::outgoing_strike_damage_multiplier>(
                 entity, component::outgoing_strike_damage_multiplier{final_multiplier});
         });
-    registry.view<component::outgoing_damage_source>().each(
-        [&](entity_t entity, const component::outgoing_damage_source& outgoing_damage_source) {
-            auto damage_source_entity =
-                utils::get_damage_source_entity(outgoing_damage_source.source, registry);
+    registry.view<component::source_entity>().each(
+        [&](entity_t entity, const component::source_entity& outgoing_damage_source) {
+            auto source_entity = utils::get_source_entity(outgoing_damage_source.entity, registry);
             auto& source_outgoing_strike_damage_multiplier =
-                registry.get<component::outgoing_strike_damage_multiplier>(damage_source_entity);
+                registry.get<component::outgoing_strike_damage_multiplier>(source_entity);
             registry.emplace<component::outgoing_strike_damage_multiplier>(
                 entity, source_outgoing_strike_damage_multiplier);
         });

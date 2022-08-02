@@ -5,8 +5,8 @@
 
 namespace gw2combat::component {
 
-struct outgoing_damage_source {
-    entity_t source;
+struct source_entity {
+    entity_t entity;
 };
 
 }  // namespace gw2combat::component

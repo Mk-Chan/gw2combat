@@ -25,6 +25,8 @@ struct effective_attributes {
     double condition_duration_pct;
     // NOTE: Add other specific-condition durations as well
     double burning_duration_pct;
+    double bleeding_duration_pct;
+
     unsigned int max_health;
 
     // Dynamic attributes

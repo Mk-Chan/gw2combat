@@ -25,6 +25,6 @@ struct unscathed_contender {
     constexpr static double strike_damage_increase_if_has_aegis = 0.2;
 };
 
-}
+}  // namespace gw2combat::component
 
 #endif  // GW2COMBAT_COMPONENT_TRAITS_TRAIT_COMPONENTS_HPP

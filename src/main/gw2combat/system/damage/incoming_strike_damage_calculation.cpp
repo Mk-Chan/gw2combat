@@ -21,11 +21,10 @@ void incoming_strike_damage_calculation(registry_t& registry, tick_t current_tic
                 incoming_damage.strikes.end(),
                 0.0,
                 [&](const double accumulated, const strike& next) {
-                    double this_strike_damage = next.outgoing_strike_damage_multiplier *
-                                                next.critical_hit_multiplier *
-                                                weapon_strength(next.skill.weapon_type) *
-                                                next.skill.damage_coefficient *
-                                                incoming_strike_damage_multiplier.multiplier;
+                    double this_strike_damage =
+                        next.outgoing_strike_damage_multiplier * next.critical_hit_multiplier *
+                        weapon_strength(next.skill.weapon_type) * next.skill.damage_coefficient *
+                        incoming_strike_damage_multiplier.multiplier;
                     spdlog::info("tick: {}, entity: {}, incoming strike damage: {}, from skill: {}",
                                  current_tick,
                                  utils::get_name(entity, registry),

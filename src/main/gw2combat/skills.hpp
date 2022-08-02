@@ -12,9 +12,9 @@ namespace gw2combat::skills {
 
 enum class skill_tag : std::uint32_t
 {
-    WHIRL,
-    LEAP,
-    BLAST,
+    WHIRL_FINISHER,
+    LEAP_FINISHER,
+    BLAST_FINISHER,
 
     LIGHT_FIELD,
 
@@ -22,21 +22,14 @@ enum class skill_tag : std::uint32_t
     SPIRIT_WEAPON,
 };
 
-enum class applied_effect_type : std::uint32_t
-{
-    BURNING,
-
-    BINDING_BLADE,
-};
-
 enum class applied_effect_direction : std::uint8_t
 {
     OUTGOING,
-    // INCOMING,  // TODO: implement an incoming effects component
+    INCOMING,
 };
 
 struct effect_application {
-    applied_effect_type effect_type;
+    effects::applied_effect_type effect_type;
     applied_effect_direction effect_direction;
     size_t num_stacks;
     tick_t duration;
@@ -49,6 +42,8 @@ struct skill {
     std::array<tick_t, 2> cast_duration;
     std::array<std::vector<tick_t>, 2> hit_on_tick_list;
     std::vector<effect_application> on_hit_effect_applications;
+    std::array<std::vector<tick_t>, 2> pulse_on_tick_list;
+    std::vector<effect_application> on_pulse_effect_applications;
     std::vector<skill> child_entity_skills;
     std::vector<skill_tag> tags;
 
@@ -68,24 +63,19 @@ extern skills_db SKILLS_DB;
 
 NLOHMANN_JSON_SERIALIZE_ENUM(skill_tag,
                              {
-                                 {skill_tag::WHIRL, "WHIRL"},
-                                 {skill_tag::LEAP, "LEAP"},
-                                 {skill_tag::BLAST, "BLAST"},
+                                 {skill_tag::WHIRL_FINISHER, "WHIRL_FINISHER"},
+                                 {skill_tag::LEAP_FINISHER, "LEAP_FINISHER"},
+                                 {skill_tag::BLAST_FINISHER, "BLAST_FINISHER"},
 
                                  {skill_tag::LIGHT_FIELD, "LIGHT_FIELD"},
 
                                  {skill_tag::SYMBOL, "SYMBOL"},
                                  {skill_tag::SPIRIT_WEAPON, "SPIRIT_WEAPON"},
                              })
-NLOHMANN_JSON_SERIALIZE_ENUM(applied_effect_type,
-                             {
-                                 {applied_effect_type::BURNING, "BURNING"},
-                                 {applied_effect_type::BINDING_BLADE, "BINDING_BLADE"},
-                             })
 NLOHMANN_JSON_SERIALIZE_ENUM(applied_effect_direction,
                              {
                                  {applied_effect_direction::OUTGOING, "OUTGOING"},
-                                 //{applied_effect_direction::INCOMING, "INCOMING"},
+                                 {applied_effect_direction::INCOMING, "INCOMING"},
                              })
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(effect_application,
@@ -100,6 +90,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(skill,
                                    cast_duration,
                                    hit_on_tick_list,
                                    on_hit_effect_applications,
+                                   pulse_on_tick_list,
+                                   on_pulse_effect_applications,
                                    child_entity_skills,
                                    tags)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(skills_db, skills)

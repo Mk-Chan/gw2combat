@@ -34,6 +34,7 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
                     .critical_damage_pct = static_attributes.critical_damage_pct,
                     .condition_duration_pct = static_attributes.condition_duration_pct,
                     .burning_duration_pct = static_attributes.condition_duration_pct,
+                    .bleeding_duration_pct = static_attributes.condition_duration_pct,
                     .max_health = static_attributes.max_health,
                     .endurance = dynamic_attributes.max_endurance,
                     .endurance_gain_pct = dynamic_attributes.endurance_gain_pct});
@@ -54,30 +55,30 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
                     component::rune_balthazar::added_burning_duration_pct;
             }
 
-             //spdlog::info(
-             //    "entity: {}, effective_attributes: {}",
-             //    utils::get_name(entity, registry),
-             //    nlohmann::json{
-             //        {"power", effective_attributes.power},
-             //        {"precision", effective_attributes.precision},
-             //        //{"toughness", effective_attributes.toughness},
-             //        //{"vitality", effective_attributes.vitality},
-             //        //{"concentration", effective_attributes.concentration},
-             //        {"condition_damage", effective_attributes.condition_damage},
-             //        {"expertise", effective_attributes.expertise},
-             //        //{"ferocity", effective_attributes.ferocity},
-             //        //{"healing_power", effective_attributes.healing_power},
-             //        {"armor", effective_attributes.armor},
-             //        //{"boon_duration_pct", effective_attributes.boon_duration_pct},
-             //        {"critical_chance_pct", effective_attributes.critical_chance_pct},
-             //        {"critical_damage_pct", effective_attributes.critical_damage_pct},
-             //        {"condition_duration_pct", effective_attributes.condition_duration_pct},
-             //        {"burning_duration_pct", effective_attributes.burning_duration_pct},
-             //        //{"health", effective_attributes.health},
-             //        //{"endurance", effective_attributes.endurance},
-             //        //{"endurance_gain_pct", effective_attributes.endurance_gain_pct},
-             //    }
-             //        .dump());
+            // spdlog::info(
+            //     "entity: {}, effective_attributes: {}",
+            //     utils::get_name(entity, registry),
+            //     nlohmann::json{
+            //         {"power", effective_attributes.power},
+            //         {"precision", effective_attributes.precision},
+            //         //{"toughness", effective_attributes.toughness},
+            //         //{"vitality", effective_attributes.vitality},
+            //         //{"concentration", effective_attributes.concentration},
+            //         {"condition_damage", effective_attributes.condition_damage},
+            //         {"expertise", effective_attributes.expertise},
+            //         //{"ferocity", effective_attributes.ferocity},
+            //         //{"healing_power", effective_attributes.healing_power},
+            //         {"armor", effective_attributes.armor},
+            //         //{"boon_duration_pct", effective_attributes.boon_duration_pct},
+            //         {"critical_chance_pct", effective_attributes.critical_chance_pct},
+            //         {"critical_damage_pct", effective_attributes.critical_damage_pct},
+            //         {"condition_duration_pct", effective_attributes.condition_duration_pct},
+            //         {"burning_duration_pct", effective_attributes.burning_duration_pct},
+            //         //{"health", effective_attributes.health},
+            //         //{"endurance", effective_attributes.endurance},
+            //         //{"endurance_gain_pct", effective_attributes.endurance_gain_pct},
+            //     }
+            //         .dump());
         });
 }
 

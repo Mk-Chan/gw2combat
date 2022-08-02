@@ -30,9 +30,11 @@ void clear_temporary_components(registry_t& registry) {
                    component::outgoing_condition_damage_multiplier,
 
                    component::outgoing_strike_damage,
-                   component::outgoing_condition_application,
-
                    component::incoming_strike_damage,
+
+                   component::outgoing_condition_application,
+                   component::incoming_condition_application,
+
                    component::effective_incoming_damage>();
     registry.ctx().erase<component::pulse_conditions>();
 }
@@ -81,6 +83,7 @@ void run_systems(registry_t& registry, tick_t current_tick) {
     run_staged_systems<combat_stage::AFTER_INCOMING_STRIKE_DAMAGE_CALCULATION>(registry,
                                                                                current_tick);
 
+    system::incoming_condition_detection(registry, current_tick);
     system::incoming_condition_application(registry, current_tick);
     system::pulse_conditions(registry, current_tick);
 

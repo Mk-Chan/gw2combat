@@ -3,7 +3,7 @@
 
 #include "gw2combat/system/system.hpp"
 
-#include "gw2combat/component/damage/outgoing_damage_source.hpp"
+#include "gw2combat/component/damage/source_entity.hpp"
 #include "gw2combat/component/profession_components.hpp"
 
 namespace gw2combat::system {
@@ -17,10 +17,9 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
     registry.view<component::incoming_strike_damage>().each(
         [&](const component::incoming_strike_damage& incoming_strike_damage) {
             for (const auto& strike : incoming_strike_damage.strikes) {
-                entity_t damage_source_entity =
-                    utils::get_damage_source_entity(strike.source, registry);
+                entity_t source_entity = utils::get_source_entity(strike.source, registry);
                 auto virtue_of_justice_ptr =
-                    registry.try_get<component::virtue_of_justice>(damage_source_entity);
+                    registry.try_get<component::virtue_of_justice>(source_entity);
                 if (virtue_of_justice_ptr) {
                     ++virtue_of_justice_ptr->num_unaccounted_hits;
                 }
@@ -38,14 +37,15 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
                 virtue_of_justice.num_unaccounted_hits %=
                     virtue_of_justice.number_of_ticks_for_burning_application;
 
-                double condition_duration_multiplier =
-                    (1.0 + effective_attributes.condition_duration_pct / 100.0);
-                auto duration = tick_t{(unsigned int)(2'000.0 * condition_duration_multiplier)};
-
+                auto effective_duration = utils::get_effective_condition_duration(
+                    2'000, effects::applied_effect_type::BURNING, effective_attributes);
                 auto& outgoing_condition_application =
                     registry.get_or_emplace<component::outgoing_condition_application>(entity);
-                outgoing_condition_application.append_burning_effects(
-                    effects::burning{entity, current_tick, duration}, burning_stacks_to_apply);
+                outgoing_condition_application.effect_applications.template emplace_back(
+                    effects::effect_application{effects::applied_effect_type::BURNING,
+                                                burning_stacks_to_apply,
+                                                effective_duration,
+                                                entity});
 
                 spdlog::info("tick: {}, entity: {}, outgoing burning from virtue_of_justice",
                              current_tick,

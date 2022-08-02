@@ -15,6 +15,7 @@ extern void cast_skills(registry_t& registry, tick_t current_tick);
 
 extern void incoming_condition_application(registry_t& registry, tick_t current_tick);
 extern void incoming_strike_detection(registry_t& registry, tick_t current_tick);
+extern void incoming_condition_detection(registry_t& registry, tick_t current_tick);
 
 extern void incoming_strike_damage_multiplier_calculation(registry_t& registry,
                                                           tick_t current_tick);

@@ -8,6 +8,7 @@ namespace gw2combat::component {
 struct normal_cast_skill {
     skills::skill skill;
     size_t next_hit_idx{0};
+    size_t next_pulse_idx{0};
     tick_t progress{0};
 };
 

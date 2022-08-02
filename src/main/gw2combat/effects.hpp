@@ -65,9 +65,6 @@ struct effect {
     [[nodiscard]] inline effect_type const* get_child_type_const_ptr() const {
         return static_cast<effect_type const*>(this);
     }
-    [[nodiscard]] inline effect_type* get_child_type_ptr() {
-        return static_cast<effect_type*>(this);
-    }
 };
 
 template <typename Effect>
@@ -129,6 +126,13 @@ struct stacking_effect {
     inline void add(const effect_type& effect) {
         if (stacks.size() < max_stored_stacks) {
             stacks.emplace_back(effect);
+        }
+    }
+    inline void add(const effect_type& effect, size_t num_stacks) {
+        for (size_t i = 0; i < num_stacks; ++i) {
+            if (stacks.size() < max_stored_stacks) {
+                stacks.emplace_back(effect);
+            }
         }
     }
 
@@ -206,6 +210,28 @@ struct binding_blade : effect<binding_blade> {
 struct symbolic_avenger : effect<symbolic_avenger> {
     using effect<symbolic_avenger>::effect;
 };
+
+enum class applied_effect_type : std::uint32_t
+{
+    BURNING,
+    BLEEDING,
+
+    BINDING_BLADE,
+};
+
+struct effect_application {
+    effects::applied_effect_type effect_type;
+    size_t num_stacks;
+    tick_t duration;
+    entity_t source;
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(applied_effect_type,
+                             {
+                                 {applied_effect_type::BURNING, "BURNING"},
+                                 {applied_effect_type::BLEEDING, "BLEEDING"},
+                                 {applied_effect_type::BINDING_BLADE, "BINDING_BLADE"},
+                             })
 
 }  // namespace gw2combat::effects
 

@@ -35,6 +35,7 @@ void pulse_conditions(registry_t& registry, tick_t current_tick) {
     }
 
     buffer_effect_damage<component::burning>(registry, current_tick);
+    buffer_effect_damage<component::bleeding>(registry, current_tick);
     buffer_effect_damage<component::binding_blade, false>(registry, current_tick);
 
     // Apply and reset any buffered condition damage

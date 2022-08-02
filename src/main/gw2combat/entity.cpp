@@ -17,6 +17,48 @@
 
 namespace gw2combat {
 
+entity_t build_cfb(registry_t& registry) {
+    auto entity = registry.create();
+    auto cfb_gear_food_util = component::static_attributes{.power = 2159,
+                                                           .precision = 1842,
+                                                           .toughness = 1000,
+                                                           .vitality = 1235,
+                                                           .concentration = 0,
+                                                           .condition_damage = 2088,
+                                                           .expertise = 451,
+                                                           .ferocity = 150,
+                                                           .healing_power = 0,
+                                                           .armor = 2271,
+                                                           .boon_duration_pct = 0.0,
+                                                           .critical_chance_pct = 45.09,
+                                                           .critical_damage_pct = 160.0,
+                                                           .condition_duration_pct = 30.06,
+                                                           .max_health = 15394};
+    registry.emplace<component::static_attributes>(entity, cfb_gear_food_util);
+    registry.emplace<component::dynamic_attributes>(
+        entity, component::dynamic_attributes{.max_endurance = 100});
+
+    // Replace with correct components
+    registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{3});
+    registry.emplace<component::fiery_wrath>(entity);
+    registry.emplace<component::inspired_virtue>(entity);
+    registry.emplace<component::retribution>(entity);
+    registry.emplace<component::symbolic_power>(entity);
+    registry.emplace<component::symbolic_exposure>(entity);
+    registry.emplace<component::symbolic_avenger_trait>(entity);
+    registry.emplace<component::unscathed_contender>(entity);
+    registry.emplace<component::sigil_force>(entity);
+    registry.emplace<component::sigil_impact>(entity);
+    // Replace with correct components - end
+
+    registry.emplace<component::rune_balthazar>(entity);
+
+    registry.emplace<component::is_actor>(entity);
+    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player1"_hs);
+
+    return entity;
+}
+
 entity_t build_player1(registry_t& registry) {
     auto entity = registry.create();
 
@@ -117,6 +159,7 @@ entity_t build_golem_boon_condi_provider(entt::registry& registry) {
 
 void init_entities(entt::registry& registry) {
     auto player1 = build_player1(registry);
+    // auto player1 = build_cfb(registry);
     auto golem = build_medium_kitty_golem(registry);
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 

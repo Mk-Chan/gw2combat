@@ -71,6 +71,7 @@ add_executable(
     src/main/gw2combat/system/damage/pulse_conditions.cpp
 
     src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
+    src/main/gw2combat/system/damage/detection/incoming_condition_detection.cpp
     src/main/gw2combat/system/damage/detection/incoming_condition_application.cpp
 
     src/main/gw2combat/system/damage/multipliers/incoming_strike_damage_multiplier_calculation.cpp
@@ -84,7 +85,8 @@ add_executable(
     src/main/gw2combat/system/cast_skills.cpp
     src/main/gw2combat/system/staged/trait_systems.hpp
     src/main/gw2combat/system/destroy_after_rotation_entities.cpp
-    src/main/gw2combat/system/staged/skill_systems.hpp src/main/gw2combat/component/trait_components.hpp)
+    src/main/gw2combat/system/staged/skill_systems.hpp
+    src/main/gw2combat/component/trait_components.hpp)
 target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 target_include_directories(gw2combat PRIVATE ${RAPIDCSV_INCLUDE_DIRS})
 ###
