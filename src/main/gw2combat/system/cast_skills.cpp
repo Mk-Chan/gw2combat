@@ -112,15 +112,15 @@ void do_normal_cast_skill(registry_t& registry,
     bool has_quickness = registry.any_of<component::quickness>(entity);
 
     const skills::skill& skill = normal_cast_skill.skill;
-    if (normal_cast_skill.next_pulse_idx < skill.pulse_on_tick_list[has_quickness].size() &&
-        normal_cast_skill.progress >=
-            skill.pulse_on_tick_list[has_quickness][normal_cast_skill.next_pulse_idx]) {
+    while (normal_cast_skill.next_pulse_idx < skill.pulse_on_tick_list[has_quickness].size() &&
+           normal_cast_skill.progress >=
+               skill.pulse_on_tick_list[has_quickness][normal_cast_skill.next_pulse_idx]) {
         do_pulse(registry, entity, skill);
         ++normal_cast_skill.next_pulse_idx;
     }
-    if (normal_cast_skill.next_hit_idx < skill.hit_on_tick_list[has_quickness].size() &&
-        normal_cast_skill.progress >=
-            skill.hit_on_tick_list[has_quickness][normal_cast_skill.next_hit_idx]) {
+    while (normal_cast_skill.next_hit_idx < skill.hit_on_tick_list[has_quickness].size() &&
+           normal_cast_skill.progress >=
+               skill.hit_on_tick_list[has_quickness][normal_cast_skill.next_hit_idx]) {
         do_strike(registry, entity, skill);
         ++normal_cast_skill.next_hit_idx;
     }
