@@ -10,6 +10,7 @@
 #include "gw2combat/component/damage/outgoing_condition_application.hpp"
 #include "gw2combat/component/damage/outgoing_strike_damage.hpp"
 #include "gw2combat/component/effect_components.hpp"
+#include "gw2combat/component/gear/bundles.hpp"
 #include "gw2combat/component/skills/instant_cast_skills.hpp"
 #include "gw2combat/component/skills/normal_cast_skill.hpp"
 
@@ -32,6 +33,12 @@ void do_weapon_swap(entity_t entity, registry_t& registry) {
 }
 
 void do_pulse(registry_t& registry, entity_t entity, const skills::skill& skill) {
+    assert(utils::get_source_entity(entity, registry) != entity ||
+                   skill.weapon_type == weapon_type::EMPTY_HANDED ||
+                   registry.any_of<component::bundle>(entity)
+               ? true
+               : utils::has_weapon_type(skill.weapon_type, entity, registry));
+
     entity_t source_entity = utils::get_source_entity(entity, registry);
     auto& effective_attributes = registry.get<component::effective_attributes>(source_entity);
     auto& outgoing_condition_application =
@@ -63,6 +70,12 @@ void do_pulse(registry_t& registry, entity_t entity, const skills::skill& skill)
 }
 
 void do_strike(registry_t& registry, entity_t entity, const skills::skill& skill) {
+    assert(utils::get_source_entity(entity, registry) != entity ||
+                   skill.weapon_type == weapon_type::EMPTY_HANDED ||
+                   registry.any_of<component::bundle>(entity)
+               ? true
+               : utils::has_weapon_type(skill.weapon_type, entity, registry));
+
     entity_t source_entity = utils::get_source_entity(entity, registry);
     auto&& [effective_attributes, outgoing_strike_damage_multiplier] =
         registry.get<component::effective_attributes, component::outgoing_strike_damage_multiplier>(
@@ -93,10 +106,6 @@ void do_child_skills(registry_t& registry, entity_t entity, const skills::skill&
 }
 
 void do_instant_cast_skill(registry_t& registry, entity_t entity, const skills::skill& skill) {
-    if (skill.name == "Weapon Swap") {
-        do_weapon_swap(entity, registry);
-        return;
-    }
     if (!skill.pulse_on_tick_list[0].empty()) {
         do_pulse(registry, entity, skill);
     }
@@ -125,6 +134,9 @@ void do_normal_cast_skill(registry_t& registry,
         ++normal_cast_skill.next_hit_idx;
     }
     if (normal_cast_skill.progress >= skill.cast_duration[has_quickness]) {
+        if (normal_cast_skill.skill.name == "Weapon Swap") {
+            do_weapon_swap(entity, registry);
+        }
         do_child_skills(registry, entity, skill);
         registry.remove<component::normal_cast_skill>(entity);
         return;

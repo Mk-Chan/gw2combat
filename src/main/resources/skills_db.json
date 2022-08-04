@@ -1,6 +1,138 @@
 {
   "skills": [
     {
+      "name": "Sword of Wrath",
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.666,
+      "cast_duration": [525, 350],
+      "hit_on_tick_list": [[525], [350]],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": []
+    },
+    {
+      "name": "Sword Arc",
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.725,
+      "cast_duration": [770, 515],
+      "hit_on_tick_list": [[770], [515]],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": []
+    },
+    {
+      "name": "Sword Wave",
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.5,
+      "cast_duration": [1000, 675],
+      "hit_on_tick_list": [[1000, 1000, 1000], [675, 675, 675]],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": []
+    },
+    {
+      "name": "Symbol of Blades",
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.0,
+      "cast_duration": [825, 550],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Symbol of Blades Attack",
+          "weapon_type": "SWORD",
+          "damage_coefficient": 0.6,
+          "cast_duration": [4000, 4000],
+          "hit_on_tick_list": [
+            [0, 1000, 2000, 3000, 4000],
+            [0, 1000, 2000, 3000, 4000]
+          ],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "tags": ["SYMBOL", "LIGHT_FIELD"]
+        }
+      ],
+      "tags": []
+    },
+    {
+      "name": "Zealot's Defense",
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.6,
+      "cast_duration": [1800, 1200],
+      "hit_on_tick_list": [
+        [0, 257, 514, 771, 1028, 1285, 1542, 1800],
+        [0, 171, 342, 514, 685, 857, 1028, 1200]
+      ],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "tags": []
+    },
+    {
+      "name": "Ray of Judgment",
+      "weapon_type": "FOCUS",
+      "damage_coefficient": 0.0,
+      "cast_duration": [795, 530],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Ray of Judgment Attack",
+          "weapon_type": "FOCUS",
+          "damage_coefficient": 0.33,
+          "cast_duration": [6000, 6000],
+          "hit_on_tick_list": [
+            [0, 750, 1500, 2250, 3000, 3750, 4500, 5250, 6000],
+            [0, 750, 1500, 2250, 3000, 3750, 4500, 5250, 6000]
+          ],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "tags": []
+        }
+      ],
+      "tags": []
+    },
+    {
+      "name": "Shield of Wrath",
+      "weapon_type": "FOCUS",
+      "damage_coefficient": 0.0,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Shield of Wrath Attack",
+          "weapon_type": "FOCUS",
+          "damage_coefficient": 2.5,
+          "cast_duration": [4000, 4000],
+          "hit_on_tick_list": [[4000], [4000]],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "tags": []
+        }
+      ],
+      "tags": ["BLAST_FINISHER"]
+    },
+    {
       "name": "Strike",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 0.8,
@@ -11,7 +143,8 @@
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "tags": []
-    }, {
+    },
+    {
       "name": "Vengeful Strike",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 0.8,
@@ -22,7 +155,8 @@
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "tags": []
-    }, {
+    },
+    {
       "name": "Wrathful Strike",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 1.2,
@@ -33,7 +167,8 @@
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "tags": []
-    }, {
+    },
+    {
       "name": "Whirling Wrath",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 0.4125,
@@ -47,7 +182,8 @@
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "tags": ["WHIRL_FINISHER"]
-    }, {
+    },
+    {
       "name": "Leap of Faith",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 1.25,
@@ -58,7 +194,8 @@
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "tags": ["LEAP_FINISHER"]
-    }, {
+    },
+    {
       "name": "Binding Blade",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 1.0,
@@ -106,29 +243,16 @@
       "tags": []
     },
     {
-      "name": "Shield of Wrath",
-      "weapon_type": "FOCUS",
-      "damage_coefficient": 0.0,
+      "name": "Smite Condition",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.85,
       "cast_duration": [0, 0],
-      "hit_on_tick_list": [[], []],
+      "hit_on_tick_list": [[0], [0]],
       "on_hit_effect_applications": [],
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
-      "child_entity_skills": [
-        {
-          "name": "Shield of Wrath Attack",
-          "weapon_type": "FOCUS",
-          "damage_coefficient": 2.5,
-          "cast_duration": [4000, 4000],
-          "hit_on_tick_list": [[4000], [4000]],
-          "on_hit_effect_applications": [],
-          "pulse_on_tick_list": [[], []],
-          "on_pulse_effect_applications": [],
-          "child_entity_skills": [],
-          "tags": []
-        }
-      ],
-      "tags": ["BLAST_FINISHER"]
+      "child_entity_skills": [],
+      "tags": []
     },
     {
       "name": "Sword of Justice",

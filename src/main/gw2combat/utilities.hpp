@@ -171,13 +171,13 @@ namespace gw2combat::utils {
 [[nodiscard]] static inline entity_t get_source_entity(entity_t entity, registry_t& registry) {
     entity_t current_entity = entity;
     while (true) {
-        auto outgoing_damage_source_ptr =
+        auto source_entity_ptr =
             registry.try_get<component::source_entity>(current_entity);
-        if (outgoing_damage_source_ptr == nullptr) {
+        if (source_entity_ptr == nullptr) {
             break;
         }
 
-        current_entity = outgoing_damage_source_ptr->entity;
+        current_entity = source_entity_ptr->entity;
     }
     return current_entity;
 }

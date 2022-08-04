@@ -13,7 +13,11 @@ void skills_db::init(const std::string& path) {
     std::ifstream ifstream{file_path, std::ios::in};
     json skills_json = json::parse(ifstream);
     *this = skills_json.get<skills_db>();
-    this->skills.emplace_back(skills::skill{"Weapon Swap"});
+
+    skills::skill weapon_swap_skill;
+    weapon_swap_skill.name = "Weapon Swap";
+    weapon_swap_skill.cast_duration = {1, 1};
+    this->skills.emplace_back(weapon_swap_skill);
 }
 
 std::optional<skill> skills_db::get_by_name(const std::string& name) const {
