@@ -58,7 +58,7 @@ void pulse_conditions(registry_t& registry, tick_t current_tick) {
             registry.remove<component::buffered_condition_damage>(entity);
             spdlog::info("tick: {}, entity: {}, incoming condition damage: {}",
                          current_tick,
-                         utils::get_name(entity, registry),
+                         utils::get_entity_name(entity, registry),
                          effective_buffered_condition_damage);
         });
 }

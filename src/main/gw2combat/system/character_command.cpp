@@ -30,7 +30,7 @@ void character_command(registry_t& registry, tick_t current_tick) {
             if (next_skill.cast_duration[0] == 0) {
                 spdlog::info("tick: {}, entity: {}, insta-command: {}",
                              current_tick,
-                             utils::get_name(entity, registry),
+                             utils::get_entity_name(entity, registry),
                              next_skill.name);
                 auto& instant_cast_skills = registry.get_or_emplace<component::instant_cast_skills>(
                     entity, component::instant_cast_skills{});
@@ -39,7 +39,7 @@ void character_command(registry_t& registry, tick_t current_tick) {
             } else if (!registry.any_of<component::normal_cast_skill>(entity)) {
                 spdlog::info("tick: {}, entity: {}, command: {}",
                              current_tick,
-                             utils::get_name(entity, registry),
+                             utils::get_entity_name(entity, registry),
                              next_skill.name);
                 registry.emplace<component::normal_cast_skill>(
                     entity, component::normal_cast_skill{next_skill});

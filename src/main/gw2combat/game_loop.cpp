@@ -8,6 +8,7 @@
 
 #include "gw2combat/component/character/downstate.hpp"
 #include "gw2combat/component/character/is_actor.hpp"
+#include "gw2combat/component/gear/weapon_configurations.hpp"
 #include "gw2combat/component/skills/normal_cast_skill.hpp"
 
 namespace gw2combat {
@@ -29,7 +30,7 @@ void game_loop() {
         for (auto&& [entity] : registry.view<component::downstate>().each()) {
             spdlog::info("tick: {}, entity: {} is downstate!",
                          current_tick,
-                         utils::get_name(entity, registry));
+                         utils::get_entity_name(entity, registry));
             reported_downstate = true;
         }
         if (reported_downstate) {

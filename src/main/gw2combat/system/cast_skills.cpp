@@ -15,6 +15,22 @@
 
 namespace gw2combat::system {
 
+void do_weapon_swap(entity_t entity, registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+        throw std::runtime_error("no equipped_weapon_set on entity");
+    }
+    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
+    if (current_set == weapon_set::SET_1) {
+        registry.replace<component::equipped_weapon_set>(
+            entity, component::equipped_weapon_set{weapon_set::SET_2});
+    } else {
+        assert(registry.get<component::equipped_weapon_set>(entity).current_set ==
+               weapon_set::SET_2);
+        registry.replace<component::equipped_weapon_set>(
+            entity, component::equipped_weapon_set{weapon_set::SET_1});
+    }
+}
+
 void do_pulse(registry_t& registry, entity_t entity, const skills::skill& skill) {
     entity_t source_entity = utils::get_source_entity(entity, registry);
     auto& effective_attributes = registry.get<component::effective_attributes>(source_entity);
@@ -77,6 +93,10 @@ void do_child_skills(registry_t& registry, entity_t entity, const skills::skill&
 }
 
 void do_instant_cast_skill(registry_t& registry, entity_t entity, const skills::skill& skill) {
+    if (skill.name == "Weapon Swap") {
+        do_weapon_swap(entity, registry);
+        return;
+    }
     if (!skill.pulse_on_tick_list[0].empty()) {
         do_pulse(registry, entity, skill);
     }

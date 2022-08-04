@@ -1,17 +1,12 @@
 #include "gw2combat/system/system.hpp"
 
-#include <spdlog/spdlog.h>
-
 #include "gw2combat/component/character/combat_stats.hpp"
 #include "gw2combat/component/character/effective_attributes.hpp"
 #include "gw2combat/component/character/targeting.hpp"
 #include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
 #include "gw2combat/component/damage/source_entity.hpp"
 #include "gw2combat/component/effect_components.hpp"
-#include "gw2combat/component/gear/rune/rune_scholar.hpp"
-#include "gw2combat/component/gear/sigil/sigil_force.hpp"
-#include "gw2combat/component/gear/sigil/sigil_impact.hpp"
-#include "gw2combat/component/trait_components.hpp"
+#include "gw2combat/component/gear/runes.hpp"
 
 namespace gw2combat::system {
 
@@ -20,16 +15,19 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
         [&](entity_t entity,
             const component::effective_attributes& effective_attributes,
             const component::combat_stats& combat_stats) {
-            bool has_scholar_rune = registry.any_of<component::rune_scholar>(entity);
-            bool has_force_sigil = registry.any_of<component::sigil_force>(entity);
-            bool has_impact_sigil = registry.any_of<component::sigil_impact>(entity);
-            bool retribution_is_traited = registry.any_of<component::retribution>(entity);
+            bool has_scholar_rune = utils::has_rune(rune_type::SCHOLAR, entity, registry);
+            bool has_force_sigil = utils::has_sigil(weapon_sigil::FORCE, entity, registry);
+            bool has_impact_sigil = utils::has_sigil(weapon_sigil::IMPACT, entity, registry);
+            bool retribution_is_traited =
+                utils::has_trait(trait_type::RETRIBUTION, entity, registry);
             bool unscathed_contender_is_traited =
-                registry.any_of<component::unscathed_contender>(entity);
-            bool fiery_wrath_is_traited = registry.any_of<component::fiery_wrath>(entity);
+                utils::has_trait(trait_type::UNSCATHED_CONTENDER, entity, registry);
+            bool fiery_wrath_is_traited =
+                utils::has_trait(trait_type::FIERY_WRATH, entity, registry);
             bool symbolic_exposure_is_traited =
-                registry.any_of<component::symbolic_exposure>(entity);
-            bool inspired_virtue_is_traited = registry.any_of<component::inspired_virtue>(entity);
+                utils::has_trait(trait_type::SYMBOLIC_POWER, entity, registry);
+            bool inspired_virtue_is_traited =
+                utils::has_trait(trait_type::INSPIRING_VIRTUE, entity, registry);
 
             bool has_aegis = registry.any_of<component::aegis>(entity);
             bool has_might = registry.any_of<component::might>(entity);
@@ -43,45 +41,30 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
                 registry.try_get<component::symbolic_avenger_effect>(entity);
             if (symbolic_avenger_ptr) {
                 symbolic_avenger_addend +=
-                    std::min((double)symbolic_avenger_ptr->effect.num_stacks(), 5.0) *
-                    component::symbolic_avenger_trait::strike_damage_increase_per_stack;
+                    std::min((double)symbolic_avenger_ptr->effect.num_stacks(), 5.0) * 0.02;
             }
 
             double scholar_rune_multiplier = 1.0;
             bool is_above_90pct_health =
                 combat_stats.health > (effective_attributes.max_health * 0.90);
-            scholar_rune_multiplier +=
-                has_scholar_rune * is_above_90pct_health *
-                component::rune_scholar::strike_damage_increase_if_above_90pct_health;
+            scholar_rune_multiplier += has_scholar_rune * is_above_90pct_health * 0.05;
 
-            double force_sigil_addend =
-                has_force_sigil * component::sigil_force::strike_damage_increase;
-
-            double impact_sigil_addend =
-                has_impact_sigil * component::sigil_impact::strike_damage_increase;
-
-            double retribution_addend =
-                retribution_is_traited * has_resolution *
-                component::retribution::strike_damage_increase_if_has_resolution;
-
-            double unscathed_contender_addend =
-                unscathed_contender_is_traited * has_aegis *
-                component::unscathed_contender::strike_damage_increase_if_has_aegis;
+            double force_sigil_addend = has_force_sigil * 0.05;
+            double impact_sigil_addend = has_impact_sigil * 0.03;
+            double retribution_addend = retribution_is_traited * has_resolution * 0.1;
+            double unscathed_contender_addend = unscathed_contender_is_traited * has_aegis * 0.2;
 
             double fiery_wrath_multiplier = 1.0;
             double symbolic_exposure_multiplier = 1.0;
             auto targeting_ptr = registry.try_get<component::targeting>(entity);
             if (targeting_ptr) {
                 bool target_is_burning = registry.any_of<component::burning>(targeting_ptr->entity);
-                fiery_wrath_multiplier +=
-                    fiery_wrath_is_traited * target_is_burning *
-                    component::fiery_wrath::strike_damage_increase_if_target_burning;
+                fiery_wrath_multiplier += fiery_wrath_is_traited * target_is_burning * 0.07;
 
                 bool target_is_vulnerable =
                     registry.any_of<component::vulnerability>(targeting_ptr->entity);
                 symbolic_exposure_multiplier +=
-                    symbolic_exposure_is_traited * target_is_vulnerable *
-                    component::symbolic_exposure::strike_damage_increase_if_target_vulnerable;
+                    symbolic_exposure_is_traited * target_is_vulnerable * 0.05;
 
                 // TODO: Add logic to check stunned target for impact sigil's second part
             }
@@ -89,8 +72,7 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             unsigned int boon_count =
                 has_aegis + has_might + has_fury + has_quickness + has_alacrity + has_resolution;
             double inspired_virtue_multiplier =
-                1.0 + (inspired_virtue_is_traited * boon_count *
-                       component::inspired_virtue::strike_damage_increase_per_boon);
+                1.0 + (inspired_virtue_is_traited * boon_count * 0.01);
 
             double addends_multiplier =
                 (1.0 + (force_sigil_addend + impact_sigil_addend + retribution_addend +

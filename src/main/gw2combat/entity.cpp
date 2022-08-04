@@ -1,5 +1,8 @@
 #include "entity.hpp"
 
+#include "utilities.hpp"
+
+#include "gw2combat/build.hpp"
 #include "gw2combat/effects.hpp"
 
 #include "gw2combat/component/character/dynamic_attributes.hpp"
@@ -8,124 +11,110 @@
 #include "gw2combat/component/character/static_attributes.hpp"
 #include "gw2combat/component/character/targeting.hpp"
 #include "gw2combat/component/effect_components.hpp"
-#include "gw2combat/component/gear/rune/rune_balthazar.hpp"
-#include "gw2combat/component/gear/rune/rune_scholar.hpp"
-#include "gw2combat/component/gear/sigil/sigil_force.hpp"
-#include "gw2combat/component/gear/sigil/sigil_impact.hpp"
 #include "gw2combat/component/profession_components.hpp"
-#include "gw2combat/component/trait_components.hpp"
 
 namespace gw2combat {
 
 entity_t build_cfb(registry_t& registry) {
+    character_build build = character_build::read("src/main/resources/build-cfb.json");
+
     auto entity = registry.create();
-    auto cfb_gear_food_util = component::static_attributes{.power = 2159,
-                                                           .precision = 1842,
-                                                           .toughness = 1000,
-                                                           .vitality = 1235,
-                                                           .concentration = 0,
-                                                           .condition_damage = 2088,
-                                                           .expertise = 451,
-                                                           .ferocity = 150,
-                                                           .healing_power = 0,
-                                                           .armor = 2271,
-                                                           .boon_duration_pct = 0.0,
-                                                           .critical_chance_pct = 45.09,
-                                                           .critical_damage_pct = 160.0,
-                                                           .condition_duration_pct = 30.06,
-                                                           .max_health = 15394};
-    registry.emplace<component::static_attributes>(entity, cfb_gear_food_util);
+    registry.emplace<component::static_attributes>(
+        entity,
+        component::static_attributes{
+            .power = build.attributes.power,
+            .precision = build.attributes.precision,
+            .toughness = build.attributes.toughness,
+            .vitality = build.attributes.vitality,
+            .concentration = build.attributes.concentration,
+            .condition_damage = build.attributes.condition_damage,
+            .expertise = build.attributes.expertise,
+            .ferocity = build.attributes.ferocity,
+            .healing_power = build.attributes.healing_power,
+            .armor = build.attributes.armor,
+            .boon_duration_pct = build.attributes.boon_duration_pct,
+            .critical_chance_pct = build.attributes.critical_chance_pct,
+            .critical_damage_pct = build.attributes.critical_damage_pct,
+            .condition_duration_pct = build.attributes.condition_duration_pct,
+            .burning_duration_pct = build.attributes.burning_duration_pct,
+            .bleeding_duration_pct = build.attributes.bleeding_duration_pct,
+            .confusion_duration_pct = build.attributes.confusion_duration_pct,
+            .poison_duration_pct = build.attributes.poison_duration_pct,
+            .torment_duration_pct = build.attributes.torment_duration_pct,
+            .max_health = build.attributes.max_health,
+        });
     registry.emplace<component::dynamic_attributes>(
         entity, component::dynamic_attributes{.max_endurance = 100});
 
-    // Replace with correct components
-    registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{3});
-    registry.emplace<component::fiery_wrath>(entity);
-    registry.emplace<component::inspired_virtue>(entity);
-    registry.emplace<component::retribution>(entity);
-    registry.emplace<component::symbolic_power>(entity);
-    registry.emplace<component::symbolic_exposure>(entity);
-    registry.emplace<component::symbolic_avenger_trait>(entity);
-    registry.emplace<component::unscathed_contender>(entity);
-    registry.emplace<component::sigil_force>(entity);
-    registry.emplace<component::sigil_impact>(entity);
-    // Replace with correct components - end
-
-    registry.emplace<component::rune_balthazar>(entity);
+    if (build.base_class == base_class_type::GUARDIAN) {
+        registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{5});
+    }
+    registry.emplace<component::traits_component>(entity,
+                                                  component::traits_component{build.traits});
+    if (utils::has_trait(trait_type::PERMEATING_WRATH, entity, registry)) {
+        registry.get<component::virtue_of_justice>(entity).number_of_ticks_for_burning_application =
+            3;
+    }
+    registry.emplace<component::rune_component>(entity, component::rune_component{build.rune});
+    registry.emplace<component::available_weapon_configurations>(
+        entity, build.available_weapon_configurations);
+    registry.emplace<component::equipped_weapon_set>(
+        entity, component::equipped_weapon_set{weapon_set::SET_1});
 
     registry.emplace<component::is_actor>(entity);
-    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player1"_hs);
+    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player_cfb"_hs);
 
     return entity;
 }
 
-entity_t build_player1(registry_t& registry) {
-    auto entity = registry.create();
+entity_t build_core_guard(registry_t& registry) {
+    character_build build = character_build::read("src/main/resources/build-core-guard.json");
 
-    auto viper_armor_rest_zerk_crit_food =
-        component::static_attributes{.power = 3004,
-                                     .precision = 2032,
-                                     .toughness = 1000,
-                                     .vitality = 1235,
-                                     .concentration = 0,
-                                     .condition_damage = 1287,
-                                     .expertise = 207,
-                                     .ferocity = 1090,
-                                     .healing_power = 0,
-                                     .armor = 2271,
-                                     .boon_duration_pct = 0.0,
-                                     .critical_chance_pct = 79.1,
-                                     .critical_damage_pct = 222.6,
-                                     .condition_duration_pct = 13.8,
-                                     .max_health = 13995};
-    auto full_zerk_crit_food = component::static_attributes{.power = 3067,
-                                                            .precision = 2140,
-                                                            .toughness = 1000,
-                                                            .vitality = 1235,
-                                                            .concentration = 0,
-                                                            .condition_damage = 161,
-                                                            .expertise = 0,
-                                                            .ferocity = 1435,
-                                                            .healing_power = 0,
-                                                            .armor = 2271,
-                                                            .boon_duration_pct = 0.0,
-                                                            .critical_chance_pct = 84.2,
-                                                            .critical_damage_pct = 243.6,
-                                                            .condition_duration_pct = 0.0,
-                                                            .max_health = 14615};
-    auto full_zerk = component::static_attributes{.power = 3067,
-                                                  .precision = 2040,
-                                                  .toughness = 1000,
-                                                  .vitality = 1235,
-                                                  .concentration = 0,
-                                                  .condition_damage = 161,
-                                                  .expertise = 0,
-                                                  .ferocity = 1335,
-                                                  .healing_power = 0,
-                                                  .armor = 2271,
-                                                  .boon_duration_pct = 0.0,
-                                                  .critical_chance_pct = 79.5,
-                                                  .critical_damage_pct = 238.9,
-                                                  .condition_duration_pct = 0.0,
-                                                  .max_health = 14615};
-    registry.emplace<component::static_attributes>(entity, full_zerk);
+    auto entity = registry.create();
+    registry.emplace<component::static_attributes>(
+        entity,
+        component::static_attributes{
+            .power = build.attributes.power,
+            .precision = build.attributes.precision,
+            .toughness = build.attributes.toughness,
+            .vitality = build.attributes.vitality,
+            .concentration = build.attributes.concentration,
+            .condition_damage = build.attributes.condition_damage,
+            .expertise = build.attributes.expertise,
+            .ferocity = build.attributes.ferocity,
+            .healing_power = build.attributes.healing_power,
+            .armor = build.attributes.armor,
+            .boon_duration_pct = build.attributes.boon_duration_pct,
+            .critical_chance_pct = build.attributes.critical_chance_pct,
+            .critical_damage_pct = build.attributes.critical_damage_pct,
+            .condition_duration_pct = build.attributes.condition_duration_pct,
+            .burning_duration_pct = build.attributes.burning_duration_pct,
+            .bleeding_duration_pct = build.attributes.bleeding_duration_pct,
+            .confusion_duration_pct = build.attributes.confusion_duration_pct,
+            .poison_duration_pct = build.attributes.poison_duration_pct,
+            .torment_duration_pct = build.attributes.torment_duration_pct,
+            .max_health = build.attributes.max_health,
+        });
     registry.emplace<component::dynamic_attributes>(
         entity, component::dynamic_attributes{.max_endurance = 100});
 
-    registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{3});
-    registry.emplace<component::fiery_wrath>(entity);
-    registry.emplace<component::inspired_virtue>(entity);
-    registry.emplace<component::retribution>(entity);
-    registry.emplace<component::symbolic_power>(entity);
-    registry.emplace<component::symbolic_exposure>(entity);
-    registry.emplace<component::symbolic_avenger_trait>(entity);
-    registry.emplace<component::unscathed_contender>(entity);
-    registry.emplace<component::sigil_force>(entity);
-    registry.emplace<component::sigil_impact>(entity);
-    registry.emplace<component::rune_scholar>(entity);
+    if (build.base_class == base_class_type::GUARDIAN) {
+        registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{5});
+    }
+    registry.emplace<component::traits_component>(entity,
+                                                  component::traits_component{build.traits});
+    if (utils::has_trait(trait_type::PERMEATING_WRATH, entity, registry)) {
+        registry.get<component::virtue_of_justice>(entity).number_of_ticks_for_burning_application =
+            3;
+    }
+    registry.emplace<component::rune_component>(entity, component::rune_component{build.rune});
+    registry.emplace<component::available_weapon_configurations>(
+        entity, build.available_weapon_configurations);
+    registry.emplace<component::equipped_weapon_set>(
+        entity, component::equipped_weapon_set{weapon_set::SET_1});
 
     registry.emplace<component::is_actor>(entity);
-    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player1"_hs);
+    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player_core_guard"_hs);
 
     return entity;
 }
@@ -158,7 +147,7 @@ entity_t build_golem_boon_condi_provider(entt::registry& registry) {
 }
 
 void init_entities(entt::registry& registry) {
-    auto player1 = build_player1(registry);
+    auto player1 = build_core_guard(registry);
     // auto player1 = build_cfb(registry);
     auto golem = build_medium_kitty_golem(registry);
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);

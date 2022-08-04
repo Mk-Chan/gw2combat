@@ -49,7 +49,7 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
 
                 spdlog::info("tick: {}, entity: {}, outgoing burning from virtue_of_justice",
                              current_tick,
-                             utils::get_name(entity, registry));
+                             utils::get_entity_name(entity, registry));
             }
         });
 }

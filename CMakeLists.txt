@@ -36,6 +36,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3")
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
+
+set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 ###
 
 ###
@@ -59,6 +61,7 @@ add_executable(
 
     src/main/gw2combat/entity.cpp
     src/main/gw2combat/skills.cpp
+    src/main/gw2combat/build.cpp
     src/main/gw2combat/rotation.cpp
 
     src/main/gw2combat/system/system.cpp
@@ -83,10 +86,8 @@ add_executable(
     src/main/gw2combat/system/damage/expire_damaging_effects.cpp
 
     src/main/gw2combat/system/cast_skills.cpp
-    src/main/gw2combat/system/staged/trait_systems.hpp
     src/main/gw2combat/system/destroy_after_rotation_entities.cpp
-    src/main/gw2combat/system/staged/skill_systems.hpp
-    src/main/gw2combat/component/trait_components.hpp)
+)
 target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 target_include_directories(gw2combat PRIVATE ${RAPIDCSV_INCLUDE_DIRS})
 ###

@@ -37,15 +37,15 @@ struct effect_application {
 
 struct skill {
     std::string name;
-    weapon_type weapon_type;
-    double damage_coefficient;
-    std::array<tick_t, 2> cast_duration;
-    std::array<std::vector<tick_t>, 2> hit_on_tick_list;
-    std::vector<effect_application> on_hit_effect_applications;
-    std::array<std::vector<tick_t>, 2> pulse_on_tick_list;
-    std::vector<effect_application> on_pulse_effect_applications;
-    std::vector<skill> child_entity_skills;
-    std::vector<skill_tag> tags;
+    weapon_type weapon_type = weapon_type::EMPTY_HANDED;
+    double damage_coefficient = 0.0;
+    std::array<tick_t, 2> cast_duration{};
+    std::array<std::vector<tick_t>, 2> hit_on_tick_list{};
+    std::vector<effect_application> on_hit_effect_applications{};
+    std::array<std::vector<tick_t>, 2> pulse_on_tick_list{};
+    std::vector<effect_application> on_pulse_effect_applications{};
+    std::vector<skill> child_entity_skills{};
+    std::vector<skill_tag> tags{};
 
     inline bool operator==(const skill& rhs) const {
         return this->name == rhs.name;

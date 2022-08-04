@@ -23,7 +23,7 @@ void incoming_condition_detection(registry_t& registry, tick_t current_tick) {
                      outgoing_condition_application.effect_applications) {
                     spdlog::info("tick: {}, entity: {}, added {} {} effects, {} duration",
                                  current_tick,
-                                 utils::get_name(targeting_ptr->entity, registry),
+                                 utils::get_entity_name(targeting_ptr->entity, registry),
                                  effect_application.num_stacks,
                                  nlohmann::json{effect_application.effect_type}[0].dump(),
                                  effect_application.duration);
@@ -43,7 +43,7 @@ void incoming_condition_detection(registry_t& registry, tick_t current_tick) {
                      outgoing_condition_application.effect_applications) {
                     spdlog::info("tick: {}, entity: {}, added {} {} effects, {} duration",
                                  current_tick,
-                                 utils::get_name(targeting.entity, registry),
+                                 utils::get_entity_name(targeting.entity, registry),
                                  effect_application.num_stacks,
                                  nlohmann::json{effect_application.effect_type}[0].dump(),
                                  effect_application.duration);

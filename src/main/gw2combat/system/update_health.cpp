@@ -24,7 +24,7 @@ void update_health(registry_t& registry, tick_t current_tick) {
             }
             spdlog::info("tick: {}, entity: {}, health: {}",
                          current_tick,
-                         utils::get_name(entity, registry),
+                         utils::get_entity_name(entity, registry),
                          combat_stats.health);
         });
 }

@@ -37,6 +37,9 @@ struct effect {
         return remaining(current_tick) <= 0.0;
     }
     [[nodiscard]] inline tick_t remaining(tick_t current_tick) const {
+        if (current_tick > (start_tick + duration)) {
+            return 0;
+        }
         return (start_tick + duration) - current_tick;
     }
 
@@ -98,7 +101,7 @@ struct stacking_effect {
     }
     [[nodiscard]] inline tick_t remaining(tick_t current_tick) const {
         return std::max_element(stacks.begin(), stacks.end(), [&](effect_type& effect) {
-            return (effect.start_tick + effect.duration) - current_tick;
+            return effect.remaining(current_tick);
         });
     }
     [[nodiscard]] inline size_t num_stacks() const {

@@ -6,24 +6,32 @@ namespace gw2combat::component {
 // https://wiki.guildwars2.com/wiki/Attribute
 struct static_attributes {
     // Primary attributes
-    unsigned int power;
-    unsigned int precision;
-    unsigned int toughness;
-    unsigned int vitality;
+    unsigned int power = 0;
+    unsigned int precision = 0;
+    unsigned int toughness = 0;
+    unsigned int vitality = 0;
 
     // Secondary attributes
-    unsigned int concentration;
-    unsigned int condition_damage;
-    unsigned int expertise;
-    unsigned int ferocity;
-    unsigned int healing_power;
+    unsigned int concentration = 0;
+    unsigned int condition_damage = 0;
+    unsigned int expertise = 0;
+    unsigned int ferocity = 0;
+    unsigned int healing_power = 0;
 
     // Derived attributes
-    unsigned int armor;
-    double boon_duration_pct;
-    double critical_chance_pct;
-    double critical_damage_pct;
-    double condition_duration_pct;
+    unsigned int armor = 0;
+    double boon_duration_pct = 0.0;
+    double critical_chance_pct = 0.0;
+    double critical_damage_pct = 0.0;
+    double condition_duration_pct = 0.0;
+
+    // Condition-specific durations
+    double burning_duration_pct = condition_duration_pct;
+    double bleeding_duration_pct = condition_duration_pct;
+    double confusion_duration_pct = condition_duration_pct;
+    double poison_duration_pct = condition_duration_pct;
+    double torment_duration_pct = condition_duration_pct;
+
     unsigned int max_health = 1;
 };
 

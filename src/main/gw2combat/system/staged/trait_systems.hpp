@@ -2,8 +2,8 @@
 #define GW2COMBAT_SYSTEM_TRAITS_TRAIT_SYSTEMS_HPP
 
 #include "gw2combat/component/damage/incoming_strike_damage.hpp"
+#include "gw2combat/component/damage/outgoing_strike_damage.hpp"
 #include "gw2combat/component/effect_components.hpp"
-#include "gw2combat/component/trait_components.hpp"
 #include "gw2combat/system/system.hpp"
 
 namespace gw2combat::system {
@@ -18,7 +18,7 @@ void symbolic_power(registry_t& registry, tick_t current_tick) {
         [&](entity_t entity, component::outgoing_strike_damage& outgoing_strike_damage) {
             auto source_entity = utils::get_source_entity(entity, registry);
             bool is_symbolic_power_traited =
-                registry.template any_of<component::symbolic_power>(source_entity);
+                utils::has_trait(trait_type::SYMBOLIC_POWER, source_entity, registry);
             if (is_symbolic_power_traited) {
                 for (strike& strike : outgoing_strike_damage.strikes) {
                     bool is_symbol_strike =
@@ -26,8 +26,7 @@ void symbolic_power(registry_t& registry, tick_t current_tick) {
                                   strike.skill.tags.end(),
                                   skills::skill_tag::SYMBOL) != strike.skill.tags.end();
                     if (is_symbol_strike) {
-                        strike.outgoing_strike_damage_multiplier *=
-                            1.0 + component::symbolic_power::symbol_strike_damage_increase;
+                        strike.outgoing_strike_damage_multiplier *= 1.3;
                     }
                 }
             }
@@ -44,12 +43,10 @@ void symbolic_avenger(registry_t& registry, tick_t current_tick) {
         [&](const component::incoming_strike_damage& incoming_strike_damage) {
             for (const strike& strike : incoming_strike_damage.strikes) {
                 bool is_symbol_strike =
-                    std::find(strike.skill.tags.begin(),
-                              strike.skill.tags.end(),
-                              skills::skill_tag::SYMBOL) != strike.skill.tags.end();
+                    utils::skill_has_tag(strike.skill, skills::skill_tag::SYMBOL);
                 if (is_symbol_strike) {
                     auto source_entity = utils::get_source_entity(strike.source, registry);
-                    if (registry.any_of<component::symbolic_avenger_trait>(source_entity)) {
+                    if (utils::has_trait(trait_type::SYMBOLIC_AVENGER, source_entity, registry)) {
                         auto& symbolic_avenger_effect =
                             registry.get_or_emplace<component::symbolic_avenger_effect>(
                                 source_entity);
