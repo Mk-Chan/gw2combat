@@ -52,7 +52,7 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
 
             if (utils::has_trait(trait_type::RIGHT_HAND_STRENGTH, entity, registry) &&
                 !registry.any_of<component::bundle>(entity) &&
-                utils::has_one_handed_weapon(entity, registry)) {
+                utils::has_one_handed_weapon(weapon_position::MAIN_HAND, entity, registry)) {
                 effective_attributes.power += 80;
             }
             if (utils::has_trait(trait_type::ZEALOUS_BLADE, entity, registry) &&

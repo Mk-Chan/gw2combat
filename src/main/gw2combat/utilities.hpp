@@ -38,6 +38,24 @@ namespace gw2combat::utils {
 }
 
 [[nodiscard]] static inline bool has_weapon_type(weapon_type type,
+                                                 weapon_position position,
+                                                 entity_t entity,
+                                                 registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+        return false;
+    }
+    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
+    auto& weapon_configurations =
+        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
+    return std::any_of(weapon_configurations.begin(),
+                       weapon_configurations.end(),
+                       [&](const weapon_configuration& configuration) {
+                           return configuration.set == current_set && configuration.type == type &&
+                                  configuration.position == position;
+                       });
+}
+
+[[nodiscard]] static inline bool has_weapon_type(weapon_type type,
                                                  entity_t entity,
                                                  registry_t& registry) {
     if (!registry.any_of<component::equipped_weapon_set>(entity)) {
@@ -72,6 +90,24 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline bool is_two_handed_weapon(weapon_type type) {
     return !is_one_handed_weapon(type);
+}
+
+[[nodiscard]] static inline bool has_one_handed_weapon(weapon_position position,
+                                                       entity_t entity,
+                                                       registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+        return false;
+    }
+    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
+    auto& weapon_configurations =
+        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
+    return std::any_of(weapon_configurations.begin(),
+                       weapon_configurations.end(),
+                       [&](const weapon_configuration& configuration) {
+                           return configuration.set == current_set &&
+                                  is_one_handed_weapon(configuration.type) &&
+                                  configuration.position == position;
+                       });
 }
 
 [[nodiscard]] static inline bool has_one_handed_weapon(entity_t entity, registry_t& registry) {
