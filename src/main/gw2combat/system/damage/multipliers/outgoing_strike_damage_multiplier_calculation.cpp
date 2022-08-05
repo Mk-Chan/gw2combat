@@ -29,6 +29,9 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             bool inspired_virtue_is_traited =
                 utils::has_trait(trait_type::INSPIRING_VIRTUE, entity, registry);
 
+            bool has_inspiring_virtue_effect =
+                registry.any_of<component::inspiring_virtue_effect>(entity);
+
             bool has_aegis = registry.any_of<component::aegis>(entity);
             bool has_might = registry.any_of<component::might>(entity);
             bool has_fury = registry.any_of<component::fury>(entity);
@@ -53,6 +56,7 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             double impact_sigil_addend = has_impact_sigil * 0.03;
             double retribution_addend = retribution_is_traited * has_resolution * 0.1;
             double unscathed_contender_addend = unscathed_contender_is_traited * has_aegis * 0.2;
+            double inspiring_virtue_addend = has_inspiring_virtue_effect * 0.1;
 
             double fiery_wrath_multiplier = 1.0;
             double symbolic_exposure_multiplier = 1.0;
@@ -74,9 +78,9 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             double inspired_virtue_multiplier =
                 1.0 + (inspired_virtue_is_traited * boon_count * 0.01);
 
-            double addends_multiplier =
-                (1.0 + (force_sigil_addend + impact_sigil_addend + retribution_addend +
-                        unscathed_contender_addend + symbolic_avenger_addend));
+            double addends_multiplier = (1.0 + (force_sigil_addend + impact_sigil_addend +
+                                                retribution_addend + unscathed_contender_addend +
+                                                symbolic_avenger_addend + inspiring_virtue_addend));
 
             double final_multiplier = addends_multiplier * scholar_rune_multiplier *
                                       inspired_virtue_multiplier * fiery_wrath_multiplier *

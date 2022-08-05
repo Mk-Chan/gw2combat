@@ -27,9 +27,14 @@ void incoming_condition_application(registry_t& registry, tick_t current_tick) {
                            effects::applied_effect_type::BINDING_BLADE) {
                     registry.emplace_or_replace<component::binding_blade>(
                         entity,
-                        effects::binding_blade{effect_application.source,
-                                               current_tick,
-                                               effect_application.duration});
+                        effects::binding_blade{
+                            effect_application.source, current_tick, effect_application.duration});
+                } else if (effect_application.effect_type ==
+                           effects::applied_effect_type::VIRTUE_OF_JUSTICE) {
+                    registry.emplace_or_replace<component::virtue_of_justice_effect>(
+                        entity,
+                        effects::virtue_of_justice{
+                            effect_application.source, current_tick, effect_application.duration});
                 }
             }
             // NOTE: Torment, confusion etc...

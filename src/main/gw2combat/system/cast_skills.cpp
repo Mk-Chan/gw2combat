@@ -150,7 +150,6 @@ void cast_skills(registry_t& registry, tick_t current_tick) {
             for (const skills::skill& skill : instant_cast_skills.skills) {
                 do_instant_cast_skill(registry, entity, skill);
             }
-            registry.remove<component::instant_cast_skills>(entity);
         });
     registry.view<component::normal_cast_skill>().each(
         [&](entity_t entity, component::normal_cast_skill& normal_cast_skill) {

@@ -56,6 +56,14 @@ struct symbolic_avenger_effect {
     using effect_type = effects::symbolic_avenger;
     effects::stacking_effect<effect_type> effect{5};
 };
+struct virtue_of_justice_effect {
+    using effect_type = effects::virtue_of_justice;
+    effect_type effect;
+};
+struct inspiring_virtue_effect {
+    using effect_type = effects::inspiring_virtue;
+    effect_type effect;
+};
 
 }  // namespace gw2combat::component
 

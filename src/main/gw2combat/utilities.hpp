@@ -17,7 +17,13 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline bool skill_has_tag(const skills::skill& skill,
                                                skills::skill_tag skill_tag) {
-    return std::find(skill.tags.begin(), skill.tags.end(), skill_tag) != skill.tags.end();
+    return std::find(skill.tags.cbegin(), skill.tags.cend(), skill_tag) != skill.tags.cend();
+}
+
+[[nodiscard]] static inline bool has_trait(trait_type trait,
+                                           const component::traits_component& traits_component) {
+    return std::find(traits_component.traits.begin(), traits_component.traits.end(), trait) !=
+           traits_component.traits.end();
 }
 
 [[nodiscard]] static inline bool has_trait(trait_type trait,
@@ -171,8 +177,7 @@ namespace gw2combat::utils {
 [[nodiscard]] static inline entity_t get_source_entity(entity_t entity, registry_t& registry) {
     entity_t current_entity = entity;
     while (true) {
-        auto source_entity_ptr =
-            registry.try_get<component::source_entity>(current_entity);
+        auto source_entity_ptr = registry.try_get<component::source_entity>(current_entity);
         if (source_entity_ptr == nullptr) {
             break;
         }
@@ -205,6 +210,7 @@ namespace gw2combat::utils {
         case effects::applied_effect_type::BLEEDING:
             return calc(effective_attributes.bleeding_duration_pct);
         case effects::applied_effect_type::BINDING_BLADE:
+        case effects::applied_effect_type::VIRTUE_OF_JUSTICE:
             return tick_t{duration};
     }
 }

@@ -2,6 +2,7 @@
 
 #include <spdlog/spdlog.h>
 #include <filesystem>
+#include <exception>
 
 #include "rapidcsv.h"
 
@@ -27,6 +28,7 @@ std::vector<skill_cast> read_scraped_simple_rotation(const std::string& path) {
         auto skill_opt = skills::SKILLS_DB.get_by_name(row[0]);
         if (!skill_opt) {
             spdlog::error("unable to parse skill: {}", row[0]);
+            throw std::runtime_error("unable to parse skill");
         }
         auto skill = *skill_opt;
         int cast_time = (int)(std::stod(std::string{std::string_view{row[1]}.substr(7).substr(

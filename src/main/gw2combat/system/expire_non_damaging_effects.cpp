@@ -32,6 +32,8 @@ void expire_non_damaging_effects(registry_t& registry, tick_t current_tick) {
 
     expire_end_of_life_effects<component::vulnerability>(registry, current_tick);
     expire_end_of_life_effects<component::symbolic_avenger_effect>(registry, current_tick);
+    expire_end_of_life_effects<component::virtue_of_justice_effect>(registry, current_tick);
+    expire_end_of_life_effects<component::inspiring_virtue_effect>(registry, current_tick);
 }
 
 }  // namespace gw2combat::system

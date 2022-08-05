@@ -58,6 +58,33 @@ void symbolic_avenger(registry_t& registry, tick_t current_tick) {
         });
 }
 
+template <combat_stage stage>
+void inspiring_virtue(registry_t& registry, tick_t current_tick) {
+    if (stage != combat_stage::BEFORE_OUTGOING_STRIKE_BUFFERING) {
+        return;
+    }
+
+    registry.template view<component::traits_component, component::instant_cast_skills>().each(
+        [&](entity_t entity,
+            const component::traits_component& traits_component,
+            const component::instant_cast_skills& instant_cast_skills) {
+            bool has_inspiring_virtue_trait =
+                utils::has_trait(trait_type::INSPIRING_VIRTUE, traits_component);
+            if (!has_inspiring_virtue_trait) {
+                return;
+            }
+
+            for (const skills::skill& skill : instant_cast_skills.skills) {
+                bool is_guardian_virtue_skill =
+                    utils::skill_has_tag(skill, skills::skill_tag::GUARDIAN_VIRTUE);
+                if (is_guardian_virtue_skill) {
+                    registry.template emplace_or_replace<component::inspiring_virtue_effect>(
+                        entity, effects::inspiring_virtue{entity, current_tick, 6'000});
+                }
+            }
+        });
+}
+
 }  // namespace gw2combat::system
 
 #endif  // GW2COMBAT_SYSTEM_TRAITS_TRAIT_SYSTEMS_HPP

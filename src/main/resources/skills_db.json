@@ -1,6 +1,52 @@
 {
   "skills": [
     {
+      "name": "Virtue of Justice",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[0], [0]],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "VIRTUE_OF_JUSTICE",
+          "num_stacks": 1,
+          "duration": 20000,
+          "effect_direction": "INCOMING"
+        }
+      ],
+      "child_entity_skills": [],
+      "cooldown": [20000, 16000],
+      "tags": ["GUARDIAN_VIRTUE"]
+    },
+    {
+      "name": "Virtue of Resolve",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [30000, 24000],
+      "tags": ["GUARDIAN_VIRTUE"]
+    },
+    {
+      "name": "Virtue of Courage",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [45000, 36000],
+      "tags": ["GUARDIAN_VIRTUE"]
+    },
+    {
       "name": "Sword of Wrath",
       "weapon_type": "SWORD",
       "damage_coefficient": 0.666,
@@ -10,6 +56,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [0, 0],
       "tags": []
     },
     {
@@ -22,6 +69,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [0, 0],
       "tags": []
     },
     {
@@ -34,6 +82,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [0, 0],
       "tags": []
     },
     {
@@ -59,9 +108,11 @@
           "pulse_on_tick_list": [[], []],
           "on_pulse_effect_applications": [],
           "child_entity_skills": [],
+          "cooldown": [0, 0],
           "tags": ["SYMBOL", "LIGHT_FIELD"]
         }
       ],
+      "cooldown": [8000, 6400],
       "tags": []
     },
     {
@@ -77,6 +128,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [15000, 12000],
       "tags": []
     },
     {
@@ -102,9 +154,11 @@
           "pulse_on_tick_list": [[], []],
           "on_pulse_effect_applications": [],
           "child_entity_skills": [],
+          "cooldown": [0, 0],
           "tags": []
         }
       ],
+      "cooldown": [20000, 16000],
       "tags": []
     },
     {
@@ -127,9 +181,11 @@
           "pulse_on_tick_list": [[], []],
           "on_pulse_effect_applications": [],
           "child_entity_skills": [],
+          "cooldown": [0, 0],
           "tags": []
         }
       ],
+      "cooldown": [35000, 28000],
       "tags": ["BLAST_FINISHER"]
     },
     {
@@ -142,6 +198,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [0, 0],
       "tags": []
     },
     {
@@ -154,6 +211,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [0, 0],
       "tags": []
     },
     {
@@ -166,6 +224,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [0, 0],
       "tags": []
     },
     {
@@ -181,6 +240,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [8000, 6400],
       "tags": ["WHIRL_FINISHER"]
     },
     {
@@ -193,6 +253,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [12000, 9600],
       "tags": ["LEAP_FINISHER"]
     },
     {
@@ -212,6 +273,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [12000, 9600],
       "tags": ["WHIRL_FINISHER"]
     },
     {
@@ -237,9 +299,11 @@
           "pulse_on_tick_list": [[], []],
           "on_pulse_effect_applications": [],
           "child_entity_skills": [],
+          "cooldown": [0, 0],
           "tags": ["SYMBOL", "LIGHT_FIELD"]
         }
       ],
+      "cooldown": [12000, 9600],
       "tags": []
     },
     {
@@ -252,6 +316,7 @@
       "pulse_on_tick_list": [[], []],
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
+      "cooldown": [20000, 16000],
       "tags": []
     },
     {
@@ -277,9 +342,11 @@
           "pulse_on_tick_list": [[], []],
           "on_pulse_effect_applications": [],
           "child_entity_skills": [],
+          "cooldown": [0, 0],
           "tags": ["SPIRIT_WEAPON"]
         }
       ],
+      "cooldown": [20000, 16000],
       "tags": []
     },
     {
@@ -312,9 +379,11 @@
           "pulse_on_tick_list": [[], []],
           "on_pulse_effect_applications": [],
           "child_entity_skills": [],
+          "cooldown": [0, 0],
           "tags": ["CONSECRATION"]
         }
       ],
+      "cooldown": [25000, 20000],
       "tags": []
     },
     {
@@ -347,9 +416,11 @@
             }
           ],
           "child_entity_skills": [],
+          "cooldown": [0, 0],
           "tags": []
         }
       ],
+      "cooldown": [15000, 12000],
       "tags": []
     }
   ]

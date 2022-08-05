@@ -214,12 +214,20 @@ struct symbolic_avenger : effect<symbolic_avenger> {
     using effect<symbolic_avenger>::effect;
 };
 
+struct virtue_of_justice : effect<virtue_of_justice> {
+    using effect<virtue_of_justice>::effect;
+};
+struct inspiring_virtue : effect<inspiring_virtue> {
+    using effect<inspiring_virtue>::effect;
+};
+
 enum class applied_effect_type : std::uint32_t
 {
     BURNING,
     BLEEDING,
 
     BINDING_BLADE,
+    VIRTUE_OF_JUSTICE,
 };
 
 struct effect_application {
@@ -233,7 +241,9 @@ NLOHMANN_JSON_SERIALIZE_ENUM(applied_effect_type,
                              {
                                  {applied_effect_type::BURNING, "BURNING"},
                                  {applied_effect_type::BLEEDING, "BLEEDING"},
+
                                  {applied_effect_type::BINDING_BLADE, "BINDING_BLADE"},
+                                 {applied_effect_type::VIRTUE_OF_JUSTICE, "VIRTUE_OF_JUSTICE"},
                              })
 
 }  // namespace gw2combat::effects

@@ -50,16 +50,28 @@
   "available_weapon_configurations": {
     "weapon_configurations": [
       {
-        "type": "GREATSWORD",
-        "position": "TWO_HANDED",
+        "type": "SWORD",
+        "position": "MAIN_HAND",
         "sigil": "FORCE",
+        "set": "SET_1"
+      },
+      {
+        "type": "FOCUS",
+        "position": "OFF_HAND",
+        "sigil": "IMPACT",
         "set": "SET_1"
       },
       {
         "type": "GREATSWORD",
         "position": "TWO_HANDED",
+        "sigil": "FORCE",
+        "set": "SET_2"
+      },
+      {
+        "type": "GREATSWORD",
+        "position": "TWO_HANDED",
         "sigil": "IMPACT",
-        "set": "SET_1"
+        "set": "SET_2"
       }
     ]
   },

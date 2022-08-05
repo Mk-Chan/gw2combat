@@ -14,6 +14,7 @@
 #include "gw2combat/component/damage/outgoing_condition_application.hpp"
 #include "gw2combat/component/damage/outgoing_strike_damage.hpp"
 #include "gw2combat/component/damage/pulse_conditions.hpp"
+#include "gw2combat/component/skills/instant_cast_skills.hpp"
 #include "gw2combat/system/staged/profession_systems.hpp"
 #include "gw2combat/system/staged/skill_systems.hpp"
 #include "gw2combat/system/staged/trait_systems.hpp"
@@ -33,13 +34,15 @@ void clear_temporary_components(registry_t& registry) {
                    component::outgoing_condition_application,
                    component::incoming_condition_application,
 
-                   component::effective_incoming_damage>();
+                   component::effective_incoming_damage,
+                   component::instant_cast_skills>();
     registry.ctx().erase<component::pulse_conditions>();
 }
 
 template <combat_stage stage>
 void run_staged_systems(registry_t& registry, tick_t current_tick) {
     system::virtue_of_justice<stage>(registry, current_tick);
+    system::inspiring_virtue<stage>(registry, current_tick);
 
     system::symbolic_avenger<stage>(registry, current_tick);
     system::symbolic_power<stage>(registry, current_tick);

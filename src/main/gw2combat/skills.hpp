@@ -20,6 +20,7 @@ enum class skill_tag : std::uint32_t
 
     SYMBOL,
     SPIRIT_WEAPON,
+    GUARDIAN_VIRTUE,
 };
 
 enum class applied_effect_direction : std::uint8_t
@@ -71,6 +72,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(skill_tag,
 
                                  {skill_tag::SYMBOL, "SYMBOL"},
                                  {skill_tag::SPIRIT_WEAPON, "SPIRIT_WEAPON"},
+                                 {skill_tag::GUARDIAN_VIRTUE, "GUARDIAN_VIRTUE"},
                              })
 NLOHMANN_JSON_SERIALIZE_ENUM(applied_effect_direction,
                              {
