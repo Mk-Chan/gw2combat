@@ -22,9 +22,9 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
                         auto& effective_attributes =
                             registry.template get<component::effective_attributes>(source_entity);
                         auto effective_duration = utils::get_effective_condition_duration(
-                            4'000, effects::applied_effect_type::BURNING, effective_attributes);
+                            4'000, effects::effect_type::BURNING, effective_attributes);
                         strike.skill.on_hit_effect_applications.template emplace_back(
-                            skills::effect_application{effects::applied_effect_type::BURNING,
+                            skills::effect_application{effects::effect_type::BURNING,
                                                        skills::applied_effect_direction::OUTGOING,
                                                        1,
                                                        effective_duration});
@@ -60,11 +60,11 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
                         virtue_of_justice.number_of_ticks_for_burning_application;
 
                     auto effective_duration = utils::get_effective_condition_duration(
-                        2'000, effects::applied_effect_type::BURNING, effective_attributes);
+                        2'000, effects::effect_type::BURNING, effective_attributes);
                     auto& outgoing_condition_application =
                         registry.get_or_emplace<component::outgoing_condition_application>(entity);
                     outgoing_condition_application.effect_applications.template emplace_back(
-                        effects::effect_application{effects::applied_effect_type::BURNING,
+                        effects::effect_application{effects::effect_type::BURNING,
                                                     burning_stacks_to_apply,
                                                     effective_duration,
                                                     entity});

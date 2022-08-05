@@ -15,10 +15,10 @@ namespace gw2combat::effects {
 constexpr inline unsigned int effect_pulse_rate = 1'000;
 
 template <typename Effect>
-struct effect {
+struct effect_old {
     using effect_type = Effect;
 
-    explicit effect(entity_t source,
+    explicit effect_old(entity_t source,
                     tick_t start_tick,
                     tick_t duration,
                     tick_t max_duration = 1'000'000'000)
@@ -47,14 +47,14 @@ struct effect {
         registry_t& registry,
         tick_t current_tick,
         entity_t entity,
-        const std::function<void(registry_t&, tick_t, entity_t, effect<effect_type>&)>& fn) {
+        const std::function<void(registry_t&, tick_t, entity_t, effect_old<effect_type>&)>& fn) {
         fn(registry, current_tick, entity, *this);
     }
 
     inline void update_last_damaging_tick(tick_t current_tick) {
         last_damaging_tick = current_tick;
     }
-    inline void add(const effect<effect_type>& effect) {
+    inline void add(const effect_old<effect_type>& effect) {
         duration = std::min(max_duration, duration + effect.duration);
     }
 
@@ -145,29 +145,29 @@ struct stacking_effect {
     std::vector<effect_type> stacks;
 };
 
-struct aegis : effect<aegis> {
-    using effect<aegis>::effect;
+struct aegis : effect_old<aegis> {
+    using effect_old<aegis>::effect_old;
 };
-struct alacrity : effect<alacrity> {
-    using effect<alacrity>::effect;
+struct alacrity : effect_old<alacrity> {
+    using effect_old<alacrity>::effect_old;
 };
-struct fury : effect<fury> {
-    using effect<fury>::effect;
+struct fury : effect_old<fury> {
+    using effect_old<fury>::effect_old;
 };
-struct might : effect<might> {
-    using effect<might>::effect;
+struct might : effect_old<might> {
+    using effect_old<might>::effect_old;
 };
-struct quickness : effect<quickness> {
-    using effect<quickness>::effect;
+struct quickness : effect_old<quickness> {
+    using effect_old<quickness>::effect_old;
 };
-struct resolution : effect<resolution> {
-    using effect<resolution>::effect;
+struct resolution : effect_old<resolution> {
+    using effect_old<resolution>::effect_old;
 };
-struct vulnerability : effect<vulnerability> {
-    using effect<vulnerability>::effect;
+struct vulnerability : effect_old<vulnerability> {
+    using effect_old<vulnerability>::effect_old;
 };
-struct burning : effect<burning> {
-    using effect<burning>::effect;
+struct burning : effect_old<burning> {
+    using effect_old<burning>::effect_old;
 
     [[nodiscard]] inline double damage_calculation(const entt::registry& registry,
                                                    tick_t current_tick) const {
@@ -181,8 +181,8 @@ struct burning : effect<burning> {
         return damage * (current_tick - last_damaging_tick) / effect_pulse_rate;
     }
 };
-struct bleeding : effect<bleeding> {
-    using effect<bleeding>::effect;
+struct bleeding : effect_old<bleeding> {
+    using effect_old<bleeding>::effect_old;
 
     [[nodiscard]] inline double damage_calculation(const entt::registry& registry,
                                                    tick_t current_tick) const {
@@ -197,8 +197,8 @@ struct bleeding : effect<bleeding> {
     }
 };
 
-struct binding_blade : effect<binding_blade> {
-    using effect<binding_blade>::effect;
+struct binding_blade : effect_old<binding_blade> {
+    using effect_old<binding_blade>::effect_old;
 
     [[nodiscard]] inline double damage_calculation(const entt::registry& registry,
                                                    tick_t current_tick) const {
@@ -210,18 +210,18 @@ struct binding_blade : effect<binding_blade> {
     }
 };
 
-struct symbolic_avenger : effect<symbolic_avenger> {
-    using effect<symbolic_avenger>::effect;
+struct symbolic_avenger : effect_old<symbolic_avenger> {
+    using effect_old<symbolic_avenger>::effect_old;
 };
 
-struct virtue_of_justice : effect<virtue_of_justice> {
-    using effect<virtue_of_justice>::effect;
+struct virtue_of_justice : effect_old<virtue_of_justice> {
+    using effect_old<virtue_of_justice>::effect_old;
 };
-struct inspiring_virtue : effect<inspiring_virtue> {
-    using effect<inspiring_virtue>::effect;
+struct inspiring_virtue : effect_old<inspiring_virtue> {
+    using effect_old<inspiring_virtue>::effect_old;
 };
 
-enum class applied_effect_type : std::uint32_t
+enum class effect_type : std::uint32_t
 {
     BURNING,
     BLEEDING,
@@ -231,19 +231,19 @@ enum class applied_effect_type : std::uint32_t
 };
 
 struct effect_application {
-    effects::applied_effect_type effect_type;
+    effects::effect_type effect_type;
     size_t num_stacks;
     tick_t duration;
     entity_t source;
 };
 
-NLOHMANN_JSON_SERIALIZE_ENUM(applied_effect_type,
+NLOHMANN_JSON_SERIALIZE_ENUM(effect_type,
                              {
-                                 {applied_effect_type::BURNING, "BURNING"},
-                                 {applied_effect_type::BLEEDING, "BLEEDING"},
+                                 {effect_type::BURNING, "BURNING"},
+                                 {effect_type::BLEEDING, "BLEEDING"},
 
-                                 {applied_effect_type::BINDING_BLADE, "BINDING_BLADE"},
-                                 {applied_effect_type::VIRTUE_OF_JUSTICE, "VIRTUE_OF_JUSTICE"},
+                                 {effect_type::BINDING_BLADE, "BINDING_BLADE"},
+                                 {effect_type::VIRTUE_OF_JUSTICE, "VIRTUE_OF_JUSTICE"},
                              })
 
 }  // namespace gw2combat::effects

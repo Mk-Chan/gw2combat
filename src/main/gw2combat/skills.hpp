@@ -30,7 +30,7 @@ enum class applied_effect_direction : std::uint8_t
 };
 
 struct effect_application {
-    effects::applied_effect_type effect_type;
+    effects::effect_type effect_type;
     applied_effect_direction effect_direction;
     size_t num_stacks;
     tick_t duration;

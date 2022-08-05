@@ -12,7 +12,7 @@ void incoming_condition_damage_multiplier_calculation(registry_t& registry, tick
             auto& incoming_condition_damage =
                 registry.emplace<component::incoming_condition_damage_multiplier>(entity);
             incoming_condition_damage.multiplier =
-                1.0 + (double)vulnerability.effect.num_stacks() * 0.01;
+                1.0 + (double)vulnerability.effect_old.num_stacks() * 0.01;
         });
 
     registry.view<component::is_actor>(entt::exclude<component::vulnerability>)

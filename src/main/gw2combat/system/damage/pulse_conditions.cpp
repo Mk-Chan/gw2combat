@@ -19,13 +19,13 @@ void buffer_effect_damage(registry_t& registry, tick_t current_tick) {
 
         if constexpr (is_affected_by_incoming_multiplier) {
             buffered_condition_damage.value +=
-                effect_component.effect.damage_calculation(registry, current_tick);
+                effect_component.effect_old.damage_calculation(registry, current_tick);
         } else {
             buffered_condition_damage.unaffected_by_incoming_multiplier_value +=
-                effect_component.effect.damage_calculation(registry, current_tick);
+                effect_component.effect_old.damage_calculation(registry, current_tick);
         }
 
-        effect_component.effect.update_last_damaging_tick(current_tick);
+        effect_component.effect_old.update_last_damaging_tick(current_tick);
     });
 }
 

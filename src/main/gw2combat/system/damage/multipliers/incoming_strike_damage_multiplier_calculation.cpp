@@ -15,7 +15,7 @@ void incoming_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             auto& incoming_strike_damage_multiplier =
                 registry.emplace<component::incoming_strike_damage_multiplier>(entity);
             incoming_strike_damage_multiplier.multiplier =
-                (1.0 + (double)vulnerability.effect.num_stacks() * 0.01) /
+                (1.0 + (double)vulnerability.effect_old.num_stacks() * 0.01) /
                 effective_attributes.armor;
         });
 

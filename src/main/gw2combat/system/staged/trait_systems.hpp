@@ -50,7 +50,7 @@ void symbolic_avenger(registry_t& registry, tick_t current_tick) {
                         auto& symbolic_avenger_effect =
                             registry.get_or_emplace<component::symbolic_avenger_effect>(
                                 source_entity);
-                        symbolic_avenger_effect.effect.add(
+                        symbolic_avenger_effect.effect_old.add(
                             effects::symbolic_avenger{source_entity, current_tick, 15'000});
                     }
                 }

@@ -44,7 +44,7 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
                 registry.try_get<component::symbolic_avenger_effect>(entity);
             if (symbolic_avenger_ptr) {
                 symbolic_avenger_addend +=
-                    std::min((double)symbolic_avenger_ptr->effect.num_stacks(), 5.0) * 0.02;
+                    std::min((double)symbolic_avenger_ptr->effect_old.num_stacks(), 5.0) * 0.02;
             }
 
             double scholar_rune_multiplier = 1.0;

@@ -195,7 +195,7 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline tick_t get_effective_condition_duration(
     tick_t duration,
-    effects::applied_effect_type effect_type,
+    effects::effect_type effect_type,
     const component::effective_attributes& effective_attributes) {
     auto calc = [&](double special_condition_duration_pct) {
         return tick_t{(unsigned int)((double)duration *
@@ -205,12 +205,12 @@ namespace gw2combat::utils {
     };
 
     switch (effect_type) {
-        case effects::applied_effect_type::BURNING:
+        case effects::effect_type::BURNING:
             return calc(effective_attributes.burning_duration_pct);
-        case effects::applied_effect_type::BLEEDING:
+        case effects::effect_type::BLEEDING:
             return calc(effective_attributes.bleeding_duration_pct);
-        case effects::applied_effect_type::BINDING_BLADE:
-        case effects::applied_effect_type::VIRTUE_OF_JUSTICE:
+        case effects::effect_type::BINDING_BLADE:
+        case effects::effect_type::VIRTUE_OF_JUSTICE:
             return tick_t{duration};
     }
 }

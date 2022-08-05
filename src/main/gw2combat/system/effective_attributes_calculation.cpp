@@ -42,8 +42,8 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
 
             auto might_ptr = registry.try_get<component::might>(entity);
             if (might_ptr != nullptr) {
-                effective_attributes.power += might_ptr->effect.num_stacks() * 30;
-                effective_attributes.condition_damage += might_ptr->effect.num_stacks() * 30;
+                effective_attributes.power += might_ptr->effect_old.num_stacks() * 30;
+                effective_attributes.condition_damage += might_ptr->effect_old.num_stacks() * 30;
             }
             bool has_fury = registry.any_of<component::fury>(entity);
             if (has_fury) {
