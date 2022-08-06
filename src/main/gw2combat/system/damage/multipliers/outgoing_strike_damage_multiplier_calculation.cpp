@@ -12,7 +12,7 @@ namespace gw2combat::system {
 void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t) {
     registry.view<component::effective_attributes, component::combat_stats>().each(
         [&](entity_t entity,
-            const component::effective_attributes& effective_attributes,
+            component::effective_attributes& effective_attributes,
             const component::combat_stats& combat_stats) {
             bool has_scholar_rune = utils::has_rune(rune_type::SCHOLAR, entity, registry);
             bool has_force_sigil = utils::has_sigil(weapon_sigil::FORCE, entity, registry);
@@ -61,6 +61,14 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
 
                 bool target_is_burning =
                     utils::has_effect(effects::effect_type::BURNING, target_effects_component_ptr);
+                // FIXME: This is a bit of a hack maybe. const the effective attrs if you move this.
+                //        The right way is to roll crit for each strike and apply this at a later
+                //        stage
+                if (target_is_burning &&
+                    utils::has_trait(trait_type::RADIANT_POWER, entity, registry)) {
+                    effective_attributes.critical_chance_pct += 10;
+                }
+
                 fiery_wrath_multiplier += fiery_wrath_is_traited * target_is_burning * 0.07;
 
                 bool target_is_vulnerable = utils::has_effect(effects::effect_type::VULNERABILITY,

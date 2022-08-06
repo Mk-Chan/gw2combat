@@ -44,6 +44,11 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
             effective_attributes.power += might_stacks * 30;
             effective_attributes.condition_damage += might_stacks * 30;
 
+            if (utils::has_trait(trait_type::RIGHTEOUS_INSTINCTS, entity, registry) &&
+                utils::has_effect(effects::effect_type::RESOLUTION, entity, registry)) {
+                effective_attributes.critical_chance_pct += 10;
+            }
+
             if (utils::has_effect(effects::effect_type::FURY, entity, registry)) {
                 effective_attributes.critical_chance_pct += 25;
             }
@@ -58,10 +63,20 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
                 utils::has_weapon_type(weapon_type::GREATSWORD, entity, registry)) {
                 effective_attributes.power += 120;
             }
+            if (utils::has_trait(trait_type::IMBUED_HASTE, entity, registry) &&
+                utils::has_effect(effects::effect_type::QUICKNESS, entity, registry)) {
+                effective_attributes.condition_damage += 250;
+                effective_attributes.healing_power += 250;
+                effective_attributes.vitality += 250;
+            }
+            if (utils::has_trait(trait_type::POWER_OF_THE_VIRTUOUS, entity, registry)) {
+                effective_attributes.condition_damage +=
+                    (unsigned int)(0.13 * (double)effective_attributes.vitality);
+            }
 
             // spdlog::info(
             //     "entity: {}, effective_attributes: {}",
-            //     utils::get_name(entity, registry),
+            //     utils::get_entity_name(entity, registry),
             //     nlohmann::json{
             //         {"power", effective_attributes.power},
             //         {"precision", effective_attributes.precision},
@@ -78,12 +93,14 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
             //         {"critical_damage_pct", effective_attributes.critical_damage_pct},
             //         {"condition_duration_pct", effective_attributes.condition_duration_pct},
             //         {"burning_duration_pct", effective_attributes.burning_duration_pct},
+            //         {"bleeding_duration_pct", effective_attributes.bleeding_duration_pct},
             //         //{"health", effective_attributes.health},
             //         //{"endurance", effective_attributes.endurance},
             //         //{"endurance_gain_pct", effective_attributes.endurance_gain_pct},
             //     }
             //         .dump());
         });
+    // exit(0);
 }
 
 }  // namespace gw2combat::system

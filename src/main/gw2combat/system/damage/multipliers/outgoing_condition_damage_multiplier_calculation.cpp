@@ -13,6 +13,9 @@ void outgoing_condition_damage_multiplier_calculation(registry_t& registry, tick
         if (utils::has_sigil(weapon_sigil::BURSTING, entity, registry)) {
             outgoing_condition_damage_multiplier.multiplier *= 1.05;
         }
+        if (utils::has_trait(trait_type::AMPLIFIED_WRATH, entity, registry)) {
+            outgoing_condition_damage_multiplier.burning_multiplier *= 1.1;
+        }
     });
     registry.view<component::source_entity>().each(
         [&](entity_t entity, const component::source_entity& outgoing_damage_source) {

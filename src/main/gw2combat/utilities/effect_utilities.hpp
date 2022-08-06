@@ -202,12 +202,14 @@ constexpr static inline std::array BOONS{
     switch (effect_type) {
         case effects::effect_type::BURNING:
             return (131.0 + 0.155 * source_effective_attributes.condition_damage) *
-                   outgoing_condition_damage_multiplier.multiplier * (double)effect_stack.progress /
-                   (double)effects::effect_pulse_rate;
+                   outgoing_condition_damage_multiplier.multiplier *
+                   outgoing_condition_damage_multiplier.burning_multiplier *
+                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
         case effects::effect_type::BLEEDING:
             return (22.0 + 0.06 * source_effective_attributes.condition_damage) *
-                   outgoing_condition_damage_multiplier.multiplier * (double)effect_stack.progress /
-                   (double)effects::effect_pulse_rate;
+                   outgoing_condition_damage_multiplier.multiplier *
+                   outgoing_condition_damage_multiplier.bleeding_multiplier *
+                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
         case effects::effect_type::BINDING_BLADE:
             return (160.0 + 0.2 * source_effective_attributes.power) *
                    (double)effect_stack.progress / (double)effects::effect_pulse_rate;

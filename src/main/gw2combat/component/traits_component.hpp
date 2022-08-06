@@ -19,6 +19,7 @@ enum class trait_type : std::uint32_t
     RADIANT_FIRE,
     RETRIBUTION,
     AMPLIFIED_WRATH,
+    RADIANT_POWER,
     RIGHTEOUS_INSTINCTS,
 
     FIERY_WRATH,
@@ -34,8 +35,12 @@ enum class trait_type : std::uint32_t
     GLACIAL_HEART,
     PERMEATING_WRATH,
 
+    POWER_OF_THE_VIRTUOUS,
+
     UNRELENTING_CRITICISM,
     LEGENDARY_LORE,
+    IMBUED_HASTE,
+    STOIC_DEMEANOR,
     LOREMASTER,
 };
 
@@ -52,6 +57,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(trait_type,
                                  {trait_type::RADIANT_FIRE, "Radiant Fire"},
                                  {trait_type::RETRIBUTION, "Retribution"},
                                  {trait_type::AMPLIFIED_WRATH, "Amplified Wrath"},
+                                 {trait_type::RADIANT_POWER, "Radiant Power"},
                                  {trait_type::RIGHTEOUS_INSTINCTS, "Righteous Instincts"},
 
                                  {trait_type::FIERY_WRATH, "Fiery Wrath"},
@@ -59,6 +65,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(trait_type,
                                  {trait_type::SYMBOLIC_POWER, "Symbolic Power"},
                                  {trait_type::SYMBOLIC_AVENGER, "Symbolic Avenger"},
                                  {trait_type::SYMBOLIC_EXPOSURE, "Symbolic Exposure"},
+
+                                 {trait_type::POWER_OF_THE_VIRTUOUS, "Power of the Virtuous"},
 
                                  {trait_type::INSPIRED_VIRTUE, "Inspired Virtue"},
                                  {trait_type::UNSCATHED_CONTENDER, "Unscathed Contender"},
@@ -69,6 +77,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(trait_type,
 
                                  {trait_type::UNRELENTING_CRITICISM, "Unrelenting Criticism"},
                                  {trait_type::LEGENDARY_LORE, "Legendary Lore"},
+                                 {trait_type::IMBUED_HASTE, "Imbued Haste"},
+                                 {trait_type::STOIC_DEMEANOR, "Stoic Demeanor"},
                                  {trait_type::LOREMASTER, "Loremaster"},
                              })
 

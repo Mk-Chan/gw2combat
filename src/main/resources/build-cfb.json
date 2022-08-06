@@ -6,23 +6,27 @@
     "toughness": 1000,
     "vitality": 1235,
     "concentration": 0,
-    "condition_damage": 1870,
-    "expertise": 381,
+    "condition_damage": 1809,
+    "expertise": 451,
     "ferocity": 150,
     "healing_power": 0,
     "armor": 2271,
     "boon_duration_pct": 0,
     "critical_chance_pct": 55.095238095238095,
     "critical_damage_pct": 160,
-    "condition_duration_pct": 25.4,
+    "condition_duration_pct": 30.066666666666663,
     "max_health": 15395,
-    "bleeding_duration_pct": 25.4,
-    "burning_duration_pct": 95.4,
-    "confusion_duration_pct": 25.4,
-    "poison_duration_pct": 25.4,
-    "torment_duration_pct": 25.4
+    "bleeding_duration_pct": 30.066666666666663,
+    "burning_duration_pct": 100,
+    "confusion_duration_pct": 30.066666666666663,
+    "poison_duration_pct": 30.066666666666663,
+    "torment_duration_pct": 30.066666666666663
   },
-  "trait_lines": ["Radiance", "Virtues", "Firebrand"],
+  "trait_lines": [
+    "Radiance",
+    "Virtues",
+    "Firebrand"
+  ],
   "traits": [
     "Right-Hand Strength",
     "Radiant Fire",
@@ -32,7 +36,16 @@
     "Permeating Wrath",
     "Unrelenting Criticism",
     "Legendary Lore",
-    "Loremaster"
+    "Loremaster",
+    "Justice is Blind",
+    "Renewed Justice",
+    "Radiant Power",
+    "Inspired Virtue",
+    "Virtue of Resolution",
+    "Power of the Virtuous",
+    "Purity of Word",
+    "Swift Scholar",
+    "Imbued Haste"
   ],
   "available_weapon_configurations": {
     "weapon_configurations": [
@@ -63,6 +76,6 @@
     ]
   },
   "rune": "balthazar",
-  "nourishment": "",
+  "nourishment": "beef-rendang",
   "enhancement": ""
 }

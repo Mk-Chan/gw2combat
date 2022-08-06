@@ -57,7 +57,7 @@ add_executable(
     gw2combat
 
     src/main/gw2combat/main.cpp
-    src/main/gw2combat/game_loop.cpp
+    src/main/gw2combat/combat_loop.cpp
 
     src/main/gw2combat/entity.cpp
     src/main/gw2combat/skills.cpp
@@ -69,7 +69,7 @@ add_executable(
     src/main/gw2combat/system/combat_detection.cpp
     src/main/gw2combat/system/update_health.cpp
     src/main/gw2combat/system/downstate_detection.cpp
-    src/main/gw2combat/system/damage/pulse_conditions.cpp
+    src/main/gw2combat/system/damage/incoming_condition_damage_calculation.cpp
 
     src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
     src/main/gw2combat/system/damage/detection/incoming_condition_detection.cpp

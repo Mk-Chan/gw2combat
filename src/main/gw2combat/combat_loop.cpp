@@ -1,10 +1,12 @@
-#include "game_loop.hpp"
+#include "combat_loop.hpp"
 
 #include "entity.hpp"
 #include "skills.hpp"
 
 #include "gw2combat/component/character/downstate.hpp"
 #include "gw2combat/component/character/effective_attributes.hpp"
+#include "gw2combat/component/character/is_actor.hpp"
+#include "gw2combat/component/character/no_more_rotation.hpp"
 #include "gw2combat/component/damage/effective_incoming_damage.hpp"
 #include "gw2combat/component/damage/incoming_strike_damage.hpp"
 #include "gw2combat/component/damage/multipliers/incoming_condition_damage_multiplier.hpp"
@@ -43,6 +45,7 @@ void run_staged_systems(registry_t& registry, tick_t current_tick) {
     system::virtue_of_justice<stage>(registry, current_tick);
     system::inspiring_virtue<stage>(registry, current_tick);
 
+    system::unrelenting_criticism<stage>(registry, current_tick);
     system::symbolic_avenger<stage>(registry, current_tick);
     system::symbolic_power<stage>(registry, current_tick);
 
@@ -78,9 +81,8 @@ void run_systems(registry_t& registry, tick_t current_tick) {
 
     system::incoming_condition_detection(registry, current_tick);
     system::incoming_condition_application(registry, current_tick);
-
     if (current_tick % effects::effect_pulse_rate == 0) {
-        system::buffer_condition_damage(registry, current_tick);
+        system::incoming_condition_damage_calculation(registry, current_tick);
     }
     system::progress_effects(registry, current_tick);
 
@@ -91,25 +93,40 @@ void run_systems(registry_t& registry, tick_t current_tick) {
     clear_temporary_components(registry);
 }
 
-void game_loop() {
+void combat_loop() {
     skills::SKILLS_DB.init("src/main/resources/skills_db.json");
 
     registry_t registry;
     init_entities(registry);
 
     tick_t current_tick{0};
-    bool reported_downstate = false;
+    bool downstate_exit = false;
+    tick_t end_tick = 1'000'000'000;
     while (true) {
         run_systems(registry, current_tick);
 
+        bool actors_have_rotations = false;
+        for (auto&& [entity] : registry.view<component::is_actor>().each()) {
+            if (!registry.any_of<component::no_more_rotation>(entity)) {
+                actors_have_rotations = true;
+            }
+        }
         for (auto&& [entity] : registry.view<component::downstate>().each()) {
             spdlog::info("tick: {}, entity: {} is downstate!",
                          current_tick,
                          utils::get_entity_name(entity, registry));
-            reported_downstate = true;
+            downstate_exit = true;
         }
-        if (reported_downstate) {
+        if (downstate_exit) {
             break;
+        }
+        if (!actors_have_rotations) {
+            if (end_tick == 1'000'000'000) {
+                end_tick = current_tick + 10'000;
+            } else if (current_tick == end_tick) {
+                spdlog::info("no actor had any rotation left for 10s");
+                break;
+            }
         }
 
         current_tick += tick_t{1};

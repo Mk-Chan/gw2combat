@@ -1,6 +1,6 @@
-#include "game_loop.hpp"
+#include "combat_loop.hpp"
 
 int main() {
-    gw2combat::game_loop();
+    gw2combat::combat_loop();
     return 0;
 }

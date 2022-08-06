@@ -57,8 +57,12 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
                     virtue_of_justice.num_unaccounted_hits %=
                         virtue_of_justice.number_of_ticks_for_burning_application;
 
-                    auto effective_duration = utils::get_effective_effect_duration(
-                        2'000, effects::effect_type::BURNING, effective_attributes);
+                    double duration_modifier =
+                        utils::has_trait(trait_type::AMPLIFIED_WRATH, entity, registry) ? 1.2 : 1.0;
+                    auto effective_duration =
+                        utils::get_effective_effect_duration((tick_t)(2'000.0 * duration_modifier),
+                                                             effects::effect_type::BURNING,
+                                                             effective_attributes);
                     auto& outgoing_condition_application =
                         registry.get_or_emplace<component::outgoing_condition_application>(entity);
                     outgoing_condition_application.effect_applications.template emplace_back(

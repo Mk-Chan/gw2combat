@@ -47,6 +47,129 @@
       "tags": ["GUARDIAN_VIRTUE"]
     },
     {
+      "name": "Core Cleave",
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.36,
+      "cast_duration": [960, 640],
+      "hit_on_tick_list": [[960], [640]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 1,
+          "duration": 1000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Core Cleave Magical Hit",
+          "weapon_type": "AXE",
+          "damage_coefficient": 0.36,
+          "cast_duration": [100, 100],
+          "hit_on_tick_list": [[100], [100]],
+          "on_hit_effect_applications": [
+            {
+              "effect_type": "BLEEDING",
+              "num_stacks": 1,
+              "duration": 1000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": []
+        }
+      ],
+      "cooldown": [0, 0],
+      "tags": []
+    },
+    {
+      "name": "Bleeding Edge",
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.36,
+      "cast_duration": [1020, 680],
+      "hit_on_tick_list": [[1020], [680]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 1,
+          "duration": 1000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Bleeding Edge Magical Hit",
+          "weapon_type": "AXE",
+          "damage_coefficient": 0.36,
+          "cast_duration": [100, 100],
+          "hit_on_tick_list": [[100], [100]],
+          "on_hit_effect_applications": [
+            {
+              "effect_type": "BLEEDING",
+              "num_stacks": 1,
+              "duration": 1000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": []
+        }
+      ],
+      "cooldown": [0, 0],
+      "tags": []
+    },
+    {
+      "name": "Searing Slash",
+      "weapon_type": "AXE",
+      "damage_coefficient": 1.2,
+      "cast_duration": [960, 640],
+      "hit_on_tick_list": [[960], [640]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "duration": 2000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Searing Slash Magical Hit",
+          "weapon_type": "AXE",
+          "damage_coefficient": 1.2,
+          "cast_duration": [960, 640],
+          "hit_on_tick_list": [[100], [100]],
+          "on_hit_effect_applications": [
+            {
+              "effect_type": "BURNING",
+              "num_stacks": 1,
+              "duration": 2000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": []
+        }
+      ],
+      "cooldown": [0, 0],
+      "tags": []
+    },
+    {
       "name": "Sword of Wrath",
       "weapon_type": "SWORD",
       "damage_coefficient": 0.666,

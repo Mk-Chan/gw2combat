@@ -27,7 +27,7 @@ extern void outgoing_strike_damage_multiplier_calculation(registry_t& registry,
 extern void incoming_strike_damage_calculation(registry_t& registry, tick_t current_tick);
 extern void expire_effects(registry_t& registry, tick_t current_tick);
 extern void progress_effects(registry_t& registry, tick_t current_tick);
-extern void buffer_condition_damage(registry_t& registry, tick_t current_tick);
+extern void incoming_condition_damage_calculation(registry_t& registry, tick_t current_tick);
 
 extern void effective_attributes_calculation(registry_t& registry, tick_t current_tick);
 extern void update_health(registry_t& registry, tick_t current_tick);

@@ -64,6 +64,9 @@ entity_t build_cfb(registry_t& registry) {
     registry.emplace<component::is_actor>(entity);
     registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player_cfb"_hs);
 
+    std::vector<skill_cast> rotation = read_rotation("src/main/resources/rotation-cfb.csv");
+    registry.emplace<component::rotation>(entity, component::rotation{rotation});
+
     return entity;
 }
 
@@ -116,6 +119,9 @@ entity_t build_core_guard(registry_t& registry) {
     registry.emplace<component::is_actor>(entity);
     registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player_core_guard"_hs);
 
+    std::vector<skill_cast> rotation = read_rotation("src/main/resources/rotation-core-guard.csv");
+    registry.emplace<component::rotation>(entity, component::rotation{rotation});
+
     return entity;
 }
 
@@ -147,13 +153,11 @@ entity_t build_golem_boon_condi_provider(entt::registry& registry) {
 }
 
 void init_entities(entt::registry& registry) {
-    auto player1 = build_core_guard(registry);
-    // auto player1 = build_cfb(registry);
+    // auto player1 = build_core_guard(registry);
+    auto player1 = build_cfb(registry);
     auto golem = build_medium_kitty_golem(registry);
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 
-    std::vector<skill_cast> player1_rotation = read_rotation("src/main/resources/rotation.csv");
-    registry.emplace<component::rotation>(player1, component::rotation{player1_rotation});
     registry.emplace<component::targeting>(player1, component::targeting{golem});
     // registry.remove<component::is_actor>(player1);  // Disable player1
 
