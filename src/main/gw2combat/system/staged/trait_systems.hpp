@@ -3,7 +3,6 @@
 
 #include "gw2combat/component/damage/incoming_strike_damage.hpp"
 #include "gw2combat/component/damage/outgoing_strike_damage.hpp"
-#include "gw2combat/component/effect_components.hpp"
 #include "gw2combat/system/system.hpp"
 
 namespace gw2combat::system {
@@ -47,11 +46,12 @@ void symbolic_avenger(registry_t& registry, tick_t current_tick) {
                 if (is_symbol_strike) {
                     auto source_entity = utils::get_source_entity(strike.source, registry);
                     if (utils::has_trait(trait_type::SYMBOLIC_AVENGER, source_entity, registry)) {
-                        auto& symbolic_avenger_effect =
-                            registry.get_or_emplace<component::symbolic_avenger_effect>(
-                                source_entity);
-                        symbolic_avenger_effect.effect_old.add(
-                            effects::symbolic_avenger{source_entity, current_tick, 15'000});
+                        auto& effects_component =
+                            registry.template get<component::effects_component>(source_entity);
+                        utils::apply_effects(
+                            effects::effect_application{
+                                effects::effect_type::SYMBOLIC_AVENGER, source_entity, 15'000},
+                            effects_component);
                     }
                 }
             }
@@ -78,8 +78,12 @@ void inspiring_virtue(registry_t& registry, tick_t current_tick) {
                 bool is_guardian_virtue_skill =
                     utils::skill_has_tag(skill, skills::skill_tag::GUARDIAN_VIRTUE);
                 if (is_guardian_virtue_skill) {
-                    registry.template emplace_or_replace<component::inspiring_virtue_effect>(
-                        entity, effects::inspiring_virtue{entity, current_tick, 6'000});
+                    auto& effects_component =
+                        registry.template get<component::effects_component>(entity);
+                    utils::apply_effects(
+                        effects::effect_application{
+                            effects::effect_type::INSPIRING_VIRTUE, entity, 6'000},
+                        effects_component);
                 }
             }
         });

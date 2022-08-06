@@ -2,43 +2,74 @@
 
 #include <spdlog/spdlog.h>
 
-#include "gw2combat/component/effect_components.hpp"
-
 #include "gw2combat/component/damage/buffered_condition_damage.hpp"
 #include "gw2combat/component/damage/effective_incoming_damage.hpp"
 #include "gw2combat/component/damage/multipliers/incoming_condition_damage_multiplier.hpp"
-#include "gw2combat/component/damage/pulse_conditions.hpp"
 
 namespace gw2combat::system {
 
-template <typename EffectComponent, bool is_affected_by_incoming_multiplier = true>
-void buffer_effect_damage(registry_t& registry, tick_t current_tick) {
-    registry.view<EffectComponent>().each([&](entity_t entity, EffectComponent& effect_component) {
-        auto& buffered_condition_damage =
-            registry.get_or_emplace<component::buffered_condition_damage>(entity);
+void expire_effects(registry_t& registry, tick_t current_tick) {
+    registry.view<component::effects_component>().each(
+        [&](entity_t entity, component::effects_component& effects_component) {
+            auto& buffered_condition_damage =
+                registry.get_or_emplace<component::buffered_condition_damage>(entity);
 
-        if constexpr (is_affected_by_incoming_multiplier) {
-            buffered_condition_damage.value +=
-                effect_component.effect_old.damage_calculation(registry, current_tick);
-        } else {
-            buffered_condition_damage.unaffected_by_incoming_multiplier_value +=
-                effect_component.effect_old.damage_calculation(registry, current_tick);
-        }
-
-        effect_component.effect_old.update_last_damaging_tick(current_tick);
-    });
+            for (auto&& [effect_type, effect_stacks] : effects_component.effects) {
+                if (effect_stacks.progress >= effect_stacks.duration) {
+                    if (utils::is_effect_affected_by_incoming_multiplier(effect_type)) {
+                        buffered_condition_damage.value +=
+                            utils::calculate_condition_damage(effect_type, effect_stacks, registry);
+                    } else {
+                        buffered_condition_damage.unaffected_by_incoming_multiplier_value +=
+                            utils::calculate_condition_damage(effect_type, effect_stacks, registry);
+                    }
+                }
+            }
+            std::erase_if(effects_component.effects, [&](const auto& item) {
+                const auto& [effect_type, effect_stack] = item;
+                return effect_stack.progress >= effect_stack.duration;
+            });
+            if (buffered_condition_damage.value == 0.0 &&
+                buffered_condition_damage.unaffected_by_incoming_multiplier_value == 0.0) {
+                registry.remove<component::buffered_condition_damage>(entity);
+            }
+        });
 }
 
-void pulse_conditions(registry_t& registry, tick_t current_tick) {
-    if (!registry.ctx().contains<component::pulse_conditions>()) {
-        return;
-    }
+void progress_effects(registry_t& registry, tick_t current_tick) {
+    registry.view<component::effects_component>().each(
+        [&](component::effects_component& effects_component) {
+            for (auto&& [effect_type, effect_stacks] : effects_component.effects) {
+                effect_stacks.progress += 1;
+            }
+        });
+}
 
-    buffer_effect_damage<component::burning>(registry, current_tick);
-    buffer_effect_damage<component::bleeding>(registry, current_tick);
-    buffer_effect_damage<component::binding_blade, false>(registry, current_tick);
+void buffer_condition_damage(registry_t& registry, tick_t current_tick) {
+    registry.view<component::effects_component>().each(
+        [&](entity_t entity, component::effects_component& effects_component) {
+            auto& buffered_condition_damage =
+                registry.get_or_emplace<component::buffered_condition_damage>(entity);
 
-    // Apply and reset any buffered condition damage
+            for (auto&& [effect_type, effect_stacks] : effects_component.effects) {
+                if (utils::is_effect_affected_by_incoming_multiplier(effect_type)) {
+                    buffered_condition_damage.value +=
+                        utils::calculate_condition_damage(effect_type, effect_stacks, registry);
+                } else {
+                    buffered_condition_damage.unaffected_by_incoming_multiplier_value +=
+                        utils::calculate_condition_damage(effect_type, effect_stacks, registry);
+                }
+
+                effect_stacks.duration -= effect_stacks.progress;
+                effect_stacks.progress = 0;
+            }
+
+            if (buffered_condition_damage.value == 0.0 &&
+                buffered_condition_damage.unaffected_by_incoming_multiplier_value == 0.0) {
+                registry.remove<component::buffered_condition_damage>(entity);
+            }
+        });
+
     registry
         .view<component::incoming_condition_damage_multiplier,
               component::buffered_condition_damage>()

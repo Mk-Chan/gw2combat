@@ -4,7 +4,6 @@
 #include "gw2combat/system/system.hpp"
 
 #include "gw2combat/component/damage/source_entity.hpp"
-#include "gw2combat/component/effect_components.hpp"
 #include "gw2combat/component/profession_components.hpp"
 
 namespace gw2combat::system {
@@ -16,12 +15,11 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
             [&](component::incoming_strike_damage& incoming_strike_damage) {
                 for (auto& strike : incoming_strike_damage.strikes) {
                     entity_t source_entity = utils::get_source_entity(strike.source, registry);
-                    auto virtue_of_justice_effect_ptr =
-                        registry.try_get<component::virtue_of_justice_effect>(source_entity);
-                    if (virtue_of_justice_effect_ptr) {
+                    if (utils::has_effect(
+                            effects::effect_type::VIRTUE_OF_JUSTICE, source_entity, registry)) {
                         auto& effective_attributes =
                             registry.template get<component::effective_attributes>(source_entity);
-                        auto effective_duration = utils::get_effective_condition_duration(
+                        auto effective_duration = utils::get_effective_effect_duration(
                             4'000, effects::effect_type::BURNING, effective_attributes);
                         strike.skill.on_hit_effect_applications.template emplace_back(
                             skills::effect_application{effects::effect_type::BURNING,
@@ -30,8 +28,8 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
                                                        effective_duration});
                         registry.template get<component::virtue_of_justice>(source_entity)
                             .num_unaccounted_hits = 0;
-                        registry.template remove<component::virtue_of_justice_effect>(
-                            source_entity);
+                        utils::remove_all_effect_stacks(
+                            effects::effect_type::VIRTUE_OF_JUSTICE, source_entity, registry);
                     }
                 }
             });
@@ -59,15 +57,15 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
                     virtue_of_justice.num_unaccounted_hits %=
                         virtue_of_justice.number_of_ticks_for_burning_application;
 
-                    auto effective_duration = utils::get_effective_condition_duration(
+                    auto effective_duration = utils::get_effective_effect_duration(
                         2'000, effects::effect_type::BURNING, effective_attributes);
                     auto& outgoing_condition_application =
                         registry.get_or_emplace<component::outgoing_condition_application>(entity);
                     outgoing_condition_application.effect_applications.template emplace_back(
                         effects::effect_application{effects::effect_type::BURNING,
-                                                    burning_stacks_to_apply,
+                                                    entity,
                                                     effective_duration,
-                                                    entity});
+                                                    burning_stacks_to_apply});
 
                     spdlog::info("tick: {}, entity: {}, outgoing burning from virtue_of_justice",
                                  current_tick,

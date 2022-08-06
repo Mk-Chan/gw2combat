@@ -6,8 +6,6 @@
 
 namespace gw2combat::system {
 
-extern void run_systems(registry_t& registry, tick_t current_tick);
-
 extern void combat_detection(registry_t& registry, tick_t current_tick);
 
 extern void character_command(registry_t& registry, tick_t current_tick);
@@ -27,10 +25,9 @@ extern void outgoing_strike_damage_multiplier_calculation(registry_t& registry,
                                                           tick_t current_tick);
 
 extern void incoming_strike_damage_calculation(registry_t& registry, tick_t current_tick);
-extern void pulse_conditions(registry_t& registry, tick_t current_tick);
-
-extern void expire_damaging_effects(registry_t& registry, tick_t current_tick);
-extern void expire_non_damaging_effects(registry_t& registry, tick_t current_tick);
+extern void expire_effects(registry_t& registry, tick_t current_tick);
+extern void progress_effects(registry_t& registry, tick_t current_tick);
+extern void buffer_condition_damage(registry_t& registry, tick_t current_tick);
 
 extern void effective_attributes_calculation(registry_t& registry, tick_t current_tick);
 extern void update_health(registry_t& registry, tick_t current_tick);

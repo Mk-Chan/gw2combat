@@ -31,23 +31,25 @@ void on_hit_effect_applications(registry_t& registry, tick_t current_tick) {
                 for (const skills::effect_application& effect_application :
                      strike.skill.on_hit_effect_applications) {
                     auto effective_duration =
-                        utils::get_effective_condition_duration(effect_application.duration,
-                                                                effect_application.effect_type,
-                                                                effective_attributes);
+                        utils::get_effective_effect_duration(effect_application.duration,
+                                                             effect_application.effect_type,
+                                                             effective_attributes);
                     if (effect_application.effect_direction ==
                         skills::applied_effect_direction::OUTGOING) {
                         outgoing_condition_application.effect_applications.template emplace_back(
-                            effects::effect_application{effect_application.effect_type,
-                                                        effect_application.num_stacks,
-                                                        effective_duration,
-                                                        source_entity});
+                            effects::effect_application{
+                                effect_application.effect_type,
+                                source_entity,
+                                effective_duration,
+                                effect_application.num_stacks,
+                            });
                     } else if (effect_application.effect_direction ==
                                skills::applied_effect_direction::INCOMING) {
                         incoming_condition_application.effect_applications.template emplace_back(
                             effects::effect_application{effect_application.effect_type,
-                                                        effect_application.num_stacks,
+                                                        source_entity,
                                                         effective_duration,
-                                                        source_entity});
+                                                        effect_application.num_stacks});
                     }
                 }
             }

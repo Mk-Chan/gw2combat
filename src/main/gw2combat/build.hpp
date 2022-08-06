@@ -6,7 +6,7 @@
 #include "gw2combat/component/character/static_attributes.hpp"
 #include "gw2combat/component/gear/runes.hpp"
 #include "gw2combat/component/gear/weapon_configurations.hpp"
-#include "gw2combat/component/traits.hpp"
+#include "gw2combat/component/traits_component.hpp"
 
 namespace gw2combat {
 

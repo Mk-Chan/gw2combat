@@ -10,7 +10,7 @@
 #include "gw2combat/component/character/rotation.hpp"
 #include "gw2combat/component/character/static_attributes.hpp"
 #include "gw2combat/component/character/targeting.hpp"
-#include "gw2combat/component/effect_components.hpp"
+#include "gw2combat/component/effects_component.hpp"
 #include "gw2combat/component/profession_components.hpp"
 
 namespace gw2combat {
@@ -152,34 +152,47 @@ void init_entities(entt::registry& registry) {
     auto golem = build_medium_kitty_golem(registry);
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 
-    // NOTE: Default boons for testing
-    using namespace effects;
     std::vector<skill_cast> player1_rotation = read_rotation("src/main/resources/rotation.csv");
     registry.emplace<component::rotation>(player1, component::rotation{player1_rotation});
-    registry.emplace<component::aegis>(
-        player1, component::aegis{aegis{golem_boon_condi_provider, 0, 1'000'000'000}});
-    registry.emplace<component::alacrity>(
-        player1, component::alacrity{alacrity{golem_boon_condi_provider, 0, 1'000'000'000}});
-    registry.emplace<component::fury>(
-        player1, component::fury{fury{golem_boon_condi_provider, 0, 1'000'000'000}});
-    registry.emplace<component::might>(player1,
-                                       component::might{stacking_effect<might>{
-                                           golem_boon_condi_provider, 25, 0, 1'000'000'000, 25}});
-    registry.emplace<component::quickness>(
-        player1, component::quickness{quickness{golem_boon_condi_provider, 0, 1'000'000'000}});
-    registry.emplace<component::resolution>(
-        player1, component::resolution{resolution{golem_boon_condi_provider, 0, 1'000'000'000}});
-
     registry.emplace<component::targeting>(player1, component::targeting{golem});
-    // registry.remove<component::is_character>(player1);  // Disable player1
+    // registry.remove<component::is_actor>(player1);  // Disable player1
 
-    registry.emplace<component::burning>(golem,
-                                         component::burning{stacking_effect<burning>{
-                                             golem_boon_condi_provider, 1, 0, 1'000'000'000}});
-    registry.emplace<component::vulnerability>(
-        golem,
-        component::vulnerability{
-            stacking_effect<vulnerability>{golem_boon_condi_provider, 25, 0, 1'000'000'000, 25}});
+    // NOTE: Default boons for testing
+    auto& player1_effects_component = registry.emplace<component::effects_component>(player1);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::AEGIS, golem_boon_condi_provider, 1'000'000'000},
+        player1_effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::ALACRITY, golem_boon_condi_provider, 1'000'000'000},
+        player1_effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::FURY, golem_boon_condi_provider, 1'000'000'000},
+        player1_effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::MIGHT, golem_boon_condi_provider, 1'000'000'000, 25},
+        player1_effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::QUICKNESS, golem_boon_condi_provider, 1'000'000'000},
+        player1_effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::RESOLUTION, golem_boon_condi_provider, 1'000'000'000},
+        player1_effects_component);
+
+    auto& golem_effects_component = registry.emplace<component::effects_component>(golem);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::BURNING, golem_boon_condi_provider, 1'000'000'000, 1},
+        golem_effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::VULNERABILITY, golem_boon_condi_provider, 1'000'000'000, 25},
+        golem_effects_component);
 }
 
 }  // namespace gw2combat

@@ -9,7 +9,6 @@
 #include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
 #include "gw2combat/component/damage/outgoing_condition_application.hpp"
 #include "gw2combat/component/damage/outgoing_strike_damage.hpp"
-#include "gw2combat/component/effect_components.hpp"
 #include "gw2combat/component/gear/bundles.hpp"
 #include "gw2combat/component/skills/instant_cast_skills.hpp"
 #include "gw2combat/component/skills/normal_cast_skill.hpp"
@@ -50,21 +49,21 @@ void do_pulse(registry_t& registry, entity_t entity, const skills::skill& skill)
             outgoing_condition_application.effect_applications.emplace_back(
                 effects::effect_application{
                     effect_application.effect_type,
-                    effect_application.num_stacks,
-                    utils::get_effective_condition_duration(effect_application.duration,
-                                                            effect_application.effect_type,
-                                                            effective_attributes),
-                    source_entity});
+                    source_entity,
+                    utils::get_effective_effect_duration(effect_application.duration,
+                                                         effect_application.effect_type,
+                                                         effective_attributes),
+                    effect_application.num_stacks});
         } else if (effect_application.effect_direction ==
                    skills::applied_effect_direction::INCOMING) {
             incoming_condition_application.effect_applications.emplace_back(
                 effects::effect_application{
                     effect_application.effect_type,
-                    effect_application.num_stacks,
-                    utils::get_effective_condition_duration(effect_application.duration,
-                                                            effect_application.effect_type,
-                                                            effective_attributes),
-                    source_entity});
+                    source_entity,
+                    utils::get_effective_effect_duration(effect_application.duration,
+                                                         effect_application.effect_type,
+                                                         effective_attributes),
+                    effect_application.num_stacks});
         }
     }
 }
@@ -118,7 +117,7 @@ void do_instant_cast_skill(registry_t& registry, entity_t entity, const skills::
 void do_normal_cast_skill(registry_t& registry,
                           entity_t entity,
                           component::normal_cast_skill& normal_cast_skill) {
-    bool has_quickness = registry.any_of<component::quickness>(entity);
+    bool has_quickness = utils::has_effect(effects::effect_type::QUICKNESS, entity, registry);
 
     const skills::skill& skill = normal_cast_skill.skill;
     while (normal_cast_skill.next_pulse_idx < skill.pulse_on_tick_list[has_quickness].size() &&

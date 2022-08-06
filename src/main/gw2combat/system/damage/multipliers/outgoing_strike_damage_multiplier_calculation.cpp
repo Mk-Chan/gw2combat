@@ -5,7 +5,6 @@
 #include "gw2combat/component/character/targeting.hpp"
 #include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
 #include "gw2combat/component/damage/source_entity.hpp"
-#include "gw2combat/component/effect_components.hpp"
 #include "gw2combat/component/gear/runes.hpp"
 
 namespace gw2combat::system {
@@ -18,34 +17,29 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             bool has_scholar_rune = utils::has_rune(rune_type::SCHOLAR, entity, registry);
             bool has_force_sigil = utils::has_sigil(weapon_sigil::FORCE, entity, registry);
             bool has_impact_sigil = utils::has_sigil(weapon_sigil::IMPACT, entity, registry);
+
+            auto traits_component_ptr = registry.try_get<component::traits_component>(entity);
             bool retribution_is_traited =
-                utils::has_trait(trait_type::RETRIBUTION, entity, registry);
+                utils::has_trait(trait_type::RETRIBUTION, traits_component_ptr);
             bool unscathed_contender_is_traited =
-                utils::has_trait(trait_type::UNSCATHED_CONTENDER, entity, registry);
+                utils::has_trait(trait_type::UNSCATHED_CONTENDER, traits_component_ptr);
             bool fiery_wrath_is_traited =
-                utils::has_trait(trait_type::FIERY_WRATH, entity, registry);
+                utils::has_trait(trait_type::FIERY_WRATH, traits_component_ptr);
             bool symbolic_exposure_is_traited =
-                utils::has_trait(trait_type::SYMBOLIC_POWER, entity, registry);
+                utils::has_trait(trait_type::SYMBOLIC_EXPOSURE, traits_component_ptr);
             bool inspired_virtue_is_traited =
-                utils::has_trait(trait_type::INSPIRING_VIRTUE, entity, registry);
+                utils::has_trait(trait_type::INSPIRED_VIRTUE, traits_component_ptr);
 
+            auto effects_component_ptr = registry.try_get<component::effects_component>(entity);
             bool has_inspiring_virtue_effect =
-                registry.any_of<component::inspiring_virtue_effect>(entity);
+                utils::has_effect(effects::effect_type::INSPIRING_VIRTUE, effects_component_ptr);
+            bool has_aegis = utils::has_effect(effects::effect_type::AEGIS, effects_component_ptr);
+            bool has_resolution =
+                utils::has_effect(effects::effect_type::RESOLUTION, effects_component_ptr);
 
-            bool has_aegis = registry.any_of<component::aegis>(entity);
-            bool has_might = registry.any_of<component::might>(entity);
-            bool has_fury = registry.any_of<component::fury>(entity);
-            bool has_quickness = registry.any_of<component::quickness>(entity);
-            bool has_alacrity = registry.any_of<component::alacrity>(entity);
-            bool has_resolution = registry.any_of<component::resolution>(entity);
-
-            double symbolic_avenger_addend = 0.0;
-            auto symbolic_avenger_ptr =
-                registry.try_get<component::symbolic_avenger_effect>(entity);
-            if (symbolic_avenger_ptr) {
-                symbolic_avenger_addend +=
-                    std::min((double)symbolic_avenger_ptr->effect_old.num_stacks(), 5.0) * 0.02;
-            }
+            size_t symbolic_avenger_stacks = utils::get_num_stacks_of_effect(
+                effects::effect_type::SYMBOLIC_AVENGER, effects_component_ptr);
+            double symbolic_avenger_addend = ((double)symbolic_avenger_stacks) * 0.02;
 
             double scholar_rune_multiplier = 1.0;
             bool is_above_90pct_health =
@@ -62,21 +56,30 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             double symbolic_exposure_multiplier = 1.0;
             auto targeting_ptr = registry.try_get<component::targeting>(entity);
             if (targeting_ptr) {
-                bool target_is_burning = registry.any_of<component::burning>(targeting_ptr->entity);
+                auto target_effects_component_ptr =
+                    registry.try_get<component::effects_component>(targeting_ptr->entity);
+
+                bool target_is_burning =
+                    utils::has_effect(effects::effect_type::BURNING, target_effects_component_ptr);
                 fiery_wrath_multiplier += fiery_wrath_is_traited * target_is_burning * 0.07;
 
-                bool target_is_vulnerable =
-                    registry.any_of<component::vulnerability>(targeting_ptr->entity);
+                bool target_is_vulnerable = utils::has_effect(effects::effect_type::VULNERABILITY,
+                                                              target_effects_component_ptr);
                 symbolic_exposure_multiplier +=
                     symbolic_exposure_is_traited * target_is_vulnerable * 0.05;
 
                 // TODO: Add logic to check stunned target for impact sigil's second part
             }
 
-            unsigned int boon_count =
-                has_aegis + has_might + has_fury + has_quickness + has_alacrity + has_resolution;
-            double inspired_virtue_multiplier =
-                1.0 + (inspired_virtue_is_traited * boon_count * 0.01);
+            double inspired_virtue_multiplier = 1.0;
+            if (effects_component_ptr != nullptr) {
+                size_t boon_count = 0;
+                for (auto boon : utils::BOONS) {
+                    boon_count += utils::has_effect(boon, effects_component_ptr);
+                }
+                inspired_virtue_multiplier +=
+                    (inspired_virtue_is_traited * (double)boon_count * 0.01);
+            }
 
             double addends_multiplier = (1.0 + (force_sigil_addend + impact_sigil_addend +
                                                 retribution_addend + unscathed_contender_addend +

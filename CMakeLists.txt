@@ -64,10 +64,8 @@ add_executable(
     src/main/gw2combat/build.cpp
     src/main/gw2combat/rotation.cpp
 
-    src/main/gw2combat/system/system.cpp
     src/main/gw2combat/system/character_command.cpp
     src/main/gw2combat/system/effective_attributes_calculation.cpp
-    src/main/gw2combat/system/expire_non_damaging_effects.cpp
     src/main/gw2combat/system/combat_detection.cpp
     src/main/gw2combat/system/update_health.cpp
     src/main/gw2combat/system/downstate_detection.cpp
@@ -83,7 +81,6 @@ add_executable(
     src/main/gw2combat/system/damage/multipliers/outgoing_strike_damage_multiplier_calculation.cpp
 
     src/main/gw2combat/system/damage/incoming_strike_damage_calculation.cpp
-    src/main/gw2combat/system/damage/expire_damaging_effects.cpp
 
     src/main/gw2combat/system/cast_skills.cpp
     src/main/gw2combat/system/destroy_after_rotation_entities.cpp

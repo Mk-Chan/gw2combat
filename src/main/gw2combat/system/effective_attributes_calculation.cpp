@@ -3,7 +3,6 @@
 #include "gw2combat/component/character/dynamic_attributes.hpp"
 #include "gw2combat/component/character/effective_attributes.hpp"
 #include "gw2combat/component/character/static_attributes.hpp"
-#include "gw2combat/component/effect_components.hpp"
 #include "gw2combat/component/gear/bundles.hpp"
 #include "gw2combat/component/gear/runes.hpp"
 
@@ -40,13 +39,12 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
                     .endurance = dynamic_attributes.max_endurance,
                     .endurance_gain_pct = dynamic_attributes.endurance_gain_pct});
 
-            auto might_ptr = registry.try_get<component::might>(entity);
-            if (might_ptr != nullptr) {
-                effective_attributes.power += might_ptr->effect_old.num_stacks() * 30;
-                effective_attributes.condition_damage += might_ptr->effect_old.num_stacks() * 30;
-            }
-            bool has_fury = registry.any_of<component::fury>(entity);
-            if (has_fury) {
+            size_t might_stacks =
+                utils::get_num_stacks_of_effect(effects::effect_type::MIGHT, entity, registry);
+            effective_attributes.power += might_stacks * 30;
+            effective_attributes.condition_damage += might_stacks * 30;
+
+            if (utils::has_effect(effects::effect_type::FURY, entity, registry)) {
                 effective_attributes.critical_chance_pct += 25;
             }
 
