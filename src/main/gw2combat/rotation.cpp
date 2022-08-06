@@ -1,8 +1,8 @@
 #include "rotation.hpp"
 
 #include <spdlog/spdlog.h>
-#include <filesystem>
 #include <exception>
+#include <filesystem>
 
 #include "rapidcsv.h"
 
