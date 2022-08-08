@@ -3,6 +3,7 @@
 #include "gw2combat/skills.hpp"
 
 #include "gw2combat/component/character/destroy_after_rotation.hpp"
+#include "gw2combat/component/character/did_weapon_swap.hpp"
 #include "gw2combat/component/character/is_actor.hpp"
 #include "gw2combat/component/character/rotation.hpp"
 #include "gw2combat/component/damage/incoming_condition_application.hpp"
@@ -29,6 +30,8 @@ void do_weapon_swap(entity_t entity, registry_t& registry) {
         registry.replace<component::equipped_weapon_set>(
             entity, component::equipped_weapon_set{weapon_set::SET_1});
     }
+
+    registry.emplace<component::did_weapon_swap>(entity);
 }
 
 void do_pulse(registry_t& registry, entity_t entity, const skills::skill& skill) {

@@ -11,6 +11,10 @@ struct sigil_earth {
     tick_t cooldown_progress = 2'000;
 };
 
-}
+struct sigil_geomancy {
+    tick_t cooldown_progress = 9'000;
+};
+
+}  // namespace gw2combat::component
 
 #endif  // GW2COMBAT_COMPONENT_GEAR_SIGILS_HPP

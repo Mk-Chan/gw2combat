@@ -3,6 +3,7 @@
 #include "entity.hpp"
 #include "skills.hpp"
 
+#include "gw2combat/component/character/did_weapon_swap.hpp"
 #include "gw2combat/component/character/downstate.hpp"
 #include "gw2combat/component/character/effective_attributes.hpp"
 #include "gw2combat/component/character/is_actor.hpp"
@@ -39,7 +40,8 @@ void clear_temporary_components(registry_t& registry) {
                    component::incoming_condition_application,
 
                    component::effective_incoming_damage,
-                   component::instant_cast_skills>();
+                   component::instant_cast_skills,
+                   component::did_weapon_swap>();
 }
 
 template <combat_stage stage>
@@ -47,6 +49,7 @@ void run_staged_systems(registry_t& registry, tick_t current_tick) {
     system::virtue_of_justice<stage>(registry, current_tick);
     system::inspiring_virtue<stage>(registry, current_tick);
 
+    system::sigil_geomancy<stage>(registry, current_tick);
     system::sigil_earth<stage>(registry, current_tick);
 
     system::unrelenting_criticism<stage>(registry, current_tick);

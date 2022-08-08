@@ -62,8 +62,12 @@ entity_t build_cfb(registry_t& registry) {
         entity, build.available_weapon_configurations);
     registry.emplace<component::equipped_weapon_set>(
         entity, component::equipped_weapon_set{weapon_set::SET_1});
+
     if (utils::has_sigil_at_all(weapon_sigil::EARTH, entity, registry)) {
         registry.emplace<component::sigil_earth>(entity);
+    }
+    if (utils::has_sigil_at_all(weapon_sigil::GEOMANCY, entity, registry)) {
+        registry.emplace<component::sigil_geomancy>(entity);
     }
 
     registry.emplace<component::is_actor>(entity);
