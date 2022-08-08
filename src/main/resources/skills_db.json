@@ -227,6 +227,79 @@
       "tags": []
     },
     {
+      "name": "Orb of Wrath",
+      "weapon_type": "SCEPTER",
+      "damage_coefficient": 0.6,
+      "cast_duration": [640, 420],
+      "hit_on_tick_list": [[640], [420]],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [0, 0],
+      "tags": []
+    },
+    {
+      "name": "Symbol of Punishment",
+      "weapon_type": "SCEPTER",
+      "damage_coefficient": 0.0,
+      "cast_duration": [480, 320],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Symbol of Punishment Fist Summoning",
+          "weapon_type": "SCEPTER",
+          "damage_coefficient": 0.0,
+          "cast_duration": [0, 0],
+          "hit_on_tick_list": [[], []],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [
+            {
+              "name": "Symbol of Punishment Fist Attack",
+              "weapon_type": "SCEPTER",
+              "damage_coefficient": 0.2,
+              "cast_duration": [4000, 4000],
+              "hit_on_tick_list": [
+                [0, 571, 1142, 1714, 2285, 2857, 3428, 4000],
+                [0, 571, 1142, 1714, 2285, 2857, 3428, 4000]
+              ],
+              "on_hit_effect_applications": [],
+              "pulse_on_tick_list": [[], []],
+              "on_pulse_effect_applications": [],
+              "child_entity_skills": [],
+              "cooldown": [0, 0],
+              "tags": ["SYMBOL", "LIGHT_FIELD"]
+            }
+          ],
+          "cooldown": [0, 0],
+          "tags": []
+        },
+        {
+          "name": "Symbol of Punishment Symbol Attack",
+          "weapon_type": "SCEPTER",
+          "damage_coefficient": 0.5,
+          "cast_duration": [4000, 4000],
+          "hit_on_tick_list": [
+            [1000, 2000, 3000, 4000],
+            [1000, 2000, 3000, 4000]
+          ],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": ["SYMBOL", "LIGHT_FIELD"]
+        }
+      ],
+      "cooldown": [10000, 8000],
+      "tags": []
+    },
+    {
       "name": "Zealot's Flame",
       "weapon_type": "TORCH",
       "damage_coefficient": 0.0,
@@ -281,6 +354,29 @@
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "cooldown": [750, 750],
+      "tags": []
+    },
+    {
+      "name": "Cleansing Flame",
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.4,
+      "cast_duration": [3750, 2500],
+      "hit_on_tick_list": [
+        [0, 416, 833, 1250, 1666, 2083, 2500, 2916, 3333, 3750],
+        [0, 277, 555, 833, 1111, 1388, 1666, 1944, 2222, 2500]
+      ],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[3750], [2500]],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 2,
+          "duration": 4000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "child_entity_skills": [],
+      "cooldown": [15000, 12000],
       "tags": []
     },
     {
@@ -621,6 +717,19 @@
         }
       ],
       "cooldown": [25000, 20000],
+      "tags": []
+    },
+    {
+      "name": "Glacial Heart",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.5,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[0], [0]],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [0, 0],
       "tags": []
     }
   ]
