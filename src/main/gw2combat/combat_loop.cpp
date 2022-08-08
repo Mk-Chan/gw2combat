@@ -9,6 +9,7 @@
 #include "gw2combat/component/character/no_more_rotation.hpp"
 #include "gw2combat/component/damage/effective_incoming_damage.hpp"
 #include "gw2combat/component/damage/incoming_strike_damage.hpp"
+#include "gw2combat/component/damage/metrics/damage_metrics.hpp"
 #include "gw2combat/component/damage/multipliers/incoming_condition_damage_multiplier.hpp"
 #include "gw2combat/component/damage/multipliers/incoming_strike_damage_multiplier.hpp"
 #include "gw2combat/component/damage/multipliers/outgoing_condition_damage_multiplier.hpp"
@@ -16,6 +17,7 @@
 #include "gw2combat/component/damage/outgoing_condition_application.hpp"
 #include "gw2combat/component/damage/outgoing_strike_damage.hpp"
 #include "gw2combat/component/skills/instant_cast_skills.hpp"
+#include "gw2combat/system/staged/gear_systems.hpp"
 #include "gw2combat/system/staged/profession_systems.hpp"
 #include "gw2combat/system/staged/skill_systems.hpp"
 #include "gw2combat/system/staged/trait_systems.hpp"
@@ -44,6 +46,8 @@ template <combat_stage stage>
 void run_staged_systems(registry_t& registry, tick_t current_tick) {
     system::virtue_of_justice<stage>(registry, current_tick);
     system::inspiring_virtue<stage>(registry, current_tick);
+
+    system::sigil_earth<stage>(registry, current_tick);
 
     system::unrelenting_criticism<stage>(registry, current_tick);
     system::symbolic_avenger<stage>(registry, current_tick);
@@ -131,6 +135,26 @@ void combat_loop() {
 
         current_tick += tick_t{1};
     }
+
+    // Note: Metrics
+    registry.view<component::damage_metrics_component>().each(
+        [&](entity_t entity, const component::damage_metrics_component& damage_metrics_component) {
+            spdlog::info("entity: {}", utils::get_entity_name(entity, registry));
+            std::unordered_map<std::string, double> grouped_by_damage_name;
+            for (const auto& metric_unit : damage_metrics_component.metrics) {
+                grouped_by_damage_name[metric_unit.damage_name] += metric_unit.damage;
+            }
+            spdlog::info("{}", nlohmann::json{grouped_by_damage_name}.dump(2));
+
+            std::unordered_map<std::string, std::unordered_map<std::string, double>>
+                grouped_by_source_and_damage_name;
+            for (const auto& metric_unit : damage_metrics_component.metrics) {
+                grouped_by_source_and_damage_name[metric_unit.source_name]
+                                                 [metric_unit.damage_name] += metric_unit.damage;
+            }
+            spdlog::info("{}", nlohmann::json{grouped_by_source_and_damage_name}.dump(2));
+        });
+
     spdlog::info("tick: {}, done!", current_tick);
 }
 

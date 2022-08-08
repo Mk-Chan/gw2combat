@@ -7,10 +7,9 @@
 #include <spdlog/spdlog.h>
 #include <entt/entt.hpp>
 #include <nlohmann/json.hpp>
+#include <range/v3/all.hpp>
 
 namespace gw2combat {
-
-using namespace entt::literals;
 
 using tick_t = std::uint32_t;
 using entity_t = entt::entity;

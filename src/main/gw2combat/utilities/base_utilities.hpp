@@ -22,10 +22,10 @@ namespace gw2combat::utils {
 }
 
 [[nodiscard]] static inline std::string get_entity_name(entity_t entity, registry_t& registry) {
-    if (!registry.ctx().contains<entt::hashed_string>(to_u32(entity))) {
+    if (!registry.ctx().contains<std::string>(to_u32(entity))) {
         return "temporary_entity";
     }
-    return std::string{registry.ctx().at<entt::hashed_string>(to_u32(entity)).data()};
+    return registry.ctx().at<std::string>(to_u32(entity));
 }
 
 [[nodiscard]] static inline entity_t get_source_entity(entity_t entity, registry_t& registry) {

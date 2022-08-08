@@ -21,9 +21,9 @@ void skills_db::init(const std::string& path) {
 }
 
 std::optional<skill> skills_db::get_by_name(const std::string& name) const {
-    auto skill_iter = std::find_if(
-        skills.begin(), skills.end(), [&](const skill& skill) { return skill.name == name; });
-    if (skill_iter != skills.end()) {
+    auto skill_iter =
+        ranges::find_if(skills, [&](const skill& skill) { return skill.name == name; });
+    if (skill_iter != ranges::end(skills)) {
         return *skill_iter;
     } else {
         return std::nullopt;

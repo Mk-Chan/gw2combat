@@ -15,8 +15,9 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
             component::effective_attributes& effective_attributes,
             const component::combat_stats& combat_stats) {
             bool has_scholar_rune = utils::has_rune(rune_type::SCHOLAR, entity, registry);
-            bool has_force_sigil = utils::has_sigil(weapon_sigil::FORCE, entity, registry);
-            bool has_impact_sigil = utils::has_sigil(weapon_sigil::IMPACT, entity, registry);
+            bool has_force_sigil = utils::has_sigil_equipped(weapon_sigil::FORCE, entity, registry);
+            bool has_impact_sigil =
+                utils::has_sigil_equipped(weapon_sigil::IMPACT, entity, registry);
 
             auto traits_component_ptr = registry.try_get<component::traits_component>(entity);
             bool retribution_is_traited =

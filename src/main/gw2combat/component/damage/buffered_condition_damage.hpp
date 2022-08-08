@@ -6,15 +6,12 @@
 namespace gw2combat::component {
 
 struct buffered_condition_damage {
-    struct buffered_damage_unit {
+    struct damage_unit {
         effects::effect_type effect_type;
+        entity_t source;
         double damage;
     };
-};
-
-struct buffered_condition_damage_old {
-    double value = 0.0;
-    double unaffected_by_incoming_multiplier_value = 0.0;
+    std::vector<damage_unit> damage_units;
 };
 
 }  // namespace gw2combat::component

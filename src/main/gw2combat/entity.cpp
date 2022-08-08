@@ -10,7 +10,9 @@
 #include "gw2combat/component/character/rotation.hpp"
 #include "gw2combat/component/character/static_attributes.hpp"
 #include "gw2combat/component/character/targeting.hpp"
+#include "gw2combat/component/damage/metrics/damage_metrics.hpp"
 #include "gw2combat/component/effects_component.hpp"
+#include "gw2combat/component/gear/sigils.hpp"
 #include "gw2combat/component/profession_components.hpp"
 
 namespace gw2combat {
@@ -60,9 +62,13 @@ entity_t build_cfb(registry_t& registry) {
         entity, build.available_weapon_configurations);
     registry.emplace<component::equipped_weapon_set>(
         entity, component::equipped_weapon_set{weapon_set::SET_1});
+    if (utils::has_sigil_at_all(weapon_sigil::EARTH, entity, registry)) {
+        registry.emplace<component::sigil_earth>(entity);
+    }
 
     registry.emplace<component::is_actor>(entity);
-    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player_cfb"_hs);
+    registry.ctx().emplace_hint<std::string>(to_u32(entity),
+                                             "player_cfb" + std::to_string(to_u32(entity)));
 
     std::vector<skill_cast> rotation = read_rotation("src/main/resources/rotation-cfb.csv");
     registry.emplace<component::rotation>(entity, component::rotation{rotation});
@@ -117,7 +123,8 @@ entity_t build_core_guard(registry_t& registry) {
         entity, component::equipped_weapon_set{weapon_set::SET_1});
 
     registry.emplace<component::is_actor>(entity);
-    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "player_core_guard"_hs);
+    registry.ctx().emplace_hint<std::string>(to_u32(entity),
+                                             "player_core_guard" + std::to_string(to_u32(entity)));
 
     std::vector<skill_cast> rotation = read_rotation("src/main/resources/rotation-core-guard.csv");
     registry.emplace<component::rotation>(entity, component::rotation{rotation});
@@ -133,7 +140,7 @@ entity_t build_medium_kitty_golem(entt::registry& registry) {
     registry.emplace<component::dynamic_attributes>(entity);
 
     registry.emplace<component::is_actor>(entity);
-    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity), "medium_kitty_golem"_hs);
+    registry.ctx().emplace_hint<std::string>(to_u32(entity), "medium_kitty_golem");
 
     return entity;
 }
@@ -146,57 +153,57 @@ entity_t build_golem_boon_condi_provider(entt::registry& registry) {
     registry.emplace<component::dynamic_attributes>(entity);
 
     registry.emplace<component::is_actor>(entity);
-    registry.ctx().emplace_hint<entt::hashed_string>(to_u32(entity),
-                                                     "golem_boon_condi_provider"_hs);
+    registry.ctx().emplace_hint<std::string>(to_u32(entity), "golem_boon_condi_provider");
 
     return entity;
 }
 
-void init_entities(entt::registry& registry) {
+void apply_player_benchmark_effects(entity_t entity, entity_t source_entity, registry_t& registry) {
+    auto& effects_component = registry.emplace<component::effects_component>(entity);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::AEGIS, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::ALACRITY, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::FURY, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::MIGHT, source_entity, 1'000'000'000, 25},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::QUICKNESS, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::RESOLUTION, source_entity, 1'000'000'000},
+        effects_component);
+}
+
+void apply_golem_benchmark_effects(entity_t entity, entity_t source_entity, registry_t& registry) {
+    auto& effects_component = registry.emplace<component::effects_component>(entity);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::BURNING, source_entity, 1'000'000'000, 1},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::VULNERABILITY, source_entity, 1'000'000'000, 25},
+        effects_component);
+}
+
+void init_entities(registry_t& registry) {
     // auto player1 = build_core_guard(registry);
     auto player1 = build_cfb(registry);
     auto golem = build_medium_kitty_golem(registry);
     auto golem_boon_condi_provider = build_golem_boon_condi_provider(registry);
 
+    registry.emplace<component::damage_metrics_component>(golem);
     registry.emplace<component::targeting>(player1, component::targeting{golem});
     // registry.remove<component::is_actor>(player1);  // Disable player1
 
     // NOTE: Default boons for testing
-    auto& player1_effects_component = registry.emplace<component::effects_component>(player1);
-    utils::apply_effects(
-        effects::effect_application{
-            effects::effect_type::AEGIS, golem_boon_condi_provider, 1'000'000'000},
-        player1_effects_component);
-    utils::apply_effects(
-        effects::effect_application{
-            effects::effect_type::ALACRITY, golem_boon_condi_provider, 1'000'000'000},
-        player1_effects_component);
-    utils::apply_effects(
-        effects::effect_application{
-            effects::effect_type::FURY, golem_boon_condi_provider, 1'000'000'000},
-        player1_effects_component);
-    utils::apply_effects(
-        effects::effect_application{
-            effects::effect_type::MIGHT, golem_boon_condi_provider, 1'000'000'000, 25},
-        player1_effects_component);
-    utils::apply_effects(
-        effects::effect_application{
-            effects::effect_type::QUICKNESS, golem_boon_condi_provider, 1'000'000'000},
-        player1_effects_component);
-    utils::apply_effects(
-        effects::effect_application{
-            effects::effect_type::RESOLUTION, golem_boon_condi_provider, 1'000'000'000},
-        player1_effects_component);
-
-    auto& golem_effects_component = registry.emplace<component::effects_component>(golem);
-    utils::apply_effects(
-        effects::effect_application{
-            effects::effect_type::BURNING, golem_boon_condi_provider, 1'000'000'000, 1},
-        golem_effects_component);
-    utils::apply_effects(
-        effects::effect_application{
-            effects::effect_type::VULNERABILITY, golem_boon_condi_provider, 1'000'000'000, 25},
-        golem_effects_component);
+    apply_player_benchmark_effects(player1, golem_boon_condi_provider, registry);
+    apply_golem_benchmark_effects(golem, golem_boon_condi_provider, registry);
 }
 
 }  // namespace gw2combat

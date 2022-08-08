@@ -10,7 +10,7 @@ void outgoing_condition_damage_multiplier_calculation(registry_t& registry, tick
     registry.view<component::is_actor>().each([&](entity_t entity) {
         auto& outgoing_condition_damage_multiplier =
             registry.get_or_emplace<component::outgoing_condition_damage_multiplier>(entity);
-        if (utils::has_sigil(weapon_sigil::BURSTING, entity, registry)) {
+        if (utils::has_sigil_equipped(weapon_sigil::BURSTING, entity, registry)) {
             outgoing_condition_damage_multiplier.multiplier *= 1.05;
         }
         if (utils::has_trait(trait_type::AMPLIFIED_WRATH, entity, registry)) {

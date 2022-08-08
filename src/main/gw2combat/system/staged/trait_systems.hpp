@@ -46,9 +46,8 @@ void symbolic_power(registry_t& registry, tick_t current_tick) {
             if (utils::has_trait(trait_type::SYMBOLIC_POWER, source_entity, registry)) {
                 for (strike& strike : outgoing_strike_damage.strikes) {
                     bool is_symbol_strike =
-                        std::find(strike.skill.tags.begin(),
-                                  strike.skill.tags.end(),
-                                  skills::skill_tag::SYMBOL) != strike.skill.tags.end();
+                        ranges::find(strike.skill.tags, skills::skill_tag::SYMBOL) !=
+                        ranges::end(strike.skill.tags);
                     if (is_symbol_strike) {
                         strike.outgoing_strike_damage_multiplier *= 1.3;
                     }

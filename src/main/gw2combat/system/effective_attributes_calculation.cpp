@@ -44,15 +44,14 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
             effective_attributes.power += might_stacks * 30;
             effective_attributes.condition_damage += might_stacks * 30;
 
-            if (utils::has_trait(trait_type::RIGHTEOUS_INSTINCTS, entity, registry) &&
-                utils::has_effect(effects::effect_type::RESOLUTION, entity, registry)) {
-                effective_attributes.critical_chance_pct += 10;
-            }
-
             if (utils::has_effect(effects::effect_type::FURY, entity, registry)) {
                 effective_attributes.critical_chance_pct += 25;
             }
 
+            if (utils::has_trait(trait_type::RIGHTEOUS_INSTINCTS, entity, registry) &&
+                utils::has_effect(effects::effect_type::RESOLUTION, entity, registry)) {
+                effective_attributes.critical_chance_pct += 10;
+            }
             if (utils::has_trait(trait_type::RIGHT_HAND_STRENGTH, entity, registry) &&
                 !registry.any_of<component::bundle>(entity) &&
                 utils::has_one_handed_weapon(weapon_position::MAIN_HAND, entity, registry)) {

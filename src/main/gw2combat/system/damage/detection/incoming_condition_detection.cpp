@@ -25,7 +25,7 @@ void incoming_condition_detection(registry_t& registry, tick_t current_tick) {
                                  current_tick,
                                  utils::get_entity_name(targeting_ptr->entity, registry),
                                  effect_application.num_stacks,
-                                 nlohmann::json{effect_application.effect_type}[0].dump(),
+                                 nlohmann::json{effect_application.effect_type}[0],
                                  effect_application.duration);
                     target_incoming_condition_application.effect_applications.emplace_back(
                         effect_application);
@@ -45,7 +45,7 @@ void incoming_condition_detection(registry_t& registry, tick_t current_tick) {
                                  current_tick,
                                  utils::get_entity_name(targeting.entity, registry),
                                  effect_application.num_stacks,
-                                 nlohmann::json{effect_application.effect_type}[0].dump(),
+                                 nlohmann::json{effect_application.effect_type}[0],
                                  effect_application.duration);
                     target_incoming_condition_application.effect_applications.emplace_back(
                         effect_application);

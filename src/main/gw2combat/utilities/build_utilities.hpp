@@ -9,8 +9,7 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline bool has_trait(trait_type trait,
                                            const component::traits_component& traits_component) {
-    return std::find(traits_component.traits.begin(), traits_component.traits.end(), trait) !=
-           traits_component.traits.end();
+    return ranges::find(traits_component.traits, trait) != ranges::end(traits_component.traits);
 }
 
 [[nodiscard]] static inline bool has_trait(trait_type trait,

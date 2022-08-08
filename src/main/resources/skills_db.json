@@ -170,6 +170,120 @@
       "tags": []
     },
     {
+      "name": "Symbol of Vengeance",
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.0,
+      "cast_duration": [1200, 800],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Symbol of Vengeance Attack",
+          "weapon_type": "AXE",
+          "damage_coefficient": 0.6,
+          "cast_duration": [4000, 4000],
+          "hit_on_tick_list": [
+            [0, 1000, 2000, 3000, 4000],
+            [0, 1000, 2000, 3000, 4000]
+          ],
+          "on_hit_effect_applications": [
+            {
+              "effect_type": "BLEEDING",
+              "num_stacks": 1,
+              "duration": 3000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": ["SYMBOL", "LIGHT_FIELD"]
+        }
+      ],
+      "cooldown": [12000, 9600],
+      "tags": []
+    },
+    {
+      "name": "Blazing Edge",
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.8,
+      "cast_duration": [780, 520],
+      "hit_on_tick_list": [[780], [520]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "duration": 3000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [0, 0],
+      "tags": []
+    },
+    {
+      "name": "Zealot's Flame",
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.0,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Zealot's Flame Pulse",
+          "weapon_type": "TORCH",
+          "damage_coefficient": 0.0,
+          "cast_duration": [3000, 3000],
+          "hit_on_tick_list": [[], []],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [
+            [0, 1000, 2000, 3000],
+            [0, 1000, 2000, 3000]
+          ],
+          "on_pulse_effect_applications": [
+            {
+              "effect_type": "BURNING",
+              "num_stacks": 1,
+              "duration": 3000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": []
+        }
+      ],
+      "cooldown": [15000, 12000],
+      "tags": []
+    },
+    {
+      "name": "Zealot's Fire",
+      "weapon_type": "TORCH",
+      "damage_coefficient": 2.25,
+      "cast_duration": [1020, 680],
+      "hit_on_tick_list": [[1020], [680]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 3,
+          "duration": 3000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [750, 750],
+      "tags": []
+    },
+    {
       "name": "Sword of Wrath",
       "weapon_type": "SWORD",
       "damage_coefficient": 0.666,
@@ -486,10 +600,10 @@
           "name": "Purging Flames Attack",
           "weapon_type": "EMPTY_HANDED",
           "damage_coefficient": 0.2,
-          "cast_duration": [5000, 5000],
+          "cast_duration": [7000, 7000],
           "hit_on_tick_list": [
-            [0, 1000, 2000, 3000, 4000, 5000],
-            [0, 1000, 2000, 3000, 4000, 5000]
+            [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000],
+            [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000]
           ],
           "on_hit_effect_applications": [
             {
@@ -507,43 +621,6 @@
         }
       ],
       "cooldown": [25000, 20000],
-      "tags": []
-    },
-    {
-      "name": "Zealot's Flame",
-      "weapon_type": "TORCH",
-      "damage_coefficient": 0.0,
-      "cast_duration": [0, 0],
-      "hit_on_tick_list": [[], []],
-      "on_hit_effect_applications": [],
-      "pulse_on_tick_list": [[], []],
-      "on_pulse_effect_applications": [],
-      "child_entity_skills": [
-        {
-          "name": "Zealot's Flame Pulse",
-          "weapon_type": "TORCH",
-          "damage_coefficient": 0.0,
-          "cast_duration": [3000, 3000],
-          "hit_on_tick_list": [[], []],
-          "on_hit_effect_applications": [],
-          "pulse_on_tick_list": [
-            [0, 1000, 2000, 3000],
-            [0, 1000, 2000, 3000]
-          ],
-          "on_pulse_effect_applications": [
-            {
-              "effect_type": "BURNING",
-              "num_stacks": 1,
-              "duration": 3000,
-              "effect_direction": "OUTGOING"
-            }
-          ],
-          "child_entity_skills": [],
-          "cooldown": [0, 0],
-          "tags": []
-        }
-      ],
-      "cooldown": [15000, 12000],
       "tags": []
     }
   ]

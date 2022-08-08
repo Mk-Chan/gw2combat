@@ -2,4 +2,5 @@ spdlog
 entt
 nlohmann-json
 rapidcsv
+range-v3
 catch2

@@ -111,26 +111,37 @@ namespace gw2combat::utils {
                        });
 }
 
-[[nodiscard]] static inline bool has_sigil(weapon_sigil sigil,
-                                           entity_t entity,
-                                           registry_t& registry) {
+[[nodiscard]] static inline bool has_sigil_at_all(weapon_sigil sigil,
+                                                  entity_t entity,
+                                                  registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+        return false;
+    }
+    auto& weapon_configurations =
+        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
+    return ranges::find_if(weapon_configurations, [&](const weapon_configuration& configuration) {
+               return configuration.sigil == sigil;
+           }) != ranges::end(weapon_configurations);
+}
+
+[[nodiscard]] static inline bool has_sigil_equipped(weapon_sigil sigil,
+                                                    entity_t entity,
+                                                    registry_t& registry) {
     if (!registry.any_of<component::equipped_weapon_set>(entity)) {
         return false;
     }
     auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
     auto& weapon_configurations =
         registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
-    return std::find_if(weapon_configurations.begin(),
-                        weapon_configurations.end(),
-                        [&](const weapon_configuration& configuration) {
-                            return configuration.set == current_set && configuration.sigil == sigil;
-                        }) != weapon_configurations.end();
+    return ranges::find_if(weapon_configurations, [&](const weapon_configuration& configuration) {
+               return configuration.set == current_set && configuration.sigil == sigil;
+           }) != ranges::end(weapon_configurations);
 }
 
 [[nodiscard]] static inline double get_weapon_strength(weapon_type type) {
     auto& range = weapon_type_to_strength_range_map.at(type);
-    // return range[0] + (get_random_0_100() * (range[1] - range[0]) / 100.0);
-    return (range[0] + range[1]) / 2.0;
+    return range[0] + (get_random_0_100() * (range[1] - range[0]) / 100.0);
+    // return (range[0] + range[1]) / 2.0;
 }
 
 [[nodiscard]] static inline bool has_rune(rune_type rune, entity_t entity, registry_t& registry) {

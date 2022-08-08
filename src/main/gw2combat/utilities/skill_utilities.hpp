@@ -9,7 +9,7 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline bool skill_has_tag(const skills::skill& skill,
                                                skills::skill_tag skill_tag) {
-    return std::find(skill.tags.cbegin(), skill.tags.cend(), skill_tag) != skill.tags.cend();
+    return ranges::find(skill.tags, skill_tag) != ranges::end(skill.tags);
 }
 
 }  // namespace gw2combat::utils
