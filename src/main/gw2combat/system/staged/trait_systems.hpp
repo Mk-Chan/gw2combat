@@ -8,6 +8,35 @@
 namespace gw2combat::system {
 
 template <combat_stage stage>
+void legendary_lore(registry_t& registry, tick_t current_tick) {
+    if constexpr (stage != combat_stage::BEFORE_OUTGOING_STRIKE_BUFFERING) {
+        return;
+    }
+
+    registry.template view<component::outgoing_strike_damage>().template each(
+        [&](component::outgoing_strike_damage& outgoing_strike_damage) {
+            for (strike& strike : outgoing_strike_damage.strikes) {
+                auto source_entity = utils::get_source_entity(strike.source, registry);
+                if (utils::has_trait(trait_type::LEGENDARY_LORE, source_entity, registry) &&
+                    utils::skill_has_tag(strike.skill, skills::skill_tag::TOME)) {
+                    for (auto& effect_application : strike.skill.on_hit_effect_applications) {
+                        if (effect_application.effect_type == effects::effect_type::BURNING) {
+                            effect_application.duration =
+                                (tick_t)((double)effect_application.duration * 1.2);
+                        }
+                    }
+                    for (auto& effect_application : strike.skill.on_pulse_effect_applications) {
+                        if (effect_application.effect_type == effects::effect_type::BURNING) {
+                            effect_application.duration =
+                                (tick_t)((double)effect_application.duration * 1.2);
+                        }
+                    }
+                }
+            }
+        });
+}
+
+template <combat_stage stage>
 void unrelenting_criticism(registry_t& registry, tick_t current_tick) {
     if constexpr (stage != combat_stage::AFTER_INCOMING_STRIKE_DAMAGE_CALCULATION) {
         return;

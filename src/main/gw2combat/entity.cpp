@@ -66,8 +66,14 @@ entity_t build_cfb(registry_t& registry) {
     if (utils::has_sigil_at_all(weapon_sigil::EARTH, entity, registry)) {
         registry.emplace<component::sigil_earth>(entity);
     }
+    if (utils::has_sigil_at_all(weapon_sigil::TORMENT, entity, registry)) {
+        registry.emplace<component::sigil_torment>(entity);
+    }
     if (utils::has_sigil_at_all(weapon_sigil::GEOMANCY, entity, registry)) {
         registry.emplace<component::sigil_geomancy>(entity);
+    }
+    if (ranges::contains(build.trait_lines, trait_line_type::FIREBRAND)) {
+        registry.emplace<component::ashes_of_the_just_component>(entity);
     }
 
     registry.emplace<component::is_actor>(entity);
@@ -139,8 +145,11 @@ entity_t build_core_guard(registry_t& registry) {
 entity_t build_medium_kitty_golem(entt::registry& registry) {
     auto entity = registry.create();
 
+    // FIXME: Subtracted a nominal amount from 4M HP to account for lifesteal and ticks before
+    //        combat (taken from cfb bench). Exact number is hard to predict since arcdps does not
+    //        record condition damage perfectly
     registry.emplace<component::static_attributes>(
-        entity, component::static_attributes{.armor = 2597, .max_health = 1'000'000});
+        entity, component::static_attributes{.armor = 2597, .max_health = 3'950'000});
     registry.emplace<component::dynamic_attributes>(entity);
 
     registry.emplace<component::is_actor>(entity);
@@ -182,6 +191,25 @@ void apply_player_benchmark_effects(entity_t entity, entity_t source_entity, reg
     utils::apply_effects(
         effects::effect_application{effects::effect_type::RESOLUTION, source_entity, 1'000'000'000},
         effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::RESISTANCE, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::PROTECTION, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::REGENERATION, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::VIGOR, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::SWIFTNESS, source_entity, 1'000'000'000},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::STABILITY, source_entity, 1'000'000'000},
+        effects_component);
 }
 
 void apply_golem_benchmark_effects(entity_t entity, entity_t source_entity, registry_t& registry) {
@@ -191,11 +219,26 @@ void apply_golem_benchmark_effects(entity_t entity, entity_t source_entity, regi
         effects_component);
     utils::apply_effects(
         effects::effect_application{
+            effects::effect_type::BLEEDING, source_entity, 1'000'000'000, 1},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::TORMENT, source_entity, 1'000'000'000, 1},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{effects::effect_type::POISON, source_entity, 1'000'000'000, 1},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{
+            effects::effect_type::CONFUSION, source_entity, 1'000'000'000, 1},
+        effects_component);
+    utils::apply_effects(
+        effects::effect_application{
             effects::effect_type::VULNERABILITY, source_entity, 1'000'000'000, 25},
         effects_component);
 }
 
 void init_entities(registry_t& registry) {
+    // NOTE: Remember that glacial heart is allowed to crit at the moment
     // auto player1 = build_core_guard(registry);
     auto player1 = build_cfb(registry);
     auto golem = build_medium_kitty_golem(registry);

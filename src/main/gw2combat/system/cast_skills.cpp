@@ -16,7 +16,20 @@
 
 namespace gw2combat::system {
 
+void equip_tome_of_justice(entity_t entity, registry_t& registry) {
+    if (registry.any_of<component::bundle>(entity)) {
+        registry.remove<component::bundle>(entity);
+    }
+    registry.emplace<component::bundle>(entity, component::bundle{weapon_type::KIT_CONJURE_TOME});
+    registry.emplace<component::did_weapon_swap>(entity);
+}
+
 void do_weapon_swap(entity_t entity, registry_t& registry) {
+    if (registry.any_of<component::bundle>(entity)) {
+        registry.emplace<component::did_weapon_swap>(entity);
+        registry.remove<component::bundle>(entity);
+        return;
+    }
     if (!registry.any_of<component::equipped_weapon_set>(entity)) {
         throw std::runtime_error("no equipped_weapon_set on entity");
     }
@@ -138,6 +151,8 @@ void do_normal_cast_skill(registry_t& registry,
     if (normal_cast_skill.progress >= skill.cast_duration[has_quickness]) {
         if (normal_cast_skill.skill.name == "Weapon Swap") {
             do_weapon_swap(entity, registry);
+        } else if (normal_cast_skill.skill.name == "Tome of Justice") {
+            equip_tome_of_justice(entity, registry);
         }
         do_child_skills(registry, entity, skill);
         registry.remove<component::normal_cast_skill>(entity);

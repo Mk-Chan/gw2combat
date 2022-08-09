@@ -24,7 +24,7 @@ void character_command(registry_t& registry, tick_t current_tick) {
             auto next_skill = next_skill_cast.skill;
             auto cast_time = next_skill_cast.cast_time;
             if (current_tick < cast_time) {
-                return;
+                return;  // NOTE: Comment this to remove any idle time and perfectly perform skills
             }
 
             if (next_skill.cast_duration[0] == 0) {

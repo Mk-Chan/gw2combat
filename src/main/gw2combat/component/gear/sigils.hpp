@@ -10,6 +10,9 @@ namespace gw2combat::component {
 struct sigil_earth {
     tick_t cooldown_progress = 2'000;
 };
+struct sigil_torment {
+    tick_t cooldown_progress = 5'000;
+};
 
 struct sigil_geomancy {
     tick_t cooldown_progress = 9'000;

@@ -48,9 +48,12 @@ template <combat_stage stage>
 void run_staged_systems(registry_t& registry, tick_t current_tick) {
     system::virtue_of_justice<stage>(registry, current_tick);
     system::inspiring_virtue<stage>(registry, current_tick);
+    system::legendary_lore<stage>(registry, current_tick);
 
     system::sigil_geomancy<stage>(registry, current_tick);
     system::sigil_earth<stage>(registry, current_tick);
+    system::sigil_torment<stage>(registry, current_tick);
+    system::ashes_of_the_just<stage>(registry, current_tick);
 
     system::unrelenting_criticism<stage>(registry, current_tick);
     system::symbolic_avenger<stage>(registry, current_tick);
@@ -156,6 +159,14 @@ void combat_loop() {
                                                  [metric_unit.damage_name] += metric_unit.damage;
             }
             spdlog::info("{}", nlohmann::json{grouped_by_source_and_damage_name}.dump(2));
+
+            std::unordered_map<std::string, std::unordered_map<std::string, unsigned int>>
+                grouped_by_source_and_damage_name_counts;
+            for (const auto& metric_unit : damage_metrics_component.metrics) {
+                grouped_by_source_and_damage_name_counts[metric_unit.source_name]
+                                                        [metric_unit.damage_name] += 1;
+            }
+            spdlog::info("{}", nlohmann::json{grouped_by_source_and_damage_name_counts}.dump(2));
         });
 
     spdlog::info("tick: {}, done!", current_tick);

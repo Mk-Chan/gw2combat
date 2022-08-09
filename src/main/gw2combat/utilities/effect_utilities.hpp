@@ -15,6 +15,12 @@ constexpr static inline std::array BOONS{
     effects::effect_type::MIGHT,
     effects::effect_type::QUICKNESS,
     effects::effect_type::RESOLUTION,
+    effects::effect_type::RESISTANCE,
+    effects::effect_type::PROTECTION,
+    effects::effect_type::REGENERATION,
+    effects::effect_type::VIGOR,
+    effects::effect_type::SWIFTNESS,
+    effects::effect_type::STABILITY,
 };
 
 [[nodiscard]] static inline effects::effect_stacking_type get_effect_stacking_type(
@@ -25,6 +31,12 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::FURY:
         case effects::effect_type::QUICKNESS:
         case effects::effect_type::RESOLUTION:
+        case effects::effect_type::RESISTANCE:
+        case effects::effect_type::PROTECTION:
+        case effects::effect_type::REGENERATION:
+        case effects::effect_type::VIGOR:
+        case effects::effect_type::SWIFTNESS:
+        case effects::effect_type::STABILITY:
         case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::INSPIRING_VIRTUE:
@@ -33,7 +45,11 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::VULNERABILITY:
         case effects::effect_type::BURNING:
         case effects::effect_type::BLEEDING:
+        case effects::effect_type::TORMENT:
+        case effects::effect_type::POISON:
+        case effects::effect_type::CONFUSION:
         case effects::effect_type::SYMBOLIC_AVENGER:
+        case effects::effect_type::ASHES_OF_THE_JUST:
             return effects::effect_stacking_type::STACKING_INTENSITY;
     }
 }
@@ -46,6 +62,12 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::FURY:
         case effects::effect_type::QUICKNESS:
         case effects::effect_type::RESOLUTION:
+        case effects::effect_type::RESISTANCE:
+        case effects::effect_type::PROTECTION:
+        case effects::effect_type::REGENERATION:
+        case effects::effect_type::VIGOR:
+        case effects::effect_type::SWIFTNESS:
+        case effects::effect_type::STABILITY:
         case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::INSPIRING_VIRTUE:
@@ -54,7 +76,11 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::VULNERABILITY:
         case effects::effect_type::BURNING:
         case effects::effect_type::BLEEDING:
+        case effects::effect_type::TORMENT:
+        case effects::effect_type::POISON:
+        case effects::effect_type::CONFUSION:
         case effects::effect_type::SYMBOLIC_AVENGER:
+        case effects::effect_type::ASHES_OF_THE_JUST:
             return 1500;
     }
 }
@@ -67,6 +93,12 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::FURY:
         case effects::effect_type::QUICKNESS:
         case effects::effect_type::RESOLUTION:
+        case effects::effect_type::RESISTANCE:
+        case effects::effect_type::PROTECTION:
+        case effects::effect_type::REGENERATION:
+        case effects::effect_type::VIGOR:
+        case effects::effect_type::SWIFTNESS:
+        case effects::effect_type::STABILITY:
         case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::INSPIRING_VIRTUE:
@@ -78,6 +110,10 @@ constexpr static inline std::array BOONS{
             return 25;
         case effects::effect_type::BURNING:
         case effects::effect_type::BLEEDING:
+        case effects::effect_type::TORMENT:
+        case effects::effect_type::POISON:
+        case effects::effect_type::CONFUSION:
+        case effects::effect_type::ASHES_OF_THE_JUST:
             return 1500;
     }
 }
@@ -90,6 +126,12 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::MIGHT:
         case effects::effect_type::QUICKNESS:
         case effects::effect_type::RESOLUTION:
+        case effects::effect_type::RESISTANCE:
+        case effects::effect_type::PROTECTION:
+        case effects::effect_type::REGENERATION:
+        case effects::effect_type::VIGOR:
+        case effects::effect_type::SWIFTNESS:
+        case effects::effect_type::STABILITY:
             // FIXME: Commented for testing only
             // return 30;
         case effects::effect_type::BINDING_BLADE:
@@ -99,6 +141,10 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::VULNERABILITY:
         case effects::effect_type::BURNING:
         case effects::effect_type::BLEEDING:
+        case effects::effect_type::TORMENT:
+        case effects::effect_type::POISON:
+        case effects::effect_type::CONFUSION:
+        case effects::effect_type::ASHES_OF_THE_JUST:
             return 1'000'000'000;
     }
 }
@@ -127,6 +173,12 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::MIGHT:
         case effects::effect_type::QUICKNESS:
         case effects::effect_type::RESOLUTION:
+        case effects::effect_type::RESISTANCE:
+        case effects::effect_type::PROTECTION:
+        case effects::effect_type::REGENERATION:
+        case effects::effect_type::VIGOR:
+        case effects::effect_type::SWIFTNESS:
+        case effects::effect_type::STABILITY:
             return calculate_boon_duration();
 
         case effects::effect_type::VULNERABILITY:
@@ -136,11 +188,18 @@ constexpr static inline std::array BOONS{
             return calculate_condition_duration(effective_attributes.burning_duration_pct);
         case effects::effect_type::BLEEDING:
             return calculate_condition_duration(effective_attributes.bleeding_duration_pct);
+        case effects::effect_type::TORMENT:
+            return calculate_condition_duration(effective_attributes.torment_duration_pct);
+        case effects::effect_type::POISON:
+            return calculate_condition_duration(effective_attributes.poison_duration_pct);
+        case effects::effect_type::CONFUSION:
+            return calculate_condition_duration(effective_attributes.confusion_duration_pct);
 
         case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::SYMBOLIC_AVENGER:
         case effects::effect_type::INSPIRING_VIRTUE:
+        case effects::effect_type::ASHES_OF_THE_JUST:
             return tick_t{duration};
     }
 }
@@ -153,15 +212,25 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::MIGHT:
         case effects::effect_type::QUICKNESS:
         case effects::effect_type::RESOLUTION:
+        case effects::effect_type::RESISTANCE:
+        case effects::effect_type::PROTECTION:
+        case effects::effect_type::REGENERATION:
+        case effects::effect_type::VIGOR:
+        case effects::effect_type::SWIFTNESS:
+        case effects::effect_type::STABILITY:
             return true;
 
         case effects::effect_type::BURNING:
         case effects::effect_type::BLEEDING:
+        case effects::effect_type::TORMENT:
+        case effects::effect_type::POISON:
+        case effects::effect_type::CONFUSION:
         case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VULNERABILITY:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::SYMBOLIC_AVENGER:
         case effects::effect_type::INSPIRING_VIRTUE:
+        case effects::effect_type::ASHES_OF_THE_JUST:
             return false;
     }
 }
@@ -170,6 +239,9 @@ constexpr static inline std::array BOONS{
     switch (effect_type) {
         case effects::effect_type::BURNING:
         case effects::effect_type::BLEEDING:
+        case effects::effect_type::TORMENT:
+        case effects::effect_type::POISON:
+        case effects::effect_type::CONFUSION:
         case effects::effect_type::BINDING_BLADE:
             return true;
 
@@ -179,10 +251,17 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::MIGHT:
         case effects::effect_type::QUICKNESS:
         case effects::effect_type::RESOLUTION:
+        case effects::effect_type::RESISTANCE:
+        case effects::effect_type::PROTECTION:
+        case effects::effect_type::REGENERATION:
+        case effects::effect_type::VIGOR:
+        case effects::effect_type::SWIFTNESS:
+        case effects::effect_type::STABILITY:
         case effects::effect_type::VULNERABILITY:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::SYMBOLIC_AVENGER:
         case effects::effect_type::INSPIRING_VIRTUE:
+        case effects::effect_type::ASHES_OF_THE_JUST:
             return false;
     }
 }
@@ -210,6 +289,23 @@ constexpr static inline std::array BOONS{
                    outgoing_condition_damage_multiplier.multiplier *
                    outgoing_condition_damage_multiplier.bleeding_multiplier *
                    (double)effect_stack.progress / (double)effects::effect_pulse_rate;
+        case effects::effect_type::TORMENT:
+            // FIXME: This is stationary-only torment damage for golem logs only
+            return (31.8 + 0.09 * source_effective_attributes.condition_damage) *
+                outgoing_condition_damage_multiplier.multiplier *
+                outgoing_condition_damage_multiplier.torment_multiplier *
+                (double)effect_stack.progress / (double)effects::effect_pulse_rate;
+        case effects::effect_type::POISON:
+            return (33.5 + 0.06 * source_effective_attributes.condition_damage) *
+                outgoing_condition_damage_multiplier.multiplier *
+                outgoing_condition_damage_multiplier.poison_multiplier *
+                (double)effect_stack.progress / (double)effects::effect_pulse_rate;
+        case effects::effect_type::CONFUSION:
+            // FIXME: This is idle-only confusion damage for golem logs only
+            return (11.0 + 0.03 * source_effective_attributes.condition_damage) *
+                outgoing_condition_damage_multiplier.multiplier *
+                outgoing_condition_damage_multiplier.confusion_multiplier *
+                (double)effect_stack.progress / (double)effects::effect_pulse_rate;
         case effects::effect_type::BINDING_BLADE:
             return (160.0 + 0.2 * source_effective_attributes.power) *
                    (double)effect_stack.progress / (double)effects::effect_pulse_rate;

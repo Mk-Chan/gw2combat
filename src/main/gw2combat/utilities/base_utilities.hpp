@@ -11,7 +11,7 @@ namespace gw2combat::utils {
 [[nodiscard]] static inline double get_random_0_100() {
     static std::random_device random_device;
     static unsigned int rng_seed = random_device();
-    // static unsigned int rng_seed = 297364872;
+    // static unsigned int rng_seed = 297364871;
     static std::mt19937 generator(rng_seed);
     static std::uniform_real_distribution distribution(0.0, 100.0);
     return distribution(generator);

@@ -149,7 +149,7 @@
           "name": "Searing Slash Magical Hit",
           "weapon_type": "AXE",
           "damage_coefficient": 1.2,
-          "cast_duration": [960, 640],
+          "cast_duration": [100, 100],
           "hit_on_tick_list": [[100], [100]],
           "on_hit_effect_applications": [
             {
@@ -730,6 +730,188 @@
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "cooldown": [0, 0],
+      "tags": []
+    },
+    {
+      "name": "Renewed Focus",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [3040, 3040],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [90000, 72000],
+      "tags": []
+    },
+    {
+      "name": "Tome of Justice",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [540, 360],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [30000, 24000],
+      "tags": []
+    },
+    {
+      "name": "Chapter 1: Searing Spell",
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.97,
+      "cast_duration": [1020, 680],
+      "hit_on_tick_list": [[1020], [680]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "duration": 2500,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [500, 400],
+      "tags": ["TOME"]
+    },
+    {
+      "name": "Chapter 2: Igniting Burst",
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.55,
+      "cast_duration": [900, 600],
+      "hit_on_tick_list": [[900], [600]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "duration": 10000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [4000, 3200],
+      "tags": ["TOME"]
+    },
+    {
+      "name": "Chapter 4: Scorched Aftermath",
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.0,
+      "cast_duration": [1380, 920],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Chapter 4: Scorched Aftermath Attack",
+          "weapon_type": "TORCH",
+          "damage_coefficient": 0.64,
+          "cast_duration": [4000, 4000],
+          "hit_on_tick_list": [
+            [0, 1000, 2000, 3000, 4000],
+            [0, 1000, 2000, 3000, 4000]
+          ],
+          "on_hit_effect_applications": [
+            {
+              "effect_type": "BURNING",
+              "num_stacks": 1,
+              "duration": 2000,
+              "effect_direction": "OUTGOING"
+            },
+            {
+              "effect_type": "BLEEDING",
+              "num_stacks": 1,
+              "duration": 2000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": ["TOME"]
+        }
+      ],
+      "cooldown": [10000, 8000],
+      "tags": ["TOME"]
+    },
+    {
+      "name": "Epilogue: Ashes of the Just",
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.0,
+      "cast_duration": [1320, 880],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[1320], [880]],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "ASHES_OF_THE_JUST",
+          "num_stacks": 3,
+          "duration": 10000,
+          "effect_direction": "INCOMING"
+        }
+      ],
+      "child_entity_skills": [],
+      "cooldown": [12000, 9600],
+      "tags": ["TOME"]
+    },
+    {
+      "name": "Mantra of Flame",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.7,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[0], [0]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "duration": 4000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [12000, 9600],
+      "tags": ["MANTRA"]
+    },
+    {
+      "name": "Ring of Earth",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.25,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[0], [0]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 3,
+          "duration": 8000,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [9000, 9000],
+      "tags": []
+    },
+    {
+      "name": "Weapon Swap",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [100, 100],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [10000, 10000],
       "tags": []
     }
   ]

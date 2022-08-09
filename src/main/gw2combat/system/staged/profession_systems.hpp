@@ -17,15 +17,11 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
                     entity_t source_entity = utils::get_source_entity(strike.source, registry);
                     if (utils::has_effect(
                             effects::effect_type::VIRTUE_OF_JUSTICE, source_entity, registry)) {
-                        auto& effective_attributes =
-                            registry.template get<component::effective_attributes>(source_entity);
-                        auto effective_duration = utils::get_effective_effect_duration(
-                            4'000, effects::effect_type::BURNING, effective_attributes);
                         strike.skill.on_hit_effect_applications.template emplace_back(
                             skills::effect_application{effects::effect_type::BURNING,
                                                        skills::applied_effect_direction::OUTGOING,
                                                        1,
-                                                       effective_duration});
+                                                       4'000});
                         registry.template get<component::virtue_of_justice>(source_entity)
                             .num_unaccounted_hits = 0;
                         utils::remove_all_effect_stacks(

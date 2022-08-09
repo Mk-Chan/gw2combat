@@ -15,6 +15,7 @@ enum class weapon_sigil : std::uint8_t
 {
     BURSTING,
     EARTH,
+    TORMENT,
     FORCE,
     GEOMANCY,
     IMPACT,
@@ -67,6 +68,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_sigil,
                              {
                                  {weapon_sigil::BURSTING, "BURSTING"},
                                  {weapon_sigil::EARTH, "EARTH"},
+                                 {weapon_sigil::TORMENT, "TORMENT"},
                                  {weapon_sigil::FORCE, "FORCE"},
                                  {weapon_sigil::GEOMANCY, "GEOMANCY"},
                                  {weapon_sigil::IMPACT, "IMPACT"},
