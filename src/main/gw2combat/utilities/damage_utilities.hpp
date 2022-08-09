@@ -9,11 +9,14 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline double get_critical_hit_multiplier(
     const component::effective_attributes& effective_attributes) {
-    // return (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
-    //                   (effective_attributes.critical_damage_pct / 100.0 - 1.0));
-    return utils::check_random_success(effective_attributes.critical_chance_pct)
-               ? effective_attributes.critical_damage_pct / 100.0
-               : 1.0;
+    if constexpr (DETERMINISTIC_SIMULATION) {
+        return (1.0 + (std::min(effective_attributes.critical_chance_pct, 100.0) / 100.0) *
+                          (effective_attributes.critical_damage_pct / 100.0 - 1.0));
+    } else {
+        return utils::check_random_success(effective_attributes.critical_chance_pct)
+                   ? effective_attributes.critical_damage_pct / 100.0
+                   : 1.0;
+    }
 }
 
 }  // namespace gw2combat::utils

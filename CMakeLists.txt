@@ -87,4 +87,40 @@ add_executable(
 )
 target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
 target_include_directories(gw2combat PRIVATE ${RAPIDCSV_INCLUDE_DIRS})
+
+add_executable(
+    gw2combat_deterministic
+
+    src/main/gw2combat/main.cpp
+    src/main/gw2combat/combat_loop.cpp
+
+    src/main/gw2combat/entity.cpp
+    src/main/gw2combat/skills.cpp
+    src/main/gw2combat/build.cpp
+    src/main/gw2combat/rotation.cpp
+
+    src/main/gw2combat/system/character_command.cpp
+    src/main/gw2combat/system/effective_attributes_calculation.cpp
+    src/main/gw2combat/system/combat_detection.cpp
+    src/main/gw2combat/system/update_health.cpp
+    src/main/gw2combat/system/downstate_detection.cpp
+    src/main/gw2combat/system/damage/incoming_condition_damage_calculation.cpp
+
+    src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
+    src/main/gw2combat/system/damage/detection/incoming_condition_detection.cpp
+    src/main/gw2combat/system/damage/detection/incoming_condition_application.cpp
+
+    src/main/gw2combat/system/damage/multipliers/incoming_strike_damage_multiplier_calculation.cpp
+    src/main/gw2combat/system/damage/multipliers/incoming_condition_damage_multiplier_calculation.cpp
+    src/main/gw2combat/system/damage/multipliers/outgoing_condition_damage_multiplier_calculation.cpp
+    src/main/gw2combat/system/damage/multipliers/outgoing_strike_damage_multiplier_calculation.cpp
+
+    src/main/gw2combat/system/damage/incoming_strike_damage_calculation.cpp
+
+    src/main/gw2combat/system/cast_skills.cpp
+    src/main/gw2combat/system/destroy_after_rotation_entities.cpp
+)
+target_link_libraries(gw2combat_deterministic PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
+target_include_directories(gw2combat_deterministic PRIVATE ${RAPIDCSV_INCLUDE_DIRS})
+target_compile_definitions(gw2combat_deterministic PUBLIC DETERMINISTIC)
 ###

@@ -149,7 +149,7 @@ entity_t build_medium_kitty_golem(entt::registry& registry) {
     //        combat (taken from cfb bench). Exact number is hard to predict since arcdps does not
     //        record condition damage perfectly
     registry.emplace<component::static_attributes>(
-        entity, component::static_attributes{.armor = 2597, .max_health = 3'950'000});
+        entity, component::static_attributes{.armor = 2597, .max_health = 4'000'000 - 17'000});
     registry.emplace<component::dynamic_attributes>(entity);
 
     registry.emplace<component::is_actor>(entity);

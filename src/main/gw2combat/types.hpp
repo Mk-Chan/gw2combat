@@ -11,6 +11,12 @@
 
 namespace gw2combat {
 
+#if DETERMINISTIC
+constexpr static bool DETERMINISTIC_SIMULATION = true;
+#else
+constexpr static bool DETERMINISTIC_SIMULATION = false;
+#endif
+
 using tick_t = std::uint32_t;
 using entity_t = entt::entity;
 using registry_t = entt::registry;

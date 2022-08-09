@@ -292,20 +292,20 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::TORMENT:
             // FIXME: This is stationary-only torment damage for golem logs only
             return (31.8 + 0.09 * source_effective_attributes.condition_damage) *
-                outgoing_condition_damage_multiplier.multiplier *
-                outgoing_condition_damage_multiplier.torment_multiplier *
-                (double)effect_stack.progress / (double)effects::effect_pulse_rate;
+                   outgoing_condition_damage_multiplier.multiplier *
+                   outgoing_condition_damage_multiplier.torment_multiplier *
+                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
         case effects::effect_type::POISON:
             return (33.5 + 0.06 * source_effective_attributes.condition_damage) *
-                outgoing_condition_damage_multiplier.multiplier *
-                outgoing_condition_damage_multiplier.poison_multiplier *
-                (double)effect_stack.progress / (double)effects::effect_pulse_rate;
+                   outgoing_condition_damage_multiplier.multiplier *
+                   outgoing_condition_damage_multiplier.poison_multiplier *
+                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
         case effects::effect_type::CONFUSION:
             // FIXME: This is idle-only confusion damage for golem logs only
             return (11.0 + 0.03 * source_effective_attributes.condition_damage) *
-                outgoing_condition_damage_multiplier.multiplier *
-                outgoing_condition_damage_multiplier.confusion_multiplier *
-                (double)effect_stack.progress / (double)effects::effect_pulse_rate;
+                   outgoing_condition_damage_multiplier.multiplier *
+                   outgoing_condition_damage_multiplier.confusion_multiplier *
+                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
         case effects::effect_type::BINDING_BLADE:
             return (160.0 + 0.2 * source_effective_attributes.power) *
                    (double)effect_stack.progress / (double)effects::effect_pulse_rate;

@@ -141,8 +141,11 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline double get_weapon_strength(weapon_type type) {
     auto& range = weapon_type_to_strength_range_map.at(type);
-    return range[0] + (get_random_0_100() * (range[1] - range[0]) / 100.0);
-    // return (range[0] + range[1]) / 2.0;
+    if constexpr (DETERMINISTIC_SIMULATION) {
+        return (range[0] + range[1]) / 2.0;
+    } else {
+        return range[0] + (get_random_0_100() * (range[1] - range[0]) / 100.0);
+    }
 }
 
 [[nodiscard]] static inline bool has_rune(rune_type rune, entity_t entity, registry_t& registry) {

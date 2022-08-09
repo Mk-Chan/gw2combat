@@ -39,11 +39,6 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
                     .endurance = dynamic_attributes.max_endurance,
                     .endurance_gain_pct = dynamic_attributes.endurance_gain_pct});
 
-            size_t might_stacks =
-                utils::get_num_stacks_of_effect(effects::effect_type::MIGHT, entity, registry);
-            effective_attributes.power += might_stacks * 30;
-            effective_attributes.condition_damage += might_stacks * 30;
-
             if (utils::has_effect(effects::effect_type::FURY, entity, registry)) {
                 effective_attributes.critical_chance_pct += 25;
             }
@@ -72,6 +67,17 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
                 effective_attributes.condition_damage +=
                     (unsigned int)(0.13 * (double)effective_attributes.vitality);
             }
+
+            // FIXME: Remember to implement banker's rounding later
+            effective_attributes.condition_damage +=
+                (unsigned int)((0.03 * (double)effective_attributes.power));
+            effective_attributes.condition_damage +=
+                (unsigned int)(0.03 * (double)effective_attributes.precision);
+
+            size_t might_stacks =
+                utils::get_num_stacks_of_effect(effects::effect_type::MIGHT, entity, registry);
+            effective_attributes.power += might_stacks * 30;
+            effective_attributes.condition_damage += might_stacks * 30;
 
             // spdlog::info(
             //     "entity: {}, effective_attributes: {}",

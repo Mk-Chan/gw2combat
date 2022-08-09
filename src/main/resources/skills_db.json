@@ -761,7 +761,7 @@
     {
       "name": "Chapter 1: Searing Spell",
       "weapon_type": "TOME",
-      "damage_coefficient": 0.97,
+      "damage_coefficient": 0.95,
       "cast_duration": [1020, 680],
       "hit_on_tick_list": [[1020], [680]],
       "on_hit_effect_applications": [

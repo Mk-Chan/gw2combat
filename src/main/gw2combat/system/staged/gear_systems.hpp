@@ -58,21 +58,36 @@ void sigil_earth(registry_t& registry, tick_t current_tick) {
                 if (utils::has_sigil_equipped(weapon_sigil::EARTH, source_entity, registry)) {
                     auto& sigil_earth =
                         registry.template get<component::sigil_earth>(source_entity);
-                    // NOTE: Move the crit check to send whether it is a crit or not in the
-                    // strike
-                    //       object itself so the calculation is only at one place
-                    if (sigil_earth.cooldown_progress >= 2'000 &&
-                        strike.critical_hit_multiplier > 1.0) {
-                        strike.skill.on_hit_effect_applications.template emplace_back(
-                            skills::effect_application{effects::effect_type::BLEEDING,
-                                                       skills::applied_effect_direction::OUTGOING,
-                                                       1,
-                                                       6'000});
-                        sigil_earth.cooldown_progress = 0;
+                    if constexpr (DETERMINISTIC_SIMULATION) {
+                        if (sigil_earth.cooldown_progress >= 2'000 &&
+                            utils::check_random_success(33.0)) {
+                            strike.skill.on_hit_effect_applications.template emplace_back(
+                                skills::effect_application{
+                                    effects::effect_type::BLEEDING,
+                                    skills::applied_effect_direction::OUTGOING,
+                                    1,
+                                    6'000});
+                            sigil_earth.cooldown_progress = 0;
 
-                        spdlog::info("tick: {}, entity: {}, outgoing bleeding from earth sigil",
-                                     current_tick,
-                                     utils::get_entity_name(source_entity, registry));
+                            spdlog::info("tick: {}, entity: {}, outgoing bleeding from earth sigil",
+                                         current_tick,
+                                         utils::get_entity_name(source_entity, registry));
+                        }
+                    } else {
+                        if (sigil_earth.cooldown_progress >= 2'000 &&
+                            strike.critical_hit_multiplier > 1.0) {
+                            strike.skill.on_hit_effect_applications.template emplace_back(
+                                skills::effect_application{
+                                    effects::effect_type::BLEEDING,
+                                    skills::applied_effect_direction::OUTGOING,
+                                    1,
+                                    6'000});
+                            sigil_earth.cooldown_progress = 0;
+
+                            spdlog::info("tick: {}, entity: {}, outgoing bleeding from earth sigil",
+                                         current_tick,
+                                         utils::get_entity_name(source_entity, registry));
+                        }
                     }
                 }
             }
@@ -89,16 +104,33 @@ void sigil_torment(registry_t& registry, tick_t current_tick) {
         sigil.cooldown_progress = std::min(sigil.cooldown_progress + 1, tick_t{5'000});
     });
 
-    registry.view<component::incoming_strike_damage>().each(
-        [&](component::incoming_strike_damage& incoming_strike_damage) {
-            for (strike& strike : incoming_strike_damage.strikes) {
-                auto source_entity = utils::get_source_entity(strike.source, registry);
-                if (utils::has_sigil_equipped(weapon_sigil::TORMENT, source_entity, registry)) {
-                    auto& sigil_torment =
-                        registry.template get<component::sigil_torment>(source_entity);
-                    // NOTE: Move the crit check to send whether it is a crit or not in the
-                    // strike
-                    //       object itself so the calculation is only at one place
+    registry.view<component::incoming_strike_damage>().each([&](component::incoming_strike_damage&
+                                                                    incoming_strike_damage) {
+        for (strike& strike : incoming_strike_damage.strikes) {
+            auto source_entity = utils::get_source_entity(strike.source, registry);
+            if (utils::has_sigil_equipped(weapon_sigil::TORMENT, source_entity, registry)) {
+                auto& sigil_torment =
+                    registry.template get<component::sigil_torment>(source_entity);
+                // NOTE: Move the crit check to send whether it is a crit or not in the
+                // strike
+                //       object itself so the calculation is only at one place
+                if constexpr (DETERMINISTIC_SIMULATION) {
+                    auto& effective_attributes =
+                        registry.template get<component::effective_attributes>(source_entity);
+                    if (sigil_torment.cooldown_progress >= 5'000 &&
+                        utils::check_random_success(effective_attributes.critical_chance_pct)) {
+                        strike.skill.on_hit_effect_applications.template emplace_back(
+                            skills::effect_application{effects::effect_type::TORMENT,
+                                                       skills::applied_effect_direction::OUTGOING,
+                                                       2,
+                                                       5'000});
+                        sigil_torment.cooldown_progress = 0;
+
+                        spdlog::info("tick: {}, entity: {}, outgoing torment from torment sigil",
+                                     current_tick,
+                                     utils::get_entity_name(source_entity, registry));
+                    }
+                } else {
                     if (sigil_torment.cooldown_progress >= 5'000 &&
                         strike.critical_hit_multiplier > 1.0) {
                         strike.skill.on_hit_effect_applications.template emplace_back(
@@ -114,7 +146,8 @@ void sigil_torment(registry_t& registry, tick_t current_tick) {
                     }
                 }
             }
-        });
+        }
+    });
 }
 
 }  // namespace gw2combat::system
