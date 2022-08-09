@@ -760,7 +760,7 @@
     },
     {
       "name": "Chapter 1: Searing Spell",
-      "weapon_type": "TORCH",
+      "weapon_type": "TOME",
       "damage_coefficient": 0.97,
       "cast_duration": [1020, 680],
       "hit_on_tick_list": [[1020], [680]],
@@ -780,7 +780,7 @@
     },
     {
       "name": "Chapter 2: Igniting Burst",
-      "weapon_type": "TORCH",
+      "weapon_type": "TOME",
       "damage_coefficient": 0.55,
       "cast_duration": [900, 600],
       "hit_on_tick_list": [[900], [600]],
@@ -800,7 +800,7 @@
     },
     {
       "name": "Chapter 4: Scorched Aftermath",
-      "weapon_type": "TORCH",
+      "weapon_type": "TOME",
       "damage_coefficient": 0.0,
       "cast_duration": [1380, 920],
       "hit_on_tick_list": [[], []],
@@ -810,7 +810,7 @@
       "child_entity_skills": [
         {
           "name": "Chapter 4: Scorched Aftermath Attack",
-          "weapon_type": "TORCH",
+          "weapon_type": "TOME",
           "damage_coefficient": 0.64,
           "cast_duration": [4000, 4000],
           "hit_on_tick_list": [
@@ -843,7 +843,7 @@
     },
     {
       "name": "Epilogue: Ashes of the Just",
-      "weapon_type": "TORCH",
+      "weapon_type": "TOME",
       "damage_coefficient": 0.0,
       "cast_duration": [1320, 880],
       "hit_on_tick_list": [[], []],

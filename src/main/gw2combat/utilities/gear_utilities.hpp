@@ -46,7 +46,8 @@ namespace gw2combat::utils {
     switch (type) {
         case weapon_type::EMPTY_HANDED:
         case weapon_type::GREATSWORD:
-        case weapon_type::KIT_CONJURE_TOME:
+        case weapon_type::TOME:
+        case weapon_type::KIT_CONJURE:
             return false;
         case weapon_type::SWORD:
         case weapon_type::AXE:

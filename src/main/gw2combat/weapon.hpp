@@ -30,6 +30,7 @@ enum class weapon_position : std::uint8_t
 
 enum class weapon_type : std::uint32_t
 {
+    UNDEFINED,
     EMPTY_HANDED,
     GREATSWORD,
     SWORD,
@@ -37,7 +38,8 @@ enum class weapon_type : std::uint32_t
     TORCH,
     SCEPTER,
     FOCUS,
-    KIT_CONJURE_TOME,
+    KIT_CONJURE,
+    TOME,
 };
 
 struct weapon_configuration {
@@ -49,6 +51,7 @@ struct weapon_configuration {
 
 static inline std::unordered_map<weapon_type, std::array<double, 2>>
     weapon_type_to_strength_range_map{
+        {weapon_type::UNDEFINED, {0.0, 0.0}},
         {weapon_type::EMPTY_HANDED, {656.0, 725.0}},
         {weapon_type::GREATSWORD, {1045.0, 1155.0}},
         {weapon_type::SWORD, {950.0, 1050.0}},
@@ -56,7 +59,8 @@ static inline std::unordered_map<weapon_type, std::array<double, 2>>
         {weapon_type::TORCH, {828.0, 972.0}},
         {weapon_type::SCEPTER, {940.0, 1060.0}},
         {weapon_type::FOCUS, {873.0, 927.0}},
-        {weapon_type::KIT_CONJURE_TOME, {920.0, 1017.0}},
+        {weapon_type::KIT_CONJURE, {920.0, 1017.0}},
+        {weapon_type::TOME, {876.0, 969.0}},
     };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_set,
@@ -81,6 +85,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_position,
                              })
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
                              {
+                                 {weapon_type::UNDEFINED, "UNDEFINED"},
                                  {weapon_type::EMPTY_HANDED, "EMPTY_HANDED"},
                                  {weapon_type::GREATSWORD, "GREATSWORD"},
                                  {weapon_type::SWORD, "SWORD"},
@@ -88,6 +93,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
                                  {weapon_type::TORCH, "TORCH"},
                                  {weapon_type::SCEPTER, "SCEPTER"},
                                  {weapon_type::FOCUS, "FOCUS"},
+                                 {weapon_type::KIT_CONJURE, "KIT_CONJURE"},
+                                 {weapon_type::TOME, "TOME"},
                              })
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(weapon_configuration, type, position, sigil, set)
 
