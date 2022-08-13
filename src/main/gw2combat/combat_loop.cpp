@@ -41,6 +41,7 @@ void clear_temporary_components(registry_t& registry) {
 
                    component::effective_incoming_damage,
                    component::instant_cast_skills,
+                   component::finished_normal_cast_skill,
                    component::did_weapon_swap>();
 }
 
@@ -53,6 +54,7 @@ void run_staged_systems(registry_t& registry, tick_t current_tick) {
     system::sigil_geomancy<stage>(registry, current_tick);
     system::sigil_earth<stage>(registry, current_tick);
     system::sigil_torment<stage>(registry, current_tick);
+    system::spear_of_justice<stage>(registry, current_tick);
     system::ashes_of_the_just<stage>(registry, current_tick);
 
     system::unrelenting_criticism<stage>(registry, current_tick);

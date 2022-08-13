@@ -12,6 +12,10 @@ struct normal_cast_skill {
     tick_t progress{0};
 };
 
+struct finished_normal_cast_skill {
+    skills::skill skill;
+};
+
 }  // namespace gw2combat::component
 
 #endif  // GW2COMBAT_COMPONENT_SKILLS_NORMAL_CAST_SKILL_HPP

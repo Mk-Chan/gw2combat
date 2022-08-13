@@ -45,7 +45,7 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
 
             if (utils::has_trait(trait_type::RIGHTEOUS_INSTINCTS, entity, registry) &&
                 utils::has_effect(effects::effect_type::RESOLUTION, entity, registry)) {
-                effective_attributes.critical_chance_pct += 10;
+                effective_attributes.critical_chance_pct += 25;
             }
             if (utils::has_trait(trait_type::RIGHT_HAND_STRENGTH, entity, registry) &&
                 !registry.any_of<component::bundle>(entity) &&
@@ -56,6 +56,10 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
                 !registry.any_of<component::bundle>(entity) &&
                 utils::has_weapon_type(weapon_type::GREATSWORD, entity, registry)) {
                 effective_attributes.power += 120;
+            }
+            if (utils::has_trait(trait_type::RADIANT_POWER, entity, registry)) {
+                effective_attributes.ferocity += 150;
+                effective_attributes.critical_damage_pct += 10.0;
             }
             if (utils::has_trait(trait_type::IMBUED_HASTE, entity, registry) &&
                 utils::has_effect(effects::effect_type::QUICKNESS, entity, registry)) {
@@ -69,10 +73,21 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
             }
 
             // FIXME: Remember to implement banker's rounding later
-            effective_attributes.condition_damage +=
-                (unsigned int)((0.03 * (double)effective_attributes.power));
-            effective_attributes.condition_damage +=
-                (unsigned int)(0.03 * (double)effective_attributes.precision);
+            if (registry.any_of<component::enhancement_component>(entity) &&
+                registry.get<component::enhancement_component>(entity).enhancement ==
+                    component::enhancement_type::TOXIC_FOCUSING_CRYSTAL) {
+                effective_attributes.condition_damage +=
+                    (unsigned int)((0.03 * (double)effective_attributes.power));
+                effective_attributes.condition_damage +=
+                    (unsigned int)(0.03 * (double)effective_attributes.precision);
+            } else if (registry.any_of<component::enhancement_component>(entity) &&
+                       registry.get<component::enhancement_component>(entity).enhancement ==
+                           component::enhancement_type::SUPERIOR_SHARPENING_STONE) {
+                effective_attributes.power +=
+                    (unsigned int)((0.03 * (double)effective_attributes.precision));
+                effective_attributes.power +=
+                    (unsigned int)(0.06 * (double)effective_attributes.ferocity);
+            }
 
             size_t might_stacks =
                 utils::get_num_stacks_of_effect(effects::effect_type::MIGHT, entity, registry);
@@ -90,7 +105,7 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
             //         //{"concentration", effective_attributes.concentration},
             //         {"condition_damage", effective_attributes.condition_damage},
             //         {"expertise", effective_attributes.expertise},
-            //         //{"ferocity", effective_attributes.ferocity},
+            //         {"ferocity", effective_attributes.ferocity},
             //         //{"healing_power", effective_attributes.healing_power},
             //         {"armor", effective_attributes.armor},
             //         //{"boon_duration_pct", effective_attributes.boon_duration_pct},

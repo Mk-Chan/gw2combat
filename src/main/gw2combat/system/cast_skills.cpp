@@ -155,6 +155,8 @@ void do_normal_cast_skill(registry_t& registry,
             equip_tome_of_justice(entity, registry);
         }
         do_child_skills(registry, entity, skill);
+        registry.emplace<component::finished_normal_cast_skill>(
+            entity, component::finished_normal_cast_skill{skill});
         registry.remove<component::normal_cast_skill>(entity);
         return;
     }

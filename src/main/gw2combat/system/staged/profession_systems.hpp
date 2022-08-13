@@ -10,7 +10,42 @@ namespace gw2combat::system {
 
 template <combat_stage stage>
 static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) {
-    if constexpr (stage == combat_stage::BEFORE_INCOMING_STRIKE_DAMAGE_CALCULATION) {
+    if constexpr (stage == combat_stage::BEFORE_OUTGOING_STRIKE_BUFFERING) {
+        registry.template view<component::virtue_of_justice>().template each(
+            [&](component::virtue_of_justice& virtue_of_justice) {
+                virtue_of_justice.cooldown_progress =
+                    std::min(virtue_of_justice.cooldown_progress + 1, virtue_of_justice.cooldown);
+            });
+
+        registry
+            .template view<component::finished_normal_cast_skill, component::virtue_of_justice>()
+            .each([&](entity_t entity,
+                      const component::finished_normal_cast_skill& finished_normal_casting_skill,
+                      component::virtue_of_justice& virtue_of_justice) {
+                if (utils::has_trait(trait_type::LOREMASTER, entity, registry)) {
+                    return;
+                }
+
+                if (finished_normal_casting_skill.skill.name == "Virtue of Justice" ||
+                    finished_normal_casting_skill.skill.name == "Spear of Justice" ||
+                    finished_normal_casting_skill.skill.name == "Tome of Justice") {
+                    // FIXME: Rework alacrity and quickness to be consistent across losing and
+                    //        regaining in the middle of skills
+                    bool has_alacrity =
+                        utils::has_effect(effects::effect_type::ALACRITY, entity, registry);
+
+                    virtue_of_justice.cooldown =
+                        finished_normal_casting_skill.skill.cooldown[has_alacrity];
+                    virtue_of_justice.cooldown_progress = 0;
+                    ++virtue_of_justice.num_unaccounted_hits;
+                    spdlog::info(
+                        "tick: {}, entity: {}, virtue of justice passive went on cooldown for {}",
+                        current_tick,
+                        utils::get_entity_name(entity, registry),
+                        finished_normal_casting_skill.skill.cooldown[has_alacrity]);
+                }
+            });
+    } else if (stage == combat_stage::BEFORE_INCOMING_STRIKE_DAMAGE_CALCULATION) {
         registry.view<component::incoming_strike_damage>().each(
             [&](component::incoming_strike_damage& incoming_strike_damage) {
                 for (auto& strike : incoming_strike_damage.strikes) {
@@ -36,7 +71,8 @@ static inline void virtue_of_justice(registry_t& registry, tick_t current_tick) 
                     entity_t source_entity = utils::get_source_entity(strike.source, registry);
                     auto virtue_of_justice_ptr =
                         registry.try_get<component::virtue_of_justice>(source_entity);
-                    if (virtue_of_justice_ptr) {
+                    if (virtue_of_justice_ptr && virtue_of_justice_ptr->cooldown_progress >=
+                                                     virtue_of_justice_ptr->cooldown) {
                         ++virtue_of_justice_ptr->num_unaccounted_hits;
                     }
                 }

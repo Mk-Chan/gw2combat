@@ -40,6 +40,8 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::INSPIRING_VIRTUE:
+        case effects::effect_type::SPEAR_OF_JUSTICE:
+        case effects::effect_type::CRIPPLED:
             return effects::effect_stacking_type::STACKING_DURATION;
         case effects::effect_type::MIGHT:
         case effects::effect_type::VULNERABILITY:
@@ -71,6 +73,8 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::INSPIRING_VIRTUE:
+        case effects::effect_type::SPEAR_OF_JUSTICE:
+        case effects::effect_type::CRIPPLED:
             return 1;
         case effects::effect_type::MIGHT:
         case effects::effect_type::VULNERABILITY:
@@ -102,6 +106,8 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::INSPIRING_VIRTUE:
+        case effects::effect_type::SPEAR_OF_JUSTICE:
+        case effects::effect_type::CRIPPLED:
             return 1;
         case effects::effect_type::SYMBOLIC_AVENGER:
             return 5;
@@ -132,6 +138,7 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::VIGOR:
         case effects::effect_type::SWIFTNESS:
         case effects::effect_type::STABILITY:
+        case effects::effect_type::CRIPPLED:
             // FIXME: Commented for testing only
             // return 30;
         case effects::effect_type::BINDING_BLADE:
@@ -145,6 +152,7 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::POISON:
         case effects::effect_type::CONFUSION:
         case effects::effect_type::ASHES_OF_THE_JUST:
+        case effects::effect_type::SPEAR_OF_JUSTICE:
             return 1'000'000'000;
     }
 }
@@ -181,6 +189,7 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::STABILITY:
             return calculate_boon_duration();
 
+        case effects::effect_type::CRIPPLED:
         case effects::effect_type::VULNERABILITY:
             return calculate_condition_duration();
 
@@ -200,6 +209,7 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::SYMBOLIC_AVENGER:
         case effects::effect_type::INSPIRING_VIRTUE:
         case effects::effect_type::ASHES_OF_THE_JUST:
+        case effects::effect_type::SPEAR_OF_JUSTICE:
             return tick_t{duration};
     }
 }
@@ -225,12 +235,14 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::TORMENT:
         case effects::effect_type::POISON:
         case effects::effect_type::CONFUSION:
-        case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VULNERABILITY:
+        case effects::effect_type::CRIPPLED:
+        case effects::effect_type::BINDING_BLADE:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::SYMBOLIC_AVENGER:
         case effects::effect_type::INSPIRING_VIRTUE:
         case effects::effect_type::ASHES_OF_THE_JUST:
+        case effects::effect_type::SPEAR_OF_JUSTICE:
             return false;
     }
 }
@@ -258,10 +270,12 @@ constexpr static inline std::array BOONS{
         case effects::effect_type::SWIFTNESS:
         case effects::effect_type::STABILITY:
         case effects::effect_type::VULNERABILITY:
+        case effects::effect_type::CRIPPLED:
         case effects::effect_type::VIRTUE_OF_JUSTICE:
         case effects::effect_type::SYMBOLIC_AVENGER:
         case effects::effect_type::INSPIRING_VIRTUE:
         case effects::effect_type::ASHES_OF_THE_JUST:
+        case effects::effect_type::SPEAR_OF_JUSTICE:
             return false;
     }
 }

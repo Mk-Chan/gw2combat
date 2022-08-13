@@ -17,7 +17,7 @@ void skills_db::init(const std::string& path) {
     if (!get_by_name("Weapon Swap")) {
         skills::skill weapon_swap_skill;
         weapon_swap_skill.name = "Weapon Swap";
-        weapon_swap_skill.cast_duration = {100, 100};
+        weapon_swap_skill.cast_duration = {70, 70};
         this->skills.emplace_back(weapon_swap_skill);
     }
 }

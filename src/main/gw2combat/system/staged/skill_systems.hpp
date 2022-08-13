@@ -57,6 +57,39 @@ void on_hit_effect_applications(registry_t& registry, tick_t current_tick) {
 }
 
 template <combat_stage stage>
+static inline void spear_of_justice(registry_t& registry, tick_t current_tick) {
+    if constexpr (stage == combat_stage::BEFORE_INCOMING_STRIKE_DAMAGE_CALCULATION) {
+        registry.view<component::effects_component, component::incoming_strike_damage>().each(
+            [&](const component::effects_component& effects_component,
+                component::incoming_strike_damage& incoming_strike_damage) {
+                if (!utils::has_effect(effects::effect_type::SPEAR_OF_JUSTICE, effects_component)) {
+                    return;
+                }
+
+                std::unordered_set<entity_t> sources_applying_spear_of_justice;
+                auto all_spear_of_justice_effects =
+                    effects_component.effects.equal_range(effects::effect_type::SPEAR_OF_JUSTICE);
+                for (auto iter = all_spear_of_justice_effects.first;
+                     iter != all_spear_of_justice_effects.second;
+                     ++iter) {
+                    sources_applying_spear_of_justice.template emplace(iter->second.source);
+                }
+                for (strike& strike : incoming_strike_damage.strikes) {
+                    auto source_entity = utils::get_source_entity(strike.source, registry);
+                    if (sources_applying_spear_of_justice.contains(source_entity)) {
+                        strike.outgoing_strike_damage_multiplier *= 1.15;
+                        strike.skill.on_hit_effect_applications.template emplace_back(
+                            skills::effect_application{effects::effect_type::VULNERABILITY,
+                                                       skills::applied_effect_direction::OUTGOING,
+                                                       1,
+                                                       10'000});
+                    }
+                }
+            });
+    }
+}
+
+template <combat_stage stage>
 static inline void ashes_of_the_just(registry_t& registry, tick_t current_tick) {
     if constexpr (stage != combat_stage::AFTER_INCOMING_STRIKE_DAMAGE_CALCULATION) {
         return;

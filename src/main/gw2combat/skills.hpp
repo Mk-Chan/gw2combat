@@ -47,6 +47,7 @@ struct skill {
     std::array<std::vector<tick_t>, 2> pulse_on_tick_list{};
     std::vector<effect_application> on_pulse_effect_applications{};
     std::vector<skill> child_entity_skills{};
+    std::array<tick_t, 2> cooldown{};
     std::vector<skill_tag> tags{};
 
     inline bool operator==(const skill& rhs) const {
@@ -97,6 +98,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(skill,
                                    pulse_on_tick_list,
                                    on_pulse_effect_applications,
                                    child_entity_skills,
+                                   cooldown,
                                    tags)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(skills_db, skills)
 

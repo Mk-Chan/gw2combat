@@ -3,6 +3,7 @@
 
 #include "gw2combat/types.hpp"
 
+#include "gw2combat/component/character/enhancement.hpp"
 #include "gw2combat/component/character/static_attributes.hpp"
 #include "gw2combat/component/gear/runes.hpp"
 #include "gw2combat/component/gear/weapon_configurations.hpp"
@@ -47,6 +48,7 @@ struct character_build {
     std::vector<trait_type> traits;
     component::available_weapon_configurations available_weapon_configurations;
     rune_type rune;
+    component::enhancement_type enhancement;
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(base_class_type,
@@ -80,7 +82,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(character_build,
                                    trait_lines,
                                    traits,
                                    available_weapon_configurations,
-                                   rune)
+                                   rune,
+                                   enhancement)
 
 }  // namespace gw2combat
 

@@ -452,10 +452,10 @@
       "name": "Zealot's Defense",
       "weapon_type": "SWORD",
       "damage_coefficient": 0.6,
-      "cast_duration": [1800, 1200],
+      "cast_duration": [1750, 1165],
       "hit_on_tick_list": [
-        [0, 257, 514, 771, 1028, 1285, 1542, 1800],
-        [0, 171, 342, 514, 685, 857, 1028, 1200]
+        [0, 250, 500, 750, 1000, 1250, 1500, 1750],
+        [0, 166, 332, 499, 665, 832, 998, 1165]
       ],
       "on_hit_effect_applications": [],
       "pulse_on_tick_list": [[], []],
@@ -468,7 +468,7 @@
       "name": "Ray of Judgment",
       "weapon_type": "FOCUS",
       "damage_coefficient": 0.0,
-      "cast_duration": [795, 530],
+      "cast_duration": [720, 480],
       "hit_on_tick_list": [[], []],
       "on_hit_effect_applications": [],
       "pulse_on_tick_list": [[], []],
@@ -550,7 +550,7 @@
     {
       "name": "Wrathful Strike",
       "weapon_type": "GREATSWORD",
-      "damage_coefficient": 1.2,
+      "damage_coefficient": 1.25,
       "cast_duration": [1000, 675],
       "hit_on_tick_list": [[1000], [675]],
       "on_hit_effect_applications": [],
@@ -564,10 +564,10 @@
       "name": "Whirling Wrath",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 0.4125,
-      "cast_duration": [2002, 1470],
+      "cast_duration": [1968, 1312],
       "hit_on_tick_list": [
-        [0, 154, 308, 462, 616, 770, 924, 1078, 1232, 1386, 1540, 1694, 1848, 2002],
-        [0, 113, 226, 339, 452, 565, 678, 791, 904, 1017, 1130, 1243, 1356, 1470]
+        [0, 151, 302, 454, 605, 756, 908, 1059, 1211, 1362, 1513, 1665, 1816, 1968],
+        [0, 100, 201, 302, 403, 504, 605, 706, 807, 908, 1009, 1110, 1211, 1312]
       ],
       "on_hit_effect_applications": [],
       "pulse_on_tick_list": [[], []],
@@ -613,7 +613,7 @@
       "name": "Symbol of Resolution",
       "weapon_type": "GREATSWORD",
       "damage_coefficient": 0.0,
-      "cast_duration": [360, 240],
+      "cast_duration": [350, 233],
       "hit_on_tick_list": [[], []],
       "on_hit_effect_applications": [],
       "pulse_on_tick_list": [[], []],
@@ -880,6 +880,107 @@
       "child_entity_skills": [],
       "cooldown": [12000, 9600],
       "tags": ["MANTRA"]
+    },
+    {
+      "name": "Spear of Justice",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.6,
+      "cast_duration": [825, 550],
+      "hit_on_tick_list": [[825], [550]],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "SPEAR_OF_JUSTICE",
+          "num_stacks": 1,
+          "duration": 9960,
+          "effect_direction": "OUTGOING"
+        }
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Spear of Justice Pulse",
+          "weapon_type": "EMPTY_HANDED",
+          "damage_coefficient": 0.0,
+          "cast_duration": [10000, 10000],
+          "hit_on_tick_list": [[], []],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [
+            [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+            [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+          ],
+          "on_pulse_effect_applications": [
+            {
+              "effect_type": "BURNING",
+              "num_stacks": 1,
+              "duration": 2000,
+              "effect_direction": "OUTGOING"
+            }
+          ],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": []
+        }
+      ],
+      "cooldown": [20000, 16000],
+      "tags": []
+    },
+    {
+      "name": "Dragon's Maw",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [660, 440],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Dragon's Maw Attack",
+          "weapon_type": "EMPTY_HANDED",
+          "damage_coefficient": 2.4,
+          "cast_duration": [500, 500],
+          "hit_on_tick_list": [[500], [500]],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": ["TRAP"]
+        }
+      ],
+      "cooldown": [75000, 60000],
+      "tags": []
+    },
+    {
+      "name": "Procession of Blades",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [660, 440],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [
+        {
+          "name": "Procession of Blades Attack",
+          "weapon_type": "EMPTY_HANDED",
+          "damage_coefficient": 0.44,
+          "cast_duration": [5500, 5500],
+          "hit_on_tick_list": [
+            [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500],
+            [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500]
+          ],
+          "on_hit_effect_applications": [],
+          "pulse_on_tick_list": [[], []],
+          "on_pulse_effect_applications": [],
+          "child_entity_skills": [],
+          "cooldown": [0, 0],
+          "tags": ["TRAP"]
+        }
+      ],
+      "cooldown": [20000, 16000],
+      "tags": []
     },
     {
       "name": "Ring of Earth",

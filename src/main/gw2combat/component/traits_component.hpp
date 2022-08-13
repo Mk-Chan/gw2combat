@@ -11,10 +11,13 @@ enum class trait_line_type : std::uint32_t
     VIRTUES,
     ZEAL,
     FIREBRAND,
+    DRAGONHUNTER,
 };
 
 enum class trait_type : std::uint32_t
 {
+    NOTHING,
+
     RIGHT_HAND_STRENGTH,
     RADIANT_FIRE,
     RETRIBUTION,
@@ -42,6 +45,12 @@ enum class trait_type : std::uint32_t
     IMBUED_HASTE,
     STOIC_DEMEANOR,
     LOREMASTER,
+
+    VIRTUOUS_ACTION,
+    PIERCING_LIGHT,
+    ZEALOTS_AGGRESSION,
+    PURE_OF_SIGHT,
+    BIG_GAME_HUNTER,
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(trait_line_type,
@@ -50,9 +59,12 @@ NLOHMANN_JSON_SERIALIZE_ENUM(trait_line_type,
                                  {trait_line_type::RADIANCE, "Radiance"},
                                  {trait_line_type::VIRTUES, "Virtues"},
                                  {trait_line_type::FIREBRAND, "Firebrand"},
+                                 {trait_line_type::DRAGONHUNTER, "Dragonhunter"},
                              })
 NLOHMANN_JSON_SERIALIZE_ENUM(trait_type,
                              {
+                                 {trait_type::NOTHING, "Nothing"},
+
                                  {trait_type::RIGHT_HAND_STRENGTH, "Right-Hand Strength"},
                                  {trait_type::RADIANT_FIRE, "Radiant Fire"},
                                  {trait_type::RETRIBUTION, "Retribution"},
@@ -80,6 +92,12 @@ NLOHMANN_JSON_SERIALIZE_ENUM(trait_type,
                                  {trait_type::IMBUED_HASTE, "Imbued Haste"},
                                  {trait_type::STOIC_DEMEANOR, "Stoic Demeanor"},
                                  {trait_type::LOREMASTER, "Loremaster"},
+
+                                 {trait_type::VIRTUOUS_ACTION, "Virtuous Action"},
+                                 {trait_type::PIERCING_LIGHT, "Piercing Light"},
+                                 {trait_type::ZEALOTS_AGGRESSION, "Zealot's Aggression"},
+                                 {trait_type::PURE_OF_SIGHT, "Pure of Sight"},
+                                 {trait_type::BIG_GAME_HUNTER, "Big Game Hunter"},
                              })
 
 }  // namespace gw2combat

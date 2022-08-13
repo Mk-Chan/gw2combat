@@ -32,6 +32,7 @@ enum class effect_type : std::uint32_t
 
     // Non-damaging conditions
     VULNERABILITY,
+    CRIPPLED,
 
     // Damaging conditions
     BURNING,
@@ -46,6 +47,7 @@ enum class effect_type : std::uint32_t
     SYMBOLIC_AVENGER,
     INSPIRING_VIRTUE,
     ASHES_OF_THE_JUST,
+    SPEAR_OF_JUSTICE,
 };
 
 enum class effect_stacking_type : std::uint8_t
@@ -95,6 +97,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(effect_type,
                                  {effect_type::STABILITY, "STABILITY"},
 
                                  {effect_type::VULNERABILITY, "VULNERABILITY"},
+                                 {effect_type::CRIPPLED, "CRIPPLED"},
 
                                  {effect_type::BURNING, "BURNING"},
                                  {effect_type::BLEEDING, "BLEEDING"},
@@ -107,6 +110,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(effect_type,
                                  {effect_type::SYMBOLIC_AVENGER, "SYMBOLIC_AVENGER"},
                                  {effect_type::INSPIRING_VIRTUE, "INSPIRING_VIRTUE"},
                                  {effect_type::ASHES_OF_THE_JUST, "ASHES_OF_THE_JUST"},
+                                 {effect_type::SPEAR_OF_JUSTICE, "SPEAR_OF_JUSTICE"},
                              })
 
 }  // namespace gw2combat::effects
