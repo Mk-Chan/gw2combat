@@ -135,12 +135,14 @@ void sigil_air(registry_t& registry, tick_t current_tick) {
                     } else {
                         if (sigil_air.cooldown_progress >= 3'000 &&
                             this_strike.critical_hit_multiplier > 1.0) {
-                            this_strike.skill.on_hit_effect_applications.template emplace_back(
-                                skills::effect_application{
-                                    effects::effect_type::BLEEDING,
-                                    skills::applied_effect_direction::OUTGOING,
-                                    1,
-                                    6'000});
+                            incoming_strike_damage.strikes.template emplace_back(strike{
+                                source_entity,
+                                registry
+                                    .template get<component::outgoing_strike_damage_multiplier>(
+                                        source_entity)
+                                    .multiplier,
+                                1.0,
+                                *skills::SKILLS_DB.get_by_name("Lightning Strike")});
                             sigil_air.cooldown_progress = 0;
 
                             spdlog::info(
