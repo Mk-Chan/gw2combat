@@ -16,7 +16,11 @@ struct damage_unit {
 void incoming_strike_damage_calculation(registry_t& registry, tick_t current_tick) {
     auto calculate_strike_damage = [](const strike& strike,
                                       double incoming_strike_damage_multiplier) {
-        return strike.outgoing_strike_damage_multiplier * strike.critical_hit_multiplier *
+        double effective_critical_hit_multiplier =
+            (utils::skill_has_tag(strike.skill, skills::skill_tag::CANNOT_CRIT)
+                 ? 1
+                 : strike.critical_hit_multiplier);
+        return strike.outgoing_strike_damage_multiplier * effective_critical_hit_multiplier *
                utils::get_weapon_strength(strike.skill.weapon_type) *
                strike.skill.damage_coefficient * incoming_strike_damage_multiplier;
     };

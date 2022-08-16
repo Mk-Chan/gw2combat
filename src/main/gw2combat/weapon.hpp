@@ -13,6 +13,7 @@ enum class weapon_set : std::uint8_t
 
 enum class weapon_sigil : std::uint8_t
 {
+    AIR,
     BURSTING,
     EARTH,
     TORMENT,
@@ -70,6 +71,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_set,
                              })
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_sigil,
                              {
+                                 {weapon_sigil::AIR, "AIR"},
                                  {weapon_sigil::BURSTING, "BURSTING"},
                                  {weapon_sigil::EARTH, "EARTH"},
                                  {weapon_sigil::TORMENT, "TORMENT"},

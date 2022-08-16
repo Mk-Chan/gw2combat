@@ -5,7 +5,6 @@
 #include "gw2combat/build.hpp"
 #include "gw2combat/effects.hpp"
 
-#include "gw2combat/component/character/dynamic_attributes.hpp"
 #include "gw2combat/component/character/is_actor.hpp"
 #include "gw2combat/component/character/rotation.hpp"
 #include "gw2combat/component/character/static_attributes.hpp"
@@ -45,8 +44,6 @@ entity_t build_dh(registry_t& registry) {
             .torment_duration_pct = build.attributes.torment_duration_pct,
             .max_health = build.attributes.max_health,
         });
-    registry.emplace<component::dynamic_attributes>(
-        entity, component::dynamic_attributes{.max_endurance = 100});
 
     if (build.base_class == base_class_type::GUARDIAN) {
         registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{5});
@@ -59,11 +56,17 @@ entity_t build_dh(registry_t& registry) {
     }
     registry.emplace<component::rune_component>(entity, component::rune_component{build.rune});
     registry.emplace<component::available_weapon_configurations>(
-        entity, build.available_weapon_configurations);
+        entity,
+        component::available_weapon_configurations{
+            build.available_weapon_configurations.weapon_configurations});
     registry.emplace<component::equipped_weapon_set>(
         entity, component::equipped_weapon_set{weapon_set::SET_1});
     registry.emplace<component::enhancement_component>(
         entity, component::enhancement_component{build.enhancement});
+
+    if (utils::has_sigil_at_all(weapon_sigil::AIR, entity, registry)) {
+        registry.emplace<component::sigil_air>(entity);
+    }
 
     registry.emplace<component::is_actor>(entity);
     registry.ctx().emplace_hint<std::string>(to_u32(entity),
@@ -103,8 +106,6 @@ entity_t build_cfb(registry_t& registry) {
             .torment_duration_pct = build.attributes.torment_duration_pct,
             .max_health = build.attributes.max_health,
         });
-    registry.emplace<component::dynamic_attributes>(
-        entity, component::dynamic_attributes{.max_endurance = 100});
 
     if (build.base_class == base_class_type::GUARDIAN) {
         registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{5});
@@ -117,7 +118,9 @@ entity_t build_cfb(registry_t& registry) {
     }
     registry.emplace<component::rune_component>(entity, component::rune_component{build.rune});
     registry.emplace<component::available_weapon_configurations>(
-        entity, build.available_weapon_configurations);
+        entity,
+        component::available_weapon_configurations{
+            build.available_weapon_configurations.weapon_configurations});
     registry.emplace<component::equipped_weapon_set>(
         entity, component::equipped_weapon_set{weapon_set::SET_1});
     registry.emplace<component::enhancement_component>(
@@ -125,6 +128,9 @@ entity_t build_cfb(registry_t& registry) {
 
     if (utils::has_sigil_at_all(weapon_sigil::EARTH, entity, registry)) {
         registry.emplace<component::sigil_earth>(entity);
+    }
+    if (utils::has_sigil_at_all(weapon_sigil::AIR, entity, registry)) {
+        registry.emplace<component::sigil_air>(entity);
     }
     if (utils::has_sigil_at_all(weapon_sigil::TORMENT, entity, registry)) {
         registry.emplace<component::sigil_torment>(entity);
@@ -174,8 +180,6 @@ entity_t build_core_guard(registry_t& registry) {
             .torment_duration_pct = build.attributes.torment_duration_pct,
             .max_health = build.attributes.max_health,
         });
-    registry.emplace<component::dynamic_attributes>(
-        entity, component::dynamic_attributes{.max_endurance = 100});
 
     if (build.base_class == base_class_type::GUARDIAN) {
         registry.emplace<component::virtue_of_justice>(entity, component::virtue_of_justice{5});
@@ -188,7 +192,9 @@ entity_t build_core_guard(registry_t& registry) {
     }
     registry.emplace<component::rune_component>(entity, component::rune_component{build.rune});
     registry.emplace<component::available_weapon_configurations>(
-        entity, build.available_weapon_configurations);
+        entity,
+        component::available_weapon_configurations{
+            build.available_weapon_configurations.weapon_configurations});
     registry.emplace<component::equipped_weapon_set>(
         entity, component::equipped_weapon_set{weapon_set::SET_1});
     registry.emplace<component::enhancement_component>(
@@ -208,8 +214,7 @@ entity_t build_medium_kitty_golem(entt::registry& registry) {
     auto entity = registry.create();
 
     registry.emplace<component::static_attributes>(
-        entity, component::static_attributes{.armor = 2597, .max_health = 4'000'000 - 390'000});
-    registry.emplace<component::dynamic_attributes>(entity);
+        entity, component::static_attributes{.armor = 2597, .max_health = 4'000'000 - 450'000});
 
     registry.emplace<component::is_actor>(entity);
     registry.ctx().emplace_hint<std::string>(to_u32(entity), "medium_kitty_golem");
@@ -222,7 +227,6 @@ entity_t build_golem_boon_condi_provider(entt::registry& registry) {
 
     registry.emplace<component::static_attributes>(
         entity, component::static_attributes{.condition_damage = 0});
-    registry.emplace<component::dynamic_attributes>(entity);
 
     registry.emplace<component::is_actor>(entity);
     registry.ctx().emplace_hint<std::string>(to_u32(entity), "golem_boon_condi_provider");

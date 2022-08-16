@@ -10,9 +10,15 @@
 
 namespace gw2combat::system {
 
+void get_available_skills(entity_t entity, registry_t& registry, tick_t current_tick) {
+
+}
+
 void character_command(registry_t& registry, tick_t current_tick) {
     registry.view<component::is_actor>(entt::exclude<component::no_more_rotation>)
         .each([&](entity_t entity) {
+            get_available_skills(entity, registry, current_tick);
+
             auto rotation_ptr = registry.try_get<component::rotation>(entity);
             if (!rotation_ptr || rotation_ptr->current_idx >= rotation_ptr->skill_casts.size()) {
                 registry.emplace_or_replace<component::no_more_rotation>(entity);

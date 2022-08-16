@@ -7,6 +7,9 @@
 
 namespace gw2combat::component {
 
+struct sigil_air {
+    tick_t cooldown_progress = 3'000;
+};
 struct sigil_earth {
     tick_t cooldown_progress = 2'000;
 };

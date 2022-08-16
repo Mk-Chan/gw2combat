@@ -75,6 +75,11 @@
       }
     ]
   },
+  "equipped_slot_skill_names": [
+    "Purging Flames",
+    "Mantra of Flame",
+    "Renewed Focus"
+  ],
   "rune": "balthazar",
   "nourishment": "beef-rendang",
   "enhancement": "toxic-focusing-crystal"

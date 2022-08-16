@@ -75,7 +75,12 @@
       }
     ]
   },
+  "equipped_slot_skill_names": [
+    "Sword of Justice",
+    "Procession of Blades",
+    "Dragon's Maw"
+  ],
   "rune": "scholar",
-  "nourishment": "",
-  "enhancement": ""
+  "nourishment": "sweet-and-spicy-butternut-squash-soup",
+  "enhancement": "superior-sharpening-stone"
 }

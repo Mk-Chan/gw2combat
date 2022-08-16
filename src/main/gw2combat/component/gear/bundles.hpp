@@ -7,6 +7,7 @@ namespace gw2combat::component {
 
 struct bundle {
     weapon_type type;
+    std::string name;
 };
 
 }  // namespace gw2combat::component

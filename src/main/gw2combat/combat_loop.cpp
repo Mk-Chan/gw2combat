@@ -52,6 +52,7 @@ void run_staged_systems(registry_t& registry, tick_t current_tick) {
     system::legendary_lore<stage>(registry, current_tick);
 
     system::sigil_geomancy<stage>(registry, current_tick);
+    system::sigil_air<stage>(registry, current_tick);
     system::sigil_earth<stage>(registry, current_tick);
     system::sigil_torment<stage>(registry, current_tick);
     system::spear_of_justice<stage>(registry, current_tick);

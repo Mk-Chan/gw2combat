@@ -39,6 +39,10 @@ struct attributes_configuration {
     unsigned int max_health;
 };
 
+struct available_weapon_configurations {
+    std::vector<weapon_configuration> weapon_configurations;
+};
+
 struct character_build {
     [[nodiscard]] static character_build read(const std::string& path);
 
@@ -46,15 +50,18 @@ struct character_build {
     attributes_configuration attributes;
     std::vector<trait_line_type> trait_lines;
     std::vector<trait_type> traits;
-    component::available_weapon_configurations available_weapon_configurations;
+    available_weapon_configurations available_weapon_configurations;
+    std::vector<std::string> equipped_slot_skill_names;
     rune_type rune;
     component::enhancement_type enhancement;
 };
+
 
 NLOHMANN_JSON_SERIALIZE_ENUM(base_class_type,
                              {
                                  {base_class_type::GUARDIAN, "guardian"},
                              })
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(available_weapon_configurations, weapon_configurations)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(attributes_configuration,
                                    power,
                                    precision,
@@ -82,6 +89,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(character_build,
                                    trait_lines,
                                    traits,
                                    available_weapon_configurations,
+                                   equipped_slot_skill_names,
                                    rune,
                                    enhancement)
 

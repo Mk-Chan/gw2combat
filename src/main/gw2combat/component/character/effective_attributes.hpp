@@ -30,10 +30,6 @@ struct effective_attributes {
     double torment_duration_pct = condition_duration_pct;
 
     unsigned int max_health = 1;
-
-    // Dynamic attributes
-    unsigned int endurance = 100;
-    double endurance_gain_pct = 0;
 };
 
 }  // namespace gw2combat::component

@@ -58,7 +58,7 @@
       {
         "type": "FOCUS",
         "position": "OFF_HAND",
-        "sigil": "IMPACT",
+        "sigil": "AIR",
         "set": "SET_1"
       },
       {
@@ -70,11 +70,15 @@
       {
         "type": "GREATSWORD",
         "position": "TWO_HANDED",
-        "sigil": "IMPACT",
+        "sigil": "AIR",
         "set": "SET_2"
       }
     ]
   },
+  "equipped_slot_skill_names": [
+    "Sword of Justice",
+    "Smite Condition"
+  ],
   "rune": "scholar",
   "nourishment": "sweet-and-spicy-butternut-squash-soup",
   "enhancement": "superior-sharpening-stone"

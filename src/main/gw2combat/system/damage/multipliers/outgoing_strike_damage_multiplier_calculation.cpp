@@ -36,7 +36,7 @@ void outgoing_strike_damage_multiplier_calculation(registry_t& registry, tick_t)
                 utils::has_trait(trait_type::ZEALOTS_AGGRESSION, traits_component_ptr);
 
             // 7.33% effective multiplier on huge hitbox (350 radius)
-            double pure_of_sight_multiplier = 1.0 + pure_of_sight_is_traited * 0.0733;
+            double pure_of_sight_multiplier = 1.0 + pure_of_sight_is_traited * 0.05;
 
             auto effects_component_ptr = registry.try_get<component::effects_component>(entity);
             bool has_inspiring_virtue_effect =

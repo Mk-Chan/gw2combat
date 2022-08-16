@@ -59,8 +59,10 @@ void sigil_earth(registry_t& registry, tick_t current_tick) {
                     auto& sigil_earth =
                         registry.template get<component::sigil_earth>(source_entity);
                     if constexpr (DETERMINISTIC_SIMULATION) {
+                        auto& effective_attributes =
+                            registry.template get<component::effective_attributes>(source_entity);
                         if (sigil_earth.cooldown_progress >= 2'000 &&
-                            utils::check_random_success(33.0)) {
+                            utils::check_random_success(effective_attributes.critical_chance_pct)) {
                             strike.skill.on_hit_effect_applications.template emplace_back(
                                 skills::effect_application{
                                     effects::effect_type::BLEEDING,
@@ -87,6 +89,64 @@ void sigil_earth(registry_t& registry, tick_t current_tick) {
                             spdlog::info("tick: {}, entity: {}, outgoing bleeding from earth sigil",
                                          current_tick,
                                          utils::get_entity_name(source_entity, registry));
+                        }
+                    }
+                }
+            }
+        });
+}
+
+template <combat_stage stage>
+void sigil_air(registry_t& registry, tick_t current_tick) {
+    if constexpr (stage != combat_stage::BEFORE_INCOMING_STRIKE_DAMAGE_CALCULATION) {
+        return;
+    }
+
+    registry.template view<component::sigil_air>().each([](component::sigil_air& sigil) {
+        sigil.cooldown_progress = std::min(sigil.cooldown_progress + 1, tick_t{3'000});
+    });
+
+    registry.view<component::incoming_strike_damage>().each(
+        [&](component::incoming_strike_damage& incoming_strike_damage) {
+            for (strike& this_strike : incoming_strike_damage.strikes) {
+                auto source_entity = utils::get_source_entity(this_strike.source, registry);
+                if (utils::has_sigil_equipped(weapon_sigil::AIR, source_entity, registry)) {
+                    auto& sigil_air = registry.template get<component::sigil_air>(source_entity);
+                    if constexpr (DETERMINISTIC_SIMULATION) {
+                        auto& effective_attributes =
+                            registry.template get<component::effective_attributes>(source_entity);
+                        if (sigil_air.cooldown_progress >= 3'000 &&
+                            utils::check_random_success(effective_attributes.critical_chance_pct)) {
+                            incoming_strike_damage.strikes.template emplace_back(strike{
+                                source_entity,
+                                registry
+                                    .template get<component::outgoing_strike_damage_multiplier>(
+                                        source_entity)
+                                    .multiplier,
+                                1.0,
+                                *skills::SKILLS_DB.get_by_name("Lightning Strike")});
+                            sigil_air.cooldown_progress = 0;
+
+                            spdlog::info(
+                                "tick: {}, entity: {}, outgoing lightning strike from air sigil",
+                                current_tick,
+                                utils::get_entity_name(source_entity, registry));
+                        }
+                    } else {
+                        if (sigil_air.cooldown_progress >= 3'000 &&
+                            this_strike.critical_hit_multiplier > 1.0) {
+                            this_strike.skill.on_hit_effect_applications.template emplace_back(
+                                skills::effect_application{
+                                    effects::effect_type::BLEEDING,
+                                    skills::applied_effect_direction::OUTGOING,
+                                    1,
+                                    6'000});
+                            sigil_air.cooldown_progress = 0;
+
+                            spdlog::info(
+                                "tick: {}, entity: {}, outgoing lightning strike from air sigil",
+                                current_tick,
+                                utils::get_entity_name(source_entity, registry));
                         }
                     }
                 }

@@ -730,7 +730,7 @@
       "on_pulse_effect_applications": [],
       "child_entity_skills": [],
       "cooldown": [0, 0],
-      "tags": []
+      "tags": ["CANNOT_CRIT"]
     },
     {
       "name": "Renewed Focus",
@@ -1001,6 +1001,19 @@
       "child_entity_skills": [],
       "cooldown": [9000, 9000],
       "tags": []
+    },
+    {
+      "name": "Lightning Strike",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 1.1,
+      "cast_duration": [0, 0],
+      "hit_on_tick_list": [[0], [0]],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [0, 0],
+      "tags": ["CANNOT_CRIT"]
     },
     {
       "name": "Weapon Swap",

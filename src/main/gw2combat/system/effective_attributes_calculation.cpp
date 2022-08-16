@@ -1,6 +1,5 @@
 #include "system.hpp"
 
-#include "gw2combat/component/character/dynamic_attributes.hpp"
 #include "gw2combat/component/character/effective_attributes.hpp"
 #include "gw2combat/component/character/static_attributes.hpp"
 #include "gw2combat/component/gear/bundles.hpp"
@@ -9,10 +8,8 @@
 namespace gw2combat::system {
 
 void effective_attributes_calculation(registry_t& registry, tick_t) {
-    registry.view<component::static_attributes, component::dynamic_attributes>().each(
-        [&](entity_t entity,
-            const component::static_attributes& static_attributes,
-            const component::dynamic_attributes& dynamic_attributes) {
+    registry.view<component::static_attributes>().each(
+        [&](entity_t entity, const component::static_attributes& static_attributes) {
             auto& effective_attributes = registry.get_or_emplace<component::effective_attributes>(
                 entity,
                 component::effective_attributes{
@@ -35,9 +32,7 @@ void effective_attributes_calculation(registry_t& registry, tick_t) {
                     .confusion_duration_pct = static_attributes.confusion_duration_pct,
                     .poison_duration_pct = static_attributes.poison_duration_pct,
                     .torment_duration_pct = static_attributes.torment_duration_pct,
-                    .max_health = static_attributes.max_health,
-                    .endurance = dynamic_attributes.max_endurance,
-                    .endurance_gain_pct = dynamic_attributes.endurance_gain_pct});
+                    .max_health = static_attributes.max_health});
 
             if (utils::has_effect(effects::effect_type::FURY, entity, registry)) {
                 effective_attributes.critical_chance_pct += 25;

@@ -20,7 +20,8 @@ void equip_tome_of_justice(entity_t entity, registry_t& registry) {
     if (registry.any_of<component::bundle>(entity)) {
         registry.remove<component::bundle>(entity);
     }
-    registry.emplace<component::bundle>(entity, component::bundle{weapon_type::TOME});
+    registry.emplace<component::bundle>(entity,
+                                        component::bundle{weapon_type::TOME, "Tome of Justice"});
     registry.emplace<component::did_weapon_swap>(entity);
 }
 
