@@ -1,6 +1,5 @@
 # CMake
-cmake-init_entities-*/
-init_entities/
+cmake-build-*/
 build/
 
 # Tools

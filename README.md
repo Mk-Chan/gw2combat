@@ -12,7 +12,7 @@ git clone --recurse-submodules https://github.com/Mk-Chan/gw2combat
 ```
 
 - Configure build in src/main/resources/build-core-guard.json (instructions soon)
-- Configure skills in src/main/resources/skills_db.json (instructions soon)
-- Configure rotation in src/main/resources/rotation.csv (only configured skills will work)
+- Configure skill_configurations in src/main/resources/skills_db.json (instructions soon)
+- Configure rotation_t in src/main/resources/rotation_t.csv (only configured skill_configurations will work)
 
 ### Documentation in progress

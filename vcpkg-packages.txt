@@ -1,6 +1,4 @@
-spdlog
+catch2
 entt
 nlohmann-json
-rapidcsv
-range-v3
-catch2
+spdlog

@@ -1,27 +1,5 @@
 {
   "base_class": "guardian",
-  "attributes": {
-    "power": 2848,
-    "precision": 1749,
-    "toughness": 1000,
-    "vitality": 1802,
-    "concentration": 0,
-    "condition_damage": 0,
-    "expertise": 0,
-    "ferocity": 1449,
-    "healing_power": 0,
-    "armor": 2271,
-    "boon_duration_pct": 0,
-    "critical_chance_pct": 40.666666666666664,
-    "critical_damage_pct": 246.60000000000002,
-    "condition_duration_pct": 0,
-    "max_health": 19665,
-    "bleeding_duration_pct": 0,
-    "burning_duration_pct": 0,
-    "confusion_duration_pct": 0,
-    "poison_duration_pct": 0,
-    "torment_duration_pct": 0
-  },
   "trait_lines": [
     "Radiance",
     "Zeal",
@@ -47,34 +25,54 @@
     "Defender's Dogma",
     "Pure of Sight"
   ],
-  "available_weapon_configurations": {
-    "weapon_configurations": [
-      {
-        "type": "SWORD",
-        "position": "MAIN_HAND",
-        "sigil": "FORCE",
-        "set": "SET_1"
-      },
-      {
-        "type": "FOCUS",
-        "position": "OFF_HAND",
-        "sigil": "AIR",
-        "set": "SET_1"
-      },
-      {
-        "type": "GREATSWORD",
-        "position": "TWO_HANDED",
-        "sigil": "FORCE",
-        "set": "SET_2"
-      },
-      {
-        "type": "GREATSWORD",
-        "position": "TWO_HANDED",
-        "sigil": "AIR",
-        "set": "SET_2"
-      }
-    ]
+  "attributes": {
+    "power": 2848,
+    "precision": 1749,
+    "toughness": 1000,
+    "vitality": 1802,
+    "concentration": 0,
+    "condition_damage": 0,
+    "expertise": 0,
+    "ferocity": 1449,
+    "healing_power": 0,
+    "armor": 2271,
+    "max_health": 19665,
+    "boon_duration_pct": 0,
+    "critical_chance_pct": 40.666666666666664,
+    "critical_damage_pct": 246.60000000000002,
+    "condition_duration_pct": 0,
+    "bleeding_duration_pct": 0,
+    "burning_duration_pct": 0,
+    "confusion_duration_pct": 0,
+    "poison_duration_pct": 0,
+    "torment_duration_pct": 0
   },
+  "available_weapon_configurations": [
+    {
+      "type": "SWORD",
+      "position": "MAIN_HAND",
+      "sigil": "FORCE",
+      "set": "SET_1"
+    },
+    {
+      "type": "FOCUS",
+      "position": "OFF_HAND",
+      "sigil": "IMPACT",
+      "set": "SET_1"
+    },
+    {
+      "type": "GREATSWORD",
+      "position": "TWO_HANDED",
+      "sigil": "FORCE",
+      "set": "SET_2"
+    },
+    {
+      "type": "GREATSWORD",
+      "position": "TWO_HANDED",
+      "sigil": "IMPACT",
+      "set": "SET_2"
+    }
+  ],
   "equipped_slot_skill_names": [
     "Sword of Justice",
     "Smite Condition"

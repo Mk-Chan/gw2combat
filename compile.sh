@@ -4,7 +4,7 @@ set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-./dependencies-install.sh
+./setup-dependencies.sh
 
 TARGET=${1:-all}
 BUILD_TYPE=${2:-Debug}
@@ -18,7 +18,8 @@ mkdir -p "${CMAKE_BUILD_DIR}"
 cd "${CMAKE_BUILD_DIR}"
 
 echo "Running CMake..."
-cmake -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
+cmake -G Ninja \
+    -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
     -DCMAKE_TOOLCHAIN_FILE="${DIR}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake" \
     ../..
 

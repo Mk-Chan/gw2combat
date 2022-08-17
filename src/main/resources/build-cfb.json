@@ -1,27 +1,5 @@
 {
   "base_class": "guardian",
-  "attributes": {
-    "power": 2079,
-    "precision": 1842,
-    "toughness": 1000,
-    "vitality": 1235,
-    "concentration": 0,
-    "condition_damage": 1809,
-    "expertise": 451,
-    "ferocity": 150,
-    "healing_power": 0,
-    "armor": 2271,
-    "boon_duration_pct": 0,
-    "critical_chance_pct": 45.095238095238095,
-    "critical_damage_pct": 160,
-    "condition_duration_pct": 30.066666666666663,
-    "max_health": 15395,
-    "bleeding_duration_pct": 30.066666666666663,
-    "burning_duration_pct": 100,
-    "confusion_duration_pct": 30.066666666666663,
-    "poison_duration_pct": 30.066666666666663,
-    "torment_duration_pct": 30.066666666666663
-  },
   "trait_lines": [
     "Radiance",
     "Virtues",
@@ -47,35 +25,56 @@
     "Swift Scholar",
     "Imbued Haste"
   ],
-  "available_weapon_configurations": {
-    "weapon_configurations": [
-      {
-        "type": "AXE",
-        "position": "MAIN_HAND",
-        "sigil": "TORMENT",
-        "set": "SET_1"
-      },
-      {
-        "type": "TORCH",
-        "position": "OFF_HAND",
-        "sigil": "BURSTING",
-        "set": "SET_1"
-      },
-      {
-        "type": "SCEPTER",
-        "position": "MAIN_HAND",
-        "sigil": "GEOMANCY",
-        "set": "SET_2"
-      },
-      {
-        "type": "TORCH",
-        "position": "OFF_HAND",
-        "sigil": "BURSTING",
-        "set": "SET_2"
-      }
-    ]
+  "attributes": {
+    "power": 2079,
+    "precision": 1842,
+    "toughness": 1000,
+    "vitality": 1235,
+    "concentration": 0,
+    "condition_damage": 1629,
+    "expertise": 451,
+    "ferocity": 150,
+    "healing_power": 0,
+    "armor": 2271,
+    "max_health": 15395,
+    "boon_duration_pct": 0,
+    "critical_chance_pct": 45.095238095238095,
+    "critical_damage_pct": 160,
+    "condition_duration_pct": 30.066666666666663,
+    "bleeding_duration_pct": 30.066666666666663,
+    "burning_duration_pct": 100,
+    "confusion_duration_pct": 30.066666666666663,
+    "poison_duration_pct": 30.066666666666663,
+    "torment_duration_pct": 30.066666666666663
   },
+  "available_weapon_configurations": [
+    {
+      "type": "AXE",
+      "position": "MAIN_HAND",
+      "sigil": "TORMENT",
+      "set": "SET_1"
+    },
+    {
+      "type": "TORCH",
+      "position": "OFF_HAND",
+      "sigil": "BURSTING",
+      "set": "SET_1"
+    },
+    {
+      "type": "SCEPTER",
+      "position": "MAIN_HAND",
+      "sigil": "GEOMANCY",
+      "set": "SET_2"
+    },
+    {
+      "type": "TORCH",
+      "position": "OFF_HAND",
+      "sigil": "BURSTING",
+      "set": "SET_2"
+    }
+  ],
   "equipped_slot_skill_names": [
+    "Signet of Wrath",
     "Purging Flames",
     "Mantra of Flame",
     "Renewed Focus"

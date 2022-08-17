@@ -1,0 +1,1296 @@
+{
+  "skill_configurations": [
+    {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Virtue of Justice"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0,
+      "cast_duration": [0, 0],
+      "cooldown": [20000, 16000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[0], [0]],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "VIRTUE_OF_JUSTICE",
+          "num_stacks": 1,
+          "base_duration": 20000,
+          "direction": "INCOMING"
+        }
+      ],
+      "child_skill_keys": [],
+      "tags": ["GUARDIAN_VIRTUE"]
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Virtue of Resolve"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0,
+      "cast_duration": [0, 0],
+      "cooldown": [30000, 24000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["GUARDIAN_VIRTUE"]
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Virtue of Courage"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0,
+      "cast_duration": [0, 0],
+      "cooldown": [45000, 36000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["GUARDIAN_VIRTUE"]
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Core Cleave Magical Hit"
+      },
+      "is_child_skill": true,
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.36,
+      "cast_duration": [100, 100],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[100], [100]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 1,
+          "base_duration": 1000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Core Cleave"
+      },
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.36,
+      "cast_duration": [960, 640],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[960], [640]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 1,
+          "base_duration": 1000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "base_class": "GUARDIAN",
+          "name": "Core Cleave Magical Hit"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Bleeding Edge Magical Hit"
+      },
+      "is_child_skill": true,
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.36,
+      "cast_duration": [100, 100],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[100], [100]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 1,
+          "base_duration": 1000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Bleeding Edge"
+      },
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.36,
+      "cast_duration": [1020, 680],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[1020], [680]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 1,
+          "base_duration": 1000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "base_class": "GUARDIAN",
+          "name": "Bleeding Edge Magical Hit"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Searing Slash Magical Hit"
+      },
+      "is_child_skill": true,
+      "weapon_type": "AXE",
+      "damage_coefficient": 1.2,
+      "cast_duration": [100, 100],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[100], [100]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 2000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Searing Slash",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "AXE",
+      "damage_coefficient": 1.2,
+      "cast_duration": [960, 640],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[960], [640]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 2000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "base_class": "GUARDIAN",
+          "name": "Searing Slash Magical Hit"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Symbol of Vengeance Attack"
+      },
+      "is_child_skill": true,
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.6,
+      "cast_duration": [4000, 4000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [0, 1000, 2000, 3000, 4000],
+        [0, 1000, 2000, 3000, 4000]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 1,
+          "base_duration": 3000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["SYMBOL"]
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
+        "name": "Symbol of Vengeance"
+      },
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.0,
+      "cast_duration": [1200, 800],
+      "cooldown": [12000, 9600],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "base_class": "GUARDIAN",
+          "name": "Symbol of Vengeance Attack"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Blazing Edge",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "AXE",
+      "damage_coefficient": 0.8,
+      "cast_duration": [780, 520],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[780], [520]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 3000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Orb of Wrath",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "SCEPTER",
+      "damage_coefficient": 0.6,
+      "cast_duration": [640, 420],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[640], [420]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Symbol of Punishment Fist Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "SCEPTER",
+      "damage_coefficient": 0.2,
+      "cast_duration": [4000, 4000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [0, 571, 1142, 1714, 2285, 2857, 3428, 4000],
+        [0, 571, 1142, 1714, 2285, 2857, 3428, 4000]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["SYMBOL"]
+    }, {
+      "skill_key": {
+        "name": "Symbol of Punishment Fist Summoning",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "SCEPTER",
+      "damage_coefficient": 0.0,
+      "cast_duration": [0, 0],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Symbol of Punishment Fist Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Symbol of Punishment Symbol Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "SCEPTER",
+      "damage_coefficient": 0.5,
+      "cast_duration": [4000, 4000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [1000, 2000, 3000, 4000],
+        [1000, 2000, 3000, 4000]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["SYMBOL"]
+    }, {
+      "skill_key": {
+        "name": "Symbol of Punishment",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "SCEPTER",
+      "damage_coefficient": 0.0,
+      "cast_duration": [480, 320],
+      "cooldown": [10000, 8000],
+      "on_hit_effect_applications": [],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Symbol of Punishment Fist Summoning",
+          "base_class": "GUARDIAN"
+        }, {
+          "name": "Symbol of Punishment Symbol Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Zealot's Flame Pulse",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.0,
+      "cast_duration": [3000, 3000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [
+        [0, 1000, 2000, 3000],
+        [0, 1000, 2000, 3000]
+      ],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 3000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Zealot's Flame",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.0,
+      "cast_duration": [0, 0],
+      "cooldown": [15000, 12000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Zealot's Flame Pulse",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Zealot's Fire",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "TORCH",
+      "damage_coefficient": 2.25,
+      "cast_duration": [1020, 680],
+      "cooldown": [750, 750],
+      "hit_on_tick_list": [[1020], [680]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 3,
+          "base_duration": 3000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Cleansing Flame",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "TORCH",
+      "damage_coefficient": 0.4,
+      "cast_duration": [3750, 2500],
+      "cooldown": [15000, 12000],
+      "hit_on_tick_list": [
+        [0, 416, 833, 1250, 1666, 2083, 2500, 2916, 3333, 3750],
+        [0, 277, 555, 833, 1111, 1388, 1666, 1944, 2222, 2500]
+      ],
+      "pulse_on_tick_list": [[3750], [2500]],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 2,
+          "base_duration": 4000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Sword of Wrath",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.666,
+      "cast_duration": [525, 350],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[525], [350]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Sword Arc",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.725,
+      "cast_duration": [770, 515],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[770], [515]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Sword Wave",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.5,
+      "cast_duration": [1000, 675],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [1000, 1000, 1000],
+        [675, 675, 675]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Symbol of Blades Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.6,
+      "cast_duration": [4000, 4000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [0, 1000, 2000, 3000, 4000],
+        [0, 1000, 2000, 3000, 4000]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["SYMBOL"]
+    }, {
+      "skill_key": {
+        "name": "Symbol of Blades",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.0,
+      "cast_duration": [825, 550],
+      "cooldown": [8000, 6400],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Symbol of Blades Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Zealot's Defense",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "SWORD",
+      "damage_coefficient": 0.6,
+      "cast_duration": [1750, 1165],
+      "cooldown": [15000, 12000],
+      "hit_on_tick_list": [
+        [0, 250, 500, 750, 1000, 1250, 1500, 1750],
+        [0, 166, 332, 499, 665, 832, 998, 1165]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Ray of Judgment Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "FOCUS",
+      "damage_coefficient": 0.33,
+      "cast_duration": [6000, 6000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [0, 750, 1500, 2250, 3000, 3750, 4500, 5250, 6000],
+        [0, 750, 1500, 2250, 3000, 3750, 4500, 5250, 6000]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Ray of Judgment",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "FOCUS",
+      "damage_coefficient": 0.0,
+      "cast_duration": [720, 480],
+      "cooldown": [20000, 16000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Ray of Judgment Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Shield of Wrath Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "FOCUS",
+      "damage_coefficient": 2.5,
+      "cast_duration": [4000, 4000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[4000], [4000]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Shield of Wrath",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "FOCUS",
+      "damage_coefficient": 0.0,
+      "cast_duration": [0, 0],
+      "cooldown": [35000, 28000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Shield of Wrath Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Strike",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.8,
+      "cast_duration": [600, 400],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[600], [400]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Vengeful Strike",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.8,
+      "cast_duration": [840, 600],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[840], [600]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Wrathful Strike",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 1.25,
+      "cast_duration": [1000, 675],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[1000], [675]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Whirling Wrath",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.4125,
+      "cast_duration": [1968, 1312],
+      "cooldown": [8000, 6400],
+      "hit_on_tick_list": [
+        [0, 151, 302, 454, 605, 756, 908, 1059, 1211, 1362, 1513, 1665, 1816, 1968],
+        [0, 100, 201, 302, 403, 504, 605, 706, 807, 908, 1009, 1110, 1211, 1312]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Leap of Faith",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 1.25,
+      "cast_duration": [1000, 720],
+      "cooldown": [12000, 9600],
+      "hit_on_tick_list": [[1000], [720]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Binding Blade",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 1.0,
+      "cast_duration": [720, 475],
+      "cooldown": [12000, 9600],
+      "hit_on_tick_list": [[720], [475]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BINDING_BLADE",
+          "num_stacks": 1,
+          "base_duration": 10000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Symbol of Resolution Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.6,
+      "cast_duration": [4000, 4000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[0, 1000, 2000, 3000, 4000], [0, 1000, 2000, 3000, 4000]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["SYMBOL"]
+    }, {
+      "skill_key": {
+        "name": "Symbol of Resolution",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "GREATSWORD",
+      "damage_coefficient": 0.0,
+      "cast_duration": [350, 233],
+      "cooldown": [12000, 9600],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Symbol of Resolution Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Smite Condition",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.85,
+      "cast_duration": [0, 0],
+      "cooldown": [20000, 16000],
+      "hit_on_tick_list": [[0], [0]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Sword of Justice Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.72,
+      "cast_duration": [1850, 1850],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [650, 1050, 1450, 1850],
+        [650, 1050, 1450, 1850]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["SPIRIT_WEAPON"]
+    }, {
+      "skill_key": {
+        "name": "Sword of Justice",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [900, 600],
+      "cooldown": [20000, 16000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Sword of Justice Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": [],
+      "ammo": 3,
+      "recharge_duration": 1000
+    }, {
+      "skill_key": {
+        "name": "Purging Flames Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.2,
+      "cast_duration": [7000, 7000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000],
+        [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 4000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["CONSECRATION"]
+    }, {
+      "skill_key": {
+        "name": "Purging Flames",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [480, 320],
+      "cooldown": [25000, 20000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Purging Flames Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Glacial Heart",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.5,
+      "cast_duration": [0, 0],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[0], [0]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["CANNOT_CRITICAL_HIT"]
+    }, {
+      "skill_key": {
+        "name": "Renewed Focus",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [3040, 3040],
+      "cooldown": [90000, 72000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Tome of Justice",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [540, 360],
+      "cooldown": [30000, 24000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Chapter 1: Searing Spell",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "TOME",
+      "damage_coefficient": 0.95,
+      "cast_duration": [1020, 680],
+      "cooldown": [500, 400],
+      "hit_on_tick_list": [[1020], [680]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 2500,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["TOME"]
+    }, {
+      "skill_key": {
+        "name": "Chapter 2: Igniting Burst",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "TOME",
+      "damage_coefficient": 0.55,
+      "cast_duration": [900, 600],
+      "cooldown": [4000, 3200],
+      "hit_on_tick_list": [[900], [600]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 10000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["TOME"]
+    }, {
+      "skill_key": {
+        "name": "Chapter 4: Scorched Aftermath Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "TOME",
+      "damage_coefficient": 0.64,
+      "cast_duration": [4000, 4000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [0, 1000, 2000, 3000, 4000],
+        [0, 1000, 2000, 3000, 4000]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 2000,
+          "direction": "OUTGOING"
+        }, {
+          "effect_type": "BLEEDING",
+          "num_stacks": 1,
+          "base_duration": 2000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["TOME"]
+    }, {
+      "skill_key": {
+        "name": "Chapter 4: Scorched Aftermath",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "TOME",
+      "damage_coefficient": 0.0,
+      "cast_duration": [1380, 920],
+      "cooldown": [10000, 8000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Chapter 4: Scorched Aftermath Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": ["TOME"]
+    }, {
+      "skill_key": {
+        "name": "Epilogue: Ashes of the Just",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "TOME",
+      "damage_coefficient": 0.0,
+      "cast_duration": [1320, 880],
+      "cooldown": [12000, 9600],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[1320], [880]],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "ASHES_OF_THE_JUST",
+          "num_stacks": 3,
+          "base_duration": 10000,
+          "direction": "INCOMING"
+        }
+      ],
+      "child_skill_keys": [],
+      "tags": ["TOME"]
+    }, {
+      "skill_key": {
+        "name": "Mantra of Flame",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.7,
+      "cast_duration": [0, 0],
+      "cooldown": [12000, 9600],
+      "hit_on_tick_list": [[0], [0]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 4000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["MANTRA"],
+      "ammo": 3,
+      "recharge_duration": 1000
+    }, {
+      "skill_key": {
+        "name": "Spear of Justice Pulse",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [10000, 10000],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [
+        [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+        [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+      ],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "base_duration": 2000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Spear of Justice",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.6,
+      "cast_duration": [825, 550],
+      "cooldown": [20000, 16000],
+      "hit_on_tick_list": [[825], [550]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "SPEAR_OF_JUSTICE",
+          "num_stacks": 1,
+          "base_duration": 9960,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Spear of Justice Pulse",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Dragon's Maw Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 2.4,
+      "cast_duration": [500, 500],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [[500], [500]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["TRAP"]
+    }, {
+      "skill_key": {
+        "name": "Dragon's Maw",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [660, 440],
+      "cooldown": [75000, 60000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Dragon's Maw Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Procession of Blades Attack",
+        "base_class": "GUARDIAN"
+      },
+      "is_child_skill": true,
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.44,
+      "cast_duration": [5500, 5500],
+      "cooldown": [0, 0],
+      "hit_on_tick_list": [
+        [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500],
+        [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500]
+      ],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": ["TRAP"]
+    }, {
+      "skill_key": {
+        "name": "Procession of Blades",
+        "base_class": "GUARDIAN"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [660, 440],
+      "cooldown": [20000, 16000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [
+        {
+          "name": "Procession of Blades Attack",
+          "base_class": "GUARDIAN"
+        }
+      ],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Signet of Wrath",
+        "base_class": "UNIVERSAL"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.25,
+      "cast_duration": [750, 500],
+      "cooldown": [25000, 20000],
+      "hit_on_tick_list": [[750], [500]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": [],
+      "attribute_modifications": [
+        {
+          "attribute": "condition_damage",
+          "multiplier": 1,
+          "addend": 180
+        }
+      ]
+    }, {
+      "skill_key": {
+        "name": "Ring of Earth",
+        "base_class": "UNIVERSAL"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.25,
+      "cast_duration": [0, 0],
+      "cooldown": [9000, 9000],
+      "hit_on_tick_list": [[0], [0]],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [
+        {
+          "effect_type": "BLEEDING",
+          "num_stacks": 3,
+          "base_duration": 8000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "name": "Weapon Swap",
+        "base_class": "UNIVERSAL"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [100, 100],
+      "cooldown": [10000, 10000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [],
+      "child_skill_keys": [],
+      "tags": []
+    }, {
+      "skill_key": {
+        "base_class": "UNIVERSAL",
+        "name": "Pulse Boons and Conditions"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0,
+      "cast_duration": [0, 0],
+      "cooldown": [30000, 30000],
+      "hit_on_tick_list": [[], []],
+      "pulse_on_tick_list": [[0], [0]],
+      "on_hit_effect_applications": [],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "MIGHT",
+          "num_stacks": 25,
+          "base_duration": 30000,
+          "direction": "TEAM"
+        },
+        {
+          "effect_type": "QUICKNESS",
+          "num_stacks": 1,
+          "base_duration": 30000,
+          "direction": "TEAM"
+        },
+        {
+          "effect_type": "ALACRITY",
+          "num_stacks": 1,
+          "base_duration": 30000,
+          "direction": "TEAM"
+        },
+        {
+          "effect_type": "FURY",
+          "num_stacks": 1,
+          "base_duration": 30000,
+          "direction": "TEAM"
+        }
+      ],
+      "child_skill_keys": [],
+      "tags": []
+    }
+  ]
+}

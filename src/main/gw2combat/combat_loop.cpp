@@ -1,178 +1,208 @@
 #include "combat_loop.hpp"
 
-#include "entity.hpp"
-#include "skills.hpp"
+#include "common.hpp"
 
-#include "gw2combat/component/character/did_weapon_swap.hpp"
-#include "gw2combat/component/character/downstate.hpp"
-#include "gw2combat/component/character/effective_attributes.hpp"
-#include "gw2combat/component/character/is_actor.hpp"
-#include "gw2combat/component/character/no_more_rotation.hpp"
-#include "gw2combat/component/damage/effective_incoming_damage.hpp"
-#include "gw2combat/component/damage/incoming_strike_damage.hpp"
-#include "gw2combat/component/damage/metrics/damage_metrics.hpp"
-#include "gw2combat/component/damage/multipliers/incoming_condition_damage_multiplier.hpp"
-#include "gw2combat/component/damage/multipliers/incoming_strike_damage_multiplier.hpp"
-#include "gw2combat/component/damage/multipliers/outgoing_condition_damage_multiplier.hpp"
-#include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
-#include "gw2combat/component/damage/outgoing_condition_application.hpp"
-#include "gw2combat/component/damage/outgoing_strike_damage.hpp"
-#include "gw2combat/component/skills/instant_cast_skills.hpp"
-#include "gw2combat/system/staged/gear_systems.hpp"
-#include "gw2combat/system/staged/profession_systems.hpp"
-#include "gw2combat/system/staged/skill_systems.hpp"
-#include "gw2combat/system/staged/trait_systems.hpp"
-#include "gw2combat/system/system.hpp"
+#include "utilities/effect_utilities.hpp"
+#include "utilities/entity_utilities.hpp"
+#include "utilities/logging_utilities.hpp"
+
+#include "system/system.hpp"
+
+#include "actor/build.hpp"
+#include "actor/rotation.hpp"
+#include "actor/skill.hpp"
+
+#include "gw2combat/component/actor/alacrity.hpp"
+#include "gw2combat/component/actor/animation.hpp"
+#include "gw2combat/component/actor/effects_component.hpp"
+#include "gw2combat/component/actor/finished_casting_skill.hpp"
+#include "gw2combat/component/actor/is_actor.hpp"
+#include "gw2combat/component/actor/no_more_rotation.hpp"
+#include "gw2combat/component/actor/quickness.hpp"
+#include "gw2combat/component/actor/rotation_component.hpp"
+#include "gw2combat/component/actor/skills_component.hpp"
+#include "gw2combat/component/actor/static_attributes.hpp"
+#include "gw2combat/component/actor/team.hpp"
+#include "gw2combat/component/attribute_modifications.hpp"
+#include "gw2combat/component/equipment/weapons.hpp"
+#include "gw2combat/component/owner_actor.hpp"
+#include "gw2combat/component/skill/is_skill.hpp"
 
 namespace gw2combat {
 
-void clear_temporary_components(registry_t& registry) {
-    registry.clear<component::effective_attributes,
-                   component::incoming_strike_damage_multiplier,
-                   component::incoming_condition_damage_multiplier,
-                   component::outgoing_strike_damage_multiplier,
-                   component::outgoing_condition_damage_multiplier,
+void build_actor(registry_t& registry,
+                 const std::string& configuration_suffix,
+                 int team_id,
+                 actor::rotation_t* provided_rotation_ptr = nullptr) {
+    auto actor_entity = registry.create();
+    registry.ctx().emplace_hint<std::string>(
+        actor_entity, fmt::format("actor{}-{}", actor_entity, configuration_suffix));
+    registry.emplace<component::is_actor>(actor_entity);
+    registry.emplace<component::quickness>(actor_entity);
 
-                   component::outgoing_strike_damage,
-                   component::incoming_strike_damage,
+    auto actor_build = actor::build_t::read(fmt::format("build-{}.json", configuration_suffix));
+    auto base_class = actor_build.base_class;
 
-                   component::outgoing_condition_application,
-                   component::incoming_condition_application,
+    auto& skills_component = registry.emplace<component::skills_component>(actor_entity);
 
-                   component::effective_incoming_damage,
-                   component::instant_cast_skills,
-                   component::finished_normal_cast_skill,
-                   component::did_weapon_swap>();
-}
+    auto& skill_database = actor::skill_database::instance();
+    if (!actor_build.trait_lines.empty() &&
+        actor_build.trait_lines[actor_build.trait_lines.size() - 1] ==
+            actor::trait_line_t::FIREBRAND) {
+        auto tome_of_justice_skill_entity = registry.create();
+        registry.emplace<component::is_skill>(tome_of_justice_skill_entity);
+        registry.ctx().emplace_hint<std::string>(tome_of_justice_skill_entity, "Tome of Justice");
+        registry.emplace<component::owner_actor>(tome_of_justice_skill_entity,
+                                                 component::owner_actor{actor_entity});
+        skills_component.skill_entities.emplace_back(component::skill_entity{
+            skill_database.find_by(actor::skill_t{base_class, "Tome of Justice"}).skill_key,
+            tome_of_justice_skill_entity});
+    } else if (base_class == actor::base_class_t::GUARDIAN) {
+        auto virtue_of_justice_skill_entity = registry.create();
+        registry.emplace<component::is_skill>(virtue_of_justice_skill_entity);
+        registry.ctx().emplace_hint<std::string>(virtue_of_justice_skill_entity,
+                                                 "Virtue of Justice");
+        registry.emplace<component::owner_actor>(virtue_of_justice_skill_entity,
+                                                 component::owner_actor{actor_entity});
+        skills_component.skill_entities.emplace_back(component::skill_entity{
+            skill_database.find_by(actor::skill_t{base_class, "Virtue of Justice"}).skill_key,
+            virtue_of_justice_skill_entity});
 
-template <combat_stage stage>
-void run_staged_systems(registry_t& registry, tick_t current_tick) {
-    system::virtue_of_justice<stage>(registry, current_tick);
-    system::inspiring_virtue<stage>(registry, current_tick);
-    system::legendary_lore<stage>(registry, current_tick);
+        auto virtue_of_resolve_skill_entity = registry.create();
+        registry.emplace<component::is_skill>(virtue_of_resolve_skill_entity);
+        registry.ctx().emplace_hint<std::string>(virtue_of_resolve_skill_entity,
+                                                 "Virtue of Resolve");
+        registry.emplace<component::owner_actor>(virtue_of_resolve_skill_entity,
+                                                 component::owner_actor{actor_entity});
+        skills_component.skill_entities.emplace_back(component::skill_entity{
+            skill_database.find_by(actor::skill_t{base_class, "Virtue of Resolve"}).skill_key,
+            virtue_of_resolve_skill_entity});
 
-    system::sigil_geomancy<stage>(registry, current_tick);
-    system::sigil_air<stage>(registry, current_tick);
-    system::sigil_earth<stage>(registry, current_tick);
-    system::sigil_torment<stage>(registry, current_tick);
-    system::spear_of_justice<stage>(registry, current_tick);
-    system::ashes_of_the_just<stage>(registry, current_tick);
-
-    system::unrelenting_criticism<stage>(registry, current_tick);
-    system::symbolic_avenger<stage>(registry, current_tick);
-    system::symbolic_power<stage>(registry, current_tick);
-
-    system::on_hit_effect_applications<stage>(registry, current_tick);
-}
-
-void run_systems(registry_t& registry, tick_t current_tick) {
-    system::combat_detection(registry, current_tick);
-
-    system::effective_attributes_calculation(registry, current_tick);
-    system::incoming_strike_damage_multiplier_calculation(registry, current_tick);
-    system::incoming_condition_damage_multiplier_calculation(registry, current_tick);
-    system::outgoing_condition_damage_multiplier_calculation(registry, current_tick);
-    system::outgoing_strike_damage_multiplier_calculation(registry, current_tick);
-
-    system::expire_effects(registry, current_tick);
-
-    system::character_command(registry, current_tick);
-    system::cast_skills(registry, current_tick);
-
-    run_staged_systems<combat_stage::BEFORE_OUTGOING_STRIKE_BUFFERING>(registry, current_tick);
-
-    system::incoming_strike_detection(registry, current_tick);
-
-    run_staged_systems<combat_stage::AFTER_OUTGOING_STRIKE_BUFFERING>(registry, current_tick);
-    run_staged_systems<combat_stage::BEFORE_INCOMING_STRIKE_DAMAGE_CALCULATION>(registry,
-                                                                                current_tick);
-
-    system::incoming_strike_damage_calculation(registry, current_tick);
-
-    run_staged_systems<combat_stage::AFTER_INCOMING_STRIKE_DAMAGE_CALCULATION>(registry,
-                                                                               current_tick);
-
-    system::incoming_condition_detection(registry, current_tick);
-    system::incoming_condition_application(registry, current_tick);
-    if (current_tick % effects::effect_pulse_rate == 0) {
-        system::incoming_condition_damage_calculation(registry, current_tick);
+        auto virtue_of_courage_skill_entity = registry.create();
+        registry.emplace<component::is_skill>(virtue_of_courage_skill_entity);
+        registry.ctx().emplace_hint<std::string>(virtue_of_courage_skill_entity,
+                                                 "Virtue of Courage");
+        registry.emplace<component::owner_actor>(virtue_of_courage_skill_entity,
+                                                 component::owner_actor{actor_entity});
+        skills_component.skill_entities.emplace_back(component::skill_entity{
+            skill_database.find_by(actor::skill_t{base_class, "Virtue of Courage"}).skill_key,
+            virtue_of_courage_skill_entity});
     }
-    system::progress_effects(registry, current_tick);
 
-    system::update_health(registry, current_tick);
-    system::downstate_detection(registry, current_tick);
-    system::destroy_after_rotation_entities(registry, current_tick);
+    auto& available_weapons = registry.emplace<component::equipped_weapons>(
+        actor_entity, component::equipped_weapons{actor_build.available_weapon_configurations});
+    auto& current_weapon_set = registry.emplace<component::current_weapon_set>(actor_entity);
+    for (auto& equipped_weapon : available_weapons.weapons) {
+        if (equipped_weapon.set != current_weapon_set.set) {
+            continue;
+        }
+
+        auto this_weapon_skills =
+            skill_database.find_by(equipped_weapon.type, equipped_weapon.position);
+        for (auto& weapon_skill : this_weapon_skills) {
+            if (weapon_skill.is_child_skill) {
+                continue;
+            }
+
+            for (int i = 0; i < weapon_skill.ammo; ++i) {
+                auto skill_entity = registry.create();
+                registry.emplace<component::is_skill>(skill_entity);
+                registry.ctx().emplace_hint<std::string>(skill_entity, weapon_skill.skill_key.name);
+                registry.emplace<component::owner_actor>(skill_entity,
+                                                         component::owner_actor{actor_entity});
+
+                if (!weapon_skill.attribute_modifications.empty()) {
+                    auto& attribute_modifications_component =
+                        registry.emplace<component::attribute_modifications_component>(
+                            skill_entity);
+                    std::copy(weapon_skill.attribute_modifications.cbegin(),
+                              weapon_skill.attribute_modifications.cend(),
+                              std::back_inserter(
+                                  attribute_modifications_component.attribute_modifications));
+                }
+
+                skills_component.skill_entities.emplace_back(
+                    component::skill_entity{weapon_skill.skill_key, skill_entity});
+            }
+        }
+    }
+    for (auto& slot_skill_name : actor_build.equipped_slot_skill_names) {
+        auto& slot_skill = skill_database.find_by(actor::skill_t{base_class, slot_skill_name});
+        auto skill_entity = registry.create();
+        registry.emplace<component::is_skill>(skill_entity);
+        registry.ctx().emplace_hint<std::string>(skill_entity, slot_skill.skill_key.name);
+        registry.emplace<component::owner_actor>(skill_entity,
+                                                 component::owner_actor{actor_entity});
+        if (!slot_skill.attribute_modifications.empty()) {
+            auto& attribute_modifications_component =
+                registry.emplace<component::attribute_modifications_component>(skill_entity);
+            std::copy(
+                slot_skill.attribute_modifications.cbegin(),
+                slot_skill.attribute_modifications.cend(),
+                std::back_inserter(attribute_modifications_component.attribute_modifications));
+        }
+        skills_component.skill_entities.emplace_back(
+            component::skill_entity{slot_skill.skill_key, skill_entity});
+    }
+
+    if (provided_rotation_ptr == nullptr) {
+        auto actor_rotation = actor::rotation_t::read(
+            fmt::format("rotation-{}.csv", configuration_suffix), base_class);
+        registry.emplace<component::rotation_component>(
+            actor_entity, component::rotation_component{actor_rotation, 0, 0, false});
+    } else {
+        registry.emplace<component::rotation_component>(
+            actor_entity, component::rotation_component{*provided_rotation_ptr, 0, 0, false});
+    }
+
+    registry.emplace<component::static_attributes>(
+        actor_entity, utils::get_static_attributes_from_build(actor_build));
+
+    registry.emplace<component::team>(actor_entity, component::team{team_id});
+}
+
+void build_actors(registry_t& registry) {
+    build_actor(registry, "cfb", 1);
+
+    actor::rotation_t technician_rotation;
+    technician_rotation.skill_casts.emplace_back(actor::skill_cast_t{
+        actor::skill_t{actor::base_class_t::UNIVERSAL, "Pulse Boons and Conditions"}, 0});
+    build_actor(registry, "technician", 1, &technician_rotation);
+
+    actor::rotation_t golem_rotation;
+    build_actor(registry, "golem", 2, &golem_rotation);
+}
+
+void clear_temporary_components(registry_t& registry) {
+    registry.clear<component::effective_attributes, component::finished_casting_skill>();
+}
+
+void do_tick(registry_t& registry) {
+    system::progress_cooldowns(registry);
+    system::calculate_effective_attributes(registry);
+    // utils::log_component<component::effective_attributes>(registry);
+
+    system::continue_rotation(registry);
+    // utils::log_component<component::animation>(registry);
+
+    system::do_animation(registry);
+    utils::log_component<component::animation>(registry);
+    utils::log_component<component::finished_casting_skill>(registry);
 
     clear_temporary_components(registry);
 }
 
 void combat_loop() {
-    skills::SKILLS_DB.init("src/main/resources/skills_db.json");
-
     registry_t registry;
-    init_entities(registry);
+    build_actors(registry);
 
     tick_t current_tick{0};
-    bool downstate_exit = false;
-    tick_t end_tick = 1'000'000'000;
-    while (true) {
-        run_systems(registry, current_tick);
+    registry.ctx().emplace<const tick_t&>(current_tick);
 
-        bool actors_have_rotations = false;
-        for (auto&& [entity] : registry.view<component::is_actor>().each()) {
-            if (!registry.any_of<component::no_more_rotation>(entity)) {
-                actors_have_rotations = true;
-            }
-        }
-        for (auto&& [entity] : registry.view<component::downstate>().each()) {
-            spdlog::info("tick: {}, entity: {} is downstate!",
-                         current_tick,
-                         utils::get_entity_name(entity, registry));
-            downstate_exit = true;
-        }
-        if (downstate_exit) {
-            break;
-        }
-        if (!actors_have_rotations) {
-            if (end_tick == 1'000'000'000) {
-                end_tick = current_tick + 10'000;
-            } else if (current_tick == end_tick) {
-                spdlog::info("no actor had any rotation left for 10s");
-                break;
-            }
-        }
-
-        current_tick += tick_t{1};
+    while (current_tick < 30001) {
+        do_tick(registry);
+        ++current_tick;
     }
-
-    // Note: Metrics
-    registry.view<component::damage_metrics_component>().each(
-        [&](entity_t entity, const component::damage_metrics_component& damage_metrics_component) {
-            spdlog::info("entity: {}", utils::get_entity_name(entity, registry));
-            std::unordered_map<std::string, double> grouped_by_damage_name;
-            for (const auto& metric_unit : damage_metrics_component.metrics) {
-                grouped_by_damage_name[metric_unit.damage_name] += metric_unit.damage;
-            }
-            spdlog::info("{}", nlohmann::json{grouped_by_damage_name}.dump(2));
-
-            std::unordered_map<std::string, std::unordered_map<std::string, double>>
-                grouped_by_source_and_damage_name;
-            for (const auto& metric_unit : damage_metrics_component.metrics) {
-                grouped_by_source_and_damage_name[metric_unit.source_name]
-                                                 [metric_unit.damage_name] += metric_unit.damage;
-            }
-            spdlog::info("{}", nlohmann::json{grouped_by_source_and_damage_name}.dump(2));
-
-            std::unordered_map<std::string, std::unordered_map<std::string, unsigned int>>
-                grouped_by_source_and_damage_name_counts;
-            for (const auto& metric_unit : damage_metrics_component.metrics) {
-                grouped_by_source_and_damage_name_counts[metric_unit.source_name]
-                                                        [metric_unit.damage_name] += 1;
-            }
-            spdlog::info("{}", nlohmann::json{grouped_by_source_and_damage_name_counts}.dump(2));
-        });
-
-    spdlog::info("tick: {}, done!", current_tick);
 }
 
 }  // namespace gw2combat

@@ -5,12 +5,11 @@ project(gw2combat)
 ###
 # Find packages
 ###
-find_package(fmt CONFIG REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
 find_package(Catch2 3 REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
-find_path(RAPIDCSV_INCLUDE_DIRS "rapidcsv.h")
+find_package(fmt CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 ###
 
 ###
@@ -23,7 +22,7 @@ include_directories(src/main)
 # Global Flags
 ###
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
-add_compile_options(-Wall -Wextra -Wpedantic -fpermissive)
+add_compile_options(-Wall -Wextra -Wpedantic)
 ###
 
 ###
@@ -43,50 +42,32 @@ set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 ###
 # Tests
 ###
-#enable_testing()
-#add_test(gw2combat_test_build "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target gw2combat_test)
-#add_test(gw2combat_test_run gw2combat_test)
-#set_tests_properties(gw2combat_test_run PROPERTIES DEPENDS gw2combat_test_build)
+enable_testing()
+add_test(gw2combat_test_build "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target gw2combat_test)
+add_test(gw2combat_test_run gw2combat_test)
+set_tests_properties(gw2combat_test_run PROPERTIES DEPENDS gw2combat_test_build)
 ###
 
 ###
 # Targets
 ###
-# gw2combat
 add_executable(
     gw2combat
 
     src/main/gw2combat/main.cpp
     src/main/gw2combat/combat_loop.cpp
 
-    src/main/gw2combat/entity.cpp
-    src/main/gw2combat/skills.cpp
-    src/main/gw2combat/build.cpp
-    src/main/gw2combat/rotation.cpp
+    src/main/gw2combat/actor/build.cpp
+    src/main/gw2combat/actor/rotation.cpp
+    src/main/gw2combat/actor/skill_database.cpp
 
-    src/main/gw2combat/system/character_command.cpp
-    src/main/gw2combat/system/effective_attributes_calculation.cpp
-    src/main/gw2combat/system/combat_detection.cpp
-    src/main/gw2combat/system/update_health.cpp
-    src/main/gw2combat/system/downstate_detection.cpp
-    src/main/gw2combat/system/damage/incoming_condition_damage_calculation.cpp
-
-    src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
-    src/main/gw2combat/system/damage/detection/incoming_condition_detection.cpp
-    src/main/gw2combat/system/damage/detection/incoming_condition_application.cpp
-
-    src/main/gw2combat/system/damage/multipliers/incoming_strike_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/incoming_condition_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/outgoing_condition_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/outgoing_strike_damage_multiplier_calculation.cpp
-
-    src/main/gw2combat/system/damage/incoming_strike_damage_calculation.cpp
-
-    src/main/gw2combat/system/cast_skills.cpp
-    src/main/gw2combat/system/destroy_after_rotation_entities.cpp
+    src/main/gw2combat/system/calculate_effective_attributes.cpp
+    src/main/gw2combat/system/continue_rotation.cpp
+    src/main/gw2combat/system/do_animation.cpp
+    src/main/gw2combat/system/progress_cooldowns.cpp
+    src/main/gw2combat/system/progress_recharges.cpp
 )
-target_link_libraries(gw2combat PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
-target_include_directories(gw2combat PRIVATE ${RAPIDCSV_INCLUDE_DIRS})
+target_link_libraries(gw2combat PRIVATE EnTT::EnTT fmt::fmt nlohmann_json::nlohmann_json spdlog::spdlog)
 
 add_executable(
     gw2combat_deterministic
@@ -94,33 +75,54 @@ add_executable(
     src/main/gw2combat/main.cpp
     src/main/gw2combat/combat_loop.cpp
 
-    src/main/gw2combat/entity.cpp
-    src/main/gw2combat/skills.cpp
-    src/main/gw2combat/build.cpp
-    src/main/gw2combat/rotation.cpp
+    src/main/gw2combat/actor/build.cpp
+    src/main/gw2combat/actor/rotation.cpp
+    src/main/gw2combat/actor/skill_database.cpp
 
-    src/main/gw2combat/system/character_command.cpp
-    src/main/gw2combat/system/effective_attributes_calculation.cpp
-    src/main/gw2combat/system/combat_detection.cpp
-    src/main/gw2combat/system/update_health.cpp
-    src/main/gw2combat/system/downstate_detection.cpp
-    src/main/gw2combat/system/damage/incoming_condition_damage_calculation.cpp
-
-    src/main/gw2combat/system/damage/detection/incoming_strike_detection.cpp
-    src/main/gw2combat/system/damage/detection/incoming_condition_detection.cpp
-    src/main/gw2combat/system/damage/detection/incoming_condition_application.cpp
-
-    src/main/gw2combat/system/damage/multipliers/incoming_strike_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/incoming_condition_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/outgoing_condition_damage_multiplier_calculation.cpp
-    src/main/gw2combat/system/damage/multipliers/outgoing_strike_damage_multiplier_calculation.cpp
-
-    src/main/gw2combat/system/damage/incoming_strike_damage_calculation.cpp
-
-    src/main/gw2combat/system/cast_skills.cpp
-    src/main/gw2combat/system/destroy_after_rotation_entities.cpp
+    src/main/gw2combat/system/calculate_effective_attributes.cpp
+    src/main/gw2combat/system/continue_rotation.cpp
+    src/main/gw2combat/system/do_animation.cpp
+    src/main/gw2combat/system/progress_cooldowns.cpp
+    src/main/gw2combat/system/progress_recharges.cpp
 )
-target_link_libraries(gw2combat_deterministic PRIVATE fmt::fmt spdlog::spdlog nlohmann_json::nlohmann_json EnTT::EnTT)
-target_include_directories(gw2combat_deterministic PRIVATE ${RAPIDCSV_INCLUDE_DIRS})
+target_link_libraries(gw2combat_deterministic PRIVATE EnTT::EnTT fmt::fmt nlohmann_json::nlohmann_json spdlog::spdlog)
 target_compile_definitions(gw2combat_deterministic PUBLIC DETERMINISTIC)
+
+add_executable(
+    gw2combat_test
+
+    src/test/gw2combat/test_build.cpp
+    src/test/gw2combat/test_skills.cpp
+    src/test/gw2combat/test_rotation.cpp
+
+    src/main/gw2combat/combat_loop.cpp
+
+    src/main/gw2combat/actor/build.cpp
+    src/main/gw2combat/actor/rotation.cpp
+    src/main/gw2combat/actor/skill_database.cpp
+
+    src/main/gw2combat/system/calculate_effective_attributes.cpp
+
+    src/main/gw2combat/system/continue_rotation.cpp
+    src/main/gw2combat/system/do_animation.cpp
+    src/main/gw2combat/system/progress_cooldowns.cpp
+    src/main/gw2combat/system/progress_recharges.cpp
+)
+target_link_libraries(gw2combat_test PRIVATE Catch2::Catch2WithMain EnTT::EnTT fmt::fmt nlohmann_json::nlohmann_json)
+
+
+FILE(
+    COPY
+    src/main/resources/skills.json
+    src/main/resources/build-cfb.json
+    src/main/resources/build-dh.json
+    src/main/resources/build-technician.json
+    src/main/resources/build-golem.json
+
+    src/main/resources/rotation-cfb.csv
+    src/main/resources/rotation-dh.csv
+
+    DESTINATION
+    "${CMAKE_BINARY_DIR}"
+)
 ###
