@@ -1027,6 +1027,19 @@
       "child_entity_skills": [],
       "cooldown": [10000, 10000],
       "tags": []
+    },
+    {
+      "name": "Weapon Draw",
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cast_duration": [32, 32],
+      "hit_on_tick_list": [[], []],
+      "on_hit_effect_applications": [],
+      "pulse_on_tick_list": [[], []],
+      "on_pulse_effect_applications": [],
+      "child_entity_skills": [],
+      "cooldown": [0, 0],
+      "tags": []
     }
   ]
 }

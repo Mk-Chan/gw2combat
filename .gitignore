@@ -2,6 +2,7 @@
 cmake-init_entities-*/
 init_entities/
 build/
+.DS_Store
 
 # Tools
 tools/

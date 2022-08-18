@@ -75,10 +75,7 @@
       }
     ]
   },
-  "equipped_slot_skill_names": [
-    "Sword of Justice",
-    "Smite Condition"
-  ],
+  "equipped_slot_skill_names": [],
   "rune": "scholar",
   "nourishment": "sweet-and-spicy-butternut-squash-soup",
   "enhancement": "superior-sharpening-stone"

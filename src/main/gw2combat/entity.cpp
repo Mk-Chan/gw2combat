@@ -214,7 +214,7 @@ entity_t build_medium_kitty_golem(entt::registry& registry) {
     auto entity = registry.create();
 
     registry.emplace<component::static_attributes>(
-        entity, component::static_attributes{.armor = 2597, .max_health = 4'000'000 - 450'000});
+        entity, component::static_attributes{.armor = 2597, .max_health = 4'000'000});
 
     registry.emplace<component::is_actor>(entity);
     registry.ctx().emplace_hint<std::string>(to_u32(entity), "medium_kitty_golem");
