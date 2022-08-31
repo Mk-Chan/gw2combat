@@ -7,9 +7,9 @@ namespace gw2combat::component {
 
 struct rotation_component {
     actor::rotation_t rotation;
-    std::size_t current_idx;
-    tick_t offset;
-    bool repeat;
+    std::size_t current_idx = 0;
+    tick_t offset = 0;
+    bool repeat = false;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(rotation_component, rotation, current_idx, repeat)

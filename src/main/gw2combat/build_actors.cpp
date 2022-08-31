@@ -19,17 +19,13 @@
 
 namespace gw2combat {
 
-auto build_actor(registry_t& registry,
-                 const std::string& configuration_suffix,
-                 int team_id,
-                 actor::rotation_t* provided_rotation_ptr = nullptr,
-                 bool repeat_rotation = false) {
-    auto actor_build = actor::build_t::read(fmt::format("build-{}.json", configuration_suffix));
+entity_t build_actor(registry_t& registry, const std::string& name, int team_id) {
+    auto actor_build = actor::build_t::read(fmt::format("build-{}.json", name));
     auto base_class = actor_build.base_class;
 
     auto actor_entity = registry.create();
-    registry.ctx().emplace_hint<std::string>(
-        actor_entity, fmt::format("actor{}-{}", actor_entity, configuration_suffix));
+    registry.ctx().emplace_hint<std::string>(actor_entity,
+                                             fmt::format("actor{}-{}", actor_entity, name));
     registry.emplace<component::is_actor>(actor_entity);
     registry.emplace<component::effects_component>(actor_entity);
 
@@ -65,11 +61,6 @@ auto build_actor(registry_t& registry,
     utils::add_skill_to_actor(
         actor::base_class_t::UNIVERSAL, "Weapon Draw", actor_entity, registry);
 
-    if (base_class == actor::base_class_t::GUARDIAN) {
-        utils::add_unique_effect_to_actor(
-            actor::unique_effect_t{"Spear of Justice Passive Effect"}, actor_entity, registry);
-    }
-
     bool elite_specialization_selected = false;
     if (!actor_build.trait_lines.empty()) {
         if (std::find(actor_build.trait_lines.begin(),
@@ -90,7 +81,10 @@ auto build_actor(registry_t& registry,
         } else if (std::find(actor_build.trait_lines.begin(),
                              actor_build.trait_lines.end(),
                              actor::trait_line_t::DRAGONHUNTER) != actor_build.trait_lines.end()) {
+            elite_specialization_selected = true;
             utils::add_skill_to_actor(base_class, "Spear of Justice", actor_entity, registry);
+            utils::add_unique_effect_to_actor(
+                actor::unique_effect_t{"Spear of Justice Passive Effect"}, actor_entity, registry);
         }
     }
     if (!elite_specialization_selected) {
@@ -100,8 +94,12 @@ auto build_actor(registry_t& registry,
             utils::add_skill_to_actor(base_class, "Virtue of Courage", actor_entity, registry);
         }
     }
-
+    std::set<std::pair<actor::weapon_set, actor::weapon_position>> visited;
     for (auto& weapon : available_weapons.weapons) {
+        if (visited.contains({weapon.set, weapon.position})) {
+            continue;
+        }
+        visited.insert({weapon.set, weapon.position});
         auto this_weapon_skills = skill_database.find_by(weapon.type, weapon.position);
         for (auto& weapon_skill : this_weapon_skills) {
             if (weapon_skill.is_child_skill) {
@@ -118,32 +116,29 @@ auto build_actor(registry_t& registry,
         utils::add_skill_to_actor(
             slot_skill.skill_key.base_class, slot_skill.skill_key.name, actor_entity, registry);
     }
-
-    if (provided_rotation_ptr == nullptr) {
-        auto actor_rotation = actor::rotation_t::read(
-            fmt::format("rotation-{}.csv", configuration_suffix), base_class);
-        registry.emplace<component::rotation_component>(
-            actor_entity, component::rotation_component{actor_rotation, 0, 0, repeat_rotation});
-    } else {
-        registry.emplace<component::rotation_component>(
-            actor_entity,
-            component::rotation_component{*provided_rotation_ptr, 0, 0, repeat_rotation});
-    }
     return actor_entity;
 }
 
 void build_actors(registry_t& registry) {
-    build_actor(registry, "dh", 1);
+    auto dh_actor = build_actor(registry, "dh", 1);
+    auto actor_rotation =
+        actor::rotation_t::read(fmt::format("rotation-dh.csv"), actor::base_class_t::GUARDIAN);
+    registry.emplace<component::rotation_component>(
+        dh_actor, component::rotation_component{actor_rotation, 0, 0, false});
 
+    auto technician_actor = build_actor(registry, "technician", 1);
     actor::rotation_t technician_rotation;
     technician_rotation.skill_casts.emplace_back(actor::skill_cast_t{
         actor::skill_t{actor::base_class_t::UNIVERSAL, "Pulse Boons and Conditions"}, 0});
     technician_rotation.skill_casts.emplace_back(
         actor::skill_cast_t{actor::skill_t{actor::base_class_t::UNIVERSAL, "Idle_30s"}, 0});
-    build_actor(registry, "technician", 1, &technician_rotation, true);
+    registry.emplace<component::rotation_component>(
+        technician_actor, component::rotation_component{technician_rotation, 0, 0, true});
 
+    auto golem_actor = build_actor(registry, "golem", 2);
     actor::rotation_t golem_rotation;
-    build_actor(registry, "golem", 2, &golem_rotation);
+    registry.emplace<component::rotation_component>(
+        golem_actor, component::rotation_component{golem_rotation, 0, 0, false});
 }
 
 }  // namespace gw2combat

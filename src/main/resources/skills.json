@@ -985,7 +985,7 @@
         "base_class": "GUARDIAN"
       },
       "weapon_type": "EMPTY_HANDED",
-      "damage_coefficient": 10,
+      "damage_coefficient": 1.0,
       "cast_duration": [750, 500],
       "cooldown": [30000, 24000],
       "hit_on_tick_list": [[750], [500]],

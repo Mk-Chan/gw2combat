@@ -12,6 +12,15 @@
 
 namespace gw2combat::system {
 
+void reset_combat_stats(registry_t& registry) {
+    registry.view<component::static_attributes, component::combat_stats>().each(
+        [&](const component::static_attributes& static_attributes,
+            component::combat_stats& combat_stats) {
+            combat_stats.health =
+                (int)static_attributes.attribute_value_map.at(actor::attribute_t::MAX_HEALTH);
+        });
+}
+
 void init_combat_stats(registry_t& registry) {
     registry
         .view<component::is_actor, component::static_attributes>(

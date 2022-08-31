@@ -3,10 +3,13 @@
 
 #include "base_utilities.hpp"
 
+#include "entity_utilities.hpp"
+
 #include "gw2combat/actor/skill_database.hpp"
 
 #include "gw2combat/component/actor/skills_component.hpp"
 #include "gw2combat/component/cooldown.hpp"
+#include "gw2combat/component/equipment/weapons.hpp"
 #include "gw2combat/component/skill/ammo.hpp"
 #include "gw2combat/component/skill/recharge.hpp"
 
@@ -20,7 +23,31 @@ namespace gw2combat::utils {
         return false;
     }
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
-    return skill_ammo.current_ammo > 0;
+    if (skill_ammo.current_ammo <= 0) {
+        return false;
+    }
+
+    auto& skill_configuration =
+        registry.get<actor::skill_database>(utils::get_owner(actor_entity, registry))
+            .find_by(skill);
+    if (skill_configuration.is_child_skill &&
+        !registry.any_of<component::owner_actor>(actor_entity)) {
+        return false;
+    }
+    if (!skill_configuration.is_child_skill &&
+        skill_configuration.weapon_type != actor::weapon_type::EMPTY_HANDED &&
+        skill_configuration.weapon_type != actor::weapon_type::INVALID) {
+        auto& weapons = registry.get<component::equipped_weapons>(actor_entity).weapons;
+        auto current_weapon_set = registry.get<component::current_weapon_set>(actor_entity).set;
+        return std::any_of(weapons.begin(), weapons.end(), [&](const actor::weapon& weapon) {
+            return weapon.set == current_weapon_set &&
+                   weapon.type == skill_configuration.weapon_type &&
+                   (skill_configuration.weapon_position == actor::weapon_position::UNIVERSAL ||
+                    skill_configuration.weapon_position == weapon.position);
+        });
+    }
+
+    return true;
 }
 
 static inline void put_skill_on_cooldown(entity_t actor_entity,

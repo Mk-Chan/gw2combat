@@ -63,8 +63,6 @@ void do_tick(registry_t& registry) {
     // utils::log_component<component::incoming_strikes_component>(registry);
     // utils::log_component<component::outgoing_effects_component>(registry);
 
-    system::do_skill_triggers(registry);
-
     system::dispatch_effects(registry);
     // utils::log_component<component::incoming_effects_component>(registry);
 

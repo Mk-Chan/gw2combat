@@ -212,9 +212,9 @@ void apply_incoming_effects(registry_t& registry) {
                     registry.emplace<component::duration>(effect_entity,
                                                           component::duration{effective_duration});
                     if (application.effect_type == effect::effect_t::QUICKNESS) {
-                        registry.emplace<component::quickness>(target_entity);
+                        registry.emplace_or_replace<component::quickness>(target_entity);
                     } else if (application.effect_type == effect::effect_t::ALACRITY) {
-                        registry.emplace<component::alacrity>(target_entity);
+                        registry.emplace_or_replace<component::alacrity>(target_entity);
                     }
 
                     registry.ctx().emplace_hint<std::string>(

@@ -5,7 +5,7 @@
 
 namespace gw2combat {
 
-extern void do_tick(registry_t& registry, tick_t current_tick);
+extern void do_tick(registry_t& registry);
 extern void combat_loop();
 
 }  // namespace gw2combat

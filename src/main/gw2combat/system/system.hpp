@@ -19,7 +19,6 @@ extern void check_if_animation_finished(registry_t& registry);
 extern void progress_animations(registry_t& registry);
 extern void remove_animation_if_finished(registry_t& registry);
 extern void do_skill(registry_t& registry);
-extern void do_skill_triggers(registry_t& registry);
 extern void dispatch_strikes(registry_t& registry);
 extern void dispatch_effects(registry_t& registry);
 extern void apply_incoming_effects(registry_t& target_entity);
@@ -29,6 +28,7 @@ extern void buffer_condition_damage(registry_t& registry,
 extern void apply_condition_damage(registry_t& target_entity);
 extern void destroy_after_rotation(registry_t& registry);
 extern void update_combat_stats(registry_t& registry);
+extern void reset_combat_stats(registry_t& registry);
 
 }  // namespace gw2combat::system
 

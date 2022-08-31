@@ -23,9 +23,9 @@ void check_if_animation_finished(registry_t& registry) {
             if (no_quickness_progress_pct + quickness_progress_pct >= 100) {
                 registry.emplace<component::finished_animation>(
                     entity, component::finished_animation{animation.skill});
-                spdlog::info("[{}] finished animation for skill {}",
-                             utils::get_current_tick(registry),
-                             utils::to_string(animation.skill));
+                // spdlog::info("[{}] finished animation for skill {}",
+                //              utils::get_current_tick(registry),
+                //              utils::to_string(animation.skill));
                 return;
             }
         });
