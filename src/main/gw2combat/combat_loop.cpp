@@ -1,178 +1,146 @@
 #include "combat_loop.hpp"
 
-#include "entity.hpp"
-#include "skills.hpp"
+#include "common.hpp"
 
-#include "gw2combat/component/character/did_weapon_swap.hpp"
-#include "gw2combat/component/character/downstate.hpp"
-#include "gw2combat/component/character/effective_attributes.hpp"
-#include "gw2combat/component/character/is_actor.hpp"
-#include "gw2combat/component/character/no_more_rotation.hpp"
-#include "gw2combat/component/damage/effective_incoming_damage.hpp"
-#include "gw2combat/component/damage/incoming_strike_damage.hpp"
-#include "gw2combat/component/damage/metrics/damage_metrics.hpp"
-#include "gw2combat/component/damage/multipliers/incoming_condition_damage_multiplier.hpp"
-#include "gw2combat/component/damage/multipliers/incoming_strike_damage_multiplier.hpp"
-#include "gw2combat/component/damage/multipliers/outgoing_condition_damage_multiplier.hpp"
-#include "gw2combat/component/damage/multipliers/outgoing_strike_damage_multiplier.hpp"
-#include "gw2combat/component/damage/outgoing_condition_application.hpp"
-#include "gw2combat/component/damage/outgoing_strike_damage.hpp"
-#include "gw2combat/component/skills/instant_cast_skills.hpp"
-#include "gw2combat/system/staged/gear_systems.hpp"
-#include "gw2combat/system/staged/profession_systems.hpp"
-#include "gw2combat/system/staged/skill_systems.hpp"
-#include "gw2combat/system/staged/trait_systems.hpp"
-#include "gw2combat/system/system.hpp"
+#include "init.hpp"
+
+#include "utilities/logging_utilities.hpp"
+
+#include "system/system.hpp"
+
+#include "gw2combat/component/actor/destroy_after_rotation.hpp"
+#include "gw2combat/component/actor/effects_component.hpp"
+#include "gw2combat/component/actor/is_actor.hpp"
+#include "gw2combat/component/actor/is_downstate.hpp"
+#include "gw2combat/component/actor/no_more_rotation.hpp"
+#include "gw2combat/component/damage/effects_pipeline.hpp"
+#include "gw2combat/component/damage/incoming_damage.hpp"
+#include "gw2combat/component/damage/incoming_damage_modifiers.hpp"
+#include "gw2combat/component/damage/outgoing_damage_modifiers.hpp"
+#include "gw2combat/component/damage/strikes_pipeline.hpp"
+#include "gw2combat/component/effect/duration.hpp"
+#include "gw2combat/component/skill/finished_animation.hpp"
 
 namespace gw2combat {
 
 void clear_temporary_components(registry_t& registry) {
     registry.clear<component::effective_attributes,
-                   component::incoming_strike_damage_multiplier,
-                   component::incoming_condition_damage_multiplier,
-                   component::outgoing_strike_damage_multiplier,
-                   component::outgoing_condition_damage_multiplier,
-
-                   component::outgoing_strike_damage,
-                   component::incoming_strike_damage,
-
-                   component::outgoing_condition_application,
-                   component::incoming_condition_application,
-
-                   component::effective_incoming_damage,
-                   component::instant_cast_skills,
-                   component::finished_normal_cast_skill,
-                   component::did_weapon_swap>();
+                   component::outgoing_damage_modifiers,
+                   component::incoming_damage_modifiers,
+                   component::outgoing_strikes_component,
+                   component::incoming_strikes_component,
+                   component::outgoing_effects_component,
+                   component::incoming_effects_component,
+                   component::incoming_damage,
+                   component::finished_animation>();
 }
 
-template <combat_stage stage>
-void run_staged_systems(registry_t& registry, tick_t current_tick) {
-    system::virtue_of_justice<stage>(registry, current_tick);
-    system::inspiring_virtue<stage>(registry, current_tick);
-    system::legendary_lore<stage>(registry, current_tick);
+void do_tick(registry_t& registry) {
+    system::init_combat_stats(registry);
 
-    system::sigil_geomancy<stage>(registry, current_tick);
-    system::sigil_air<stage>(registry, current_tick);
-    system::sigil_earth<stage>(registry, current_tick);
-    system::sigil_torment<stage>(registry, current_tick);
-    system::spear_of_justice<stage>(registry, current_tick);
-    system::ashes_of_the_just<stage>(registry, current_tick);
+    system::progress_recharges(registry);
+    system::progress_cooldowns(registry);
+    system::progress_durations(registry);
 
-    system::unrelenting_criticism<stage>(registry, current_tick);
-    system::symbolic_avenger<stage>(registry, current_tick);
-    system::symbolic_power<stage>(registry, current_tick);
+    system::expire_non_damaging_effects_with_no_duration(registry);
 
-    system::on_hit_effect_applications<stage>(registry, current_tick);
-}
+    system::calculate_effective_attributes(registry);
+    // utils::log_component<component::effective_attributes>(registry);
 
-void run_systems(registry_t& registry, tick_t current_tick) {
-    system::combat_detection(registry, current_tick);
+    system::continue_rotation(registry, true);
+    // utils::log_component<component::animation>(registry);
 
-    system::effective_attributes_calculation(registry, current_tick);
-    system::incoming_strike_damage_multiplier_calculation(registry, current_tick);
-    system::incoming_condition_damage_multiplier_calculation(registry, current_tick);
-    system::outgoing_condition_damage_multiplier_calculation(registry, current_tick);
-    system::outgoing_strike_damage_multiplier_calculation(registry, current_tick);
+    system::check_if_animation_finished(registry);
+    // utils::log_component<component::animation>(registry);
+    // utils::log_component<component::finished_animation>(registry);
 
-    system::expire_effects(registry, current_tick);
+    system::do_skill(registry);
+    // utils::log_component<component::outgoing_strikes_component>(registry);
 
-    system::character_command(registry, current_tick);
-    system::cast_skills(registry, current_tick);
+    system::dispatch_strikes(registry);
 
-    run_staged_systems<combat_stage::BEFORE_OUTGOING_STRIKE_BUFFERING>(registry, current_tick);
+    system::apply_incoming_strikes(registry);
+    // utils::log_component<component::incoming_strikes_component>(registry);
+    // utils::log_component<component::outgoing_effects_component>(registry);
 
-    system::incoming_strike_detection(registry, current_tick);
+    system::do_skill_triggers(registry);
 
-    run_staged_systems<combat_stage::AFTER_OUTGOING_STRIKE_BUFFERING>(registry, current_tick);
-    run_staged_systems<combat_stage::BEFORE_INCOMING_STRIKE_DAMAGE_CALCULATION>(registry,
-                                                                                current_tick);
+    system::dispatch_effects(registry);
+    // utils::log_component<component::incoming_effects_component>(registry);
 
-    system::incoming_strike_damage_calculation(registry, current_tick);
+    system::apply_incoming_effects(registry);
+    // utils::log_component<component::effects_component>(registry);
+    // utils::log_component<component::duration>(registry);
+    // registry.view<component::effects_component>().each(
+    //    [&](entity_t entity, const component::effects_component& effects_component) {
+    //        auto effect_counts = effects_component.count_all();
+    //        spdlog::info("[{}] {} - {}",
+    //                     utils::get_current_tick(registry),
+    //                     utils::get_entity_name(entity, registry),
+    //                     utils::to_string(effect_counts));
+    //    });
 
-    run_staged_systems<combat_stage::AFTER_INCOMING_STRIKE_DAMAGE_CALCULATION>(registry,
-                                                                               current_tick);
+    system::expire_damaging_effects_with_no_duration(registry);
 
-    system::incoming_condition_detection(registry, current_tick);
-    system::incoming_condition_application(registry, current_tick);
-    if (current_tick % effects::effect_pulse_rate == 0) {
-        system::incoming_condition_damage_calculation(registry, current_tick);
+    if (tick_t current_tick = utils::get_current_tick(registry);
+        (current_tick != 0) && (current_tick % 1'000 == 0)) {
+        system::buffer_condition_damage(registry);
+        system::apply_condition_damage(registry);
     }
-    system::progress_effects(registry, current_tick);
 
-    system::update_health(registry, current_tick);
-    system::downstate_detection(registry, current_tick);
-    system::destroy_after_rotation_entities(registry, current_tick);
+    system::progress_animations(registry);
+    system::remove_animation_if_finished(registry);
+    // utils::log_component<component::finished_animation>(registry);
+    // registry.view<component::no_more_rotation, component::destroy_after_rotation>().each(
+    //    [&](entity_t entity) {
+    //        spdlog::info("entity: {} destroyed after rota",
+    //                     utils::get_entity_name(entity, registry));
+    //    });
+    system::destroy_after_rotation(registry);
+
+    system::update_combat_stats(registry);
 
     clear_temporary_components(registry);
 }
 
 void combat_loop() {
-    skills::SKILLS_DB.init("src/main/resources/skills_db.json");
-
     registry_t registry;
-    init_entities(registry);
+    build_actors(registry);
+    build_skills(registry);
 
     tick_t current_tick{0};
-    bool downstate_exit = false;
-    tick_t end_tick = 1'000'000'000;
-    while (true) {
-        run_systems(registry, current_tick);
+    registry.ctx().emplace<const tick_t&>(current_tick);
 
-        bool actors_have_rotations = false;
-        for (auto&& [entity] : registry.view<component::is_actor>().each()) {
+    tick_t everyone_out_of_rotation_at_tick = 3'000'000'000;
+    while (true) {
+        do_tick(registry);
+
+        bool everyone_out_of_rotation = true;
+        auto actors = registry.view<component::is_actor>();
+        for (auto entity : actors) {
+            if (registry.ctx().at<std::string>(entity).ends_with("technician")) {
+                continue;
+            }
+            if (registry.any_of<component::is_downstate>(entity)) {
+                spdlog::info(
+                    "[{}] {} is downstate", current_tick, utils::get_entity_name(entity, registry));
+                return;
+            }
             if (!registry.any_of<component::no_more_rotation>(entity)) {
-                actors_have_rotations = true;
+                everyone_out_of_rotation = false;
             }
         }
-        for (auto&& [entity] : registry.view<component::downstate>().each()) {
-            spdlog::info("tick: {}, entity: {} is downstate!",
-                         current_tick,
-                         utils::get_entity_name(entity, registry));
-            downstate_exit = true;
-        }
-        if (downstate_exit) {
-            break;
-        }
-        if (!actors_have_rotations) {
-            if (end_tick == 1'000'000'000) {
-                end_tick = current_tick + 10'000;
-            } else if (current_tick == end_tick) {
-                spdlog::info("no actor had any rotation left for 10s");
+        if (everyone_out_of_rotation) {
+            if (everyone_out_of_rotation_at_tick > current_tick) {
+                everyone_out_of_rotation_at_tick = current_tick;
+            }
+            if (current_tick - everyone_out_of_rotation_at_tick >= 10'000) {
                 break;
             }
         }
 
-        current_tick += tick_t{1};
+        ++current_tick;
     }
-
-    // Note: Metrics
-    registry.view<component::damage_metrics_component>().each(
-        [&](entity_t entity, const component::damage_metrics_component& damage_metrics_component) {
-            spdlog::info("entity: {}", utils::get_entity_name(entity, registry));
-            std::unordered_map<std::string, double> grouped_by_damage_name;
-            for (const auto& metric_unit : damage_metrics_component.metrics) {
-                grouped_by_damage_name[metric_unit.damage_name] += metric_unit.damage;
-            }
-            spdlog::info("{}", nlohmann::json{grouped_by_damage_name}.dump(2));
-
-            std::unordered_map<std::string, std::unordered_map<std::string, double>>
-                grouped_by_source_and_damage_name;
-            for (const auto& metric_unit : damage_metrics_component.metrics) {
-                grouped_by_source_and_damage_name[metric_unit.source_name]
-                                                 [metric_unit.damage_name] += metric_unit.damage;
-            }
-            spdlog::info("{}", nlohmann::json{grouped_by_source_and_damage_name}.dump(2));
-
-            std::unordered_map<std::string, std::unordered_map<std::string, unsigned int>>
-                grouped_by_source_and_damage_name_counts;
-            for (const auto& metric_unit : damage_metrics_component.metrics) {
-                grouped_by_source_and_damage_name_counts[metric_unit.source_name]
-                                                        [metric_unit.damage_name] += 1;
-            }
-            spdlog::info("{}", nlohmann::json{grouped_by_source_and_damage_name_counts}.dump(2));
-        });
-
-    spdlog::info("tick: {}, done!", current_tick);
 }
 
 }  // namespace gw2combat

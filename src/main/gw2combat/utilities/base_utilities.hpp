@@ -3,15 +3,18 @@
 
 #include <random>
 
-#include "gw2combat/component/damage/source_entity.hpp"
-#include "gw2combat/types.hpp"
+#include "gw2combat/common.hpp"
 
 namespace gw2combat::utils {
+
+template <typename T>
+[[nodiscard]] static inline std::string to_string(T t) {
+    return nlohmann::json{t}[0].dump();
+}
 
 [[nodiscard]] static inline double get_random_0_100() {
     static std::random_device random_device;
     static unsigned int rng_seed = random_device();
-    // static unsigned int rng_seed = 297364871;
     static std::mt19937 generator(rng_seed);
     static std::uniform_real_distribution distribution(0.0, 100.0);
     return distribution(generator);
@@ -21,24 +24,8 @@ namespace gw2combat::utils {
     return get_random_0_100() < upper_bound;
 }
 
-[[nodiscard]] static inline std::string get_entity_name(entity_t entity, registry_t& registry) {
-    if (!registry.ctx().contains<std::string>(to_u32(entity))) {
-        return "temporary_entity";
-    }
-    return registry.ctx().at<std::string>(to_u32(entity));
-}
-
-[[nodiscard]] static inline entity_t get_source_entity(entity_t entity, registry_t& registry) {
-    entity_t current_entity = entity;
-    while (true) {
-        auto source_entity_ptr = registry.try_get<component::source_entity>(current_entity);
-        if (source_entity_ptr == nullptr) {
-            break;
-        }
-
-        current_entity = source_entity_ptr->entity;
-    }
-    return current_entity;
+[[nodiscard]] static inline tick_t get_current_tick(registry_t& registry) {
+    return registry.ctx().at<const tick_t>();
 }
 
 }  // namespace gw2combat::utils

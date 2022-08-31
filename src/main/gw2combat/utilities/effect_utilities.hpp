@@ -3,425 +3,325 @@
 
 #include "base_utilities.hpp"
 
-#include "gw2combat/component/effects_component.hpp"
-#include "gw2combat/effects.hpp"
+#include "gw2combat/effect/effect.hpp"
+#include "gw2combat/effect/stacking.hpp"
+
+#include "gw2combat/component/actor/effective_attributes.hpp"
+#include "gw2combat/component/damage_modifiers_component.hpp"
 
 namespace gw2combat::utils {
 
-constexpr static inline std::array BOONS{
-    effects::effect_type::AEGIS,
-    effects::effect_type::ALACRITY,
-    effects::effect_type::FURY,
-    effects::effect_type::MIGHT,
-    effects::effect_type::QUICKNESS,
-    effects::effect_type::RESOLUTION,
-    effects::effect_type::RESISTANCE,
-    effects::effect_type::PROTECTION,
-    effects::effect_type::REGENERATION,
-    effects::effect_type::VIGOR,
-    effects::effect_type::SWIFTNESS,
-    effects::effect_type::STABILITY,
+struct effect_duration_pct_addends_t {
+    double boon_duration_pct_addend = 0.0;
+    double condition_duration_pct_addend = 0.0;
+    double burning_duration_pct_addend = 0.0;
+    double bleeding_duration_pct_addend = 0.0;
+    double confusion_duration_pct_addend = 0.0;
+    double poison_duration_pct_addend = 0.0;
+    double torment_duration_pct_addend = 0.0;
 };
 
-[[nodiscard]] static inline effects::effect_stacking_type get_effect_stacking_type(
-    effects::effect_type effect_type) {
+constexpr static inline std::array BOONS{
+    effect::effect_t::AEGIS,
+    effect::effect_t::ALACRITY,
+    effect::effect_t::FURY,
+    effect::effect_t::MIGHT,
+    effect::effect_t::QUICKNESS,
+    effect::effect_t::RESOLUTION,
+    effect::effect_t::RESISTANCE,
+    effect::effect_t::PROTECTION,
+    effect::effect_t::REGENERATION,
+    effect::effect_t::VIGOR,
+    effect::effect_t::SWIFTNESS,
+    effect::effect_t::STABILITY,
+};
+
+[[nodiscard]] static inline effect::stacking_t get_effect_stacking_type(
+    effect::effect_t effect_type) {
     switch (effect_type) {
-        case effects::effect_type::AEGIS:
-        case effects::effect_type::ALACRITY:
-        case effects::effect_type::FURY:
-        case effects::effect_type::QUICKNESS:
-        case effects::effect_type::RESOLUTION:
-        case effects::effect_type::RESISTANCE:
-        case effects::effect_type::PROTECTION:
-        case effects::effect_type::REGENERATION:
-        case effects::effect_type::VIGOR:
-        case effects::effect_type::SWIFTNESS:
-        case effects::effect_type::STABILITY:
-        case effects::effect_type::BINDING_BLADE:
-        case effects::effect_type::VIRTUE_OF_JUSTICE:
-        case effects::effect_type::INSPIRING_VIRTUE:
-        case effects::effect_type::SPEAR_OF_JUSTICE:
-        case effects::effect_type::CRIPPLED:
-            return effects::effect_stacking_type::STACKING_DURATION;
-        case effects::effect_type::MIGHT:
-        case effects::effect_type::VULNERABILITY:
-        case effects::effect_type::BURNING:
-        case effects::effect_type::BLEEDING:
-        case effects::effect_type::TORMENT:
-        case effects::effect_type::POISON:
-        case effects::effect_type::CONFUSION:
-        case effects::effect_type::SYMBOLIC_AVENGER:
-        case effects::effect_type::ASHES_OF_THE_JUST:
-            return effects::effect_stacking_type::STACKING_INTENSITY;
+        case effect::effect_t::AEGIS:
+        case effect::effect_t::ALACRITY:
+        case effect::effect_t::FURY:
+        case effect::effect_t::QUICKNESS:
+        case effect::effect_t::RESOLUTION:
+        case effect::effect_t::RESISTANCE:
+        case effect::effect_t::PROTECTION:
+        case effect::effect_t::REGENERATION:
+        case effect::effect_t::VIGOR:
+        case effect::effect_t::SWIFTNESS:
+        case effect::effect_t::STABILITY:
+        case effect::effect_t::BINDING_BLADE:
+        case effect::effect_t::VIRTUE_OF_JUSTICE:
+        case effect::effect_t::INSPIRING_VIRTUE:
+        case effect::effect_t::CRIPPLED:
+            return effect::stacking_t::STACKING_DURATION;
+        case effect::effect_t::MIGHT:
+        case effect::effect_t::VULNERABILITY:
+        case effect::effect_t::BURNING:
+        case effect::effect_t::BLEEDING:
+        case effect::effect_t::TORMENT:
+        case effect::effect_t::POISON:
+        case effect::effect_t::CONFUSION:
+        case effect::effect_t::SYMBOLIC_AVENGER:
+        case effect::effect_t::ASHES_OF_THE_JUST:
+        case effect::effect_t::ARBITRARY_EFFECT:
+            return effect::stacking_t::STACKING_INTENSITY;
+        case effect::effect_t::INVALID:
+            throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
 
 [[nodiscard]] static inline size_t get_max_stored_stacks_of_effect_type(
-    effects::effect_type effect_type) {
+    effect::effect_t effect_type) {
     switch (effect_type) {
-        case effects::effect_type::AEGIS:
-        case effects::effect_type::ALACRITY:
-        case effects::effect_type::FURY:
-        case effects::effect_type::QUICKNESS:
-        case effects::effect_type::RESOLUTION:
-        case effects::effect_type::RESISTANCE:
-        case effects::effect_type::PROTECTION:
-        case effects::effect_type::REGENERATION:
-        case effects::effect_type::VIGOR:
-        case effects::effect_type::SWIFTNESS:
-        case effects::effect_type::STABILITY:
-        case effects::effect_type::BINDING_BLADE:
-        case effects::effect_type::VIRTUE_OF_JUSTICE:
-        case effects::effect_type::INSPIRING_VIRTUE:
-        case effects::effect_type::SPEAR_OF_JUSTICE:
-        case effects::effect_type::CRIPPLED:
+        case effect::effect_t::AEGIS:
+        case effect::effect_t::ALACRITY:
+        case effect::effect_t::FURY:
+        case effect::effect_t::QUICKNESS:
+        case effect::effect_t::RESOLUTION:
+        case effect::effect_t::RESISTANCE:
+        case effect::effect_t::PROTECTION:
+        case effect::effect_t::REGENERATION:
+        case effect::effect_t::VIGOR:
+        case effect::effect_t::SWIFTNESS:
+        case effect::effect_t::STABILITY:
+        case effect::effect_t::BINDING_BLADE:
+        case effect::effect_t::VIRTUE_OF_JUSTICE:
+        case effect::effect_t::INSPIRING_VIRTUE:
+        case effect::effect_t::CRIPPLED:
             return 1;
-        case effects::effect_type::MIGHT:
-        case effects::effect_type::VULNERABILITY:
-        case effects::effect_type::BURNING:
-        case effects::effect_type::BLEEDING:
-        case effects::effect_type::TORMENT:
-        case effects::effect_type::POISON:
-        case effects::effect_type::CONFUSION:
-        case effects::effect_type::SYMBOLIC_AVENGER:
-        case effects::effect_type::ASHES_OF_THE_JUST:
+        case effect::effect_t::MIGHT:
+        case effect::effect_t::VULNERABILITY:
+        case effect::effect_t::BURNING:
+        case effect::effect_t::BLEEDING:
+        case effect::effect_t::TORMENT:
+        case effect::effect_t::POISON:
+        case effect::effect_t::CONFUSION:
+        case effect::effect_t::SYMBOLIC_AVENGER:
+        case effect::effect_t::ASHES_OF_THE_JUST:
+        case effect::effect_t::ARBITRARY_EFFECT:
             return 1500;
+        case effect::effect_t::INVALID:
+            throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
 
 [[nodiscard]] static inline size_t get_max_considered_stacks_of_effect_type(
-    effects::effect_type effect_type) {
+    effect::effect_t effect_type) {
     switch (effect_type) {
-        case effects::effect_type::AEGIS:
-        case effects::effect_type::ALACRITY:
-        case effects::effect_type::FURY:
-        case effects::effect_type::QUICKNESS:
-        case effects::effect_type::RESOLUTION:
-        case effects::effect_type::RESISTANCE:
-        case effects::effect_type::PROTECTION:
-        case effects::effect_type::REGENERATION:
-        case effects::effect_type::VIGOR:
-        case effects::effect_type::SWIFTNESS:
-        case effects::effect_type::STABILITY:
-        case effects::effect_type::BINDING_BLADE:
-        case effects::effect_type::VIRTUE_OF_JUSTICE:
-        case effects::effect_type::INSPIRING_VIRTUE:
-        case effects::effect_type::SPEAR_OF_JUSTICE:
-        case effects::effect_type::CRIPPLED:
+        case effect::effect_t::AEGIS:
+        case effect::effect_t::ALACRITY:
+        case effect::effect_t::FURY:
+        case effect::effect_t::QUICKNESS:
+        case effect::effect_t::RESOLUTION:
+        case effect::effect_t::RESISTANCE:
+        case effect::effect_t::PROTECTION:
+        case effect::effect_t::REGENERATION:
+        case effect::effect_t::VIGOR:
+        case effect::effect_t::SWIFTNESS:
+        case effect::effect_t::STABILITY:
+        case effect::effect_t::BINDING_BLADE:
+        case effect::effect_t::VIRTUE_OF_JUSTICE:
+        case effect::effect_t::INSPIRING_VIRTUE:
+        case effect::effect_t::CRIPPLED:
             return 1;
-        case effects::effect_type::SYMBOLIC_AVENGER:
+        case effect::effect_t::SYMBOLIC_AVENGER:
             return 5;
-        case effects::effect_type::MIGHT:
-        case effects::effect_type::VULNERABILITY:
+        case effect::effect_t::MIGHT:
+        case effect::effect_t::VULNERABILITY:
             return 25;
-        case effects::effect_type::BURNING:
-        case effects::effect_type::BLEEDING:
-        case effects::effect_type::TORMENT:
-        case effects::effect_type::POISON:
-        case effects::effect_type::CONFUSION:
-        case effects::effect_type::ASHES_OF_THE_JUST:
+        case effect::effect_t::BURNING:
+        case effect::effect_t::BLEEDING:
+        case effect::effect_t::TORMENT:
+        case effect::effect_t::POISON:
+        case effect::effect_t::CONFUSION:
+        case effect::effect_t::ASHES_OF_THE_JUST:
+        case effect::effect_t::ARBITRARY_EFFECT:
             return 1500;
+        case effect::effect_t::INVALID:
+            throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
 
-[[nodiscard]] static inline size_t get_max_effect_duration(effects::effect_type effect_type) {
+[[nodiscard]] static inline size_t get_max_effect_duration(effect::effect_t effect_type) {
     switch (effect_type) {
-        case effects::effect_type::AEGIS:
-        case effects::effect_type::ALACRITY:
-        case effects::effect_type::FURY:
-        case effects::effect_type::MIGHT:
-        case effects::effect_type::QUICKNESS:
-        case effects::effect_type::RESOLUTION:
-        case effects::effect_type::RESISTANCE:
-        case effects::effect_type::PROTECTION:
-        case effects::effect_type::REGENERATION:
-        case effects::effect_type::VIGOR:
-        case effects::effect_type::SWIFTNESS:
-        case effects::effect_type::STABILITY:
-        case effects::effect_type::CRIPPLED:
-            // FIXME: Commented for testing only
-            // return 30;
-        case effects::effect_type::BINDING_BLADE:
-        case effects::effect_type::VIRTUE_OF_JUSTICE:
-        case effects::effect_type::INSPIRING_VIRTUE:
-        case effects::effect_type::SYMBOLIC_AVENGER:
-        case effects::effect_type::VULNERABILITY:
-        case effects::effect_type::BURNING:
-        case effects::effect_type::BLEEDING:
-        case effects::effect_type::TORMENT:
-        case effects::effect_type::POISON:
-        case effects::effect_type::CONFUSION:
-        case effects::effect_type::ASHES_OF_THE_JUST:
-        case effects::effect_type::SPEAR_OF_JUSTICE:
+        case effect::effect_t::CRIPPLED:
+            return 10;
+        case effect::effect_t::AEGIS:
+        case effect::effect_t::ALACRITY:
+        case effect::effect_t::FURY:
+        case effect::effect_t::MIGHT:
+        case effect::effect_t::QUICKNESS:
+        case effect::effect_t::RESOLUTION:
+        case effect::effect_t::RESISTANCE:
+        case effect::effect_t::PROTECTION:
+        case effect::effect_t::REGENERATION:
+        case effect::effect_t::VIGOR:
+        case effect::effect_t::SWIFTNESS:
+        case effect::effect_t::STABILITY:
+            return 30;
+        case effect::effect_t::BURNING:
+        case effect::effect_t::BLEEDING:
+        case effect::effect_t::TORMENT:
+        case effect::effect_t::POISON:
+        case effect::effect_t::CONFUSION:
+        case effect::effect_t::VULNERABILITY:
+        case effect::effect_t::BINDING_BLADE:
+        case effect::effect_t::VIRTUE_OF_JUSTICE:
+        case effect::effect_t::INSPIRING_VIRTUE:
+        case effect::effect_t::SYMBOLIC_AVENGER:
+        case effect::effect_t::ASHES_OF_THE_JUST:
+        case effect::effect_t::ARBITRARY_EFFECT:
             return 1'000'000'000;
+        case effect::effect_t::INVALID:
+            throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
 
-[[nodiscard]] static inline tick_t get_effective_effect_duration(
-    tick_t duration,
-    effects::effect_type effect_type,
-    const component::effective_attributes& effective_attributes) {
+[[nodiscard]] static inline int get_effective_effect_duration(
+    int base_duration,
+    effect::effect_t effect_type,
+    const component::effective_attributes& effective_attributes,
+    const effect_duration_pct_addends_t& effect_duration_pct_addends) {
+    double effective_uniform_condition_duration_pct =
+        effective_attributes[actor::attribute_t::CONDITION_DURATION_PCT] +
+        effect_duration_pct_addends.condition_duration_pct_addend;
+    double effective_uniform_boon_duration_pct =
+        effective_attributes[actor::attribute_t::BOON_DURATION_PCT] +
+        effect_duration_pct_addends.boon_duration_pct_addend;
     auto calculate_condition_duration = [&](double special_condition_duration_pct = 0.0) {
-        return tick_t{(unsigned int)((double)duration *
-                                     (1.0 + std::max(effective_attributes.condition_duration_pct,
-                                                     special_condition_duration_pct) /
-                                                100.0))};
+        double normalized_uniform_condition_duration_pct = std::min(
+            100.0,
+            std::max(effective_uniform_condition_duration_pct, special_condition_duration_pct));
+        return (int)((double)base_duration *
+                     (1.0 + normalized_uniform_condition_duration_pct / 100.0));
     };
     auto calculate_boon_duration = [&](double special_boon_duration_pct = 0.0) {
-        return tick_t{(unsigned int)((double)duration *
-                                     (1.0 + std::max(effective_attributes.boon_duration_pct,
-                                                     special_boon_duration_pct) /
-                                                100.0))};
+        double normalized_uniform_boon_duration_pct = std::min(
+            100.0, std::max(effective_uniform_boon_duration_pct, special_boon_duration_pct));
+        return (int)((double)base_duration * (1.0 + normalized_uniform_boon_duration_pct / 100.0));
     };
 
     switch (effect_type) {
-        case effects::effect_type::AEGIS:
-        case effects::effect_type::ALACRITY:
-        case effects::effect_type::FURY:
-        case effects::effect_type::MIGHT:
-        case effects::effect_type::QUICKNESS:
-        case effects::effect_type::RESOLUTION:
-        case effects::effect_type::RESISTANCE:
-        case effects::effect_type::PROTECTION:
-        case effects::effect_type::REGENERATION:
-        case effects::effect_type::VIGOR:
-        case effects::effect_type::SWIFTNESS:
-        case effects::effect_type::STABILITY:
+        case effect::effect_t::AEGIS:
+        case effect::effect_t::ALACRITY:
+        case effect::effect_t::FURY:
+        case effect::effect_t::MIGHT:
+        case effect::effect_t::QUICKNESS:
+        case effect::effect_t::RESOLUTION:
+        case effect::effect_t::RESISTANCE:
+        case effect::effect_t::PROTECTION:
+        case effect::effect_t::REGENERATION:
+        case effect::effect_t::VIGOR:
+        case effect::effect_t::SWIFTNESS:
+        case effect::effect_t::STABILITY:
+            // TODO: Implement boon-specific boon durations later
             return calculate_boon_duration();
 
-        case effects::effect_type::CRIPPLED:
-        case effects::effect_type::VULNERABILITY:
+        case effect::effect_t::CRIPPLED:
+        case effect::effect_t::VULNERABILITY:
             return calculate_condition_duration();
 
-        case effects::effect_type::BURNING:
-            return calculate_condition_duration(effective_attributes.burning_duration_pct);
-        case effects::effect_type::BLEEDING:
-            return calculate_condition_duration(effective_attributes.bleeding_duration_pct);
-        case effects::effect_type::TORMENT:
-            return calculate_condition_duration(effective_attributes.torment_duration_pct);
-        case effects::effect_type::POISON:
-            return calculate_condition_duration(effective_attributes.poison_duration_pct);
-        case effects::effect_type::CONFUSION:
-            return calculate_condition_duration(effective_attributes.confusion_duration_pct);
+        case effect::effect_t::BURNING:
+            return calculate_condition_duration(
+                effective_attributes[actor::attribute_t::BURNING_DURATION_PCT] +
+                effect_duration_pct_addends.burning_duration_pct_addend);
+        case effect::effect_t::BLEEDING:
+            return calculate_condition_duration(
+                effective_attributes[actor::attribute_t::BLEEDING_DURATION_PCT] +
+                effect_duration_pct_addends.bleeding_duration_pct_addend);
+        case effect::effect_t::TORMENT:
+            return calculate_condition_duration(
+                effective_attributes[actor::attribute_t::TORMENT_DURATION_PCT] +
+                effect_duration_pct_addends.torment_duration_pct_addend);
+        case effect::effect_t::POISON:
+            return calculate_condition_duration(
+                effective_attributes[actor::attribute_t::POISON_DURATION_PCT] +
+                effect_duration_pct_addends.poison_duration_pct_addend);
+        case effect::effect_t::CONFUSION:
+            return calculate_condition_duration(
+                effective_attributes[actor::attribute_t::CONFUSION_DURATION_PCT] +
+                effect_duration_pct_addends.confusion_duration_pct_addend);
 
-        case effects::effect_type::BINDING_BLADE:
-        case effects::effect_type::VIRTUE_OF_JUSTICE:
-        case effects::effect_type::SYMBOLIC_AVENGER:
-        case effects::effect_type::INSPIRING_VIRTUE:
-        case effects::effect_type::ASHES_OF_THE_JUST:
-        case effects::effect_type::SPEAR_OF_JUSTICE:
-            return tick_t{duration};
+        case effect::effect_t::BINDING_BLADE:
+        case effect::effect_t::VIRTUE_OF_JUSTICE:
+        case effect::effect_t::SYMBOLIC_AVENGER:
+        case effect::effect_t::INSPIRING_VIRTUE:
+        case effect::effect_t::ASHES_OF_THE_JUST:
+        case effect::effect_t::ARBITRARY_EFFECT:
+            return base_duration;
+
+        case effect::effect_t::INVALID:
+            throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
 
-[[nodiscard]] constexpr static inline bool is_boon(effects::effect_type effect_type) {
+[[nodiscard]] constexpr static inline bool is_boon(effect::effect_t effect_type) {
     switch (effect_type) {
-        case effects::effect_type::AEGIS:
-        case effects::effect_type::ALACRITY:
-        case effects::effect_type::FURY:
-        case effects::effect_type::MIGHT:
-        case effects::effect_type::QUICKNESS:
-        case effects::effect_type::RESOLUTION:
-        case effects::effect_type::RESISTANCE:
-        case effects::effect_type::PROTECTION:
-        case effects::effect_type::REGENERATION:
-        case effects::effect_type::VIGOR:
-        case effects::effect_type::SWIFTNESS:
-        case effects::effect_type::STABILITY:
+        case effect::effect_t::AEGIS:
+        case effect::effect_t::ALACRITY:
+        case effect::effect_t::FURY:
+        case effect::effect_t::MIGHT:
+        case effect::effect_t::QUICKNESS:
+        case effect::effect_t::RESOLUTION:
+        case effect::effect_t::RESISTANCE:
+        case effect::effect_t::PROTECTION:
+        case effect::effect_t::REGENERATION:
+        case effect::effect_t::VIGOR:
+        case effect::effect_t::SWIFTNESS:
+        case effect::effect_t::STABILITY:
             return true;
-
-        case effects::effect_type::BURNING:
-        case effects::effect_type::BLEEDING:
-        case effects::effect_type::TORMENT:
-        case effects::effect_type::POISON:
-        case effects::effect_type::CONFUSION:
-        case effects::effect_type::VULNERABILITY:
-        case effects::effect_type::CRIPPLED:
-        case effects::effect_type::BINDING_BLADE:
-        case effects::effect_type::VIRTUE_OF_JUSTICE:
-        case effects::effect_type::SYMBOLIC_AVENGER:
-        case effects::effect_type::INSPIRING_VIRTUE:
-        case effects::effect_type::ASHES_OF_THE_JUST:
-        case effects::effect_type::SPEAR_OF_JUSTICE:
+        case effect::effect_t::BURNING:
+        case effect::effect_t::BLEEDING:
+        case effect::effect_t::TORMENT:
+        case effect::effect_t::POISON:
+        case effect::effect_t::CONFUSION:
+        case effect::effect_t::VULNERABILITY:
+        case effect::effect_t::CRIPPLED:
+        case effect::effect_t::BINDING_BLADE:
+        case effect::effect_t::VIRTUE_OF_JUSTICE:
+        case effect::effect_t::SYMBOLIC_AVENGER:
+        case effect::effect_t::INSPIRING_VIRTUE:
+        case effect::effect_t::ASHES_OF_THE_JUST:
+        case effect::effect_t::ARBITRARY_EFFECT:
             return false;
+        case effect::effect_t::INVALID:
+            throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
 
-[[nodiscard]] constexpr static inline bool is_damaging_condition(effects::effect_type effect_type) {
+[[nodiscard]] constexpr static inline bool is_damaging_condition(effect::effect_t effect_type) {
     switch (effect_type) {
-        case effects::effect_type::BURNING:
-        case effects::effect_type::BLEEDING:
-        case effects::effect_type::TORMENT:
-        case effects::effect_type::POISON:
-        case effects::effect_type::CONFUSION:
-        case effects::effect_type::BINDING_BLADE:
+        case effect::effect_t::BURNING:
+        case effect::effect_t::BLEEDING:
+        case effect::effect_t::TORMENT:
+        case effect::effect_t::POISON:
+        case effect::effect_t::CONFUSION:
+        case effect::effect_t::BINDING_BLADE:
             return true;
-
-        case effects::effect_type::AEGIS:
-        case effects::effect_type::ALACRITY:
-        case effects::effect_type::FURY:
-        case effects::effect_type::MIGHT:
-        case effects::effect_type::QUICKNESS:
-        case effects::effect_type::RESOLUTION:
-        case effects::effect_type::RESISTANCE:
-        case effects::effect_type::PROTECTION:
-        case effects::effect_type::REGENERATION:
-        case effects::effect_type::VIGOR:
-        case effects::effect_type::SWIFTNESS:
-        case effects::effect_type::STABILITY:
-        case effects::effect_type::VULNERABILITY:
-        case effects::effect_type::CRIPPLED:
-        case effects::effect_type::VIRTUE_OF_JUSTICE:
-        case effects::effect_type::SYMBOLIC_AVENGER:
-        case effects::effect_type::INSPIRING_VIRTUE:
-        case effects::effect_type::ASHES_OF_THE_JUST:
-        case effects::effect_type::SPEAR_OF_JUSTICE:
+        case effect::effect_t::AEGIS:
+        case effect::effect_t::ALACRITY:
+        case effect::effect_t::FURY:
+        case effect::effect_t::MIGHT:
+        case effect::effect_t::QUICKNESS:
+        case effect::effect_t::RESOLUTION:
+        case effect::effect_t::RESISTANCE:
+        case effect::effect_t::PROTECTION:
+        case effect::effect_t::REGENERATION:
+        case effect::effect_t::VIGOR:
+        case effect::effect_t::SWIFTNESS:
+        case effect::effect_t::STABILITY:
+        case effect::effect_t::VULNERABILITY:
+        case effect::effect_t::CRIPPLED:
+        case effect::effect_t::VIRTUE_OF_JUSTICE:
+        case effect::effect_t::SYMBOLIC_AVENGER:
+        case effect::effect_t::INSPIRING_VIRTUE:
+        case effect::effect_t::ASHES_OF_THE_JUST:
+        case effect::effect_t::ARBITRARY_EFFECT:
             return false;
+        case effect::effect_t::INVALID:
+            throw std::runtime_error("cannot deal with invalid effects!");
     }
-}
-
-[[nodiscard]] static inline double calculate_condition_damage(effects::effect_type effect_type,
-                                                              effects::effect_stack effect_stack,
-                                                              registry_t& registry) {
-    if (!is_damaging_condition(effect_type)) {
-        return 0.0;
-    }
-
-    auto source_entity = get_source_entity(effect_stack.source, registry);
-    auto&& [source_effective_attributes, outgoing_condition_damage_multiplier] =
-        registry
-            .get<component::effective_attributes, component::outgoing_condition_damage_multiplier>(
-                source_entity);
-    switch (effect_type) {
-        case effects::effect_type::BURNING:
-            return (131.0 + 0.155 * source_effective_attributes.condition_damage) *
-                   outgoing_condition_damage_multiplier.multiplier *
-                   outgoing_condition_damage_multiplier.burning_multiplier *
-                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
-        case effects::effect_type::BLEEDING:
-            return (22.0 + 0.06 * source_effective_attributes.condition_damage) *
-                   outgoing_condition_damage_multiplier.multiplier *
-                   outgoing_condition_damage_multiplier.bleeding_multiplier *
-                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
-        case effects::effect_type::TORMENT:
-            // FIXME: This is stationary-only torment damage for golem logs only
-            return (31.8 + 0.09 * source_effective_attributes.condition_damage) *
-                   outgoing_condition_damage_multiplier.multiplier *
-                   outgoing_condition_damage_multiplier.torment_multiplier *
-                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
-        case effects::effect_type::POISON:
-            return (33.5 + 0.06 * source_effective_attributes.condition_damage) *
-                   outgoing_condition_damage_multiplier.multiplier *
-                   outgoing_condition_damage_multiplier.poison_multiplier *
-                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
-        case effects::effect_type::CONFUSION:
-            // FIXME: This is idle-only confusion damage for golem logs only
-            return (11.0 + 0.03 * source_effective_attributes.condition_damage) *
-                   outgoing_condition_damage_multiplier.multiplier *
-                   outgoing_condition_damage_multiplier.confusion_multiplier *
-                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
-        case effects::effect_type::BINDING_BLADE:
-            return (160.0 + 0.2 * source_effective_attributes.power) *
-                   (double)effect_stack.progress / (double)effects::effect_pulse_rate;
-        default:
-            spdlog::error("missing damage formula for effect_type: {}",
-                          nlohmann::json{effect_type}[0].dump());
-            throw std::exception();
-    }
-}
-
-[[nodiscard]] static inline double calculate_condition_damage(auto effect_type,
-                                                              auto effect_stacks,
-                                                              registry_t& registry) {
-    for (const auto& effect_stack : effect_stacks) {
-        return calculate_condition_damage(effect_type, effect_stack, registry);
-    }
-}
-
-[[nodiscard]] static inline size_t get_num_stacks_of_effect(
-    effects::effect_type effect_type,
-    const component::effects_component& effects_component) {
-    return std::min(effects_component.effects.count(effect_type),
-                    get_max_considered_stacks_of_effect_type(effect_type));
-}
-
-[[nodiscard]] static inline size_t get_num_stacks_of_effect(
-    effects::effect_type effect_type,
-    const component::effects_component* effects_component) {
-    if (effects_component == nullptr) {
-        return 0;
-    }
-    return get_num_stacks_of_effect(effect_type, *effects_component);
-}
-
-[[nodiscard]] static inline size_t get_num_stacks_of_effect(effects::effect_type effect_type,
-                                                            entity_t entity,
-                                                            registry_t& registry) {
-    auto effects_component_ptr = registry.try_get<component::effects_component>(entity);
-    return get_num_stacks_of_effect(effect_type, effects_component_ptr);
-}
-
-[[nodiscard]] static inline bool has_effect(effects::effect_type effect_type,
-                                            const component::effects_component& effects_component) {
-    return effects_component.effects.contains(effect_type);
-}
-
-[[nodiscard]] static inline bool has_effect(effects::effect_type effect_type,
-                                            const component::effects_component* effects_component) {
-    if (effects_component == nullptr) {
-        return false;
-    }
-    return has_effect(effect_type, *effects_component);
-}
-
-[[nodiscard]] static inline bool has_effect(effects::effect_type effect_type,
-                                            entity_t entity,
-                                            registry_t& registry) {
-    auto effects_component_ptr = registry.try_get<component::effects_component>(entity);
-    return has_effect(effect_type, effects_component_ptr);
-}
-
-[[nodiscard]] static inline bool is_effect_affected_by_incoming_multiplier(
-    effects::effect_type effect_type) {
-    return effect_type != effects::effect_type::BINDING_BLADE;
-}
-
-static inline void apply_effects(const effects::effect_application& effect_application,
-                                 component::effects_component& effects_component) {
-    effects::effect_type effect_type = effect_application.effect_type;
-    auto& effects = effects_component.effects;
-    if (get_effect_stacking_type(effect_type) ==
-        effects::effect_stacking_type::STACKING_INTENSITY) {
-        for (size_t i = 0; i < effect_application.num_stacks; ++i) {
-            if (get_num_stacks_of_effect(effect_type, effects_component) <
-                get_max_stored_stacks_of_effect_type(effect_type)) {
-                effects.emplace(
-                    effect_type,
-                    effects::effect_stack{effect_application.source, effect_application.duration});
-            }
-        }
-    } else if (!effects.contains(effect_type)) {
-        effects.emplace(
-            effect_type,
-            effects::effect_stack{
-                effect_application.source,
-                (tick_t)std::min(effect_application.duration * effect_application.num_stacks,
-                                 get_max_effect_duration(effect_type))});
-    } else if (get_effect_stacking_type(effect_type) ==
-               effects::effect_stacking_type::STACKING_DURATION) {
-        effects.find(effect_type)->second.duration =
-            std::min(effects.find(effect_type)->second.duration +
-                         effect_application.duration * effect_application.num_stacks,
-                     get_max_effect_duration(effect_type));
-    } else {
-        throw std::runtime_error("unexpected error!");
-    }
-}
-
-static inline void remove_all_effect_stacks(effects::effect_type effect_type,
-                                            entity_t entity,
-                                            registry_t& registry) {
-    registry.get<component::effects_component>(entity).effects.erase(effect_type);
 }
 
 }  // namespace gw2combat::utils

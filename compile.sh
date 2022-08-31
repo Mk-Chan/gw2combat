@@ -4,7 +4,7 @@ set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-./dependencies-install.sh
+./setup-dependencies.sh
 
 TARGET=${1:-all}
 BUILD_TYPE=${2:-Debug}

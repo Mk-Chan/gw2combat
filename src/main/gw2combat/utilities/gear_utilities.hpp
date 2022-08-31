@@ -3,144 +3,131 @@
 
 #include "base_utilities.hpp"
 
-#include "gw2combat/component/gear/weapon_configurations.hpp"
-#include "gw2combat/weapon.hpp"
+#include "gw2combat/actor/rune.hpp"
+#include "gw2combat/actor/weapon.hpp"
+
+#include "gw2combat/component/actor/rune_component.hpp"
+#include "gw2combat/component/equipment/weapons.hpp"
 
 namespace gw2combat::utils {
 
-[[nodiscard]] static inline bool has_weapon_type(weapon_type type,
-                                                 weapon_position position,
-                                                 entity_t entity,
-                                                 registry_t& registry) {
-    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
-        return false;
-    }
-    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
-    auto& weapon_configurations =
-        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
-    return std::any_of(weapon_configurations.begin(),
-                       weapon_configurations.end(),
-                       [&](const weapon_configuration& configuration) {
-                           return configuration.set == current_set && configuration.type == type &&
-                                  configuration.position == position;
-                       });
-}
-
-[[nodiscard]] static inline bool has_weapon_type(weapon_type type,
-                                                 entity_t entity,
-                                                 registry_t& registry) {
-    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
-        return false;
-    }
-    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
-    auto& weapon_configurations =
-        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
-    return std::any_of(weapon_configurations.begin(),
-                       weapon_configurations.end(),
-                       [&](const weapon_configuration& configuration) {
-                           return configuration.set == current_set && configuration.type == type;
-                       });
-}
-
-[[nodiscard]] static inline bool is_one_handed_weapon(weapon_type type) {
+[[nodiscard]] static inline bool is_one_handed_weapon(actor::weapon_type type) {
     switch (type) {
-        case weapon_type::EMPTY_HANDED:
-        case weapon_type::GREATSWORD:
-        case weapon_type::TOME:
-        case weapon_type::KIT_CONJURE:
+        case actor::weapon_type::EMPTY_HANDED:
+        case actor::weapon_type::GREATSWORD:
+        case actor::weapon_type::TOME:
+        case actor::weapon_type::KIT_CONJURE:
             return false;
-        case weapon_type::SWORD:
-        case weapon_type::AXE:
-        case weapon_type::TORCH:
-        case weapon_type::FOCUS:
-        case weapon_type::SCEPTER:
+        case actor::weapon_type::SWORD:
+        case actor::weapon_type::AXE:
+        case actor::weapon_type::TORCH:
+        case actor::weapon_type::FOCUS:
+        case actor::weapon_type::SCEPTER:
             return true;
         default:
             throw std::runtime_error("Unknown weapon type");
     }
 }
 
-[[nodiscard]] static inline bool is_two_handed_weapon(weapon_type type) {
+[[nodiscard]] static inline bool is_two_handed_weapon(actor::weapon_type type) {
     return !is_one_handed_weapon(type);
 }
 
-[[nodiscard]] static inline bool has_one_handed_weapon(weapon_position position,
-                                                       entity_t entity,
-                                                       registry_t& registry) {
-    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+[[nodiscard]] static inline bool has_weapon_type_active(actor::weapon_type type,
+                                                        actor::weapon_position position,
+                                                        entity_t entity,
+                                                        registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapons>(entity)) {
         return false;
     }
-    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
-    auto& weapon_configurations =
-        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
-    return std::any_of(weapon_configurations.begin(),
-                       weapon_configurations.end(),
-                       [&](const weapon_configuration& configuration) {
-                           return configuration.set == current_set &&
-                                  is_one_handed_weapon(configuration.type) &&
-                                  configuration.position == position;
-                       });
+    auto current_set = registry.get<component::current_weapon_set>(entity).set;
+    auto& weapons = registry.get<component::equipped_weapons>(entity).weapons;
+    return std::any_of(weapons.begin(), weapons.end(), [&](const actor::weapon& weapon) {
+        return weapon.set == current_set && weapon.type == type && weapon.position == position;
+    });
 }
 
-[[nodiscard]] static inline bool has_one_handed_weapon(entity_t entity, registry_t& registry) {
-    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+[[nodiscard]] static inline bool has_weapon_type_active(actor::weapon_type type,
+                                                        entity_t entity,
+                                                        registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapons>(entity)) {
         return false;
     }
-    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
-    auto& weapon_configurations =
-        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
-    return std::any_of(weapon_configurations.begin(),
-                       weapon_configurations.end(),
-                       [&](const weapon_configuration& configuration) {
-                           return configuration.set == current_set &&
-                                  is_one_handed_weapon(configuration.type);
-                       });
+    auto current_set = registry.get<component::current_weapon_set>(entity).set;
+    auto& weapons = registry.get<component::equipped_weapons>(entity).weapons;
+    return std::any_of(weapons.begin(), weapons.end(), [&](const actor::weapon& weapon) {
+        return weapon.set == current_set && weapon.type == type;
+    });
 }
 
-[[nodiscard]] static inline bool has_two_handed_weapon(entity_t entity, registry_t& registry) {
-    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+[[nodiscard]] static inline bool has_one_handed_weapon_active(actor::weapon_position position,
+                                                              entity_t entity,
+                                                              registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapons>(entity)) {
         return false;
     }
-    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
-    auto& weapon_configurations =
-        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
-    return std::any_of(weapon_configurations.begin(),
-                       weapon_configurations.end(),
-                       [&](const weapon_configuration& configuration) {
-                           return configuration.set == current_set &&
-                                  is_two_handed_weapon(configuration.type);
-                       });
+    auto current_set = registry.get<component::current_weapon_set>(entity).set;
+    auto& weapons = registry.get<component::equipped_weapons>(entity).weapons;
+    return std::any_of(weapons.begin(), weapons.end(), [&](const actor::weapon& weapon) {
+        return weapon.set == current_set && is_one_handed_weapon(weapon.type) &&
+               weapon.position == position;
+    });
 }
 
-[[nodiscard]] static inline bool has_sigil_at_all(weapon_sigil sigil,
+[[nodiscard]] static inline bool has_one_handed_weapon_active(entity_t entity,
+                                                              registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapons>(entity)) {
+        return false;
+    }
+    auto current_set = registry.get<component::current_weapon_set>(entity).set;
+    auto& weapons = registry.get<component::equipped_weapons>(entity).weapons;
+    return std::any_of(weapons.begin(), weapons.end(), [&](const actor::weapon& weapon) {
+        return weapon.set == current_set && is_one_handed_weapon(weapon.type);
+    });
+}
+
+[[nodiscard]] static inline bool has_two_handed_weapon_active(entity_t entity,
+                                                              registry_t& registry) {
+    if (!registry.any_of<component::equipped_weapons>(entity)) {
+        return false;
+    }
+    auto current_set = registry.get<component::current_weapon_set>(entity).set;
+    auto& weapons = registry.get<component::equipped_weapons>(entity).weapons;
+    return std::any_of(weapons.begin(), weapons.end(), [&](const actor::weapon& weapon) {
+        return weapon.set == current_set && is_two_handed_weapon(weapon.type);
+    });
+}
+
+[[nodiscard]] static inline bool has_sigil_at_all(actor::weapon_sigil sigil,
                                                   entity_t entity,
                                                   registry_t& registry) {
-    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+    if (!registry.any_of<component::equipped_weapons>(entity)) {
         return false;
     }
-    auto& weapon_configurations =
-        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
-    return ranges::find_if(weapon_configurations, [&](const weapon_configuration& configuration) {
-               return configuration.sigil == sigil;
-           }) != ranges::end(weapon_configurations);
+    auto& weapons = registry.get<component::equipped_weapons>(entity).weapons;
+    return std::any_of(weapons.begin(), weapons.end(), [&](const actor::weapon& weapon) {
+        return weapon.sigil == sigil;
+    });
 }
 
-[[nodiscard]] static inline bool has_sigil_equipped(weapon_sigil sigil,
+[[nodiscard]] static inline bool has_sigil_equipped(actor::weapon_sigil sigil,
                                                     entity_t entity,
                                                     registry_t& registry) {
-    if (!registry.any_of<component::equipped_weapon_set>(entity)) {
+    if (!registry.any_of<component::equipped_weapons>(entity)) {
         return false;
     }
-    auto current_set = registry.get<component::equipped_weapon_set>(entity).current_set;
-    auto& weapon_configurations =
-        registry.get<component::available_weapon_configurations>(entity).weapon_configurations;
-    return ranges::find_if(weapon_configurations, [&](const weapon_configuration& configuration) {
-               return configuration.set == current_set && configuration.sigil == sigil;
-           }) != ranges::end(weapon_configurations);
+    auto& weapons = registry.get<component::equipped_weapons>(entity).weapons;
+    auto current_set = registry.get<component::current_weapon_set>(entity).set;
+    return std::any_of(weapons.begin(), weapons.end(), [&](const actor::weapon& weapon) {
+        return weapon.sigil == sigil && weapon.set == current_set;
+    });
 }
 
-[[nodiscard]] static inline double get_weapon_strength(weapon_type type) {
-    auto& range = weapon_type_to_strength_range_map.at(type);
+[[nodiscard]] static inline double get_weapon_strength(actor::weapon_type type) {
+    if (type == actor::weapon_type::INVALID) {
+        throw std::runtime_error("got invalid weapon_type");
+    }
+    auto& range = actor::weapon_type_to_strength_range_map.at(type);
     if constexpr (DETERMINISTIC_SIMULATION) {
         return (range[0] + range[1]) / 2.0;
     } else {
@@ -148,7 +135,9 @@ namespace gw2combat::utils {
     }
 }
 
-[[nodiscard]] static inline bool has_rune(rune_type rune, entity_t entity, registry_t& registry) {
+[[nodiscard]] static inline bool has_rune(actor::rune_t rune,
+                                          entity_t entity,
+                                          registry_t& registry) {
     return registry.any_of<component::rune_component>(entity) &&
            registry.get<component::rune_component>(entity).rune == rune;
 }
