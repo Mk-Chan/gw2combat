@@ -1,0 +1,120 @@
+{
+  "unique_effect_configurations": [
+    {
+      "unique_effect_key": {
+        "name": "Spear of Justice Passive Effect"
+      },
+      "max_considered_stacks": 1,
+      "skill_triggers": [
+        {
+          "filters": {
+            "strike_counter_configuration": {
+              "required_count": 5
+            },
+            "depends_on_skill_off_cooldown": {
+              "base_class": "GUARDIAN",
+              "name": "Spear of Justice"
+            }
+          },
+          "skill": {
+            "base_class": "GUARDIAN",
+            "name": "Justice Passive"
+          }
+        }
+      ]
+    },
+    {
+      "unique_effect_key": {
+        "name": "SYMBOLIC_AVENGER"
+      },
+      "max_considered_stacks": 5,
+      "damage_modifiers": [
+        {
+          "filters": {
+            "source_actor_unique_effect": {
+              "name": "SYMBOLIC_AVENGER"
+            }
+          },
+          "strike_damage_multiplier_add_group_addend": 0.02
+        }
+      ]
+    },
+    {
+      "unique_effect_key": {
+        "name": "Spear of Justice Effect"
+      },
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
+        "name": "rune-scholar"
+      },
+      "damage_modifiers": [
+        {
+          "strike_damage_multiplier": 1.05
+        }
+      ],
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
+        "name": "sweet-and-spicy-butternut-squash-soup"
+      },
+      "attribute_modifiers": [
+        {
+          "power_addend": 100,
+          "ferocity_addend": 70
+        }
+      ],
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
+        "name": "superior-sharpening-stone"
+      },
+      "attribute_conversions": [
+        {
+          "from": "precision",
+          "to": "power",
+          "multiplier": 0.03,
+          "addend": 0
+        },
+        {
+          "from": "ferocity",
+          "to": "power",
+          "multiplier": 0.06,
+          "addend": 0
+        }
+      ],
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
+        "name": "sigil-force"
+      },
+      "damage_modifiers": [
+        {
+          "filters": {
+            "weapon_sigil": "FORCE"
+          },
+          "strike_damage_multiplier_add_group_addend": 0.05
+        }
+      ],
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
+        "name": "sigil-impact"
+      },
+      "damage_modifiers": [
+        {
+          "filters": {
+            "weapon_sigil": "IMPACT"
+          },
+          "strike_damage_multiplier_add_group_addend": 0.03
+        }
+      ],
+      "max_considered_stacks": 1
+    }
+  ]
+}

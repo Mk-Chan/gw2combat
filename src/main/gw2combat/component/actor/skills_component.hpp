@@ -3,6 +3,8 @@
 
 #include "gw2combat/common.hpp"
 
+#include "gw2combat/utilities/base_utilities.hpp"
+
 #include "gw2combat/actor/skill.hpp"
 
 namespace gw2combat::component {
@@ -13,14 +15,14 @@ struct skill_entity {
 };
 
 struct skills_component {
-    [[nodiscard]] inline std::vector<entity_t> find_by(const actor::skill_t& skill) const {
-        std::vector<entity_t> entities;
+    [[nodiscard]] inline entity_t find_by(const actor::skill_t& skill) const {
         for (auto& skill_entity : skill_entities) {
             if (skill_entity.skill == skill) {
-                entities.emplace_back(skill_entity.entity);
+                return skill_entity.entity;
             }
         }
-        return entities;
+        throw std::runtime_error(
+            fmt::format("skill with key {} not found!", utils::to_string(skill)));
     }
 
     std::vector<skill_entity> skill_entities;

@@ -1,6 +1,7 @@
 #include "system.hpp"
 
 #include "gw2combat/utilities/base_utilities.hpp"
+#include "gw2combat/utilities/logging_utilities.hpp"
 
 #include "gw2combat/component/actor/animation.hpp"
 #include "gw2combat/component/actor/no_more_rotation.hpp"
@@ -10,8 +11,7 @@
 
 namespace gw2combat::system {
 
-void continue_rotation(registry_t& registry) {
-    auto& skill_database = actor::skill_database::instance();
+void continue_rotation(registry_t& registry, bool enable_cooldowns) {
     registry
         .view<component::rotation_component>(
             entt::exclude<component::animation, component::no_more_rotation>)
@@ -31,23 +31,41 @@ void continue_rotation(registry_t& registry) {
             auto& next_skill_cast =
                 rotation_component.rotation.skill_casts[rotation_component.current_idx];
             auto next_skill = next_skill_cast.skill;
-
             if (!utils::actor_has_skill(entity, next_skill, registry)) {
                 throw std::runtime_error(fmt::format("{} does not have skill {}",
                                                      utils::get_entity_name(entity, registry),
                                                      utils::to_string(next_skill)));
             }
 
-            if (current_tick < next_skill_cast.cast_time_ms + rotation_component.offset ||
-                utils::skill_has_cooldown(entity, next_skill, registry) ||
-                utils::skill_has_recharge(entity, next_skill, registry)) {
-                return;
+            if (current_tick < next_skill_cast.cast_time_ms + rotation_component.offset) {
+                // return;
             }
 
+            if (enable_cooldowns) {
+                if (!utils::can_cast_skill(entity, next_skill, registry)) {
+                    // utils::skill_has_cooldown(entity, next_skill, registry) ||
+                    // utils::skill_has_recharge(entity, next_skill, registry)) {
+                    utils::log_component<component::cooldown>(registry);
+                    throw std::runtime_error(fmt::format("{} cannot cast skill {}",
+                                                         utils::get_entity_name(entity, registry),
+                                                         utils::to_string(next_skill)));
+                } else {
+                    utils::put_skill_on_cooldown(entity, next_skill, registry);
+                }
+            }
+
+            spdlog::info("[{}] {} casting skill {}",
+                         utils::get_current_tick(registry),
+                         utils::get_entity_name(entity, registry),
+                         utils::to_string(next_skill));
             registry.emplace<component::animation>(
                 entity,
-                component::animation{next_skill, skill_database.find_by(next_skill).cast_duration});
-            utils::put_skill_on_cooldown(entity, next_skill, registry);
+                component::animation{
+                    next_skill,
+                    registry.get<actor::skill_database>(utils::get_owner(entity, registry))
+                        .find_by(next_skill)
+                        .cast_duration});
+
             rotation_component.current_idx += 1;
         });
 }

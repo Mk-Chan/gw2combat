@@ -1,11 +1,12 @@
+#include "skill_database.hpp"
+
 #include "gw2combat/utilities/base_utilities.hpp"
-#include "skill.hpp"
 
 #include <fstream>
 
 namespace gw2combat::actor {
 
-skill_database& skill_database::instance() {
+skill_database skill_database::copy() {
     static skill_database database;
     static bool initialized = false;
 
@@ -46,6 +47,17 @@ std::vector<skill_configuration_t> skill_database::find_by(
                              skill_configuration.weapon_position == weapon_position);
                  });
     return weapon_skills;
+}
+
+std::vector<skill_configuration_t> skill_database::find_by(const skill_tag_t& skill_tag) const {
+    std::vector<skill_configuration_t> tagged_skills;
+    std::copy_if(skill_configurations.cbegin(),
+                 skill_configurations.cend(),
+                 std::back_inserter(tagged_skills),
+                 [&](const skill_configuration_t& skill_configuration) {
+                     return skill_configuration.tags.contains(skill_tag);
+                 });
+    return tagged_skills;
 }
 
 }  // namespace gw2combat::actor

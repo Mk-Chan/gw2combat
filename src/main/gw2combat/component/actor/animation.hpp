@@ -8,7 +8,7 @@ namespace gw2combat::component {
 struct animation {
     actor::skill_t skill;
     std::array<int, 2> duration;
-    std::array<int, 2> progress;
+    std::array<int, 2> progress = {0, 0};
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(animation, skill, duration, progress)

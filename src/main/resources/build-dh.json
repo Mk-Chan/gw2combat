@@ -26,14 +26,14 @@
     "Pure of Sight"
   ],
   "attributes": {
-    "power": 2848,
-    "precision": 1749,
+    "power": 2448,
+    "precision": 1669,
     "toughness": 1000,
     "vitality": 1802,
     "concentration": 0,
     "condition_damage": 0,
     "expertise": 0,
-    "ferocity": 1449,
+    "ferocity": 1379,
     "healing_power": 0,
     "armor": 2271,
     "max_health": 19665,
@@ -74,8 +74,27 @@
     }
   ],
   "equipped_slot_skill_names": [
+    "Bane Signet",
     "Sword of Justice",
-    "Smite Condition"
+    "Procession of Blades",
+    "Dragon's Maw"
+  ],
+  "permanent_unique_effects": [
+    {
+      "name": "rune-scholar"
+    },
+    {
+      "name": "sigil-force"
+    },
+    {
+      "name": "sigil-impact"
+    },
+    {
+      "name": "sweet-and-spicy-butternut-squash-soup"
+    },
+    {
+      "name": "superior-sharpening-stone"
+    }
   ],
   "rune": "scholar",
   "nourishment": "sweet-and-spicy-butternut-squash-soup",

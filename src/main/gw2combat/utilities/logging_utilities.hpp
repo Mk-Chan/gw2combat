@@ -6,6 +6,8 @@
 #include <string>
 #include <string_view>
 
+#include "entity_utilities.hpp"
+
 #include "gw2combat/component/actor/animation.hpp"
 #include "gw2combat/component/actor/effective_attributes.hpp"
 

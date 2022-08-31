@@ -42,7 +42,6 @@ enum class effect_t : std::uint32_t
     SYMBOLIC_AVENGER,
     INSPIRING_VIRTUE,
     ASHES_OF_THE_JUST,
-    SPEAR_OF_JUSTICE,
 
     ARBITRARY_EFFECT,
 };
@@ -78,7 +77,6 @@ NLOHMANN_JSON_SERIALIZE_ENUM(effect_t,
                                  {effect_t::SYMBOLIC_AVENGER, "SYMBOLIC_AVENGER"},
                                  {effect_t::INSPIRING_VIRTUE, "INSPIRING_VIRTUE"},
                                  {effect_t::ASHES_OF_THE_JUST, "ASHES_OF_THE_JUST"},
-                                 {effect_t::SPEAR_OF_JUSTICE, "SPEAR_OF_JUSTICE"},
 
                                  {effect_t::ARBITRARY_EFFECT, "ARBITRARY_EFFECT"},
                              })

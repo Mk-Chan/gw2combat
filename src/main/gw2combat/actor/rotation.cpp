@@ -1,5 +1,7 @@
 #include "rotation.hpp"
 
+#include "skill_database.hpp"
+
 #include <fstream>
 
 namespace gw2combat::actor {
@@ -7,6 +9,8 @@ namespace gw2combat::actor {
 rotation_t rotation_t::read(const std::string& path, base_class_t base_class) {
     const auto file_path = std::filesystem::path(path);
     std::ifstream ifstream{file_path, std::ios::in};
+
+    auto skill_database_instance = skill_database::copy();
 
     rotation_t rotation;
     int cast_time_offset_ms;
@@ -22,7 +26,10 @@ rotation_t rotation_t::read(const std::string& path, base_class_t base_class) {
                 fmt::format("unable to read rotation. line_num: {}", line_num));
         }
 
-        skill_t skill{base_class, line.substr(0, delimiter_pos)};
+        std::string skill_name = line.substr(0, delimiter_pos);
+        skill_t skill{
+            skill_database_instance.find_by(skill_t{base_class, skill_name}).skill_key.base_class,
+            skill_name};
         std::string time_str = line.substr(delimiter_pos + 2);
 
         auto last_delimiter_pos = time_str.find(',');

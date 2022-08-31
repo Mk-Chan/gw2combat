@@ -7,6 +7,8 @@ namespace gw2combat::actor {
 
 enum class attribute_t : std::uint8_t
 {
+    INVALID,
+
     POWER,
     PRECISION,
     TOUGHNESS,
@@ -54,6 +56,8 @@ struct attributes_configuration_t {
 
 NLOHMANN_JSON_SERIALIZE_ENUM(attribute_t,
                              {
+                                 {attribute_t::INVALID, "invalid"},
+
                                  {attribute_t::POWER, "power"},
                                  {attribute_t::PRECISION, "precision"},
                                  {attribute_t::TOUGHNESS, "toughness"},

@@ -3,56 +3,49 @@
 
 #include "base_utilities.hpp"
 
+#include "gw2combat/actor/skill_database.hpp"
+
 #include "gw2combat/component/actor/skills_component.hpp"
 #include "gw2combat/component/cooldown.hpp"
-
-#include "gw2combat/actor/skill.hpp"
+#include "gw2combat/component/skill/ammo.hpp"
 #include "gw2combat/component/skill/recharge.hpp"
 
 namespace gw2combat::utils {
 
-[[nodiscard]] static inline bool skill_has_tag(const actor::skill_t& skill,
-                                               actor::skill_tag_t skill_tag) {
-    auto& skill_tags = actor::skill_database::instance().find_by(skill).tags;
-    return std::find_if(skill_tags.cbegin(),
-                        skill_tags.cend(),
-                        [&](const actor::skill_tag_t& current_skill_tag) {
-                            return current_skill_tag == skill_tag;
-                        }) != skill_tags.cend();
-}
-
-[[nodiscard]] static inline bool skill_has_cooldown(entity_t actor_entity,
-                                                    const actor::skill_t& skill,
-                                                    registry_t& registry) {
-    auto entities = registry.get<component::skills_component>(actor_entity).find_by(skill);
-    return std::all_of(entities.begin(), entities.end(), [&](entity_t entity) {
-        return registry.any_of<component::cooldown>(entity);
-    });
-}
-
-[[nodiscard]] static inline bool skill_has_recharge(entity_t actor_entity,
-                                                    const actor::skill_t& skill,
-                                                    registry_t& registry) {
-    auto entities = registry.get<component::skills_component>(actor_entity).find_by(skill);
-    return std::all_of(entities.begin(), entities.end(), [&](entity_t entity) {
-        return registry.any_of<component::recharge>(entity);
-    });
+[[nodiscard]] static inline bool can_cast_skill(entity_t actor_entity,
+                                                const actor::skill_t& skill,
+                                                registry_t& registry) {
+    auto skill_entity = registry.get<component::skills_component>(actor_entity).find_by(skill);
+    if (registry.any_of<component::recharge>(skill_entity)) {
+        return false;
+    }
+    auto& skill_ammo = registry.get<component::ammo>(skill_entity);
+    return skill_ammo.current_ammo > 0;
 }
 
 static inline void put_skill_on_cooldown(entity_t actor_entity,
                                          const actor::skill_t& skill,
                                          registry_t& registry) {
-    auto entities = registry.get<component::skills_component>(actor_entity).find_by(skill);
-    for (auto entity : entities) {
-        if (!registry.any_of<component::cooldown>(entity)) {
-            registry.emplace<component::cooldown>(
-                entity,
-                component::cooldown{actor::skill_database::instance().find_by(skill).cooldown});
-            return;
-        }
+    auto skill_entity = registry.get<component::skills_component>(actor_entity).find_by(skill);
+
+    auto& skill_ammo = registry.get<component::ammo>(skill_entity);
+    if (skill_ammo.current_ammo <= 0) {
+        throw std::runtime_error(fmt::format("actor {} skill {} doesn't have any more ammo",
+                                             get_entity_name(actor_entity, registry),
+                                             to_string(skill)));
     }
-    throw std::runtime_error(
-        fmt::format("all entities of skill {} already on cooldown", utils::to_string(skill)));
+
+    --skill_ammo.current_ammo;
+
+    auto& skill_configuration =
+        registry.get<actor::skill_database>(utils::get_owner(actor_entity, registry))
+            .find_by(skill);
+    registry.emplace<component::recharge>(
+        skill_entity, component::recharge{skill_configuration.recharge_duration});
+    if (!registry.any_of<component::cooldown>(skill_entity)) {
+        registry.emplace<component::cooldown>(skill_entity,
+                                              component::cooldown{skill_configuration.cooldown});
+    }
 }
 
 [[nodiscard]] static inline bool actor_has_skill(entity_t actor_entity,

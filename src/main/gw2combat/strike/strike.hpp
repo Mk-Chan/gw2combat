@@ -7,18 +7,25 @@
 namespace gw2combat::strike {
 
 struct strike_t {
-    entity_t entity;
     actor::skill_t skill;
     double base_outgoing_damage;
     double critical_chance_pct;
-    double outgoing_strike_damage_multiplier;
+    double critical_damage_pct;
     std::vector<effect::application_t> on_hit_effect_applications;
-    std::vector<effect::application_t> on_pulse_effect_applications;
+    int num_targets = 1;
 
     constexpr inline bool operator==(const strike_t& rhs) const {
-        return this->entity == rhs.entity && this->skill == rhs.skill;
+        return this->skill == rhs.skill;
     }
 };
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(strike_t,
+                                                skill,
+                                                base_outgoing_damage,
+                                                critical_chance_pct,
+                                                critical_damage_pct,
+                                                on_hit_effect_applications,
+                                                num_targets)
 
 }  // namespace gw2combat::strike
 

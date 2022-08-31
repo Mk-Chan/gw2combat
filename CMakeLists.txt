@@ -55,17 +55,33 @@ add_executable(
     gw2combat
 
     src/main/gw2combat/main.cpp
+    src/main/gw2combat/build_actors.cpp
+    src/main/gw2combat/build_skills.cpp
     src/main/gw2combat/combat_loop.cpp
 
     src/main/gw2combat/actor/build.cpp
     src/main/gw2combat/actor/rotation.cpp
     src/main/gw2combat/actor/skill_database.cpp
+    src/main/gw2combat/actor/trait_database.cpp
+    src/main/gw2combat/actor/unique_effect_database.cpp
 
     src/main/gw2combat/system/calculate_effective_attributes.cpp
+    src/main/gw2combat/system/calculate_incoming_damage_modifiers.cpp
+    src/main/gw2combat/system/calculate_outgoing_damage_modifiers.cpp
+    src/main/gw2combat/system/do_skill.cpp
+    src/main/gw2combat/system/dispatch_strikes_and_effects.cpp
+    src/main/gw2combat/system/apply_incoming_effects.cpp
+    src/main/gw2combat/system/apply_incoming_strikes.cpp
+    src/main/gw2combat/system/apply_condition_damage_pulse.cpp
+    src/main/gw2combat/system/expire_effects_with_no_duration.cpp
+
+    src/main/gw2combat/system/combat_stats.cpp
+    src/main/gw2combat/system/destroy_after_rotation.cpp
     src/main/gw2combat/system/continue_rotation.cpp
     src/main/gw2combat/system/do_animation.cpp
     src/main/gw2combat/system/progress_cooldowns.cpp
     src/main/gw2combat/system/progress_recharges.cpp
+    src/main/gw2combat/system/progress_durations.cpp
 )
 target_link_libraries(gw2combat PRIVATE EnTT::EnTT fmt::fmt nlohmann_json::nlohmann_json spdlog::spdlog)
 
@@ -73,17 +89,33 @@ add_executable(
     gw2combat_deterministic
 
     src/main/gw2combat/main.cpp
+    src/main/gw2combat/build_actors.cpp
+    src/main/gw2combat/build_skills.cpp
     src/main/gw2combat/combat_loop.cpp
 
     src/main/gw2combat/actor/build.cpp
     src/main/gw2combat/actor/rotation.cpp
     src/main/gw2combat/actor/skill_database.cpp
+    src/main/gw2combat/actor/trait_database.cpp
+    src/main/gw2combat/actor/unique_effect_database.cpp
 
     src/main/gw2combat/system/calculate_effective_attributes.cpp
+    src/main/gw2combat/system/calculate_incoming_damage_modifiers.cpp
+    src/main/gw2combat/system/calculate_outgoing_damage_modifiers.cpp
+    src/main/gw2combat/system/do_skill.cpp
+    src/main/gw2combat/system/dispatch_strikes_and_effects.cpp
+    src/main/gw2combat/system/apply_incoming_effects.cpp
+    src/main/gw2combat/system/apply_incoming_strikes.cpp
+    src/main/gw2combat/system/apply_condition_damage_pulse.cpp
+    src/main/gw2combat/system/expire_effects_with_no_duration.cpp
+
+    src/main/gw2combat/system/combat_stats.cpp
+    src/main/gw2combat/system/destroy_after_rotation.cpp
     src/main/gw2combat/system/continue_rotation.cpp
     src/main/gw2combat/system/do_animation.cpp
     src/main/gw2combat/system/progress_cooldowns.cpp
     src/main/gw2combat/system/progress_recharges.cpp
+    src/main/gw2combat/system/progress_durations.cpp
 )
 target_link_libraries(gw2combat_deterministic PRIVATE EnTT::EnTT fmt::fmt nlohmann_json::nlohmann_json spdlog::spdlog)
 target_compile_definitions(gw2combat_deterministic PUBLIC DETERMINISTIC)
@@ -95,34 +127,43 @@ add_executable(
     src/test/gw2combat/test_skills.cpp
     src/test/gw2combat/test_rotation.cpp
 
+    src/main/gw2combat/build_actors.cpp
+    src/main/gw2combat/build_skills.cpp
     src/main/gw2combat/combat_loop.cpp
 
     src/main/gw2combat/actor/build.cpp
     src/main/gw2combat/actor/rotation.cpp
     src/main/gw2combat/actor/skill_database.cpp
+    src/main/gw2combat/actor/trait_database.cpp
+    src/main/gw2combat/actor/unique_effect_database.cpp
 
     src/main/gw2combat/system/calculate_effective_attributes.cpp
+    src/main/gw2combat/system/calculate_incoming_damage_modifiers.cpp
+    src/main/gw2combat/system/calculate_outgoing_damage_modifiers.cpp
+    src/main/gw2combat/system/do_skill.cpp
+    src/main/gw2combat/system/dispatch_strikes_and_effects.cpp
+    src/main/gw2combat/system/apply_incoming_effects.cpp
+    src/main/gw2combat/system/apply_incoming_strikes.cpp
+    src/main/gw2combat/system/apply_condition_damage_pulse.cpp
+    src/main/gw2combat/system/expire_effects_with_no_duration.cpp
 
+    src/main/gw2combat/system/combat_stats.cpp
+    src/main/gw2combat/system/destroy_after_rotation.cpp
     src/main/gw2combat/system/continue_rotation.cpp
     src/main/gw2combat/system/do_animation.cpp
     src/main/gw2combat/system/progress_cooldowns.cpp
     src/main/gw2combat/system/progress_recharges.cpp
+    src/main/gw2combat/system/progress_durations.cpp
 )
 target_link_libraries(gw2combat_test PRIVATE Catch2::Catch2WithMain EnTT::EnTT fmt::fmt nlohmann_json::nlohmann_json)
 
-
-FILE(
-    COPY
-    src/main/resources/skills.json
-    src/main/resources/build-cfb.json
-    src/main/resources/build-dh.json
-    src/main/resources/build-technician.json
-    src/main/resources/build-golem.json
-
-    src/main/resources/rotation-cfb.csv
-    src/main/resources/rotation-dh.csv
-
-    DESTINATION
-    "${CMAKE_BINARY_DIR}"
-)
+configure_file(src/main/resources/skills.json skills.json COPYONLY)
+configure_file(src/main/resources/traits.json traits.json COPYONLY)
+configure_file(src/main/resources/unique_effects.json unique_effects.json COPYONLY)
+configure_file(src/main/resources/build-dh.json build-dh.json COPYONLY)
+configure_file(src/main/resources/build-cfb.json build-cfb.json COPYONLY)
+configure_file(src/main/resources/build-golem.json build-golem.json COPYONLY)
+configure_file(src/main/resources/build-technician.json build-technician.json COPYONLY)
+configure_file(src/main/resources/rotation-dh.csv rotation-dh.csv COPYONLY)
+configure_file(src/main/resources/rotation-cfb.csv rotation-cfb.csv COPYONLY)
 ###
