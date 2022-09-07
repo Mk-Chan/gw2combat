@@ -90,6 +90,38 @@
     },
     {
       "unique_effect_key": {
+        "name": "beef-rendang"
+      },
+      "attribute_modifiers": [
+        {
+          "condition_damage_addend": 100,
+          "expertise_addend": 70
+        }
+      ],
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
+        "name": "toxic-focusing-crystal"
+      },
+      "attribute_conversions": [
+        {
+          "from": "power",
+          "to": "condition_damage",
+          "multiplier": 0.03,
+          "addend": 0
+        },
+        {
+          "from": "precision",
+          "to": "condition_damage",
+          "multiplier": 0.03,
+          "addend": 0
+        }
+      ],
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
         "name": "sigil-force"
       },
       "damage_modifiers": [
@@ -98,6 +130,41 @@
             "weapon_sigil": "FORCE"
           },
           "strike_damage_multiplier_add_group_addend": 0.05
+        }
+      ],
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
+        "name": "sigil-bursting"
+      },
+      "damage_modifiers": [
+        {
+          "filters": {
+            "weapon_sigil": "BURSTING"
+          },
+          "condition_damage_multiplier": 1.05
+        }
+      ],
+      "max_considered_stacks": 1
+    },
+    {
+      "unique_effect_key": {
+        "name": "sigil-torment"
+      },
+      "skill_triggers": [
+        {
+          "filters": {
+            "weapon_sigil": "TORMENT",
+            "depends_on_skill_off_cooldown": {
+              "base_class": "UNIVERSAL",
+              "name": "Torment Sigil Proc"
+            }
+          },
+          "skill": {
+            "base_class": "UNIVERSAL",
+            "name": "Torment Sigil Proc"
+          }
         }
       ],
       "max_considered_stacks": 1

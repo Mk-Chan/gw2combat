@@ -11,8 +11,9 @@ enum class skill_tag_t : std::uint32_t
 {
     INVALID,
 
-    CANNOT_CRITICAL_HIT,
-    CONSECRATION,
+    CANNOT_CRITICAL_STRIKE,
+    CONSECRATION_ATTACK,
+    CONSECRATION_CAST,
     TRAP,
     MANTRA,
     SYMBOL,
@@ -37,8 +38,9 @@ NLOHMANN_JSON_SERIALIZE_ENUM(skill_tag_t,
                              {
                                  {skill_tag_t::INVALID, "Invalid"},
 
-                                 {skill_tag_t::CANNOT_CRITICAL_HIT, "CANNOT_CRITICAL_HIT"},
-                                 {skill_tag_t::CONSECRATION, "CONSECRATION"},
+                                 {skill_tag_t::CANNOT_CRITICAL_STRIKE, "CANNOT_CRITICAL_STRIKE"},
+                                 {skill_tag_t::CONSECRATION_ATTACK, "CONSECRATION_ATTACK"},
+                                 {skill_tag_t::CONSECRATION_CAST, "CONSECRATION_CAST"},
                                  {skill_tag_t::TRAP, "TRAP"},
                                  {skill_tag_t::MANTRA, "MANTRA"},
                                  {skill_tag_t::SYMBOL, "SYMBOL"},

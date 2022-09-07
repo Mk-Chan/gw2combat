@@ -14,7 +14,8 @@ inline bool filters_satisfied(const component::filters_t& filters,
                               entity_t owner_entity,
                               const actor::skill_configuration_t& skill_configuration,
                               registry_t& registry) {
-    if (filters.weapon_type || filters.weapon_position) {
+    if (!registry.any_of<component::bundle_component>(owner_entity) &&
+        (filters.weapon_type || filters.weapon_position)) {
         bool is_satisfied =
             skill_configuration.weapon_type == *filters.weapon_type &&
             (skill_configuration.weapon_position == actor::weapon_position::UNIVERSAL ||
@@ -68,18 +69,88 @@ void build_skills(registry_t& registry) {
                                           owner_actor.entity,
                                           skill_configuration,
                                           registry)) {
-                        // spdlog::info("old: {}", utils::to_string(skill_configuration.cooldown));
                         skill_configuration.cooldown[0] -=
                             (int)(skill_modifiers.cooldown_reduction_pct *
                                   (double)skill_configuration.cooldown[0] / 100.0);
                         skill_configuration.cooldown[1] -=
                             (int)(skill_modifiers.cooldown_reduction_pct *
                                   (double)skill_configuration.cooldown[1] / 100.0);
-                        // spdlog::info("new: {}", utils::to_string(skill_configuration.cooldown));
+
+                        if (!skill_modifiers.duration_increase_ms.empty()) {
+                            double strikes_per_tick =
+                                (double)skill_configuration.strike_on_tick_list[0].size() /
+                                (double)skill_configuration.cast_duration[0];
+                            double pulses_per_tick =
+                                (double)skill_configuration.pulse_on_tick_list[0].size() /
+                                (double)skill_configuration.cast_duration[0];
+
+                            skill_configuration.cast_duration[0] +=
+                                skill_modifiers.duration_increase_ms[0];
+                            skill_configuration.cast_duration[1] +=
+                                skill_modifiers.duration_increase_ms[1];
+
+                            if (skill_configuration.strike_on_tick_list[0].size() > 1) {
+                                int additional_strikes =
+                                    (int)((double)skill_configuration.cast_duration[0] *
+                                          strikes_per_tick) -
+                                    (int)skill_configuration.strike_on_tick_list[0].size();
+                                int no_quickness_final_strike_ms =
+                                    skill_configuration.strike_on_tick_list
+                                        [0][skill_configuration.strike_on_tick_list[0].size() - 1];
+                                int no_quickness_strike_interval =
+                                    no_quickness_final_strike_ms -
+                                    skill_configuration.strike_on_tick_list
+                                        [0][skill_configuration.strike_on_tick_list[0].size() - 2];
+                                int quickness_final_strike_ms =
+                                    skill_configuration.strike_on_tick_list
+                                        [1][skill_configuration.strike_on_tick_list[1].size() - 1];
+                                int quickness_strike_interval =
+                                    quickness_final_strike_ms -
+                                    skill_configuration.strike_on_tick_list
+                                        [1][skill_configuration.strike_on_tick_list[1].size() - 2];
+                                for (int i = 0; i < additional_strikes; ++i) {
+                                    skill_configuration.strike_on_tick_list[0].emplace_back(
+                                        no_quickness_final_strike_ms +
+                                        (i + 1) * no_quickness_strike_interval);
+                                    skill_configuration.strike_on_tick_list[1].emplace_back(
+                                        quickness_final_strike_ms +
+                                        (i + 1) * quickness_strike_interval);
+                                }
+                            }
+                            if (skill_configuration.pulse_on_tick_list[0].size() > 1) {
+                                int additional_pulses =
+                                    (int)((double)skill_configuration.cast_duration[0] *
+                                          pulses_per_tick) -
+                                    (int)skill_configuration.pulse_on_tick_list[0].size();
+                                int no_quickness_final_pulse_ms =
+                                    skill_configuration.pulse_on_tick_list
+                                        [0][skill_configuration.pulse_on_tick_list[0].size() - 1];
+                                int no_quickness_pulse_interval =
+                                    no_quickness_final_pulse_ms -
+                                    skill_configuration.pulse_on_tick_list
+                                        [0][skill_configuration.pulse_on_tick_list[0].size() - 2];
+                                int quickness_final_pulse_ms =
+                                    skill_configuration.pulse_on_tick_list
+                                        [1][skill_configuration.pulse_on_tick_list[1].size() - 1];
+                                int quickness_pulse_interval =
+                                    quickness_final_pulse_ms -
+                                    skill_configuration.pulse_on_tick_list
+                                        [1][skill_configuration.pulse_on_tick_list[1].size() - 2];
+                                for (int i = 0; i < additional_pulses; ++i) {
+                                    skill_configuration.pulse_on_tick_list[0].emplace_back(
+                                        no_quickness_final_pulse_ms +
+                                        (i + 1) * no_quickness_pulse_interval);
+                                    skill_configuration.pulse_on_tick_list[1].emplace_back(
+                                        quickness_final_pulse_ms +
+                                        (i + 1) * quickness_pulse_interval);
+                                }
+                            }
+                        }
+
                         std::copy(
-                            skill_modifiers.on_hit_effect_applications.begin(),
-                            skill_modifiers.on_hit_effect_applications.end(),
-                            std::back_inserter(skill_configuration.on_hit_effect_applications));
+                            skill_modifiers.on_strike_effect_applications.begin(),
+                            skill_modifiers.on_strike_effect_applications.end(),
+                            std::back_inserter(skill_configuration.on_strike_effect_applications));
                     }
                 }
             }

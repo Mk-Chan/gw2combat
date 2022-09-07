@@ -145,7 +145,8 @@ static inline entity_t add_skill_to_actor(actor::base_class_t base_class,
                                           component::is_skill{skill_configuration.skill_key});
     registry.emplace<component::ammo>(
         skill_entity, component::ammo{skill_configuration.ammo, skill_configuration.ammo});
-    registry.emplace<component::owner_actor>(skill_entity, component::owner_actor{actor_entity});
+    registry.emplace<component::owner_actor>(
+        skill_entity, component::owner_actor{utils::get_owner(actor_entity, registry)});
 
     auto& actor_skills_component =
         registry.get_or_emplace<component::skills_component>(actor_entity);
@@ -292,6 +293,8 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
                         skill_trigger.filters.strike_counter_configuration->required_count});
             }
             skill_triggers_component.skill_triggers.emplace_back(skill_trigger);
+            utils::add_skill_to_actor(
+                skill_trigger.skill.base_class, skill_trigger.skill.name, actor_entity, registry);
         }
     }
 
@@ -308,7 +311,8 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
     registry.ctx().emplace_hint<std::string>(child_actor,
                                              fmt::format("actor{}-{}", child_actor, name));
     registry.emplace<component::is_actor>(child_actor);
-    registry.emplace<component::owner_actor>(child_actor, component::owner_actor{parent_actor});
+    registry.emplace<component::owner_actor>(
+        child_actor, component::owner_actor{utils::get_owner(parent_actor, registry)});
     registry.emplace<component::destroy_after_rotation>(child_actor);
     registry.emplace<component::team>(child_actor, component::team{team_id});
     return child_actor;

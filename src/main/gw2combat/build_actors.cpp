@@ -34,13 +34,6 @@ entity_t build_actor(registry_t& registry, const std::string& name, int team_id)
     registry.emplace<component::rune_component>(actor_entity,
                                                 component::rune_component{actor_build.rune});
 
-    for (auto& permanent_unique_effect : actor_build.permanent_unique_effects) {
-        entity_t unique_effect_entity =
-            *utils::add_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);
-        registry.emplace<component::duration>(unique_effect_entity,
-                                              component::duration{2'000'000'000});
-    }
-
     registry.emplace<component::current_weapon_set>(actor_entity);
     auto& available_weapons = registry.emplace<component::equipped_weapons>(
         actor_entity, component::equipped_weapons{actor_build.available_weapon_configurations});
@@ -74,10 +67,6 @@ entity_t build_actor(registry_t& registry, const std::string& name, int team_id)
                 utils::add_skill_to_actor(
                     base_class, tome_skill.skill_key.name, actor_entity, registry);
             }
-            if (std::find(actor_build.traits.begin(), actor_build.traits.end(), "Glacial Heart") !=
-                actor_build.traits.end()) {
-                utils::add_skill_to_actor(base_class, "Glacial Heart", actor_entity, registry);
-            }
         } else if (std::find(actor_build.trait_lines.begin(),
                              actor_build.trait_lines.end(),
                              actor::trait_line_t::DRAGONHUNTER) != actor_build.trait_lines.end()) {
@@ -87,11 +76,16 @@ entity_t build_actor(registry_t& registry, const std::string& name, int team_id)
                 actor::unique_effect_t{"Spear of Justice Passive Effect"}, actor_entity, registry);
         }
     }
-    if (!elite_specialization_selected) {
-        if (base_class == actor::base_class_t::GUARDIAN) {
+
+    if (base_class == actor::base_class_t::GUARDIAN) {
+        if (!elite_specialization_selected) {
             utils::add_skill_to_actor(base_class, "Virtue of Justice", actor_entity, registry);
             utils::add_skill_to_actor(base_class, "Virtue of Resolve", actor_entity, registry);
             utils::add_skill_to_actor(base_class, "Virtue of Courage", actor_entity, registry);
+        }
+        if (std::find(actor_build.traits.begin(), actor_build.traits.end(), "Glacial Heart") !=
+            actor_build.traits.end()) {
+            utils::add_skill_to_actor(base_class, "Glacial Heart", actor_entity, registry);
         }
     }
     std::set<std::pair<actor::weapon_set, actor::weapon_position>> visited;
@@ -115,6 +109,12 @@ entity_t build_actor(registry_t& registry, const std::string& name, int team_id)
         auto& slot_skill = skill_database.find_by(actor::skill_t{base_class, slot_skill_name});
         utils::add_skill_to_actor(
             slot_skill.skill_key.base_class, slot_skill.skill_key.name, actor_entity, registry);
+    }
+    for (auto& permanent_unique_effect : actor_build.permanent_unique_effects) {
+        entity_t unique_effect_entity =
+            *utils::add_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);
+        registry.emplace<component::duration>(unique_effect_entity,
+                                              component::duration{2'000'000'000});
     }
     return actor_entity;
 }

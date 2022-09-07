@@ -8,6 +8,7 @@
 
 #include "gw2combat/actor/attributes.hpp"
 #include "gw2combat/actor/trait.hpp"
+#include "gw2combat/component/equipment/bundle.hpp"
 #include "gw2combat/effect/application.hpp"
 #include "gw2combat/modifiers/attribute_modifiers.hpp"
 #include "gw2combat/modifiers/damage_modifiers.hpp"
@@ -25,10 +26,10 @@ struct skill_configuration_t {
     std::array<int, 2> cast_duration = {0, 0};
     std::array<int, 2> cooldown = {0, 0};
 
-    std::array<std::vector<int>, 2> hit_on_tick_list = {std::vector<int>{}, std::vector<int>{}};
+    std::array<std::vector<int>, 2> strike_on_tick_list = {std::vector<int>{}, std::vector<int>{}};
     std::array<std::vector<int>, 2> pulse_on_tick_list = {std::vector<int>{}, std::vector<int>{}};
 
-    std::vector<effect::application_t> on_hit_effect_applications;
+    std::vector<effect::application_t> on_strike_effect_applications;
     std::vector<effect::application_t> on_pulse_effect_applications;
 
     std::vector<skill_t> child_skill_keys;
@@ -36,6 +37,8 @@ struct skill_configuration_t {
 
     modifiers::attribute_modifiers_t attribute_modifiers;
     modifiers::damage_modifiers_t damage_modifiers;
+
+    component::bundle_component equip_bundle;
 
     int ammo = 1;
     int recharge_duration = 0;
@@ -65,14 +68,15 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_configuration_t,
                                                 damage_coefficient,
                                                 cast_duration,
                                                 cooldown,
-                                                hit_on_tick_list,
+                                                strike_on_tick_list,
                                                 pulse_on_tick_list,
-                                                on_hit_effect_applications,
+                                                on_strike_effect_applications,
                                                 on_pulse_effect_applications,
                                                 child_skill_keys,
                                                 tags,
                                                 attribute_modifiers,
                                                 damage_modifiers,
+                                                equip_bundle,
                                                 ammo,
                                                 recharge_duration,
                                                 num_targets)

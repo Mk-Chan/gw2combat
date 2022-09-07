@@ -12,8 +12,9 @@ namespace gw2combat::component {
 struct skill_modifiers_t {
     filters_t filters;
 
-    double cooldown_reduction_pct;
-    std::vector<effect::application_t> on_hit_effect_applications;
+    double cooldown_reduction_pct = 0;
+    std::vector<int> duration_increase_ms;
+    std::vector<effect::application_t> on_strike_effect_applications;
 };
 
 // This component is applied on traits/effects with owner_actor
@@ -25,7 +26,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_modifiers_t,
                                                 filters,
 
                                                 cooldown_reduction_pct,
-                                                on_hit_effect_applications)
+                                                duration_increase_ms,
+                                                on_strike_effect_applications)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_modifiers_component, skill_modifiers)
 
 }  // namespace gw2combat::component

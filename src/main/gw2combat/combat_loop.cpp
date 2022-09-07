@@ -9,6 +9,7 @@
 #include "system/system.hpp"
 
 #include "gw2combat/component/actor/destroy_after_rotation.hpp"
+#include "gw2combat/component/actor/did_weapon_swap.hpp"
 #include "gw2combat/component/actor/effects_component.hpp"
 #include "gw2combat/component/actor/is_actor.hpp"
 #include "gw2combat/component/actor/is_downstate.hpp"
@@ -32,6 +33,7 @@ void clear_temporary_components(registry_t& registry) {
                    component::outgoing_effects_component,
                    component::incoming_effects_component,
                    component::incoming_damage,
+                   component::did_weapon_swap,
                    component::finished_animation>();
 }
 

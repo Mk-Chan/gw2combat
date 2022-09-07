@@ -14,7 +14,7 @@ extern void expire_damaging_effects_with_no_duration(registry_t& entity);
 extern void calculate_effective_attributes(registry_t& registry);
 extern void calculate_outgoing_damage_modifiers(registry_t& source_entity);
 extern void calculate_incoming_damage_modifiers(registry_t& registry);
-extern void continue_rotation(registry_t& registry, bool enable_cooldowns = false);
+extern void continue_rotation(registry_t& registry, bool enable_checks = false);
 extern void check_if_animation_finished(registry_t& registry);
 extern void progress_animations(registry_t& registry);
 extern void remove_animation_if_finished(registry_t& registry);

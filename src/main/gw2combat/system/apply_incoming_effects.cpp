@@ -41,13 +41,16 @@ inline bool filters_satisfied(const component::filters_t& filters,
         }
         auto& equipped_weapons = registry.get<component::equipped_weapons>(source_entity);
         auto& current_weapon_set = registry.get<component::current_weapon_set>(source_entity);
+        bool has_bundle_equipped = registry.any_of<component::bundle_component>(source_entity);
         bool is_satisfied = std::any_of(
             equipped_weapons.weapons.begin(),
             equipped_weapons.weapons.end(),
             [&](const actor::weapon& weapon) {
                 return weapon.set == current_weapon_set.set &&
-                       (!filters.weapon_type || weapon.type == *filters.weapon_type) &&
-                       (!filters.weapon_position || weapon.position == *filters.weapon_position) &&
+                       (!filters.weapon_type ||
+                        (!has_bundle_equipped && weapon.type == *filters.weapon_type)) &&
+                       (!filters.weapon_position ||
+                        (!has_bundle_equipped && weapon.position == *filters.weapon_position)) &&
                        (!filters.weapon_sigil || weapon.sigil == *filters.weapon_sigil);
             });
         if (!is_satisfied) {

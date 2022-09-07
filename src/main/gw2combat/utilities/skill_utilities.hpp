@@ -22,8 +22,9 @@ namespace gw2combat::utils {
     if (registry.any_of<component::recharge>(skill_entity)) {
         return false;
     }
+    bool has_bundle_equipped = registry.any_of<component::bundle_component>(actor_entity);
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
-    if (skill_ammo.current_ammo <= 0) {
+    if (!has_bundle_equipped && skill_ammo.current_ammo <= 0) {
         return false;
     }
 
@@ -34,7 +35,7 @@ namespace gw2combat::utils {
         !registry.any_of<component::owner_actor>(actor_entity)) {
         return false;
     }
-    if (!skill_configuration.is_child_skill &&
+    if (!skill_configuration.is_child_skill && !has_bundle_equipped &&
         skill_configuration.weapon_type != actor::weapon_type::EMPTY_HANDED &&
         skill_configuration.weapon_type != actor::weapon_type::INVALID) {
         auto& weapons = registry.get<component::equipped_weapons>(actor_entity).weapons;
@@ -72,6 +73,23 @@ static inline void put_skill_on_cooldown(entity_t actor_entity,
     if (!registry.any_of<component::cooldown>(skill_entity)) {
         registry.emplace<component::cooldown>(skill_entity,
                                               component::cooldown{skill_configuration.cooldown});
+    }
+}
+
+static inline void reset_skill_cooldown(entity_t actor_entity,
+                                        const actor::skill_t& skill,
+                                        registry_t& registry) {
+    auto& skills_component = registry.get<component::skills_component>(actor_entity);
+    if (skills_component.has(skill)) {
+        auto skill_entity = skills_component.find_by(skill);
+        if (registry.any_of<component::recharge>(skill_entity)) {
+            auto& recharge = registry.get<component::recharge>(skill_entity);
+            recharge.progress = recharge.duration;
+        }
+        if (registry.any_of<component::cooldown>(skill_entity)) {
+            auto& cooldown = registry.get<component::cooldown>(skill_entity);
+            cooldown.progress = cooldown.duration;
+        }
     }
 }
 

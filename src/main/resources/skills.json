@@ -23,6 +23,26 @@
     }, {
       "skill_key": {
         "base_class": "GUARDIAN",
+        "name": "Permeating Wrath Justice Passive"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0,
+      "cast_duration": [0, 0],
+      "cooldown": [0, 0],
+      "pulse_on_tick_list": [[0], [0]],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "BURNING",
+          "num_stacks": 1,
+          "num_targets": 3,
+          "base_duration": 4000,
+          "direction": "OUTGOING"
+        }
+      ],
+      "tags": ["GUARDIAN_VIRTUE"]
+    }, {
+      "skill_key": {
+        "base_class": "GUARDIAN",
         "name": "Virtue of Justice"
       },
       "weapon_type": "EMPTY_HANDED",
@@ -63,15 +83,15 @@
     }, {
       "skill_key": {
         "base_class": "GUARDIAN",
-        "name": "Core Cleave Magical Hit"
+        "name": "Core Cleave Magical Strike"
       },
       "is_child_skill": true,
       "weapon_type": "AXE",
       "damage_coefficient": 0.36,
       "cast_duration": [100, 100],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[100], [100]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[100], [100]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BLEEDING",
           "num_stacks": 1,
@@ -88,8 +108,8 @@
       "damage_coefficient": 0.36,
       "cast_duration": [960, 640],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[960], [640]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[960], [640]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BLEEDING",
           "num_stacks": 1,
@@ -100,21 +120,21 @@
       "child_skill_keys": [
         {
           "base_class": "GUARDIAN",
-          "name": "Core Cleave Magical Hit"
+          "name": "Core Cleave Magical Strike"
         }
       ]
     }, {
       "skill_key": {
         "base_class": "GUARDIAN",
-        "name": "Bleeding Edge Magical Hit"
+        "name": "Bleeding Edge Magical Strike"
       },
       "is_child_skill": true,
       "weapon_type": "AXE",
       "damage_coefficient": 0.36,
       "cast_duration": [100, 100],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[100], [100]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[100], [100]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BLEEDING",
           "num_stacks": 1,
@@ -131,8 +151,8 @@
       "damage_coefficient": 0.36,
       "cast_duration": [1020, 680],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[1020], [680]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[1020], [680]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BLEEDING",
           "num_stacks": 1,
@@ -143,21 +163,21 @@
       "child_skill_keys": [
         {
           "base_class": "GUARDIAN",
-          "name": "Bleeding Edge Magical Hit"
+          "name": "Bleeding Edge Magical Strike"
         }
       ]
     }, {
       "skill_key": {
         "base_class": "GUARDIAN",
-        "name": "Searing Slash Magical Hit"
+        "name": "Searing Slash Magical Strike"
       },
       "is_child_skill": true,
       "weapon_type": "AXE",
       "damage_coefficient": 1.2,
       "cast_duration": [100, 100],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[100], [100]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[100], [100]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 1,
@@ -174,8 +194,8 @@
       "damage_coefficient": 1.2,
       "cast_duration": [960, 640],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[960], [640]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[960], [640]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 1,
@@ -186,7 +206,7 @@
       "child_skill_keys": [
         {
           "base_class": "GUARDIAN",
-          "name": "Searing Slash Magical Hit"
+          "name": "Searing Slash Magical Strike"
         }
       ]
     }, {
@@ -199,11 +219,11 @@
       "damage_coefficient": 0.6,
       "cast_duration": [4000, 4000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 1000, 2000, 3000, 4000],
         [0, 1000, 2000, 3000, 4000]
       ],
-      "on_hit_effect_applications": [
+      "on_strike_effect_applications": [
         {
           "effect_type": "BLEEDING",
           "num_stacks": 1,
@@ -236,8 +256,8 @@
       "damage_coefficient": 0.8,
       "cast_duration": [780, 520],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[780], [520]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[780], [520]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 1,
@@ -254,7 +274,7 @@
       "damage_coefficient": 0.6,
       "cast_duration": [640, 420],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[640], [420]]
+      "strike_on_tick_list": [[640], [420]]
     }, {
       "skill_key": {
         "name": "Symbol of Punishment Fist Attack",
@@ -265,7 +285,7 @@
       "damage_coefficient": 0.2,
       "cast_duration": [4000, 4000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 571, 1142, 1714, 2285, 2857, 3428, 4000],
         [0, 571, 1142, 1714, 2285, 2857, 3428, 4000]
       ],
@@ -296,7 +316,7 @@
       "damage_coefficient": 0.5,
       "cast_duration": [4000, 4000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [1000, 2000, 3000, 4000],
         [1000, 2000, 3000, 4000]
       ],
@@ -350,6 +370,7 @@
       "damage_coefficient": 0.0,
       "cast_duration": [0, 0],
       "cooldown": [15000, 12000],
+      "ammo": 2,
       "child_skill_keys": [
         {
           "name": "Zealot's Flame Pulse",
@@ -363,10 +384,11 @@
       },
       "weapon_type": "TORCH",
       "damage_coefficient": 2.25,
+      "ammo": 2,
       "cast_duration": [1020, 680],
       "cooldown": [750, 750],
-      "hit_on_tick_list": [[1020], [680]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[1020], [680]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 3,
@@ -383,7 +405,7 @@
       "damage_coefficient": 0.4,
       "cast_duration": [3750, 2500],
       "cooldown": [15000, 12000],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 416, 833, 1250, 1666, 2083, 2500, 2916, 3333, 3750],
         [0, 277, 555, 833, 1111, 1388, 1666, 1944, 2222, 2500]
       ],
@@ -404,7 +426,7 @@
       "weapon_type": "SWORD",
       "damage_coefficient": 0.666,
       "cast_duration": [525, 350],
-      "hit_on_tick_list": [[525], [350]]
+      "strike_on_tick_list": [[525], [350]]
     }, {
       "skill_key": {
         "name": "Sword Arc",
@@ -414,7 +436,7 @@
       "damage_coefficient": 0.725,
       "cast_duration": [770, 515],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[770], [515]]
+      "strike_on_tick_list": [[770], [515]]
     }, {
       "skill_key": {
         "name": "Sword Wave",
@@ -424,7 +446,7 @@
       "damage_coefficient": 0.5,
       "cast_duration": [1000, 675],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [1000, 1000, 1000],
         [675, 675, 675]
       ]
@@ -438,7 +460,7 @@
       "damage_coefficient": 0.6,
       "cast_duration": [4000, 4000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 1000, 2000, 3000, 4000],
         [0, 1000, 2000, 3000, 4000]
       ],
@@ -469,7 +491,7 @@
       "damage_coefficient": 0.6,
       "cast_duration": [1750, 1165],
       "cooldown": [15000, 12000],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 250, 500, 750, 1000, 1250, 1500, 1750],
         [0, 166, 332, 499, 665, 832, 998, 1165]
       ]
@@ -483,7 +505,7 @@
       "damage_coefficient": 0.33,
       "cast_duration": [6000, 6000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 750, 1500, 2250, 3000, 3750, 4500, 5250, 6000],
         [0, 750, 1500, 2250, 3000, 3750, 4500, 5250, 6000]
       ]
@@ -512,7 +534,7 @@
       "damage_coefficient": 2.5,
       "cast_duration": [4000, 4000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[4000], [4000]]
+      "strike_on_tick_list": [[4000], [4000]]
     }, {
       "skill_key": {
         "name": "Shield of Wrath",
@@ -537,7 +559,7 @@
       "damage_coefficient": 0.9,
       "cast_duration": [600, 400],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[600], [400]]
+      "strike_on_tick_list": [[600], [400]]
     }, {
       "skill_key": {
         "name": "Vengeful Strike",
@@ -547,7 +569,7 @@
       "damage_coefficient": 1.0,
       "cast_duration": [840, 600],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[840], [600]]
+      "strike_on_tick_list": [[840], [600]]
     }, {
       "skill_key": {
         "name": "Wrathful Strike",
@@ -557,7 +579,7 @@
       "damage_coefficient": 1.4,
       "cast_duration": [1000, 675],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[1000], [675]]
+      "strike_on_tick_list": [[1000], [675]]
     }, {
       "skill_key": {
         "name": "Whirling Wrath",
@@ -567,7 +589,7 @@
       "damage_coefficient": 0.4125,
       "cast_duration": [2200, 1470],
       "cooldown": [8000, 6400],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 169, 338, 507, 676, 846, 1015, 1184, 1353, 1523, 1692, 1861, 2030, 2200],
         [0, 113, 226, 339, 452, 565, 678, 791, 904, 1017, 1130, 1243, 1356, 1470]
       ]
@@ -580,7 +602,7 @@
       "damage_coefficient": 2.0,
       "cast_duration": [1000, 720],
       "cooldown": [10000, 8000],
-      "hit_on_tick_list": [[1000], [720]]
+      "strike_on_tick_list": [[1000], [720]]
     }, {
       "skill_key": {
         "name": "Symbol of Resolution Attack",
@@ -591,7 +613,7 @@
       "damage_coefficient": 0.6,
       "cast_duration": [4000, 4000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 1000, 2000, 3000, 4000],
         [0, 1000, 2000, 3000, 4000]
       ],
@@ -620,8 +642,8 @@
       "damage_coefficient": 1.5,
       "cast_duration": [750, 500],
       "cooldown": [25000, 20000],
-      "hit_on_tick_list": [[750], [500]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[750], [500]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BINDING_BLADE",
           "num_stacks": 1,
@@ -638,7 +660,7 @@
       "damage_coefficient": 0.85,
       "cast_duration": [0, 0],
       "cooldown": [20000, 16000],
-      "hit_on_tick_list": [[0], [0]]
+      "strike_on_tick_list": [[0], [0]]
     }, {
       "skill_key": {
         "name": "Sword of Justice Attack",
@@ -649,7 +671,7 @@
       "damage_coefficient": 0.72,
       "cast_duration": [1850, 1850],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [650, 1050, 1450, 1850],
         [650, 1050, 1450, 1850]
       ],
@@ -677,13 +699,13 @@
       "is_child_skill": true,
       "weapon_type": "EMPTY_HANDED",
       "damage_coefficient": 0.2,
-      "cast_duration": [7000, 7000],
+      "cast_duration": [5000, 5000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
-        [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000],
-        [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000]
+      "strike_on_tick_list": [
+        [0, 1000, 2000, 3000, 4000, 5000],
+        [0, 1000, 2000, 3000, 4000, 5000]
       ],
-      "on_hit_effect_applications": [
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 1,
@@ -691,7 +713,7 @@
           "direction": "OUTGOING"
         }
       ],
-      "tags": ["CONSECRATION"]
+      "tags": ["CONSECRATION_ATTACK"]
     }, {
       "skill_key": {
         "name": "Purging Flames",
@@ -706,7 +728,8 @@
           "name": "Purging Flames Attack",
           "base_class": "GUARDIAN"
         }
-      ]
+      ],
+      "tags": ["CONSECRATION_CAST"]
     }, {
       "skill_key": {
         "name": "Glacial Heart",
@@ -716,8 +739,8 @@
       "damage_coefficient": 0.5,
       "cast_duration": [0, 0],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[0], [0]],
-      "tags": ["CANNOT_CRITICAL_HIT"]
+      "strike_on_tick_list": [[0], [0]],
+      "tags": ["CANNOT_CRITICAL_STRIKE"]
     }, {
       "skill_key": {
         "name": "Renewed Focus",
@@ -733,6 +756,9 @@
         "base_class": "GUARDIAN"
       },
       "weapon_type": "EMPTY_HANDED",
+      "equip_bundle": {
+        "name": "Tome of Justice Bundle"
+      },
       "damage_coefficient": 0.0,
       "cast_duration": [540, 360],
       "cooldown": [30000, 24000]
@@ -745,8 +771,8 @@
       "damage_coefficient": 0.95,
       "cast_duration": [1020, 680],
       "cooldown": [500, 400],
-      "hit_on_tick_list": [[1020], [680]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[1020], [680]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 1,
@@ -764,8 +790,8 @@
       "damage_coefficient": 0.55,
       "cast_duration": [900, 600],
       "cooldown": [4000, 3200],
-      "hit_on_tick_list": [[900], [600]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[900], [600]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 1,
@@ -784,11 +810,11 @@
       "damage_coefficient": 0.64,
       "cast_duration": [4000, 4000],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [0, 1000, 2000, 3000, 4000],
         [0, 1000, 2000, 3000, 4000]
       ],
-      "on_hit_effect_applications": [
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 1,
@@ -847,8 +873,8 @@
       "damage_coefficient": 0.7,
       "cast_duration": [0, 0],
       "cooldown": [12000, 9600],
-      "hit_on_tick_list": [[0], [0]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[0], [0]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BURNING",
           "num_stacks": 1,
@@ -857,8 +883,8 @@
         }
       ],
       "tags": ["MANTRA"],
-      "ammo": 3,
-      "recharge_duration": 1000
+      "ammo": 30,
+      "recharge_duration": 1
     }, {
       "skill_key": {
         "name": "Spear of Justice Pulse",
@@ -890,8 +916,8 @@
       "damage_coefficient": 0.6,
       "cast_duration": [825, 550],
       "cooldown": [20000, 16000],
-      "hit_on_tick_list": [[825], [550]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[825], [550]],
+      "on_strike_effect_applications": [
         {
           "unique_effect_type": {
             "name": "Spear of Justice Effect"
@@ -917,7 +943,7 @@
       "damage_coefficient": 2.4,
       "cast_duration": [500, 500],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [[500], [500]],
+      "strike_on_tick_list": [[500], [500]],
       "tags": ["TRAP"]
     }, {
       "skill_key": {
@@ -945,7 +971,7 @@
       "damage_coefficient": 0.44,
       "cast_duration": [5500, 5500],
       "cooldown": [0, 0],
-      "hit_on_tick_list": [
+      "strike_on_tick_list": [
         [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500],
         [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500]
       ],
@@ -975,7 +1001,7 @@
       "damage_coefficient": 0.25,
       "cast_duration": [750, 500],
       "cooldown": [25000, 20000],
-      "hit_on_tick_list": [[750], [500]],
+      "strike_on_tick_list": [[750], [500]],
       "attribute_modifiers": {
         "condition_damage_addend": 180
       }
@@ -988,10 +1014,27 @@
       "damage_coefficient": 1.0,
       "cast_duration": [750, 500],
       "cooldown": [30000, 24000],
-      "hit_on_tick_list": [[750], [500]],
+      "strike_on_tick_list": [[750], [500]],
       "attribute_modifiers": {
         "power_addend": 180
       }
+    }, {
+      "skill_key": {
+        "name": "Torment Sigil Proc",
+        "base_class": "UNIVERSAL"
+      },
+      "weapon_type": "EMPTY_HANDED",
+      "damage_coefficient": 0.0,
+      "cooldown": [5000, 5000],
+      "pulse_on_tick_list": [[0], [0]],
+      "on_pulse_effect_applications": [
+        {
+          "effect_type": "TORMENT",
+          "num_stacks": 2,
+          "base_duration": 5000,
+          "direction": "OUTGOING"
+        }
+      ]
     }, {
       "skill_key": {
         "name": "Ring of Earth",
@@ -1001,8 +1044,8 @@
       "damage_coefficient": 0.25,
       "cast_duration": [0, 0],
       "cooldown": [9000, 9000],
-      "hit_on_tick_list": [[0], [0]],
-      "on_hit_effect_applications": [
+      "strike_on_tick_list": [[0], [0]],
+      "on_strike_effect_applications": [
         {
           "effect_type": "BLEEDING",
           "num_stacks": 3,

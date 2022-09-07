@@ -11,7 +11,7 @@
 
 namespace gw2combat::system {
 
-void continue_rotation(registry_t& registry, bool enable_cooldowns) {
+void continue_rotation(registry_t& registry, bool enable_checks) {
     registry
         .view<component::rotation_component>(
             entt::exclude<component::animation, component::no_more_rotation>)
@@ -31,17 +31,17 @@ void continue_rotation(registry_t& registry, bool enable_cooldowns) {
             auto& next_skill_cast =
                 rotation_component.rotation.skill_casts[rotation_component.current_idx];
             auto next_skill = next_skill_cast.skill;
-            if (!utils::actor_has_skill(entity, next_skill, registry)) {
-                throw std::runtime_error(fmt::format("{} does not have skill {}",
-                                                     utils::get_entity_name(entity, registry),
-                                                     utils::to_string(next_skill)));
-            }
 
             if (current_tick < next_skill_cast.cast_time_ms + rotation_component.offset) {
                 // return;
             }
 
-            if (enable_cooldowns) {
+            if (enable_checks) {
+                if (!utils::actor_has_skill(entity, next_skill, registry)) {
+                    throw std::runtime_error(fmt::format("{} does not have skill {}",
+                                                         utils::get_entity_name(entity, registry),
+                                                         utils::to_string(next_skill)));
+                }
                 if (!utils::can_cast_skill(entity, next_skill, registry)) {
                     // utils::skill_has_cooldown(entity, next_skill, registry) ||
                     // utils::skill_has_recharge(entity, next_skill, registry)) {
@@ -49,7 +49,7 @@ void continue_rotation(registry_t& registry, bool enable_cooldowns) {
                     throw std::runtime_error(fmt::format("{} cannot cast skill {}",
                                                          utils::get_entity_name(entity, registry),
                                                          utils::to_string(next_skill)));
-                } else {
+                } else if (!registry.any_of<component::bundle_component>(entity)) {
                     utils::put_skill_on_cooldown(entity, next_skill, registry);
                 }
             }

@@ -107,7 +107,7 @@
           "filters": {
             "source_skill_tag": "SYMBOL"
           },
-          "on_hit_effect_applications": [
+          "on_strike_effect_applications": [
             {
               "unique_effect_type": {
                 "name": "SYMBOLIC_AVENGER"
@@ -226,7 +226,7 @@
           "filters": {
             "source_skill_tag": "SYMBOL"
           },
-          "on_hit_effect_applications": [
+          "on_strike_effect_applications": [
             {
               "effect_type": "VULNERABILITY",
               "num_stacks": 2,
@@ -279,19 +279,57 @@
       "trait_key": {
         "name": "Radiant Fire",
         "base_class": "GUARDIAN"
-      }
+      },
+      "damage_modifiers": [
+        {
+          "burning_duration_pct_addend": 20
+        }
+      ],
+      "skill_modifiers": [
+        {
+          "filters": {
+            "weapon_type": "TORCH"
+          },
+          "cooldown_reduction_pct": 20
+        }
+      ]
     },
     {
       "trait_key": {
         "name": "Amplified Wrath",
         "base_class": "GUARDIAN"
-      }
+      },
+      "damage_modifiers": [
+        {
+          "filters": {
+            "source_skill_tag": "GUARDIAN_VIRTUE"
+          },
+          "burning_duration_pct_addend": 20
+        },
+        {
+          "burning_damage_multiplier": 1.1
+        }
+      ]
     },
     {
       "trait_key": {
         "name": "Master of Consecrations",
         "base_class": "GUARDIAN"
-      }
+      },
+      "skill_modifiers": [
+        {
+          "filters": {
+            "source_skill_tag": "CONSECRATION_ATTACK"
+          },
+          "duration_increase_ms": [2000, 2000]
+        },
+        {
+          "filters": {
+            "source_skill_tag": "CONSECRATION_CAST"
+          },
+          "cooldown_reduction_pct": 20
+        }
+      ]
     },
     {
       "trait_key": {

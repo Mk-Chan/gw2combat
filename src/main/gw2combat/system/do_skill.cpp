@@ -4,12 +4,12 @@
 #include "gw2combat/utilities/damage_utilities.hpp"
 #include "gw2combat/utilities/entity_utilities.hpp"
 #include "gw2combat/utilities/gear_utilities.hpp"
+#include "gw2combat/utilities/skill_utilities.hpp"
 
 #include "gw2combat/actor/skill_database.hpp"
 
 #include "gw2combat/component/actor/animation.hpp"
-#include "gw2combat/component/actor/rotation_component.hpp"
-#include "gw2combat/component/actor/team.hpp"
+#include "gw2combat/component/actor/did_weapon_swap.hpp"
 #include "gw2combat/component/damage/effects_pipeline.hpp"
 #include "gw2combat/component/damage/strikes_pipeline.hpp"
 #include "gw2combat/component/equipment/bundle.hpp"
@@ -26,6 +26,29 @@ void do_child_skills(const actor::skill_configuration_t& skill_configuration,
         entity, skill_configuration.skill_key.name + " Entity", child_skill_keys, registry);
 }
 
+void do_renewed_focus(entity_t entity, registry_t& registry) {
+    utils::reset_skill_cooldown(
+        entity, actor::skill_t{actor::base_class_t::GUARDIAN, "Virtue of Justice"}, registry);
+    utils::reset_skill_cooldown(
+        entity, actor::skill_t{actor::base_class_t::GUARDIAN, "Spear of Justice"}, registry);
+    utils::reset_skill_cooldown(
+        entity, actor::skill_t{actor::base_class_t::GUARDIAN, "Tome of Justice"}, registry);
+    utils::reset_skill_cooldown(
+        entity, actor::skill_t{actor::base_class_t::GUARDIAN, "Virtue of Resolve"}, registry);
+    utils::reset_skill_cooldown(
+        entity, actor::skill_t{actor::base_class_t::GUARDIAN, "Virtue of Courage"}, registry);
+}
+
+void do_equip_bundle(entity_t entity,
+                     const component::bundle_component& bundle_component,
+                     registry_t& registry) {
+    if (registry.any_of<component::bundle_component>(entity)) {
+        registry.remove<component::bundle_component>(entity);
+        return;
+    }
+    registry.emplace<component::bundle_component>(entity, bundle_component);
+}
+
 void do_weapon_swap(entity_t entity, registry_t& registry) {
     if (registry.any_of<component::bundle_component>(entity)) {
         registry.remove<component::bundle_component>(entity);
@@ -34,6 +57,9 @@ void do_weapon_swap(entity_t entity, registry_t& registry) {
     if (!registry.any_of<component::current_weapon_set>(entity)) {
         throw std::runtime_error("no equipped_weapon_set on entity");
     }
+
+    registry.emplace<component::did_weapon_swap>(entity);
+
     auto current_set = registry.get<component::current_weapon_set>(entity).set;
     if (current_set == actor::weapon_set::SET_1) {
         registry.replace<component::current_weapon_set>(
@@ -47,8 +73,8 @@ void do_weapon_swap(entity_t entity, registry_t& registry) {
 void do_strike(const actor::skill_configuration_t& skill_configuration,
                entity_t entity,
                registry_t& registry) {
-    if (skill_configuration.hit_on_tick_list.empty() ||
-        skill_configuration.hit_on_tick_list[0].empty()) {
+    if (skill_configuration.strike_on_tick_list.empty() ||
+        skill_configuration.strike_on_tick_list[0].empty()) {
         return;
     }
 
@@ -65,7 +91,7 @@ void do_strike(const actor::skill_configuration_t& skill_configuration,
         base_outgoing_damage,
         effective_attributes.attribute_value_map[actor::attribute_t::CRITICAL_CHANCE_PCT],
         effective_attributes.attribute_value_map[actor::attribute_t::CRITICAL_DAMAGE_PCT],
-        skill_configuration.on_hit_effect_applications,
+        skill_configuration.on_strike_effect_applications,
         skill_configuration.num_targets};
 
     auto& outgoing_strikes_component =
@@ -113,9 +139,10 @@ void do_skill(registry_t& registry) {
                 do_pulse(skill_configuration, entity, registry);
                 ++casting_skill.next_pulse_idx;
             }
-            while (casting_skill.next_strike_idx < skill_configuration.hit_on_tick_list[0].size() &&
+            while (casting_skill.next_strike_idx <
+                       skill_configuration.strike_on_tick_list[0].size() &&
                    effective_tick >=
-                       skill_configuration.hit_on_tick_list[0][casting_skill.next_strike_idx]) {
+                       skill_configuration.strike_on_tick_list[0][casting_skill.next_strike_idx]) {
                 do_strike(skill_configuration, entity, registry);
                 ++casting_skill.next_strike_idx;
             }
@@ -136,6 +163,12 @@ void do_skill(registry_t& registry) {
                     .find_by(animation.skill);
             if (skill_configuration.skill_key.name == "Weapon Swap") {
                 do_weapon_swap(entity, registry);
+            }
+            if (skill_configuration.equip_bundle != component::bundle_component{}) {
+                do_equip_bundle(entity, skill_configuration.equip_bundle, registry);
+            }
+            if (skill_configuration.skill_key.name == "Renewed Focus") {
+                do_renewed_focus(entity, registry);
             }
             do_child_skills(skill_configuration, entity, registry);
         });

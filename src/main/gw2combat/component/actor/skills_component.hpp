@@ -15,6 +15,12 @@ struct skill_entity {
 };
 
 struct skills_component {
+    [[nodiscard]] inline bool has(const actor::skill_t& skill) const {
+        return std::any_of(
+            skill_entities.begin(), skill_entities.end(), [&](const skill_entity& skill_entity) {
+                return skill == skill_entity.skill;
+            });
+    }
     [[nodiscard]] inline entity_t find_by(const actor::skill_t& skill) const {
         for (auto& skill_entity : skill_entities) {
             if (skill_entity.skill == skill) {

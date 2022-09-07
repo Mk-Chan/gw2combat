@@ -80,6 +80,20 @@
     "Mantra of Flame",
     "Renewed Focus"
   ],
+  "permanent_unique_effects": [
+    {
+      "name": "sigil-bursting"
+    },
+    {
+      "name": "sigil-torment"
+    },
+    {
+      "name": "beef-rendang"
+    },
+    {
+      "name": "toxic-focusing-crystal"
+    }
+  ],
   "rune": "balthazar",
   "nourishment": "beef-rendang",
   "enhancement": "toxic-focusing-crystal"

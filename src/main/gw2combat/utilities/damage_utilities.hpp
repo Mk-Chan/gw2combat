@@ -7,7 +7,7 @@
 
 namespace gw2combat::utils {
 
-[[nodiscard]] static inline double get_critical_hit_multiplier(double critical_chance_pct,
+[[nodiscard]] static inline double get_critical_strike_multiplier(double critical_chance_pct,
                                                                double critical_damage_pct) {
     if constexpr (DETERMINISTIC_SIMULATION) {
         return (1.0 + (std::min(critical_chance_pct, 100.0) / 100.0) *
@@ -17,7 +17,7 @@ namespace gw2combat::utils {
     }
 }
 
-[[nodiscard]] static inline double get_critical_hit_multiplier(
+[[nodiscard]] static inline double get_critical_strike_multiplier(
     const component::effective_attributes& effective_attributes) {
     if constexpr (DETERMINISTIC_SIMULATION) {
         return (1.0 +

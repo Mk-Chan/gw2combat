@@ -11,7 +11,7 @@ struct strike_t {
     double base_outgoing_damage;
     double critical_chance_pct;
     double critical_damage_pct;
-    std::vector<effect::application_t> on_hit_effect_applications;
+    std::vector<effect::application_t> on_strike_effect_applications;
     int num_targets = 1;
 
     constexpr inline bool operator==(const strike_t& rhs) const {
@@ -24,7 +24,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(strike_t,
                                                 base_outgoing_damage,
                                                 critical_chance_pct,
                                                 critical_damage_pct,
-                                                on_hit_effect_applications,
+                                                on_strike_effect_applications,
                                                 num_targets)
 
 }  // namespace gw2combat::strike

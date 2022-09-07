@@ -50,13 +50,16 @@ inline bool filters_for_skill_trigger_satisfied(const component::filters_t& filt
         }
         auto& equipped_weapons = registry.get<component::equipped_weapons>(source_entity);
         auto& current_weapon_set = registry.get<component::current_weapon_set>(source_entity);
+        bool has_bundle_equipped = registry.any_of<component::bundle_component>(source_entity);
         bool is_satisfied = std::any_of(
             equipped_weapons.weapons.begin(),
             equipped_weapons.weapons.end(),
             [&](const actor::weapon& weapon) {
                 return weapon.set == current_weapon_set.set &&
-                       (!filters.weapon_type || weapon.type == *filters.weapon_type) &&
-                       (!filters.weapon_position || weapon.position == *filters.weapon_position) &&
+                       (!filters.weapon_type ||
+                        (!has_bundle_equipped && weapon.type == *filters.weapon_type)) &&
+                       (!filters.weapon_position ||
+                        (!has_bundle_equipped && weapon.position == *filters.weapon_position)) &&
                        (!filters.weapon_sigil || weapon.sigil == *filters.weapon_sigil);
             });
         if (!is_satisfied) {
@@ -415,6 +418,8 @@ void apply_incoming_strikes(registry_t& registry) {
                                                                     target_entity,
                                                                     strike.strike.skill,
                                                                     registry)) {
+                                // NOTE: IMPORTANT. Sigil torment is currently performed as a child
+                                // skill so the cooldown isn't being used
                                 utils::enqueue_child_skill(
                                     strike_source_entity, skill_trigger.skill, registry);
                             }
@@ -430,8 +435,8 @@ void apply_incoming_strikes(registry_t& registry) {
                 auto& outgoing_effects_component =
                     registry.get_or_emplace<component::outgoing_effects_component>(
                         strike_source_entity);
-                std::copy(strike.strike.on_hit_effect_applications.begin(),
-                          strike.strike.on_hit_effect_applications.end(),
+                std::copy(strike.strike.on_strike_effect_applications.begin(),
+                          strike.strike.on_strike_effect_applications.end(),
                           std::back_inserter(outgoing_effects_component.effect_applications));
 
                 auto& strike_source_outgoing_damage_modifiers =
@@ -456,7 +461,7 @@ void apply_incoming_strikes(registry_t& registry) {
                      target_incoming_damage_modifiers.source_entity_to_damage_modifiers
                          .at(target_entity)
                          .strike_damage_multiplier_add_group_addend);
-                double critical_hit_multiplier = utils::get_critical_hit_multiplier(
+                double critical_strike_multiplier = utils::get_critical_strike_multiplier(
                     strike.strike.critical_chance_pct +
                         target_incoming_damage_modifiers.source_entity_to_attribute_modifiers
                             .at(strike_source_entity)
@@ -471,7 +476,8 @@ void apply_incoming_strikes(registry_t& registry) {
                 auto& incoming_damage =
                     registry.get_or_emplace<component::incoming_damage>(target_entity);
                 incoming_damage.value += strike.strike.base_outgoing_damage *
-                                         critical_hit_multiplier * total_strike_damage_multiplier /
+                                         critical_strike_multiplier *
+                                         total_strike_damage_multiplier /
                                          effective_attributes[actor::attribute_t::ARMOR];
                 spdlog::info(
                     "[{}] skill {} pow {} strike_mult {} crit_mult {} incoming_dmg {} "
@@ -481,9 +487,9 @@ void apply_incoming_strikes(registry_t& registry) {
                     registry.get<component::effective_attributes>(
                         strike_source_entity)[actor::attribute_t::POWER],
                     total_strike_damage_multiplier,
-                    critical_hit_multiplier,
+                    critical_strike_multiplier,
                     incoming_damage.value,
-                    utils::to_string(strike.strike.on_hit_effect_applications));
+                    utils::to_string(strike.strike.on_strike_effect_applications));
             }
         });
 }
