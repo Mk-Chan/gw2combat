@@ -1,0 +1,14 @@
+{
+    "actors": [
+        {
+            "name": "dh",
+            "build_path": "resources/build-dh.json",
+            "team": 1
+        },
+        {
+            "name": "golem",
+            "build_path": "resources/build-golem.json",
+            "team": 2
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "base_class": "guardian",
+    "profession": "dragonhunter",
+    "attributes": [
+        ["power", 2848],
+        ["precision", 1749],
+        ["toughness", 1000],
+        ["vitality", 1802]
+    ],
+    "skills": [
+        {
+            "skill_key": "Puncture Shot",
+            "weapon_type": "LONGBOW",
+            "damage_coefficient": 1.0,
+            "cast_duration": [1360, 680],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[850], [680]]
+        }
+    ]
+}
