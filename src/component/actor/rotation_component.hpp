@@ -7,8 +7,7 @@ namespace gw2combat::component {
 
 struct rotation_component {
     actor::rotation_t rotation;
-    std::size_t current_idx = 0;
-    tick_t offset = 0;
+    int current_idx = 0;
     bool repeat = false;
 };
 

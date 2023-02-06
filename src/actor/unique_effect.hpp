@@ -8,11 +8,11 @@ namespace gw2combat::actor {
 struct unique_effect_t {
     std::string name;
 
-    [[nodiscard]] constexpr inline bool is_invalid() const {
+    [[nodiscard]] inline bool is_invalid() const {
         return name.empty();
     }
 
-    [[nodiscard]] constexpr inline bool operator==(const unique_effect_t& rhs) const {
+    [[nodiscard]] inline bool operator==(const unique_effect_t& rhs) const {
         return this->name == rhs.name;
     }
 };

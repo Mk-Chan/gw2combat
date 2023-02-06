@@ -20,8 +20,8 @@ struct unique_effects_component {
                                return unique_effect == unique_effect_entity.unique_effect;
                            });
     }
-    [[nodiscard]] inline size_t count(const actor::unique_effect_t& unique_effect) const {
-        size_t count = 0;
+    [[nodiscard]] inline int count(const actor::unique_effect_t& unique_effect) const {
+        int count = 0;
         for (auto& unique_effect_entity : unique_effect_entities) {
             if (unique_effect_entity.unique_effect == unique_effect) {
                 ++count;

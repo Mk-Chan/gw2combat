@@ -13,16 +13,16 @@ struct effect_entity {
 };
 
 struct effects_component {
-    [[nodiscard]] inline size_t count(const actor::effect_t& effect) const {
+    [[nodiscard]] inline int count(const actor::effect_t& effect) const {
         return std::min(utils::get_max_considered_stacks_of_effect_type(effect),
-                        (size_t)std::count_if(effect_entities.begin(),
-                                              effect_entities.end(),
-                                              [&](const effect_entity& effect_entity) {
-                                                  return effect_entity.effect == effect;
-                                              }));
+                        (int)std::count_if(effect_entities.begin(),
+                                           effect_entities.end(),
+                                           [&](const effect_entity& effect_entity) {
+                                               return effect_entity.effect == effect;
+                                           }));
     }
-    [[nodiscard]] inline std::unordered_map<actor::effect_t, size_t> count_all() const {
-        std::unordered_map<actor::effect_t, size_t> effect_counts;
+    [[nodiscard]] inline std::unordered_map<actor::effect_t, int> count_all() const {
+        std::unordered_map<actor::effect_t, int> effect_counts;
         for (auto effect_entity : effect_entities) {
             effect_counts[effect_entity.effect] =
                 std::min(utils::get_max_considered_stacks_of_effect_type(effect_entity.effect),

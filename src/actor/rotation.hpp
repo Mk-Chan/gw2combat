@@ -9,7 +9,7 @@ namespace gw2combat::actor {
 
 struct skill_cast_t {
     skill_t skill;
-    tick_t cast_time_ms;
+    tick_t cast_time_ms = 0;
 };
 
 struct rotation_t {

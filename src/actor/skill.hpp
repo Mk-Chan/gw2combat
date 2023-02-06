@@ -7,6 +7,6 @@ namespace gw2combat::actor {
 
 using skill_t = std::string;
 
-}  // namespace std
+}  // namespace gw2combat::actor
 
 #endif  // GW2COMBAT_ACTOR_SKILL_HPP

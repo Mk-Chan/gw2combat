@@ -38,7 +38,7 @@ struct skill_t {
 
     std::vector<skill_t> child_skill_keys;
 
-    [[nodiscard]] constexpr inline bool operator==(const skill_t& rhs) const {
+    [[nodiscard]] inline bool operator==(const skill_t& rhs) const {
         return this->skill_key == rhs.skill_key;
     }
 };

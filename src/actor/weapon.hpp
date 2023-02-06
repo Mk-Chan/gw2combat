@@ -61,32 +61,32 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_set,
                              {
                                  {weapon_set::INVALID, "Invalid"},
 
-                                 {weapon_set::SET_1, "SET_1"},
-                                 {weapon_set::SET_2, "SET_2"},
+                                 {weapon_set::SET_1, "set_1"},
+                                 {weapon_set::SET_2, "set_2"},
                              })
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_position,
                              {
                                  {weapon_position::INVALID, "Invalid"},
 
-                                 {weapon_position::UNIVERSAL, "UNIVERSAL"},
-                                 {weapon_position::MAIN_HAND, "MAIN_HAND"},
-                                 {weapon_position::OFF_HAND, "OFF_HAND"},
-                                 {weapon_position::TWO_HANDED, "TWO_HANDED"},
+                                 {weapon_position::UNIVERSAL, "universal"},
+                                 {weapon_position::MAIN_HAND, "main_hand"},
+                                 {weapon_position::OFF_HAND, "off_hand"},
+                                 {weapon_position::TWO_HANDED, "two_handed"},
                              })
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
                              {
                                  {weapon_type::INVALID, "Invalid"},
 
-                                 {weapon_type::EMPTY_HANDED, "EMPTY_HANDED"},
-                                 {weapon_type::GREATSWORD, "GREATSWORD"},
-                                 {weapon_type::LONGBOW, "LONGBOW"},
-                                 {weapon_type::SWORD, "SWORD"},
-                                 {weapon_type::AXE, "AXE"},
-                                 {weapon_type::TORCH, "TORCH"},
-                                 {weapon_type::SCEPTER, "SCEPTER"},
-                                 {weapon_type::FOCUS, "FOCUS"},
-                                 {weapon_type::KIT_CONJURE, "KIT_CONJURE"},
-                                 {weapon_type::TOME, "TOME"},
+                                 {weapon_type::EMPTY_HANDED, "empty_handed"},
+                                 {weapon_type::GREATSWORD, "greatsword"},
+                                 {weapon_type::LONGBOW, "longbow"},
+                                 {weapon_type::SWORD, "sword"},
+                                 {weapon_type::AXE, "axe"},
+                                 {weapon_type::TORCH, "torch"},
+                                 {weapon_type::SCEPTER, "scepter"},
+                                 {weapon_type::FOCUS, "focus"},
+                                 {weapon_type::KIT_CONJURE, "kit_conjure"},
+                                 {weapon_type::TOME, "tome"},
                              })
 
 }  // namespace gw2combat::actor

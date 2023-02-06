@@ -7,13 +7,19 @@
         ["toughness", 1000],
         ["vitality", 1802]
     ],
+    "weapons": [
+        {
+            "type": "longbow",
+            "position": "two_handed",
+            "set": "set_1"
+        }
+    ],
     "skills": [
         {
             "skill_key": "Puncture Shot",
-            "weapon_type": "LONGBOW",
+            "weapon_type": "longbow",
             "damage_coefficient": 1.0,
             "cast_duration": [1360, 680],
-            "cooldown": [0, 0],
             "strike_on_tick_list": [[850], [680]]
         }
     ]

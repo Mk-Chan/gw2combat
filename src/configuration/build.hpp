@@ -19,9 +19,8 @@ struct build_t {
     actor::base_class_t base_class = actor::base_class_t::INVALID;
     actor::profession_t profession = actor::profession_t::INVALID;
     std::unordered_map<actor::attribute_t, double> attributes{};
-    std::vector<weapon> weapons{};
+    std::vector<weapon_t> weapons{};
     std::vector<skill_t> skills{};
-    std::vector<actor::effect_t> permanent_effects{};
     std::vector<unique_effect_t> permanent_unique_effects{};
 };
 
@@ -31,7 +30,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(build_t,
                                                 attributes,
                                                 weapons,
                                                 skills,
-                                                permanent_effects,
                                                 permanent_unique_effects)
 
 }  // namespace gw2combat::configuration

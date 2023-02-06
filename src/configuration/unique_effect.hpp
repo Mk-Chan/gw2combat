@@ -21,7 +21,7 @@ struct unique_effect_t {
     int max_considered_stacks = 1;
     int max_stored_stacks = 1500;
 
-    [[nodiscard]] constexpr inline bool operator==(const unique_effect_t& rhs) const {
+    [[nodiscard]] inline bool operator==(const unique_effect_t& rhs) const {
         return this->unique_effect_key == rhs.unique_effect_key;
     }
 };

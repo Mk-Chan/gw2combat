@@ -73,7 +73,7 @@ constexpr static inline std::array BOONS{
     }
 }
 
-[[nodiscard]] static inline size_t get_max_stored_stacks_of_effect_type(
+[[nodiscard]] static inline int get_max_stored_stacks_of_effect_type(
     actor::effect_t effect_type) {
     switch (effect_type) {
         case actor::effect_t::AEGIS:
@@ -110,7 +110,7 @@ constexpr static inline std::array BOONS{
     }
 }
 
-[[nodiscard]] static inline size_t get_max_considered_stacks_of_effect_type(
+[[nodiscard]] static inline int get_max_considered_stacks_of_effect_type(
     actor::effect_t effect_type) {
     switch (effect_type) {
         case actor::effect_t::AEGIS:
@@ -148,7 +148,7 @@ constexpr static inline std::array BOONS{
     }
 }
 
-[[nodiscard]] static inline size_t get_max_effect_duration(actor::effect_t effect_type) {
+[[nodiscard]] static inline int get_max_effect_duration(actor::effect_t effect_type) {
     switch (effect_type) {
         case actor::effect_t::BLINDED:
         case actor::effect_t::CHILLED:
@@ -266,7 +266,7 @@ constexpr static inline std::array BOONS{
     }
 }
 
-[[nodiscard]] constexpr static inline bool is_boon(actor::effect_t effect_type) {
+[[nodiscard]] static inline bool is_boon(actor::effect_t effect_type) {
     switch (effect_type) {
         case actor::effect_t::AEGIS:
         case actor::effect_t::ALACRITY:
@@ -302,7 +302,7 @@ constexpr static inline std::array BOONS{
     }
 }
 
-[[nodiscard]] constexpr static inline bool is_damaging_condition(actor::effect_t effect_type) {
+[[nodiscard]] static inline bool is_damaging_condition(actor::effect_t effect_type) {
     switch (effect_type) {
         case actor::effect_t::BURNING:
         case actor::effect_t::BLEEDING:
