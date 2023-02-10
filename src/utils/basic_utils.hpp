@@ -24,6 +24,10 @@ template <typename T>
     return get_random_0_100() < upper_bound;
 }
 
+[[nodiscard]] static inline tick_t get_current_tick(registry_t& registry) {
+    return registry.ctx().get<const tick_t>();
+}
+
 }  // namespace gw2combat::utils
 
 #endif  // GW2COMBAT_UTILS_BASIC_UTILS_HPP

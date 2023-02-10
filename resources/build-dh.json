@@ -5,7 +5,12 @@
         ["power", 2848],
         ["precision", 1749],
         ["toughness", 1000],
-        ["vitality", 1802]
+        ["vitality", 1802],
+        ["condition_damage", 1],
+        ["outgoing_condition_damage_multiplier", 2],
+        ["burning_damage_multiplier", 2],
+        ["burning_duration_multiplier", 2],
+        ["bleeding_damage_multiplier", 2]
     ],
     "weapons": [
         {

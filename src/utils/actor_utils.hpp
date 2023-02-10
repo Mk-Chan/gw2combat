@@ -10,10 +10,12 @@
 #include "configuration/attribute_conversion.hpp"
 #include "configuration/attribute_modifier.hpp"
 #include "configuration/skill.hpp"
+#include "configuration/unique_effect.hpp"
 
 #include "component/actor/attribute_conversions_component.hpp"
 #include "component/actor/attribute_modifiers_component.hpp"
 #include "component/actor/destroy_after_rotation.hpp"
+#include "component/actor/effects_component.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/rotation_component.hpp"
 #include "component/actor/skill_triggers_component.hpp"
@@ -22,10 +24,15 @@
 #include "component/actor/strike_counter.hpp"
 #include "component/actor/team.hpp"
 #include "component/actor/unique_effects_component.hpp"
+#include "component/effect/is_effect.hpp"
 #include "component/effect/is_unique_effect.hpp"
+#include "component/effect/source_actor.hpp"
 #include "component/skill/ammo.hpp"
 #include "component/skill/configuration_component.hpp"
 #include "component/skill/is_skill.hpp"
+#include "component/temporal//duration_component.hpp"
+#include "component/temporal/has_alacrity.hpp"
+#include "component/temporal/has_quickness.hpp"
 
 namespace gw2combat::utils {
 
@@ -59,6 +66,47 @@ static inline entity_t add_skill_to_actor(configuration::skill_t& skill,
     }
     registry.ctx().emplace_as<std::string>(skill_entity, skill.skill_key);
     return skill_entity;
+}
+
+static inline std::optional<entity_t> add_effect_to_actor(actor::effect_t effect,
+                                                          int num_stacks,
+                                                          int duration,
+                                                          entity_t source_entity,
+                                                          entity_t target_entity,
+                                                          registry_t& registry) {
+    for (; num_stacks > 0; --num_stacks) {
+        auto effect_entity = registry.create();
+        registry.emplace<component::duration_component>(effect_entity,
+                                                        component::duration_component{duration, 0});
+        registry.emplace<component::is_effect>(effect_entity, effect);
+        registry.emplace<component::source_actor>(effect_entity, source_entity);
+        registry.emplace<component::owner_component>(effect_entity, target_entity);
+        registry.get_or_emplace<component::effects_component>(target_entity)
+            .effect_entities.emplace_back(component::effect_entity{effect, effect_entity});
+
+        if (effect == actor::effect_t::MIGHT) {
+            auto& attribute_modifiers_component =
+                registry.get_or_emplace<component::attribute_modifiers_component>(effect_entity);
+            attribute_modifiers_component.attribute_modifiers.emplace_back(
+                configuration::attribute_modifier_t{
+                    configuration::condition_t{}, actor::attribute_t::POWER, 1.0, 30.0});
+            attribute_modifiers_component.attribute_modifiers.emplace_back(
+                configuration::attribute_modifier_t{
+                    configuration::condition_t{}, actor::attribute_t::CONDITION_DAMAGE, 1.0, 30.0});
+        } else if (effect == actor::effect_t::FURY) {
+            auto& attribute_modifiers_component =
+                registry.get_or_emplace<component::attribute_modifiers_component>(effect_entity);
+            attribute_modifiers_component.attribute_modifiers.emplace_back(
+                configuration::attribute_modifier_t{configuration::condition_t{},
+                                                    actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER,
+                                                    1.0,
+                                                    25.0});
+        } else if (effect == actor::effect_t::QUICKNESS) {
+            registry.emplace_or_replace<component::has_quickness>(target_entity);
+        } else if (effect == actor::effect_t::ALACRITY) {
+            registry.emplace_or_replace<component::has_alacrity>(target_entity);
+        }
+    }
 }
 
 static inline std::optional<entity_t> add_unique_effect_to_actor(

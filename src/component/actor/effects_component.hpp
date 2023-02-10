@@ -5,6 +5,8 @@
 
 #include "actor/effect.hpp"
 
+#include "utils/effect_utils.hpp"
+
 namespace gw2combat::component {
 
 struct effect_entity {
@@ -54,4 +56,4 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(effects_component, effect_entiti
 
 }  // namespace gw2combat::component
 
-#endif  // GW2COMBAT_COMPONENT_EFFECTS_COMPONENT_HPP
+#endif  // GW2COMBAT_COMPONENT_ACTOR_EFFECTS_COMPONENT_HPP

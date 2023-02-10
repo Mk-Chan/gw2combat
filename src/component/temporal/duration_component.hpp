@@ -10,7 +10,7 @@ struct duration_component {
     int progress = 0;
 };
 
-struct duration_expired_component {};
+struct duration_expired {};
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(duration_component, duration, progress)
 

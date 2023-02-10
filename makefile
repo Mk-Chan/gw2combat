@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall -pipe -Isrc/ -Iinclude/ $(EXTRACXXFLAGS)
 LDFLAGS = -pthread $(CXXFLAGS) $(EXTRALDFLAGS)
 
-SRCS = src/main.cpp src/system/encounter.cpp
+SRCS = src/main.cpp src/system/encounter.cpp src/system/temporal.cpp src/system/actor.cpp src/system/effects.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 EXE = gw2combat

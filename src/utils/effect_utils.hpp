@@ -191,10 +191,10 @@ constexpr static inline std::array BOONS{
     const component::effective_attributes& effective_attributes,
     const effect_duration_pct_addends_t& effect_duration_pct_addends) {
     double effective_uniform_condition_duration_pct =
-        effective_attributes[actor::attribute_t::CONDITION_DURATION_PCT] +
+        effective_attributes[actor::attribute_t::CONDITION_DURATION_MULTIPLIER] +
         effect_duration_pct_addends.condition_duration_pct_addend;
     double effective_uniform_boon_duration_pct =
-        effective_attributes[actor::attribute_t::BOON_DURATION_PCT] +
+        effective_attributes[actor::attribute_t::BOON_DURATION_MULTIPLIER] +
         effect_duration_pct_addends.boon_duration_pct_addend;
     auto calculate_condition_duration = [&](double special_condition_duration_pct = 0.0) {
         double normalized_uniform_condition_duration_pct = std::min(
@@ -239,23 +239,23 @@ constexpr static inline std::array BOONS{
 
         case actor::effect_t::BURNING:
             return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::BURNING_DURATION_PCT] +
+                effective_attributes[actor::attribute_t::BURNING_DURATION_MULTIPLIER] +
                 effect_duration_pct_addends.burning_duration_pct_addend);
         case actor::effect_t::BLEEDING:
             return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::BLEEDING_DURATION_PCT] +
+                effective_attributes[actor::attribute_t::BLEEDING_DURATION_MULTIPLIER] +
                 effect_duration_pct_addends.bleeding_duration_pct_addend);
         case actor::effect_t::TORMENT:
             return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::TORMENT_DURATION_PCT] +
+                effective_attributes[actor::attribute_t::TORMENT_DURATION_MULTIPLIER] +
                 effect_duration_pct_addends.torment_duration_pct_addend);
         case actor::effect_t::POISON:
             return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::POISON_DURATION_PCT] +
+                effective_attributes[actor::attribute_t::POISON_DURATION_MULTIPLIER] +
                 effect_duration_pct_addends.poison_duration_pct_addend);
         case actor::effect_t::CONFUSION:
             return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::CONFUSION_DURATION_PCT] +
+                effective_attributes[actor::attribute_t::CONFUSION_DURATION_MULTIPLIER] +
                 effect_duration_pct_addends.confusion_duration_pct_addend);
 
         case actor::effect_t::BINDING_BLADE:

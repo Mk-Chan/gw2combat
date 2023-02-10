@@ -8,8 +8,6 @@
 #include "actor/unique_effect.hpp"
 #include "actor/weapon.hpp"
 
-#include "utils/strike_counter.hpp"
-
 namespace gw2combat::configuration {
 
 struct condition_t {
