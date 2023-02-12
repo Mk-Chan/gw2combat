@@ -133,7 +133,6 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
         auto& attribute_modifiers_component =
             registry.get_or_emplace<component::attribute_modifiers_component>(unique_effect_entity);
         for (auto& attribute_modifier : unique_effect.attribute_modifiers) {
-            attribute_modifier.condition.unique_effect_on_source = unique_effect.unique_effect_key;
             attribute_modifiers_component.attribute_modifiers.emplace_back(attribute_modifier);
         }
     }
@@ -142,8 +141,6 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
             registry.get_or_emplace<component::attribute_conversions_component>(
                 unique_effect_entity);
         for (auto& attribute_conversion : unique_effect.attribute_conversions) {
-            attribute_conversion.condition.unique_effect_on_source =
-                unique_effect.unique_effect_key;
             attribute_conversions_component.attribute_conversions.emplace_back(
                 attribute_conversion);
         }
@@ -152,7 +149,6 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
         auto& skill_triggers_component =
             registry.get_or_emplace<component::skill_triggers_component>(unique_effect_entity);
         for (auto& skill_trigger : unique_effect.skill_triggers) {
-            skill_trigger.condition.unique_effect_on_source = unique_effect.unique_effect_key;
             skill_triggers_component.skill_triggers.emplace_back(skill_trigger);
             // Add skill to actor? Be careful because then the actor will be allowed to cast this
             // skill in a non-triggered as well as receive any passive bonuses as well.

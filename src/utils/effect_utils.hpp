@@ -6,19 +6,9 @@
 #include "actor/effect.hpp"
 #include "actor/stacking.hpp"
 
-#include "component/actor/effective_attributes.hpp"
+#include "component/actor/relative_attributes.hpp"
 
 namespace gw2combat::utils {
-
-struct effect_duration_pct_addends_t {
-    double boon_duration_pct_addend = 0.0;
-    double condition_duration_pct_addend = 0.0;
-    double burning_duration_pct_addend = 0.0;
-    double bleeding_duration_pct_addend = 0.0;
-    double confusion_duration_pct_addend = 0.0;
-    double poison_duration_pct_addend = 0.0;
-    double torment_duration_pct_addend = 0.0;
-};
 
 constexpr static inline std::array BOONS{
     actor::effect_t::AEGIS,
@@ -73,8 +63,7 @@ constexpr static inline std::array BOONS{
     }
 }
 
-[[nodiscard]] static inline int get_max_stored_stacks_of_effect_type(
-    actor::effect_t effect_type) {
+[[nodiscard]] static inline int get_max_stored_stacks_of_effect_type(actor::effect_t effect_type) {
     switch (effect_type) {
         case actor::effect_t::AEGIS:
         case actor::effect_t::ALACRITY:
@@ -188,14 +177,12 @@ constexpr static inline std::array BOONS{
 [[nodiscard]] static inline int get_effective_effect_duration(
     int base_duration,
     actor::effect_t effect_type,
-    const component::effective_attributes& effective_attributes,
-    const effect_duration_pct_addends_t& effect_duration_pct_addends) {
+    const component::relative_attributes& relative_attributes,
+    entity_t target_entity) {
     double effective_uniform_condition_duration_pct =
-        effective_attributes[actor::attribute_t::CONDITION_DURATION_MULTIPLIER] +
-        effect_duration_pct_addends.condition_duration_pct_addend;
+        relative_attributes.get(target_entity, actor::attribute_t::CONDITION_DURATION_MULTIPLIER);
     double effective_uniform_boon_duration_pct =
-        effective_attributes[actor::attribute_t::BOON_DURATION_MULTIPLIER] +
-        effect_duration_pct_addends.boon_duration_pct_addend;
+        relative_attributes.get(target_entity, actor::attribute_t::BOON_DURATION_MULTIPLIER);
     auto calculate_condition_duration = [&](double special_condition_duration_pct = 0.0) {
         double normalized_uniform_condition_duration_pct = std::min(
             100.0,
@@ -211,18 +198,41 @@ constexpr static inline std::array BOONS{
 
     switch (effect_type) {
         case actor::effect_t::AEGIS:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::AEGIS_DURATION_MULTIPLIER));
         case actor::effect_t::ALACRITY:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::ALACRITY_DURATION_MULTIPLIER));
         case actor::effect_t::FURY:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::FURY_DURATION_MULTIPLIER));
         case actor::effect_t::MIGHT:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::MIGHT_DURATION_MULTIPLIER));
         case actor::effect_t::QUICKNESS:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::QUICKNESS_DURATION_MULTIPLIER));
         case actor::effect_t::RESOLUTION:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::RESOLUTION_DURATION_MULTIPLIER));
         case actor::effect_t::RESISTANCE:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::RESISTANCE_DURATION_MULTIPLIER));
         case actor::effect_t::PROTECTION:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::PROTECTION_DURATION_MULTIPLIER));
         case actor::effect_t::REGENERATION:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::REGENERATION_DURATION_MULTIPLIER));
         case actor::effect_t::VIGOR:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::VIGOR_DURATION_MULTIPLIER));
         case actor::effect_t::SWIFTNESS:
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::SWIFTNESS_DURATION_MULTIPLIER));
         case actor::effect_t::STABILITY:
-            // TODO: Implement boon-specific boon durations later
+            return calculate_boon_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::STABILITY_DURATION_MULTIPLIER));
             return calculate_boon_duration();
 
         case actor::effect_t::BLINDED:
@@ -238,25 +248,20 @@ constexpr static inline std::array BOONS{
             return calculate_condition_duration();
 
         case actor::effect_t::BURNING:
-            return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::BURNING_DURATION_MULTIPLIER] +
-                effect_duration_pct_addends.burning_duration_pct_addend);
+            return calculate_condition_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::BURNING_DURATION_MULTIPLIER));
         case actor::effect_t::BLEEDING:
-            return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::BLEEDING_DURATION_MULTIPLIER] +
-                effect_duration_pct_addends.bleeding_duration_pct_addend);
+            return calculate_condition_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::BLEEDING_DURATION_MULTIPLIER));
         case actor::effect_t::TORMENT:
-            return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::TORMENT_DURATION_MULTIPLIER] +
-                effect_duration_pct_addends.torment_duration_pct_addend);
+            return calculate_condition_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::TORMENT_DURATION_MULTIPLIER));
         case actor::effect_t::POISON:
-            return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::POISON_DURATION_MULTIPLIER] +
-                effect_duration_pct_addends.poison_duration_pct_addend);
+            return calculate_condition_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::POISON_DURATION_MULTIPLIER));
         case actor::effect_t::CONFUSION:
-            return calculate_condition_duration(
-                effective_attributes[actor::attribute_t::CONFUSION_DURATION_MULTIPLIER] +
-                effect_duration_pct_addends.confusion_duration_pct_addend);
+            return calculate_condition_duration(relative_attributes.get(
+                target_entity, actor::attribute_t::CONFUSION_DURATION_MULTIPLIER));
 
         case actor::effect_t::BINDING_BLADE:
             return base_duration;

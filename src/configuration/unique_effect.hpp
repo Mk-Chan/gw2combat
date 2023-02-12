@@ -27,6 +27,7 @@ struct unique_effect_t {
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(unique_effect_t,
+                                                unique_effect_key,
                                                 attribute_modifiers,
                                                 attribute_conversions,
                                                 skill_triggers,

@@ -12,7 +12,7 @@
 #include "skill.hpp"
 #include "unique_effect.hpp"
 #include "weapon.hpp"
-#include <iostream>
+
 namespace gw2combat::configuration {
 
 struct build_t {
@@ -79,7 +79,7 @@ struct build_t {
     }
 };
 
-inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohmann_json_t) {
+static inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohmann_json_t) {
     nlohmann_json_j["base_class"] = nlohmann_json_t.base_class;
     nlohmann_json_j["profession"] = nlohmann_json_t.profession;
     nlohmann_json_j["attributes"] = nlohmann_json_t.attributes;
@@ -88,7 +88,7 @@ inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohmann_jso
     nlohmann_json_j["permanent_unique_effects"] = nlohmann_json_t.permanent_unique_effects;
 }
 
-inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlohmann_json_t) {
+static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlohmann_json_t) {
     build_t nlohmann_json_default_obj;
     nlohmann_json_t.base_class =
         nlohmann_json_j.value("base_class", nlohmann_json_default_obj.base_class);

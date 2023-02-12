@@ -10,12 +10,16 @@
 
 #include "configuration/condition.hpp"
 
+#include "entity_utils.hpp"
+
 namespace gw2combat::utils {
 
-bool conditions_satisfied(const configuration::condition_t& condition,
-                          registry_t& registry,
-                          entity_t source_entity,
-                          std::optional<entity_t> target_entity = std::nullopt) {
+[[nodiscard]] static inline bool conditions_satisfied(
+    const configuration::condition_t& condition,
+    registry_t& registry,
+    entity_t entity,
+    std::optional<entity_t> target_entity = std::nullopt) {
+    auto source_entity = utils::get_owner(entity, registry);
     if (condition.weapon_type || condition.weapon_position) {
         if (!registry.all_of<component::equipped_weapons, component::current_weapon_set>(
                 source_entity)) {

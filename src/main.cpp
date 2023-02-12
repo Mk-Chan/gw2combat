@@ -1,8 +1,7 @@
 #include "common.hpp"
 
-#include "component/actor/effects_component.hpp"
 #include "component/actor/did_weapon_swap.hpp"
-#include "component/damage/buffered_condition_damage.hpp"
+#include "component/actor/effects_component.hpp"
 #include "component/damage/incoming_damage.hpp"
 
 #include "system/actor.hpp"
@@ -13,12 +12,11 @@
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"
-#include "utils/io_utils.hpp"
 
 namespace gw2combat {
 
 void clear_temporary_components(registry_t& registry) {
-    registry.clear<component::effective_attributes,
+    registry.clear<component::relative_attributes,
                    component::incoming_damage,
                    component::did_weapon_swap,
                    component::animation_expired,
@@ -33,7 +31,7 @@ void tick(registry_t& registry) {
     system::progress_cooldowns(registry);
     system::progress_durations(registry);
 
-    system::calculate_effective_attributes(registry);
+    system::calculate_relative_attributes(registry);
 
     system::buffer_damage_for_effects_with_no_duration(registry);
     if (tick_t current_tick = utils::get_current_tick(registry); current_tick % 1000 == 0) {

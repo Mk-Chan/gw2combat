@@ -15,48 +15,45 @@
 namespace gw2combat::system {
 
 double calculate_condition_damage(actor::effect_t this_effect,
-                                  const component::effective_attributes& effective_attributes,
+                                  entity_t target_entity,
+                                  const component::relative_attributes& source_relative_attributes,
                                   double base_condition_damage_multiplier) {
     switch (this_effect) {
         case actor::effect_t::BURNING:
-            return (131.0 + 0.155 * effective_attributes[actor::attribute_t::CONDITION_DAMAGE]) *
-                   effective_attributes[actor::attribute_t::BURNING_DAMAGE_MULTIPLIER] *
-                   effective_attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER] *
-                   effective_attributes
-                       [actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] *
+            return (131.0 + 0.155 * source_relative_attributes.get(
+                                        target_entity, actor::attribute_t::CONDITION_DAMAGE)) *
+                   source_relative_attributes.get(target_entity,
+                                                  actor::attribute_t::BURNING_DAMAGE_MULTIPLIER) *
                    base_condition_damage_multiplier;
         case actor::effect_t::BLEEDING:
-            return (22.0 + 0.06 * effective_attributes[actor::attribute_t::CONDITION_DAMAGE]) *
-                   effective_attributes[actor::attribute_t::BLEEDING_DAMAGE_MULTIPLIER] *
-                   effective_attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER] *
-                   effective_attributes
-                       [actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] *
+            return (22.0 + 0.06 * source_relative_attributes.get(
+                                      target_entity, actor::attribute_t::CONDITION_DAMAGE)) *
+                   source_relative_attributes.get(target_entity,
+                                                  actor::attribute_t::BLEEDING_DAMAGE_MULTIPLIER) *
                    base_condition_damage_multiplier;
         case actor::effect_t::TORMENT:
             // FIXME: This is stationary-only torment damage for golem logs
-            return (31.8 + 0.09 * effective_attributes[actor::attribute_t::CONDITION_DAMAGE]) *
-                   effective_attributes[actor::attribute_t::TORMENT_DAMAGE_MULTIPLIER] *
-                   effective_attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER] *
-                   effective_attributes
-                       [actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] *
+            return (31.8 + 0.09 * source_relative_attributes.get(
+                                      target_entity, actor::attribute_t::CONDITION_DAMAGE)) *
+                   source_relative_attributes.get(target_entity,
+                                                  actor::attribute_t::TORMENT_DAMAGE_MULTIPLIER) *
                    base_condition_damage_multiplier;
         case actor::effect_t::POISON:
-            return (33.5 + 0.06 * effective_attributes[actor::attribute_t::CONDITION_DAMAGE]) *
-                   effective_attributes[actor::attribute_t::POISON_DAMAGE_MULTIPLIER] *
-                   effective_attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER] *
-                   effective_attributes
-                       [actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] *
+            return (33.5 + 0.06 * source_relative_attributes.get(
+                                      target_entity, actor::attribute_t::CONDITION_DAMAGE)) *
+                   source_relative_attributes.get(target_entity,
+                                                  actor::attribute_t::POISON_DAMAGE_MULTIPLIER) *
                    base_condition_damage_multiplier;
         case actor::effect_t::CONFUSION:
             // FIXME: This is idle-only confusion damage for golem logs
-            return (11.0 + 0.03 * effective_attributes[actor::attribute_t::CONDITION_DAMAGE]) *
-                   effective_attributes[actor::attribute_t::CONFUSION_DAMAGE_MULTIPLIER] *
-                   effective_attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER] *
-                   effective_attributes
-                       [actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] *
+            return (11.0 + 0.03 * source_relative_attributes.get(
+                                      target_entity, actor::attribute_t::CONDITION_DAMAGE)) *
+                   source_relative_attributes.get(target_entity,
+                                                  actor::attribute_t::CONFUSION_DAMAGE_MULTIPLIER) *
                    base_condition_damage_multiplier;
         case actor::effect_t::BINDING_BLADE:
-            return (160.0 + 0.2 * effective_attributes[actor::attribute_t::POWER]);
+            return (160.0 +
+                    0.2 * source_relative_attributes.get(target_entity, actor::attribute_t::POWER));
         default:
             throw std::runtime_error(fmt::format("missing damage formula for effect_type: {}",
                                                  utils::to_string(this_effect)));
@@ -68,25 +65,27 @@ void buffer_condition_damage(registry_t& registry,
                              entity_t target_entity,
                              entity_t effect_entity,
                              entity_t effect_source_entity) {
-    auto& source_effective_attributes =
-        registry.get<component::effective_attributes>(effect_source_entity);
-    auto& target_effective_attributes =
-        registry.get<component::effective_attributes>(target_entity);
+    auto& source_relative_attributes =
+        registry.get<component::relative_attributes>(effect_source_entity);
+    auto& target_relative_attributes = registry.get<component::relative_attributes>(target_entity);
 
     double base_condition_damage_multiplier =
-        source_effective_attributes[actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER] *
-        source_effective_attributes
-            [actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] *
-        target_effective_attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER] *
-        target_effective_attributes
-            [actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP];
+        source_relative_attributes.get(target_entity,
+                                       actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER) *
+        source_relative_attributes.get(
+            target_entity, actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP) *
+        target_relative_attributes.get(effect_source_entity,
+                                       actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER) *
+        target_relative_attributes.get(
+            effect_source_entity,
+            actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP);
 
     auto& condition_duration = registry.get<component::duration_component>(effect_entity);
     double damaging_condition_progress_multiplier = condition_duration.progress / 1'000.0;
     condition_duration.duration -= condition_duration.progress;
     condition_duration.progress = 0;
     double base_condition_damage = calculate_condition_damage(
-        this_effect, source_effective_attributes, base_condition_damage_multiplier);
+        this_effect, target_entity, source_relative_attributes, base_condition_damage_multiplier);
     double effective_condition_damage =
         base_condition_damage * damaging_condition_progress_multiplier;
 
