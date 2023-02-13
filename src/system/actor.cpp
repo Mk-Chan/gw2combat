@@ -6,11 +6,16 @@
 #include "component/actor/effects_component.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
+#include "component/actor/no_more_rotation.hpp"
 #include "component/actor/relative_attributes.hpp"
+#include "component/actor/rotation_component.hpp"
 #include "component/actor/static_attributes.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/hierarchy/owner_component.hpp"
+#include "component/skill/skill_configuration_component.hpp"
+#include "component/temporal/animation_component.hpp"
 
+#include "component/actor/skills_component.hpp"
 #include "utils/condition_utils.hpp"
 #include "utils/io_utils.hpp"
 
@@ -115,8 +120,7 @@ void calculate_relative_attributes(registry_t& registry) {
             const component::owner_component& owner_actor,
             const component::attribute_conversions_component& attribute_conversions_component) {
             auto source_entity = owner_actor.entity;
-            auto& relative_attributes =
-                registry.get<component::relative_attributes>(source_entity);
+            auto& relative_attributes = registry.get<component::relative_attributes>(source_entity);
             registry.view<component::relative_attributes>().each(
                 [&](entity_t other_entity, const component::relative_attributes&) {
                     if (source_entity == other_entity) {
@@ -150,6 +154,53 @@ void calculate_relative_attributes(registry_t& registry) {
                         //     utils::get_entity_name(other_entity, registry));
                     }
                 });
+        });
+}
+
+void perform_rotation(registry_t& registry) {
+    registry
+        .view<component::rotation_component>(
+            entt::exclude<component::animation_component, component::no_more_rotation>)
+        .each([&](entity_t entity, component::rotation_component& rotation_component) {
+            auto current_tick = utils::get_current_tick(registry);
+
+            if (rotation_component.current_idx >=
+                (int)rotation_component.rotation.skill_casts.size()) {
+                if (rotation_component.repeat) {
+                    rotation_component.current_idx = 0;
+                    rotation_component.tick_offset = current_tick;
+                } else {
+                    registry.emplace<component::no_more_rotation>(entity);
+                    spdlog::info("[{}] {} has no more rotation",
+                                 utils::get_current_tick(registry),
+                                 utils::get_entity_name(entity, registry));
+                    return;
+                }
+            }
+
+            auto& next_skill_cast =
+                rotation_component.rotation.skill_casts[rotation_component.current_idx];
+
+            // Make sure this skill can only be cast at or after the time specified in the rotation
+            // configuration
+            if (current_tick < next_skill_cast.cast_time_ms + rotation_component.tick_offset) {
+                return;
+            }
+
+            spdlog::info("[{}] {} casting skill {}",
+                         utils::get_current_tick(registry),
+                         utils::get_entity_name(entity, registry),
+                         utils::to_string(next_skill_cast.skill));
+
+            auto skill_entity =
+                registry.get<component::skills_component>(entity).find_by(next_skill_cast.skill);
+            auto& skill_cast_duration =
+                registry.get<component::skill_configuration_component>(skill_entity)
+                    .skill_configuration.cast_duration;
+            registry.emplace<component::animation_component>(
+                entity, component::animation_component{skill_cast_duration, {0, 0}});
+
+            rotation_component.current_idx += 1;
         });
 }
 

@@ -78,6 +78,10 @@ void progress_durations(registry_t& registry) {
 }
 
 void cleanup_expired_components(registry_t& registry) {
+    registry.view<component::animation_expired>().each(
+        [&](entity_t entity) { registry.remove<component::animation_component>(entity); });
+    registry.view<component::cooldown_expired>().each(
+        [&](entity_t entity) { registry.remove<component::cooldown_component>(entity); });
     registry.view<component::duration_expired>().each(
         [&](entity_t entity) { registry.destroy(entity); });
 }

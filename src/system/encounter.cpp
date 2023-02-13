@@ -21,9 +21,6 @@ void setup_encounter(registry_t& registry) {
     auto encounter = utils::read<configuration::encounter_t>("resources/encounter.json");
     for (auto&& actor : encounter.actors) {
         auto build = utils::read<configuration::build_t>(actor.build_path);
-        if (!actor.rotation_path.empty()) {
-            utils::read<configuration::rotation_t>(actor.rotation_path);
-        }
 
         auto actor_entity = registry.create();
         registry.ctx().emplace_as<std::string>(actor_entity, actor.name);
@@ -49,6 +46,18 @@ void setup_encounter(registry_t& registry) {
         }
         for (auto& permanent_unique_effects : build.permanent_unique_effects) {
             utils::add_unique_effect_to_actor(permanent_unique_effects, actor_entity, registry);
+        }
+
+        if (!actor.rotation_path.empty()) {
+            auto rotation = utils::read<configuration::rotation_t>(actor.rotation_path);
+            actor::rotation_t converted_rotation{};
+            for (auto&& skill_cast : rotation.skill_casts) {
+                converted_rotation.skill_casts.emplace_back(
+                    actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+            }
+            registry.emplace<component::rotation_component>(
+                actor_entity,
+                component::rotation_component{converted_rotation, 0, 0, rotation.repeat});
         }
     }
 }

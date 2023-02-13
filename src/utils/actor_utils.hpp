@@ -28,8 +28,8 @@
 #include "component/effect/is_unique_effect.hpp"
 #include "component/effect/source_actor.hpp"
 #include "component/skill/ammo.hpp"
-#include "component/skill/configuration_component.hpp"
 #include "component/skill/is_skill.hpp"
+#include "component/skill/skill_configuration_component.hpp"
 #include "component/temporal//duration_component.hpp"
 #include "component/temporal/has_alacrity.hpp"
 #include "component/temporal/has_quickness.hpp"
@@ -46,7 +46,7 @@ static inline entity_t add_skill_to_actor(configuration::skill_t& skill,
     registry.emplace<component::is_skill>(skill_entity);
     registry.emplace<component::owner_component>(skill_entity, actor_entity);
     registry.emplace<component::ammo>(skill_entity, component::ammo{skill.ammo, skill.ammo});
-    registry.emplace<component::configuration_component>(skill_entity, skill);
+    registry.emplace<component::skill_configuration_component>(skill_entity, skill);
     if (!skill.attribute_modifiers.empty()) {
         auto& attribute_modifiers_component =
             registry.get_or_emplace<component::attribute_modifiers_component>(skill_entity);

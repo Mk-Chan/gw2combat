@@ -11,6 +11,8 @@ extern void update_combat_stats(registry_t& registry);
 
 extern void calculate_relative_attributes(registry_t& registry);
 
+extern void perform_rotation(registry_t& registry);
+
 }  // namespace gw2combat::system
 
 #endif  // GW2COMBAT_SYSTEM_ACTOR_HPP

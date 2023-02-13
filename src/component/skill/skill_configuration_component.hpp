@@ -5,7 +5,7 @@
 
 namespace gw2combat::component {
 
-struct configuration_component {
+struct skill_configuration_component {
     configuration::skill_t skill_configuration;
 };
 
