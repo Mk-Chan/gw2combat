@@ -4,43 +4,254 @@
     "attributes": [
         ["power", 2848],
         ["precision", 1749],
-        ["toughness", 1000],
+        ["ferocity", 1449],
         ["vitality", 1802],
-        ["condition_damage", 0],
-        ["outgoing_condition_damage_multiplier", 2],
-        ["burning_damage_multiplier", 2],
-        ["burning_duration_multiplier", 2],
-        ["bleeding_damage_multiplier", 2]
+        ["critical_chance_pct", 40.666666666666664],
+        ["critical_damage_pct", 246.60000000000002]
     ],
     "weapons": [
         {
             "type": "longbow",
             "position": "two_handed",
             "set": "set_1"
+        }, {
+            "type": "greatsword",
+            "position": "two_handed",
+            "set": "set_2"
         }
     ],
     "skills": [
         {
+            "skill_key": "Weapon Swap",
+            "cast_duration": [100, 100],
+            "cooldown": [10400, 10400]
+        }, {
             "skill_key": "Puncture Shot",
             "weapon_type": "longbow",
             "damage_coefficient": 1.0,
-            "cast_duration": [1360, 680],
+            "cast_duration": [1020, 680],
+            "strike_on_tick_list": [[850], [680]]
+        }, {
+            "skill_key": "True Shot",
+            "weapon_type": "longbow",
+            "damage_coefficient": 3.2,
+            "cast_duration": [1020, 680],
             "strike_on_tick_list": [[850], [680]],
-            "pulse_on_tick_list": [[850], [680]],
-            "on_pulse_effect_applications": [
-                {
-                    "effect": "MIGHT",
-                    "direction": "SELF",
-                    "base_duration_ms": 5000,
-                    "num_stacks": 1
-                },
+            "cooldown": [4000, 3200]
+        }, {
+            "skill_key": "Deflecting Shot",
+            "weapon_type": "longbow",
+            "damage_coefficient": 1.8,
+            "cast_duration": [850, 680],
+            "strike_on_tick_list": [[850], [680]],
+            "cooldown": [10000, 8000]
+        }, {
+            "skill_key": "Symbol of Energy Initial Attack",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.69,
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
+            "on_strike_effect_applications": [
                 {
                     "effect": "BURNING",
-                    "direction": "OUTGOING",
-                    "base_duration_ms": 5000,
-                    "num_stacks": 2
+                    "base_duration_ms": 12000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "tags": ["SYMBOL", "LIGHT_FIELD"]
+        }, {
+            "skill_key": "Symbol of Energy Usual Attack",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.69,
+            "cast_duration": [4000, 4000],
+            "strike_on_tick_list": [
+                [1000, 2000, 3000, 4000],
+                [1000, 2000, 3000, 4000]
+            ],
+            "tags": ["SYMBOL", "LIGHT_FIELD"]
+        }, {
+            "skill_key": "Symbol of Energy",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.0,
+            "cast_duration": [600, 400],
+            "cooldown": [12000, 9600],
+            "child_skill_keys": [
+                "Symbol of Energy Initial Attack",
+                "Symbol of Energy Usual Attack"
+            ]
+        }, {
+            "skill_key": "Hunter's Ward Small Attacks",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.75,
+            "cast_duration": [1250, 1250],
+            "strike_on_tick_list": [
+                [650, 950, 1250],
+                [650, 950, 1250]
+            ]
+        }, {
+            "skill_key": "Hunter's Ward Big Attack",
+            "weapon_type": "longbow",
+            "damage_coefficient": 2.5,
+            "cast_duration": [300, 300],
+            "strike_on_tick_list": [[300], [300]]
+        }, {
+            "skill_key": "Hunter's Ward",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.0,
+            "cast_duration": [950, 760],
+            "cooldown": [20000, 13333],
+            "child_skill_keys": [
+                "Hunter's Ward Small Attacks",
+                "Hunter's Ward Big Attack"
+            ]
+        }, {
+            "skill_key": "Strike",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 0.9,
+            "cast_duration": [600, 400],
+            "strike_on_tick_list": [[600], [400]]
+        }, {
+            "skill_key": "Vengeful Strike",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 1.0,
+            "cast_duration": [840, 600],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[840], [600]]
+        }, {
+            "skill_key": "Wrathful Strike",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 1.4,
+            "cast_duration": [1000, 675],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[1000], [675]]
+        }, {
+            "skill_key": "Whirling Wrath",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 0.4125,
+            "cast_duration": [2200, 1470],
+            "cooldown": [8000, 6400],
+            "strike_on_tick_list": [
+                [0, 169, 338, 507, 676, 846, 1015, 1184, 1353, 1523, 1692, 1861, 2030, 2200],
+                [0, 113, 226, 339, 452, 565, 678, 791, 904, 1017, 1130, 1243, 1356, 1470]
+            ]
+        }, {
+            "skill_key": "Leap of Faith",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 2.0,
+            "cast_duration": [1000, 720],
+            "cooldown": [10000, 8000],
+            "strike_on_tick_list": [[1000], [720]]
+        }, {
+            "skill_key": "Symbol of Resolution Attack",
+            "is_child_skill": true,
+            "weapon_type": "greatsword",
+            "damage_coefficient": 0.6,
+            "cast_duration": [4000, 4000],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [0, 1000, 2000, 3000, 4000],
+                [0, 1000, 2000, 3000, 4000]
+            ],
+            "tags": ["SYMBOL"]
+        }, {
+            "skill_key": "Symbol of Resolution",
+            "weapon_type": "GREATSWORD",
+            "damage_coefficient": 0.0,
+            "cast_duration": [360, 240],
+            "cooldown": [12000, 9600],
+            "child_skill_keys": [
+                "Symbol of Resolution Attack"
+            ]
+        }, {
+            "skill_key": "Binding Blade",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 1.5,
+            "cast_duration": [750, 500],
+            "cooldown": [25000, 20000],
+            "strike_on_tick_list": [[750], [500]],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BINDING_BLADE",
+                    "num_stacks": 1,
+                    "base_duration_ms": 10000,
+                    "direction": "OUTGOING"
                 }
             ]
+        }, {
+            "skill_key": "Sword of Justice Attack",
+            "is_child_skill": true,
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.72,
+            "cast_duration": [1850, 1850],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [650, 1050, 1450, 1850],
+                [650, 1050, 1450, 1850]
+            ],
+            "tags": ["SPIRIT_WEAPON"]
+        }, {
+            "skill_key": "Sword of Justice",
+            "cast_duration": [900, 600],
+            "cooldown": [20000, 16000],
+            "child_skill_keys": [
+                "Sword of Justice Attack"
+            ],
+            "ammo": 3,
+            "recharge_duration": 1000
+        }, {
+            "skill_key": "Procession of Blades Attack",
+            "is_child_skill": true,
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.44,
+            "cast_duration": [5500, 5500],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500],
+                [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500]
+            ],
+            "tags": ["TRAP"]
+        }, {
+            "skill_key": "Procession of Blades",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.0,
+            "cast_duration": [660, 430],
+            "cooldown": [20000, 16000],
+            "child_skill_keys": [
+                "Procession of Blades Attack"
+            ],
+            "tags": ["TRAP"]
+        }, {
+            "skill_key": "Bane Signet",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 1.0,
+            "cast_duration": [750, 500],
+            "cooldown": [30000, 24000],
+            "strike_on_tick_list": [[750], [500]],
+            "attribute_modifiers": [
+                {
+                    "attribute": "power",
+                    "addend": 120
+                }
+            ]
+        }, {
+            "skill_key": "Dragon's Maw Attack",
+            "is_child_skill": true,
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 2.4,
+            "cast_duration": [500, 500],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[500], [500]],
+            "tags": ["TRAP"]
+        }, {
+            "skill_key": "Dragon's Maw",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.0,
+            "cast_duration": [675, 450],
+            "cooldown": [75000, 60000],
+            "child_skill_keys": [
+                "Dragon's Maw Attack"
+            ],
+            "tags": ["TRAP"]
         }
     ]
 }
