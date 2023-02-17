@@ -252,8 +252,9 @@ void perform_skills(registry_t& registry) {
             }
 
             if (effective_progress_pct >= 100) {
-                spdlog::info("[{}]: finished casting skill {}",
+                spdlog::info("[{}] {}: finished casting skill {}",
                              utils::get_current_tick(registry),
+                             utils::get_entity_name(entity, registry),
                              utils::to_string(skill_configuration.skill_key));
                 registry.emplace<component::finished_casting_skill>(
                     entity, component::finished_casting_skill{casting_skill.skill_entity});

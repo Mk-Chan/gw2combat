@@ -225,8 +225,9 @@ static inline void enqueue_child_skills(entity_t parent_actor,
     }
     auto child_actor = utils::create_child_actor(
         parent_actor, child_name, registry.get<component::team>(parent_actor).id, registry);
-    spdlog::info("[{}]: spawned {}",
+    spdlog::info("[{}] {}: spawned {}",
                  utils::get_current_tick(registry),
+                 utils::get_entity_name(parent_actor, registry),
                  utils::get_entity_name(child_actor, registry));
     actor::rotation_t rotation;
     for (auto& skill : skills) {

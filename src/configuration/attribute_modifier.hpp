@@ -11,7 +11,7 @@ struct attribute_modifier_t {
     condition_t condition{};
 
     actor::attribute_t attribute = actor::attribute_t::INVALID;
-    double multiplier = 0.0;
+    double multiplier = 1.0;
     double addend = 0.0;
 };
 

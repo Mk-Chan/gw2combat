@@ -53,17 +53,9 @@ void tick(registry_t& registry) {
     system::calculate_relative_attributes(registry);
 
     system::perform_skills(registry);
-    utils::log_component<component::outgoing_strikes_component>(registry);
-    utils::log_component<component::outgoing_effects_component>(registry);
-
     system::dispatch_strikes(registry);
-    utils::log_component<component::incoming_strikes_component>(registry);
-
     system::apply_strikes(registry);
-
     system::dispatch_effects(registry);
-    utils::log_component<component::incoming_effects_component>(registry);
-
     system::apply_effects(registry);
 
     system::buffer_damage_for_effects_with_no_duration(registry);

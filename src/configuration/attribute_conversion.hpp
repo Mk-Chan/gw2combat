@@ -12,7 +12,7 @@ struct attribute_conversion_t {
 
     actor::attribute_t from = actor::attribute_t::INVALID;
     actor::attribute_t to = actor::attribute_t::INVALID;
-    double multiplier = 0.0;
+    double multiplier = 1.0;
     double addend = 0.0;
 };
 
