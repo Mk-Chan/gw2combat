@@ -11,7 +11,10 @@ extern void update_combat_stats(registry_t& registry);
 
 extern void calculate_relative_attributes(registry_t& registry);
 
-extern void perform_rotation(registry_t& registry);
+extern void perform_rotations(registry_t& registry);
+extern void perform_skills(registry_t& registry);
+
+extern void cleanup_finished_casting_skills(registry_t& registry);
 
 }  // namespace gw2combat::system
 

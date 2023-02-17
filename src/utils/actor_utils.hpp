@@ -69,48 +69,65 @@ static inline entity_t add_skill_to_actor(configuration::skill_t& skill,
 }
 
 static inline std::optional<entity_t> add_effect_to_actor(actor::effect_t effect,
-                                                          int num_stacks,
-                                                          int duration,
-                                                          entity_t source_entity,
-                                                          entity_t target_entity,
+                                                          entity_t actor_entity,
                                                           registry_t& registry) {
-    for (; num_stacks > 0; --num_stacks) {
-        auto effect_entity = registry.create();
-        registry.emplace<component::duration_component>(effect_entity,
-                                                        component::duration_component{duration, 0});
-        registry.emplace<component::is_effect>(effect_entity, effect);
-        registry.emplace<component::source_actor>(effect_entity, source_entity);
-        registry.emplace<component::owner_component>(effect_entity, target_entity);
-        registry.get_or_emplace<component::effects_component>(target_entity)
-            .effect_entities.emplace_back(component::effect_entity{effect, effect_entity});
+    // TODO: Check for crossing maximum stacks / duration here.
+    // TODO: Differentiate between stacking duration / intensity
 
-        if (effect == actor::effect_t::MIGHT) {
-            auto& attribute_modifiers_component =
-                registry.get_or_emplace<component::attribute_modifiers_component>(effect_entity);
-            attribute_modifiers_component.attribute_modifiers.emplace_back(
-                configuration::attribute_modifier_t{
-                    configuration::condition_t{}, actor::attribute_t::POWER, 1.0, 30.0});
-            attribute_modifiers_component.attribute_modifiers.emplace_back(
-                configuration::attribute_modifier_t{
-                    configuration::condition_t{}, actor::attribute_t::CONDITION_DAMAGE, 1.0, 30.0});
-        } else if (effect == actor::effect_t::FURY) {
-            auto& attribute_modifiers_component =
-                registry.get_or_emplace<component::attribute_modifiers_component>(effect_entity);
-            attribute_modifiers_component.attribute_modifiers.emplace_back(
-                configuration::attribute_modifier_t{configuration::condition_t{},
-                                                    actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER,
-                                                    1.0,
-                                                    25.0});
-        } else if (effect == actor::effect_t::QUICKNESS) {
-            registry.emplace_or_replace<component::has_quickness>(target_entity);
-        } else if (effect == actor::effect_t::ALACRITY) {
-            registry.emplace_or_replace<component::has_alacrity>(target_entity);
+    auto effect_entity = registry.create();
+    registry.emplace<component::is_effect>(effect_entity, effect);
+    registry.emplace<component::owner_component>(effect_entity, actor_entity);
+    registry.get_or_emplace<component::effects_component>(actor_entity)
+        .effect_entities.emplace_back(component::effect_entity{effect, effect_entity});
+
+    if (effect == actor::effect_t::MIGHT) {
+        auto& attribute_modifiers_component =
+            registry.get_or_emplace<component::attribute_modifiers_component>(effect_entity);
+        attribute_modifiers_component.attribute_modifiers.emplace_back(
+            configuration::attribute_modifier_t{
+                configuration::condition_t{}, actor::attribute_t::POWER, 1.0, 30.0});
+        attribute_modifiers_component.attribute_modifiers.emplace_back(
+            configuration::attribute_modifier_t{
+                configuration::condition_t{}, actor::attribute_t::CONDITION_DAMAGE, 1.0, 30.0});
+    } else if (effect == actor::effect_t::FURY) {
+        auto& attribute_modifiers_component =
+            registry.get_or_emplace<component::attribute_modifiers_component>(effect_entity);
+        attribute_modifiers_component.attribute_modifiers.emplace_back(
+            configuration::attribute_modifier_t{configuration::condition_t{},
+                                                actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER,
+                                                1.0,
+                                                25.0});
+    } else if (effect == actor::effect_t::QUICKNESS) {
+        registry.emplace_or_replace<component::has_quickness>(actor_entity);
+    } else if (effect == actor::effect_t::ALACRITY) {
+        registry.emplace_or_replace<component::has_alacrity>(actor_entity);
+    }
+
+    return effect_entity;
+}
+
+static inline std::vector<entity_t> add_effect_to_actor(actor::effect_t effect,
+                                                        int num_stacks,
+                                                        int duration,
+                                                        entity_t source_entity,
+                                                        entity_t target_entity,
+                                                        registry_t& registry) {
+    std::vector<entity_t> effect_entities;
+    for (; num_stacks > 0; --num_stacks) {
+        std::optional<entity_t> effect_entity =
+            add_effect_to_actor(effect, target_entity, registry);
+        if (effect_entity) {
+            effect_entities.emplace_back(*effect_entity);
+            registry.emplace<component::source_actor>(*effect_entity, source_entity);
+            registry.emplace<component::duration_component>(
+                *effect_entity, component::duration_component{duration, 0});
         }
     }
+    return effect_entities;
 }
 
 static inline std::optional<entity_t> add_unique_effect_to_actor(
-    configuration::unique_effect_t& unique_effect,
+    const configuration::unique_effect_t& unique_effect,
     entity_t actor_entity,
     registry_t& registry) {
     if (registry.any_of<component::unique_effects_component>(actor_entity) &&
@@ -162,6 +179,28 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
     return unique_effect_entity;
 }
 
+static inline std::vector<entity_t> add_unique_effect_to_actor(
+    const configuration::unique_effect_t& unique_effect,
+    int num_stacks,
+    int duration,
+    entity_t source_entity,
+    entity_t target_entity,
+    registry_t& registry) {
+    std::vector<entity_t> unique_effect_entities;
+    for (; num_stacks > 0; --num_stacks) {
+        std::optional<entity_t> unique_effect_entity =
+            add_unique_effect_to_actor(unique_effect, target_entity, registry);
+        if (unique_effect_entity) {
+            unique_effect_entities.emplace_back(*unique_effect_entity);
+            registry.emplace<component::source_actor>(*unique_effect_entity,
+                                                      component::source_actor{source_entity});
+            registry.emplace<component::duration_component>(
+                *unique_effect_entity, component::duration_component{duration, 0});
+        }
+    }
+    return unique_effect_entities;
+}
+
 [[nodiscard]] static inline entity_t create_child_actor(entity_t parent_actor,
                                                         const std::string& name,
                                                         int team_id,
@@ -181,20 +220,21 @@ static inline void enqueue_child_skills(entity_t parent_actor,
                                         const std::string& child_name,
                                         std::vector<configuration::skill_t>& skills,
                                         registry_t& registry) {
-    if (!skills.empty()) {
-        auto child_actor = utils::create_child_actor(
-            parent_actor, child_name, registry.get<component::team>(parent_actor).id, registry);
-        // spdlog::info("[{}]: spawned {}",
-        //              utils::get_current_tick(registry),
-        //              utils::get_entity_name(child_actor, registry));
-        actor::rotation_t rotation;
-        for (auto& skill : skills) {
-            utils::add_skill_to_actor(skill, child_actor, registry);
-            rotation.skill_casts.emplace_back(actor::skill_cast_t{skill.skill_key, 0});
-        }
-        registry.emplace<component::rotation_component>(
-            child_actor, component::rotation_component{rotation, 0, false});
+    if (skills.empty()) {
+        return;
     }
+    auto child_actor = utils::create_child_actor(
+        parent_actor, child_name, registry.get<component::team>(parent_actor).id, registry);
+    spdlog::info("[{}]: spawned {}",
+                 utils::get_current_tick(registry),
+                 utils::get_entity_name(child_actor, registry));
+    actor::rotation_t rotation;
+    for (auto& skill : skills) {
+        utils::add_skill_to_actor(skill, child_actor, registry);
+        rotation.skill_casts.emplace_back(actor::skill_cast_t{skill.skill_key, 0});
+    }
+    registry.emplace<component::rotation_component>(
+        child_actor, component::rotation_component{rotation, 0, false});
 }
 
 static inline void enqueue_child_skill(entity_t parent_actor,

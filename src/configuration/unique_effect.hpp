@@ -24,6 +24,9 @@ struct unique_effect_t {
     [[nodiscard]] inline bool operator==(const unique_effect_t& rhs) const {
         return this->unique_effect_key == rhs.unique_effect_key;
     }
+    [[nodiscard]] inline bool is_invalid() const {
+        return unique_effect_key.is_invalid();
+    }
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(unique_effect_t,

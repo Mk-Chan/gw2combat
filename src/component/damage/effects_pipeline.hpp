@@ -1,7 +1,7 @@
 #ifndef GW2COMBAT_COMPONENT_DAMAGE_EFFECTS_PIPELINE_HPP
 #define GW2COMBAT_COMPONENT_DAMAGE_EFFECTS_PIPELINE_HPP
 
-#include "configuration//effect_application.hpp"
+#include "configuration/effect_application.hpp"
 
 namespace gw2combat::component {
 

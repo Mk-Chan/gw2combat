@@ -23,7 +23,7 @@ struct condition_t {
     std::optional<std::string> skill_cast_by_source_has_tag = std::nullopt;
     std::optional<actor::skill_t> depends_on_skill_off_cooldown = std::nullopt;
     std::optional<int> strike_count_required = std::nullopt;
-    bool only_applies_on_strikes = false;
+    std::optional<bool> only_applies_on_strikes = std::nullopt;
 };
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& nlohmann_json_t) {
@@ -62,7 +62,9 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     if (nlohmann_json_t.strike_count_required) {
         nlohmann_json_j["strike_count_required"] = *nlohmann_json_t.strike_count_required;
     }
-    nlohmann_json_j["only_applies_on_strikes"] = nlohmann_json_t.only_applies_on_strikes;
+    if (nlohmann_json_t.only_applies_on_strikes) {
+        nlohmann_json_j["only_applies_on_strikes"] = *nlohmann_json_t.only_applies_on_strikes;
+    }
 }
 static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t& nlohmann_json_t) {
     condition_t nlohmann_json_default_obj;
@@ -112,8 +114,10 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
         nlohmann_json_t.strike_count_required = nlohmann_json_j.value(
             "strike_count_required", *nlohmann_json_default_obj.strike_count_required);
     }
-    nlohmann_json_t.only_applies_on_strikes = nlohmann_json_j.value(
-        "only_applies_on_strikes", nlohmann_json_default_obj.only_applies_on_strikes);
+    if (nlohmann_json_j.contains("only_applies_on_strikes")) {
+        nlohmann_json_t.only_applies_on_strikes = nlohmann_json_j.value(
+            "only_applies_on_strikes", *nlohmann_json_default_obj.only_applies_on_strikes);
+    }
 }
 
 }  // namespace gw2combat::configuration

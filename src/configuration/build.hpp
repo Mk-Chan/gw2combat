@@ -39,26 +39,26 @@ struct build_t {
         attributes[actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER] = 0.0;
         attributes[actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER] = 150.0;
 
-        attributes[actor::attribute_t::BOON_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::AEGIS_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::ALACRITY_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::FURY_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::MIGHT_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::PROTECTION_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::QUICKNESS_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::REGENERATION_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::RESISTANCE_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::RESOLUTION_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::STABILITY_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::SWIFTNESS_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::VIGOR_DURATION_MULTIPLIER] = 0.0;
+        attributes[actor::attribute_t::BOON_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::AEGIS_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::ALACRITY_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::FURY_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::MIGHT_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::PROTECTION_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::QUICKNESS_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::REGENERATION_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::RESISTANCE_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::RESOLUTION_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::STABILITY_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::SWIFTNESS_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::VIGOR_DURATION_MULTIPLIER] = 1.0;
 
-        attributes[actor::attribute_t::CONDITION_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::BURNING_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::BLEEDING_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::CONFUSION_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::POISON_DURATION_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::TORMENT_DURATION_MULTIPLIER] = 0.0;
+        attributes[actor::attribute_t::CONDITION_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::BURNING_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::BLEEDING_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::CONFUSION_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::POISON_DURATION_MULTIPLIER] = 1.0;
+        attributes[actor::attribute_t::TORMENT_DURATION_MULTIPLIER] = 1.0;
 
         attributes[actor::attribute_t::CONDITION_DAMAGE_MULTIPLIER] = 1.0;
         attributes[actor::attribute_t::BURNING_DAMAGE_MULTIPLIER] = 1.0;
@@ -68,14 +68,14 @@ struct build_t {
         attributes[actor::attribute_t::TORMENT_DAMAGE_MULTIPLIER] = 1.0;
 
         attributes[actor::attribute_t::OUTGOING_STRIKE_DAMAGE_MULTIPLIER] = 1.0;
-        attributes[actor::attribute_t::OUTGOING_STRIKE_DAMAGE_MULTIPLIER_ADD_GROUP] = 1.0;
+        attributes[actor::attribute_t::OUTGOING_STRIKE_DAMAGE_MULTIPLIER_ADD_GROUP] = 0.0;
         attributes[actor::attribute_t::INCOMING_STRIKE_DAMAGE_MULTIPLIER] = 1.0;
-        attributes[actor::attribute_t::INCOMING_STRIKE_DAMAGE_MULTIPLIER_ADD_GROUP] = 1.0;
+        attributes[actor::attribute_t::INCOMING_STRIKE_DAMAGE_MULTIPLIER_ADD_GROUP] = 0.0;
 
         attributes[actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER] = 1.0;
-        attributes[actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] = 1.0;
+        attributes[actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] = 0.0;
         attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER] = 1.0;
-        attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] = 1.0;
+        attributes[actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP] = 0.0;
     }
 };
 

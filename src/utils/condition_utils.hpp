@@ -14,11 +14,10 @@
 
 namespace gw2combat::utils {
 
-[[nodiscard]] static inline bool conditions_satisfied(
-    const configuration::condition_t& condition,
-    registry_t& registry,
-    entity_t entity,
-    std::optional<entity_t> target_entity = std::nullopt) {
+[[nodiscard]] static inline bool conditions_satisfied(const configuration::condition_t& condition,
+                                                      entity_t entity,
+                                                      entity_t target_entity,
+                                                      registry_t& registry) {
     auto source_entity = utils::get_owner(entity, registry);
     if (condition.weapon_type || condition.weapon_position) {
         if (!registry.all_of<component::equipped_weapons, component::current_weapon_set>(
@@ -63,28 +62,20 @@ namespace gw2combat::utils {
         }
     }
     if (condition.unique_effect_on_target) {
-        if (!target_entity) {
-            throw std::runtime_error(
-                "target_entity is a required parameter for target-based conditions");
-        }
-        if (!registry.any_of<component::unique_effects_component>(*target_entity)) {
+        if (!registry.any_of<component::unique_effects_component>(target_entity)) {
             return false;
         }
-        bool is_satisfied = registry.get<component::unique_effects_component>(*target_entity)
+        bool is_satisfied = registry.get<component::unique_effects_component>(target_entity)
                                 .has(*condition.unique_effect_on_target);
         if (!is_satisfied) {
             return false;
         }
     }
     if (condition.effect_on_target) {
-        if (!target_entity) {
-            throw std::runtime_error(
-                "target_entity is a required parameter for target-based conditions");
-        }
-        if (!registry.any_of<component::effects_component>(*target_entity)) {
+        if (!registry.any_of<component::effects_component>(target_entity)) {
             return false;
         }
-        bool is_satisfied = registry.get<component::effects_component>(*target_entity)
+        bool is_satisfied = registry.get<component::effects_component>(target_entity)
                                 .has(*condition.effect_on_target);
         if (!is_satisfied) {
             return false;

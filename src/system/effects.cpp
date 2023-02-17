@@ -12,6 +12,8 @@
 #include "component/hierarchy/owner_component.hpp"
 #include "component/temporal/duration_component.hpp"
 
+#include "utils/entity_utils.hpp"
+
 namespace gw2combat::system {
 
 double calculate_condition_damage(actor::effect_t this_effect,
@@ -72,13 +74,13 @@ void buffer_condition_damage(registry_t& registry,
     double base_condition_damage_multiplier =
         source_relative_attributes.get(target_entity,
                                        actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER) *
-        source_relative_attributes.get(
-            target_entity, actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP) *
+        (1.0 + source_relative_attributes.get(
+            target_entity, actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP)) *
         target_relative_attributes.get(effect_source_entity,
                                        actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER) *
-        target_relative_attributes.get(
+        (1.0 + target_relative_attributes.get(
             effect_source_entity,
-            actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP);
+            actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP));
 
     auto& condition_duration = registry.get<component::duration_component>(effect_entity);
     double damaging_condition_progress_multiplier = condition_duration.progress / 1'000.0;
@@ -93,8 +95,9 @@ void buffer_condition_damage(registry_t& registry,
         registry.get_or_emplace<component::buffered_condition_damage>(target_entity);
     buffered_condition_damage.value += effective_condition_damage;
     spdlog::info(
-        "[{}] effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} buffered_dmg {}",
+        "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} buffered_dmg {}",
         utils::get_current_tick(registry),
+        utils::get_entity_name(target_entity, registry),
         utils::to_string(this_effect),
         base_condition_damage_multiplier,
         damaging_condition_progress_multiplier,

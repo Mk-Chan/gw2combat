@@ -8,19 +8,16 @@
 namespace gw2combat::component {
 
 struct strike_t {
-    actor::skill_t skill;
-    double outgoing_damage;
-    double critical_chance_pct;
-    double critical_damage_pct;
+    entity_t skill_entity = entt::tombstone;
     int num_targets = 1;
 
     constexpr inline bool operator==(const strike_t& rhs) const {
-        return this->skill == rhs.skill;
+        return this->skill_entity == rhs.skill_entity;
     }
 };
 
 struct incoming_strike {
-    entity_t source_entity;
+    entity_t source_entity = entt::tombstone;
     strike_t strike;
 };
 
@@ -33,10 +30,7 @@ struct incoming_strikes_component {
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(strike_t,
-                                                skill,
-                                                outgoing_damage,
-                                                critical_chance_pct,
-                                                critical_damage_pct,
+                                                skill_entity,
                                                 num_targets)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(incoming_strike, source_entity, strike)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(outgoing_strikes_component, strikes)

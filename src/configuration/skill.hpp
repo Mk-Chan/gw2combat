@@ -36,7 +36,7 @@ struct skill_t {
 
     std::vector<std::string> tags{};
 
-    std::vector<skill_t> child_skill_keys;
+    std::vector<actor::skill_t> child_skill_keys;
 
     [[nodiscard]] inline bool operator==(const skill_t& rhs) const {
         return this->skill_key == rhs.skill_key;

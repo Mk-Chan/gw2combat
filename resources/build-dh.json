@@ -6,7 +6,7 @@
         ["precision", 1749],
         ["toughness", 1000],
         ["vitality", 1802],
-        ["condition_damage", 1],
+        ["condition_damage", 0],
         ["outgoing_condition_damage_multiplier", 2],
         ["burning_damage_multiplier", 2],
         ["burning_duration_multiplier", 2],
@@ -25,7 +25,22 @@
             "weapon_type": "longbow",
             "damage_coefficient": 1.0,
             "cast_duration": [1360, 680],
-            "strike_on_tick_list": [[850], [680]]
+            "strike_on_tick_list": [[850], [680]],
+            "pulse_on_tick_list": [[850], [680]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "MIGHT",
+                    "direction": "SELF",
+                    "base_duration_ms": 5000,
+                    "num_stacks": 1
+                },
+                {
+                    "effect": "BURNING",
+                    "direction": "OUTGOING",
+                    "base_duration_ms": 5000,
+                    "num_stacks": 2
+                }
+            ]
         }
     ]
 }

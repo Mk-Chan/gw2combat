@@ -4,6 +4,9 @@
 #include "actor/effect.hpp"
 #include "actor/unique_effect.hpp"
 
+#include "condition.hpp"
+#include "unique_effect.hpp"
+
 namespace gw2combat::configuration {
 
 enum class direction_t : std::uint8_t
@@ -19,7 +22,7 @@ struct effect_application_t {
     condition_t condition;
 
     actor::effect_t effect = actor::effect_t::INVALID;
-    actor::unique_effect_t unique_effect{};
+    configuration::unique_effect_t unique_effect;
     direction_t direction = direction_t::INVALID;
     int base_duration_ms = 0;
     int num_stacks = 1;
