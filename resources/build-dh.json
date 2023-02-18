@@ -275,7 +275,7 @@
             ]
         }, {
             "skill_key": "Spear of Justice",
-            "weapon_type": "longbow",
+            "weapon_type": "greatsword",
             "damage_coefficient": 0.8,
             "cast_duration": [825, 550],
             "cooldown": [20000, 16000],
@@ -439,7 +439,7 @@
             "skill_key": "Symbol of Resolution Attack",
             "is_child_skill": true,
             "weapon_type": "greatsword",
-            "damage_coefficient": 0.78,
+            "damage_coefficient": 0.845,
             "cast_duration": [4000, 4000],
             "cooldown": [0, 0],
             "strike_on_tick_list": [
@@ -546,7 +546,7 @@
             "skill_key": "Dragon's Maw Attack",
             "is_child_skill": true,
             "weapon_type": "empty_handed",
-            "damage_coefficient": 2.4,
+            "damage_coefficient": 3.6,
             "cast_duration": [500, 500],
             "cooldown": [0, 0],
             "strike_on_tick_list": [[500], [500]]
