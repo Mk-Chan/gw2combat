@@ -42,6 +42,17 @@ namespace gw2combat::utils {
             return false;
         }
     }
+
+    if (condition.weapon_set) {
+        if (!registry.any_of<component::current_weapon_set>(source_entity)) {
+            return false;
+        }
+        auto& current_weapon_set = registry.get<component::current_weapon_set>(source_entity);
+        bool is_satisfied = current_weapon_set.set == *condition.weapon_set;
+        if (!is_satisfied) {
+            return false;
+        }
+    }
     if (condition.unique_effect_on_source) {
         if (!registry.any_of<component::unique_effects_component>(source_entity)) {
             return false;

@@ -53,7 +53,10 @@ void apply_strikes(registry_t& registry) {
                                  target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
                              1.5);
                 double average_critical_damage_multiplier =
-                    1.0 + (critical_chance_multiplier * (actual_critical_damage_multiplier - 1.0));
+                    skill_configuration.can_critical_strike
+                        ? 1.0 + (critical_chance_multiplier *
+                                 (actual_critical_damage_multiplier - 1.0))
+                        : 1;
 
                 double effective_strike_damage_multiplier =
                     strike_source_relative_attributes.get(
@@ -112,16 +115,8 @@ void apply_strikes(registry_t& registry) {
                                                             strike_source_entity,
                                                             target_entity,
                                                             registry)) {
-                                auto& strike_source_entity_skills_component =
-                                    registry.get<component::skills_component>(strike_source_entity);
-                                auto& skill_configuration =
-                                    registry
-                                        .get<component::skill_configuration_component>(
-                                            strike_source_entity_skills_component.find_by(
-                                                skill_trigger.skill_key))
-                                        .skill_configuration;
-                                utils::enqueue_child_skill(
-                                    strike_source_entity, skill_configuration, registry);
+                                utils::enqueue_triggered_skill(
+                                    strike_source_entity, skill_trigger.skill_key, registry);
                             }
                         }
                     });

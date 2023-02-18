@@ -252,7 +252,8 @@
             "damage_coefficient": 1.1,
             "strike_on_tick_list": [[0], [0]],
             "cast_duration": [0, 0],
-            "cooldown": [3000, 3000]
+            "cooldown": [3000, 3000],
+            "can_critical_strike": false
         }, {
             "skill_key": "Spear of Justice Pulse",
             "is_child_skill": true,

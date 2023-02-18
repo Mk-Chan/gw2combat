@@ -36,6 +36,8 @@ struct skill_t {
 
     std::vector<actor::skill_t> child_skill_keys;
 
+    bool can_critical_strike = true;
+
     [[nodiscard]] inline bool operator==(const skill_t& rhs) const {
         return this->skill_key == rhs.skill_key;
     }
@@ -56,7 +58,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 on_pulse_effect_applications,
                                                 attribute_modifiers,
                                                 attribute_conversions,
-                                                child_skill_keys)
+                                                child_skill_keys,
+                                                can_critical_strike)
 
 }  // namespace gw2combat::configuration
 
