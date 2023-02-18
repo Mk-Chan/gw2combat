@@ -18,9 +18,8 @@ struct condition_t {
     std::optional<actor::unique_effect_t> unique_effect_on_source = std::nullopt;
     std::optional<actor::effect_t> effect_on_source = std::nullopt;
     std::optional<actor::unique_effect_t> unique_effect_on_target = std::nullopt;
+    std::optional<actor::unique_effect_t> unique_effect_on_target_by_source = std::nullopt;
     std::optional<actor::effect_t> effect_on_target = std::nullopt;
-    std::optional<actor::skill_t> skill_cast_by_source = std::nullopt;
-    std::optional<std::string> skill_cast_by_source_has_tag = std::nullopt;
     std::optional<actor::skill_t> depends_on_skill_off_cooldown = std::nullopt;
     std::optional<int> strike_count_required = std::nullopt;
     std::optional<bool> only_applies_on_strikes = std::nullopt;
@@ -45,15 +44,12 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     if (nlohmann_json_t.unique_effect_on_target) {
         nlohmann_json_j["unique_effect_on_target"] = *nlohmann_json_t.unique_effect_on_target;
     }
+    if (nlohmann_json_t.unique_effect_on_target_by_source) {
+        nlohmann_json_j["unique_effect_on_target_by_source"] =
+            *nlohmann_json_t.unique_effect_on_target_by_source;
+    }
     if (nlohmann_json_t.effect_on_target) {
         nlohmann_json_j["effect_on_target"] = *nlohmann_json_t.effect_on_target;
-    }
-    if (nlohmann_json_t.skill_cast_by_source) {
-        nlohmann_json_j["skill_cast_by_source"] = *nlohmann_json_t.skill_cast_by_source;
-    }
-    if (nlohmann_json_t.skill_cast_by_source_has_tag) {
-        nlohmann_json_j["skill_cast_by_source_has_tag"] =
-            *nlohmann_json_t.skill_cast_by_source_has_tag;
     }
     if (nlohmann_json_t.depends_on_skill_off_cooldown) {
         nlohmann_json_j["depends_on_skill_off_cooldown"] =
@@ -92,18 +88,14 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
         nlohmann_json_t.unique_effect_on_target = nlohmann_json_j.value(
             "unique_effect_on_target", *nlohmann_json_default_obj.unique_effect_on_target);
     }
+    if (nlohmann_json_j.contains("unique_effect_on_target_by_source")) {
+        nlohmann_json_t.unique_effect_on_target_by_source =
+            nlohmann_json_j.value("unique_effect_on_target_by_source",
+                                  *nlohmann_json_default_obj.unique_effect_on_target_by_source);
+    }
     if (nlohmann_json_j.contains("effect_on_target")) {
         nlohmann_json_t.effect_on_target =
             nlohmann_json_j.value("effect_on_target", *nlohmann_json_default_obj.effect_on_target);
-    }
-    if (nlohmann_json_j.contains("skill_cast_by_source")) {
-        nlohmann_json_t.skill_cast_by_source = nlohmann_json_j.value(
-            "skill_cast_by_source", *nlohmann_json_default_obj.skill_cast_by_source);
-    }
-    if (nlohmann_json_j.contains("skill_cast_by_source_has_tag")) {
-        nlohmann_json_t.skill_cast_by_source_has_tag =
-            nlohmann_json_j.value("skill_cast_by_source_has_tag",
-                                  *nlohmann_json_default_obj.skill_cast_by_source_has_tag);
     }
     if (nlohmann_json_j.contains("depends_on_skill_off_cooldown")) {
         nlohmann_json_t.depends_on_skill_off_cooldown =

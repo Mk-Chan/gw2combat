@@ -26,8 +26,8 @@ void dispatch_strikes(registry_t& registry) {
                         auto& incoming_strikes_component =
                             registry.get_or_emplace<component::incoming_strikes_component>(
                                 other_entity);
-                        incoming_strikes_component.strikes.emplace_back(
-                            component::incoming_strike{source_entity, this_strike});
+                        incoming_strikes_component.strikes.emplace_back(component::incoming_strike{
+                            utils::get_owner(source_entity, registry), this_strike});
                         --this_strike.num_targets;
                     });
             }

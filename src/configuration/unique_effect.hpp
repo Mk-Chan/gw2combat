@@ -25,7 +25,7 @@ struct unique_effect_t {
         return this->unique_effect_key == rhs.unique_effect_key;
     }
     [[nodiscard]] inline bool is_invalid() const {
-        return unique_effect_key.is_invalid();
+        return unique_effect_key.empty();
     }
 };
 

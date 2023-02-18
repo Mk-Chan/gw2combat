@@ -59,9 +59,11 @@ void progress_cooldowns(registry_t& registry) {
                     ++ammo->current_ammo;
                     if (ammo->current_ammo == ammo->max_ammo) {
                         registry.emplace<component::cooldown_expired>(entity);
+                    } else {
+                        cooldown.progress = {0, 0};
                     }
                 } else {
-                    cooldown.progress = {0, 0};
+                    registry.emplace<component::cooldown_expired>(entity);
                 }
             }
         });

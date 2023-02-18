@@ -21,6 +21,7 @@
 #include "component/skill/skill_configuration_component.hpp"
 #include "component/temporal/animation_component.hpp"
 
+#include "component/skill/skill_trigger_lock.hpp"
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
 #include "utils/io_utils.hpp"
@@ -85,71 +86,172 @@ void calculate_relative_attributes(registry_t& registry) {
                 });
         });
 
+    std::map<std::tuple<actor::unique_effect_t, entity_t, entity_t>, int>
+        modifier_unique_effect_and_owner_entity_and_other_entity_to_occurrences_map;
+    std::map<std::tuple<actor::effect_t, entity_t, entity_t>, int>
+        modifier_effect_and_owner_entity_and_other_entity_to_occurrences_map;
     registry.view<component::owner_component, component::attribute_modifiers_component>().each(
-        [&](entity_t,
+        [&](entity_t modifier_entity,
             const component::owner_component& owner_actor,
             const component::attribute_modifiers_component& attribute_modifiers_component) {
-            auto source_entity = owner_actor.entity;
-            auto& relative_attributes = registry.get<component::relative_attributes>(source_entity);
-            registry.view<component::relative_attributes>().each(
-                [&](entity_t other_entity, const component::relative_attributes&) {
-                    for (auto& attribute_modifier :
-                         attribute_modifiers_component.attribute_modifiers) {
-                        if (utils::conditions_satisfied(attribute_modifier.condition,
-                                                        source_entity,
-                                                        other_entity,
-                                                        registry)) {
-                            relative_attributes.set(
-                                other_entity,
-                                attribute_modifier.attribute,
-                                relative_attributes.get(other_entity,
-                                                        attribute_modifier.attribute) *
-                                        attribute_modifier.multiplier +
-                                    attribute_modifier.addend);
-                            // spdlog::info("{} {} modifier {} against {}",
-                            //              utils::get_entity_name(source_entity, registry),
-                            //              utils::get_entity_name(entity, registry),
-                            //              utils::to_string(attribute_modifier),
-                            //              utils::get_entity_name(other_entity, registry));
-                        }
+            auto unique_effect_modifier_ptr =
+                registry.try_get<component::is_unique_effect>(modifier_entity);
+            auto effect_modifier_ptr = registry.try_get<component::is_effect>(modifier_entity);
+            auto owner_entity = owner_actor.entity;
+            auto& relative_attributes = registry.get<component::relative_attributes>(owner_entity);
+            registry.view<component::relative_attributes>().each([&](entity_t other_entity,
+                                                                     const component::
+                                                                         relative_attributes&) {
+                if (unique_effect_modifier_ptr) {
+                    if (modifier_unique_effect_and_owner_entity_and_other_entity_to_occurrences_map
+                            [std::make_tuple(
+                                unique_effect_modifier_ptr->unique_effect.unique_effect_key,
+                                owner_entity,
+                                other_entity)] >=
+                        unique_effect_modifier_ptr->unique_effect.max_considered_stacks) {
+                        return;
+                    } else {
+                        ++modifier_unique_effect_and_owner_entity_and_other_entity_to_occurrences_map
+                            [std::make_tuple(
+                                unique_effect_modifier_ptr->unique_effect.unique_effect_key,
+                                owner_entity,
+                                other_entity)];
                     }
-                });
-        });
-
-    registry.view<component::owner_component, component::attribute_conversions_component>().each(
-        [&](entity_t,
-            const component::owner_component& owner_actor,
-            const component::attribute_conversions_component& attribute_conversions_component) {
-            auto source_entity = owner_actor.entity;
-            auto& relative_attributes = registry.get<component::relative_attributes>(source_entity);
-            registry.view<component::relative_attributes>().each(
-                [&](entity_t other_entity, const component::relative_attributes&) {
-                    std::unordered_map<actor::attribute_t, double> attribute_conversion_bonuses;
-                    for (auto& attribute_conversion :
-                         attribute_conversions_component.attribute_conversions) {
-                        if (utils::conditions_satisfied(attribute_conversion.condition,
-                                                        source_entity,
-                                                        other_entity,
-                                                        registry)) {
-                            attribute_conversion_bonuses[attribute_conversion.to] +=
-                                (int)(attribute_conversion_bonuses[attribute_conversion.from] *
-                                          attribute_conversion.multiplier +
-                                      attribute_conversion.addend);
-                        }
+                }
+                if (effect_modifier_ptr) {
+                    if (modifier_effect_and_owner_entity_and_other_entity_to_occurrences_map
+                            [std::make_tuple(
+                                effect_modifier_ptr->effect, owner_entity, other_entity)] >=
+                        utils::get_max_considered_stacks_of_effect_type(
+                            effect_modifier_ptr->effect)) {
+                        return;
+                    } else {
+                        ++modifier_effect_and_owner_entity_and_other_entity_to_occurrences_map
+                            [std::make_tuple(
+                                effect_modifier_ptr->effect, owner_entity, other_entity)];
                     }
-
-                    for (auto&& [attribute, bonus] : attribute_conversion_bonuses) {
+                }
+                for (auto& attribute_modifier : attribute_modifiers_component.attribute_modifiers) {
+                    if (utils::conditions_satisfied(
+                            attribute_modifier.condition, owner_entity, other_entity, registry)) {
                         relative_attributes.set(
                             other_entity,
-                            attribute,
-                            relative_attributes.get(other_entity, attribute) + bonus);
-                        // spdlog::info(
-                        //     "{} {} conversion {} against {}",
-                        //     utils::get_entity_name(source_entity, registry),
-                        //     utils::get_entity_name(entity, registry),
-                        //     utils::to_string(relative_attributes.get(other_entity, attribute)),
-                        //     utils::get_entity_name(other_entity, registry));
+                            attribute_modifier.attribute,
+                            relative_attributes.get(other_entity, attribute_modifier.attribute) *
+                                    attribute_modifier.multiplier +
+                                attribute_modifier.addend);
+                        // spdlog::info("{}:{} source {} modifier {} final {}",
+                        //              utils::get_entity_name(owner_entity, registry),
+                        //              utils::get_entity_name(other_entity, registry),
+                        //              utils::get_entity_name(modifier_entity, registry),
+                        //              utils::to_string(attribute_modifier),
+                        //              relative_attributes.get(other_entity,
+                        //                                      attribute_modifier.attribute));
                     }
+                }
+            });
+        });
+
+    std::map<std::tuple<actor::unique_effect_t, entity_t, entity_t>, int>
+        conversion_unique_effect_and_owner_entity_and_other_entity_to_occurrences_map;
+    std::map<std::tuple<actor::effect_t, entity_t, entity_t>, int>
+        conversion_effect_and_owner_entity_and_other_entity_to_occurrences_map;
+    registry.view<component::relative_attributes>().each([&](entity_t other_entity,
+                                                             const component::
+                                                                 relative_attributes&) {
+        std::map<std::tuple<entity_t, actor::attribute_t>, double>
+            owner_entity_to_attribute_conversion_bonuses;
+        registry.view<component::owner_component, component::attribute_conversions_component>()
+            .each([&](entity_t conversion_entity,
+                      const component::owner_component& owner_actor,
+                      const component::attribute_conversions_component&
+                          attribute_conversions_component) {
+                auto unique_effect_conversion_ptr =
+                    registry.try_get<component::is_unique_effect>(conversion_entity);
+                auto effect_conversion_ptr =
+                    registry.try_get<component::is_effect>(conversion_entity);
+                auto owner_entity = owner_actor.entity;
+                auto& relative_attributes =
+                    registry.get<component::relative_attributes>(owner_entity);
+                if (unique_effect_conversion_ptr) {
+                    if (conversion_unique_effect_and_owner_entity_and_other_entity_to_occurrences_map
+                            [std::make_tuple(
+                                unique_effect_conversion_ptr->unique_effect.unique_effect_key,
+                                owner_entity,
+                                other_entity)] >=
+                        unique_effect_conversion_ptr->unique_effect.max_considered_stacks) {
+                        return;
+                    } else {
+                        ++conversion_unique_effect_and_owner_entity_and_other_entity_to_occurrences_map
+                            [std::make_tuple(
+                                unique_effect_conversion_ptr->unique_effect.unique_effect_key,
+                                owner_entity,
+                                other_entity)];
+                    }
+                }
+                if (effect_conversion_ptr) {
+                    if (conversion_effect_and_owner_entity_and_other_entity_to_occurrences_map
+                            [std::make_tuple(
+                                effect_conversion_ptr->effect, owner_entity, other_entity)] >=
+                        utils::get_max_considered_stacks_of_effect_type(
+                            effect_conversion_ptr->effect)) {
+                        return;
+                    } else {
+                        ++conversion_effect_and_owner_entity_and_other_entity_to_occurrences_map
+                            [std::make_tuple(
+                                effect_conversion_ptr->effect, owner_entity, other_entity)];
+                    }
+                }
+                for (auto& attribute_conversion :
+                     attribute_conversions_component.attribute_conversions) {
+                    if (utils::conditions_satisfied(
+                            attribute_conversion.condition, owner_entity, other_entity, registry)) {
+                        owner_entity_to_attribute_conversion_bonuses[std::make_tuple(
+                            owner_entity, attribute_conversion.to)] +=
+                            (int)((relative_attributes.get(other_entity,
+                                                           attribute_conversion.from) *
+                                   attribute_conversion.multiplier) +
+                                  attribute_conversion.addend);
+                    }
+                }
+            });
+
+        for (auto&& [owner_entity_attribute_tuple, bonus] :
+             owner_entity_to_attribute_conversion_bonuses) {
+            auto& [owner_entity, attribute] = owner_entity_attribute_tuple;
+            auto& relative_attributes = registry.get<component::relative_attributes>(owner_entity);
+            relative_attributes.set(
+                other_entity, attribute, relative_attributes.get(other_entity, attribute) + bonus);
+            // spdlog::info("{}:{} source converting {} bonus {} final {}",
+            //              utils::get_entity_name(owner_entity, registry),
+            //              utils::get_entity_name(other_entity, registry),
+            //              utils::to_string(attribute),
+            //              bonus,
+            //              utils::to_string(relative_attributes.get(other_entity, attribute)));
+        }
+    });
+
+    registry.view<component::relative_attributes>().each(
+        [&](entity_t, component::relative_attributes& relative_attributes) {
+            registry.view<component::relative_attributes>().each(
+                [&](entity_t other_entity, const component::relative_attributes&) {
+                    double precision =
+                        relative_attributes.get(other_entity, actor::attribute_t::PRECISION);
+                    relative_attributes.set(
+                        other_entity,
+                        actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER,
+                        relative_attributes.get(other_entity,
+                                                actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER) +
+                            (precision - 895) / 2100.0);
+
+                    double ferocity =
+                        relative_attributes.get(other_entity, actor::attribute_t::FEROCITY);
+                    relative_attributes.set(
+                        other_entity,
+                        actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER,
+                        relative_attributes.get(other_entity,
+                                                actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER) +
+                            ferocity / 1500.0);
                 });
         });
 }
@@ -184,20 +286,25 @@ void perform_rotations(registry_t& registry) {
                 return;
             }
 
-            spdlog::info("[{}] {} casting skill {}",
-                         utils::get_current_tick(registry),
-                         utils::get_entity_name(entity, registry),
-                         utils::to_string(next_skill_cast.skill));
-
             auto skill_entity =
                 registry.get<component::skills_component>(entity).find_by(next_skill_cast.skill);
-            auto& skill_cast_duration =
-                registry.get<component::skill_configuration_component>(skill_entity)
-                    .skill_configuration.cast_duration;
-            registry.emplace<component::animation_component>(
-                entity, component::animation_component{skill_cast_duration, {0, 0}});
-            registry.emplace<component::casting_skill>(
-                entity, component::casting_skill{skill_entity, 0, 0});
+
+            if (!registry.any_of<component::skill_trigger_lock>(skill_entity)) {
+                registry.emplace<component::skill_trigger_lock>(skill_entity);
+
+                auto& skill_cast_duration =
+                    registry.get<component::skill_configuration_component>(skill_entity)
+                        .skill_configuration.cast_duration;
+                registry.emplace<component::animation_component>(
+                    entity, component::animation_component{skill_cast_duration, {0, 0}});
+                registry.emplace<component::casting_skill>(
+                    entity, component::casting_skill{skill_entity, 0, 0});
+
+                spdlog::info("[{}] {} casting skill {}",
+                             utils::get_current_tick(registry),
+                             utils::get_entity_name(entity, registry),
+                             utils::to_string(next_skill_cast.skill));
+            }
 
             rotation_component.current_idx += 1;
         });
@@ -252,19 +359,20 @@ void perform_skills(registry_t& registry) {
             }
 
             if (effective_progress_pct >= 100) {
-                spdlog::info("[{}] {}: finished casting skill {}",
-                             utils::get_current_tick(registry),
-                             utils::get_entity_name(entity, registry),
-                             utils::to_string(skill_configuration.skill_key));
                 registry.emplace<component::finished_casting_skill>(
                     entity, component::finished_casting_skill{casting_skill.skill_entity});
                 utils::put_skill_on_cooldown(
                     utils::get_owner(entity, registry), skill_configuration.skill_key, registry);
+                spdlog::info("[{}] {}: finished casting skill {}",
+                             utils::get_current_tick(registry),
+                             utils::get_entity_name(entity, registry),
+                             utils::to_string(skill_configuration.skill_key));
             }
         });
 
     registry.view<component::finished_casting_skill>().each(
         [&](entity_t entity, const component::finished_casting_skill& finished_casting_skill) {
+            registry.remove<component::skill_trigger_lock>(finished_casting_skill.skill_entity);
             auto& skill_configuration = registry
                                             .get<component::skill_configuration_component>(
                                                 finished_casting_skill.skill_entity)
@@ -309,11 +417,15 @@ void perform_skills(registry_t& registry) {
 
 void cleanup_finished_casting_skills(registry_t& registry) {
     registry.view<component::finished_casting_skill>().each(
-        [&](entity_t entity, const component::finished_casting_skill& finished_casting_skill) {
+        [&](entity_t entity, const component::finished_casting_skill&) {
             registry.remove<component::casting_skill>(entity);
-            registry.destroy(finished_casting_skill.skill_entity);
             registry.remove<component::finished_casting_skill>(entity);
         });
+}
+
+void destroy_actors_with_no_rotation(registry_t& registry) {
+    registry.view<component::destroy_after_rotation, component::no_more_rotation>().each(
+        [&](entity_t entity) { registry.destroy(entity); });
 }
 
 }  // namespace gw2combat::system

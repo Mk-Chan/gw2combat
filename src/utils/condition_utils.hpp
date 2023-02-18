@@ -10,6 +10,7 @@
 
 #include "configuration/condition.hpp"
 
+#include "component/temporal/cooldown_component.hpp"
 #include "entity_utils.hpp"
 
 namespace gw2combat::utils {
@@ -71,6 +72,25 @@ namespace gw2combat::utils {
             return false;
         }
     }
+    if (condition.unique_effect_on_target_by_source) {
+        if (!registry.any_of<component::unique_effects_component>(target_entity)) {
+            return false;
+        }
+        auto unique_effect_entities =
+            registry.get<component::unique_effects_component>(target_entity)
+                .find_by(*condition.unique_effect_on_target_by_source);
+        bool is_satisfied =
+            std::any_of(unique_effect_entities.begin(),
+                        unique_effect_entities.end(),
+                        [&](entity_t unique_effect_entity) {
+                            auto source_actor_ptr =
+                                registry.try_get<component::source_actor>(unique_effect_entity);
+                            return source_actor_ptr && source_actor_ptr->entity == source_entity;
+                        });
+        if (!is_satisfied) {
+            return false;
+        }
+    }
     if (condition.effect_on_target) {
         if (!registry.any_of<component::effects_component>(target_entity)) {
             return false;
@@ -81,9 +101,14 @@ namespace gw2combat::utils {
             return false;
         }
     }
-    // Put a component on the source about which skills have been cast and which targets they will
-    // hit instead of the strike_pipeline. Then iterate over that to check if skill is cast by
-    // source
+    if (condition.depends_on_skill_off_cooldown) {
+        auto& skills_component = registry.get<component::skills_component>(source_entity);
+        auto skill_entity = skills_component.find_by(*condition.depends_on_skill_off_cooldown);
+        bool is_satisfied = !registry.any_of<component::cooldown_component>(skill_entity);
+        if (!is_satisfied) {
+            return false;
+        }
+    }
     return true;
 }
 

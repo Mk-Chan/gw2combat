@@ -3,7 +3,7 @@
         {
             "name": "dh",
             "build_path": "resources/build-dh.json",
-            "rotation_path": "resources/rotation-dh.json",
+            "rotation_path": "resources/rotation-dh.csv",
             "team": 1
         },
         {

@@ -27,6 +27,7 @@ static inline void put_skill_on_cooldown(entity_t actor_entity,
 
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
     if (skill_ammo.current_ammo <= 0) {
+        utils::log_component<component::cooldown_component>(registry);
         throw std::runtime_error(fmt::format("actor {} skill {} doesn't have any more ammo",
                                              get_entity_name(actor_entity, registry),
                                              to_string(skill)));

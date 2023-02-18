@@ -21,6 +21,7 @@ struct build_t {
     std::unordered_map<actor::attribute_t, double> attributes;
     std::vector<weapon_t> weapons{};
     std::vector<skill_t> skills{};
+    std::vector<actor::effect_t> permanent_effects{};
     std::vector<unique_effect_t> permanent_unique_effects{};
 
     build_t() {
@@ -37,7 +38,7 @@ struct build_t {
         attributes[actor::attribute_t::MAX_HEALTH] = 1.0;
 
         attributes[actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER] = 0.0;
-        attributes[actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER] = 150.0;
+        attributes[actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER] = 1.5;
 
         attributes[actor::attribute_t::BOON_DURATION_MULTIPLIER] = 1.0;
         attributes[actor::attribute_t::AEGIS_DURATION_MULTIPLIER] = 1.0;
@@ -85,6 +86,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohm
     nlohmann_json_j["attributes"] = nlohmann_json_t.attributes;
     nlohmann_json_j["weapons"] = nlohmann_json_t.weapons;
     nlohmann_json_j["skills"] = nlohmann_json_t.skills;
+    nlohmann_json_j["permanent_effects"] = nlohmann_json_t.permanent_effects;
     nlohmann_json_j["permanent_unique_effects"] = nlohmann_json_t.permanent_unique_effects;
 }
 
@@ -99,6 +101,8 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlo
     }
     nlohmann_json_t.weapons = nlohmann_json_j.value("weapons", nlohmann_json_default_obj.weapons);
     nlohmann_json_t.skills = nlohmann_json_j.value("skills", nlohmann_json_default_obj.skills);
+    nlohmann_json_t.permanent_effects = nlohmann_json_j.value(
+        "permanent_effects", nlohmann_json_default_obj.permanent_effects);
     nlohmann_json_t.permanent_unique_effects = nlohmann_json_j.value(
         "permanent_unique_effects", nlohmann_json_default_obj.permanent_unique_effects);
 }

@@ -10,10 +10,10 @@ namespace gw2combat::configuration {
 struct skill_trigger_t {
     condition_t condition;
 
-    actor::skill_t skill;
+    actor::skill_t skill_key;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_trigger_t, condition, skill)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_trigger_t, condition, skill_key)
 
 }  // namespace gw2combat::configuration
 

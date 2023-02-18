@@ -44,20 +44,57 @@ void setup_encounter(registry_t& registry) {
         for (auto& skill : build.skills) {
             utils::add_skill_to_actor(skill, actor_entity, registry);
         }
-        for (auto& permanent_unique_effects : build.permanent_unique_effects) {
-            utils::add_unique_effect_to_actor(permanent_unique_effects, actor_entity, registry);
+        for (auto& permanent_effect : build.permanent_effects) {
+            utils::add_effect_to_actor(permanent_effect, actor_entity, registry);
+        }
+        for (auto& permanent_unique_effect : build.permanent_unique_effects) {
+            utils::add_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);
         }
 
         if (!actor.rotation_path.empty()) {
-            auto rotation = utils::read<configuration::rotation_t>(actor.rotation_path);
-            actor::rotation_t converted_rotation{};
-            for (auto&& skill_cast : rotation.skill_casts) {
-                converted_rotation.skill_casts.emplace_back(
-                    actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+            if (actor.rotation_path.ends_with(".json")) {
+                auto rotation = utils::read<configuration::rotation_t>(actor.rotation_path);
+                actor::rotation_t converted_rotation{};
+                for (auto&& skill_cast : rotation.skill_casts) {
+                    converted_rotation.skill_casts.emplace_back(
+                        actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+                }
+                registry.emplace<component::rotation_component>(
+                    actor_entity,
+                    component::rotation_component{converted_rotation, 0, 0, rotation.repeat});
+            } else if (actor.rotation_path.ends_with(".csv")) {
+                std::basic_ifstream<char> ifstream{actor.rotation_path, std::basic_ios<char>::in};
+                const auto file_size = std::filesystem::file_size(actor.rotation_path);
+                std::string file_contents(file_size, '\0');
+                ifstream.read(file_contents.data(), file_size);
+
+                std::string delimiter = "\n";
+                size_t last = 0;
+                size_t next;
+                std::string line;
+                actor::rotation_t rotation;
+                while ((next = file_contents.find(delimiter, last)) != std::string::npos) {
+                    line = file_contents.substr(last, next - last);
+                    size_t comma_pos = line.find(',');
+                    if (comma_pos != std::string::npos) {
+                        std::string skill_key = line.substr(0, comma_pos);
+                        rotation.skill_casts.emplace_back(
+                            actor::skill_cast_t{actor::skill_t{skill_key}});
+                    }
+                    last = next + 1;
+                }
+                line = file_contents.substr(last);
+                if (!line.empty()) {
+                    size_t comma_pos = line.find(',');
+                    if (comma_pos != std::string::npos) {
+                        std::string skill_key = line.substr(0, comma_pos);
+                        rotation.skill_casts.emplace_back(
+                            actor::skill_cast_t{actor::skill_t{skill_key}});
+                    }
+                }
+                registry.emplace<component::rotation_component>(
+                    actor_entity, component::rotation_component{rotation, 0, 0, false});
             }
-            registry.emplace<component::rotation_component>(
-                actor_entity,
-                component::rotation_component{converted_rotation, 0, 0, rotation.repeat});
         }
     }
 }

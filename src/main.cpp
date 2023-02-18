@@ -44,13 +44,13 @@ void clear_temporary_components(registry_t& registry) {
 void tick(registry_t& registry) {
     system::setup_combat_stats(registry);
 
+    system::calculate_relative_attributes(registry);
+
     system::perform_rotations(registry);
 
     system::progress_animations(registry);
     system::progress_cooldowns(registry);
     system::progress_durations(registry);
-
-    system::calculate_relative_attributes(registry);
 
     system::perform_skills(registry);
     system::dispatch_strikes(registry);
@@ -69,6 +69,7 @@ void tick(registry_t& registry) {
     system::cleanup_expired_components(registry);
     system::cleanup_expired_effects(registry);
     system::cleanup_finished_casting_skills(registry);
+    system::destroy_actors_with_no_rotation(registry);
 
     clear_temporary_components(registry);
 }

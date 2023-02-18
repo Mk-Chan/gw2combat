@@ -34,8 +34,6 @@ struct skill_t {
     std::vector<attribute_modifier_t> attribute_modifiers{};
     std::vector<attribute_conversion_t> attribute_conversions{};
 
-    std::vector<std::string> tags{};
-
     std::vector<actor::skill_t> child_skill_keys;
 
     [[nodiscard]] inline bool operator==(const skill_t& rhs) const {
@@ -58,7 +56,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 on_pulse_effect_applications,
                                                 attribute_modifiers,
                                                 attribute_conversions,
-                                                tags,
                                                 child_skill_keys)
 
 }  // namespace gw2combat::configuration
