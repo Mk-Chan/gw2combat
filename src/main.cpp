@@ -2,24 +2,27 @@
 
 #include "component/actor/did_weapon_swap.hpp"
 #include "component/actor/effects_component.hpp"
-#include "component/damage/incoming_damage.hpp"
-
-#include "system/actor.hpp"
-#include "system/apply_strikes_and_effects.hpp"
-#include "system/dispatch_strikes_and_effects.hpp"
-#include "system/effects.hpp"
-#include "system/encounter.hpp"
-#include "system/temporal.hpp"
-
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
 #include "component/actor/rotation_component.hpp"
+#include "component/actor/static_attributes.hpp"
 #include "component/damage/effects_pipeline.hpp"
+#include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"
+
+#include "configuration/build.hpp"
+
+#include "system/actor.hpp"
+#include "system/apply_strikes_and_effects.hpp"
+#include "system/audit.hpp"
+#include "system/dispatch_strikes_and_effects.hpp"
+#include "system/effects.hpp"
+#include "system/encounter.hpp"
+#include "system/temporal.hpp"
 
 #include "utils/entity_utils.hpp"
 #include "utils/io_utils.hpp"
@@ -64,6 +67,8 @@ void tick(registry_t& registry) {
         system::apply_condition_damage(registry);
     }
 
+    system::audit_damage(registry);
+
     system::update_combat_stats(registry);
 
     system::cleanup_expired_components(registry);
@@ -76,6 +81,12 @@ void tick(registry_t& registry) {
 
 void combat_loop() {
     registry_t registry;
+
+    entity_t console_entity = registry.create();
+    registry.emplace<component::is_actor>(console_entity);
+    registry.emplace<component::static_attributes>(
+        console_entity, component::static_attributes{configuration::build_t{}.attributes});
+    registry.ctx().emplace_as<std::string>(console_entity, "Console");
 
     system::setup_encounter(registry);
 
@@ -92,7 +103,7 @@ void combat_loop() {
             if (registry.any_of<component::is_downstate>(entity)) {
                 spdlog::info(
                     "[{}] {} is downstate", current_tick, utils::get_entity_name(entity, registry));
-                return;
+                goto end_of_combat_loop;
             }
             if (!registry.any_of<component::rotation_component>(entity)) {
                 continue;
@@ -113,6 +124,8 @@ void combat_loop() {
 
         ++current_tick;
     }
+end_of_combat_loop:
+    system::audit_report(registry);
 }
 
 }  // namespace gw2combat

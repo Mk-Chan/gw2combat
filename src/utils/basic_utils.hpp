@@ -28,6 +28,10 @@ template <typename T>
     return registry.ctx().get<const tick_t>();
 }
 
+[[nodiscard]] static inline entity_t get_console_entity() {
+    return entity_t{0};
+}
+
 }  // namespace gw2combat::utils
 
 #endif  // GW2COMBAT_UTILS_BASIC_UTILS_HPP

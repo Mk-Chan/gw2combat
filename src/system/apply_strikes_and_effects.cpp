@@ -53,10 +53,11 @@ void apply_strikes(registry_t& registry) {
                                  target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
                              1.5);
                 double average_critical_damage_multiplier =
-                    skill_configuration.can_critical_strike
-                        ? 1.0 + (critical_chance_multiplier *
-                                 (actual_critical_damage_multiplier - 1.0))
-                        : 1;
+                    (1.0 +
+                     (critical_chance_multiplier * (actual_critical_damage_multiplier - 1.0)));
+                if (!skill_configuration.can_critical_strike) {
+                    average_critical_damage_multiplier = 1.0;
+                }
 
                 double effective_strike_damage_multiplier =
                     strike_source_relative_attributes.get(
@@ -82,7 +83,21 @@ void apply_strikes(registry_t& registry) {
 
                 auto& incoming_damage =
                     registry.get_or_emplace<component::incoming_damage>(target_entity);
-                incoming_damage.value += final_incoming_damage;
+                incoming_damage.incoming_damage_events.emplace_back(
+                    component::incoming_damage_event{utils::get_current_tick(registry),
+                                                     strike_source_entity,
+                                                     actor::effect_t::INVALID,
+                                                     skill_configuration.skill_key,
+                                                     final_incoming_damage});
+
+                double total_incoming_damage = std::accumulate(
+                    incoming_damage.incoming_damage_events.begin(),
+                    incoming_damage.incoming_damage_events.end(),
+                    0.0,
+                    [](double accumulated,
+                       const component::incoming_damage_event& incoming_damage_event) {
+                        return accumulated + incoming_damage_event.value;
+                    });
                 spdlog::info(
                     "[{}] skill {} pow {} strike_mult {} crit_chance {} crit_mult {} this_dmg {} "
                     "total_incoming_dmg {} outgoing_stuff {}",
@@ -93,7 +108,7 @@ void apply_strikes(registry_t& registry) {
                     critical_chance_multiplier,
                     average_critical_damage_multiplier,
                     final_incoming_damage,
-                    incoming_damage.value,
+                    total_incoming_damage,
                     utils::to_string(skill_configuration.on_strike_effect_applications));
 
                 if (registry.any_of<component::strike_counter>(strike_source_entity)) {
@@ -117,6 +132,34 @@ void apply_strikes(registry_t& registry) {
                                                             registry)) {
                                 utils::enqueue_triggered_skill(
                                     strike_source_entity, skill_trigger.skill_key, registry);
+                            }
+                        }
+                    });
+                registry
+                    .view<component::source_actor, component::unchained_skill_triggers_component>()
+                    .each([&](const component::source_actor& source_actor,
+                              const component::unchained_skill_triggers_component&
+                                  unchained_skill_triggers_component) {
+                        if (source_actor.entity != strike_source_entity) {
+                            return;
+                        }
+                        for (auto& skill_trigger :
+                             unchained_skill_triggers_component.skill_triggers) {
+                            if (skill_trigger.condition.only_applies_on_strikes &&
+                                *skill_trigger.condition.only_applies_on_strikes &&
+                                utils::conditions_satisfied(skill_trigger.condition,
+                                                            strike_source_entity,
+                                                            target_entity,
+                                                            registry)) {
+                                auto& skills_component =
+                                    registry.get<component::skills_component>(strike_source_entity);
+                                auto& skill_configuration =
+                                    registry
+                                        .get<component::skill_configuration_component>(
+                                            skills_component.find_by(skill_trigger.skill_key))
+                                        .skill_configuration;
+                                utils::enqueue_child_skill(
+                                    strike_source_entity, skill_configuration, registry);
                             }
                         }
                     });

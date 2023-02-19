@@ -58,7 +58,15 @@ void update_combat_stats(registry_t& registry) {
         .each([&](entity_t entity,
                   component::combat_stats& combat_stats,
                   const component::incoming_damage& incoming_damage) {
-            combat_stats.health -= (int)incoming_damage.value;
+            double total_incoming_damage =
+                std::accumulate(incoming_damage.incoming_damage_events.begin(),
+                                incoming_damage.incoming_damage_events.end(),
+                                0.0,
+                                [](double accumulated,
+                                   const component::incoming_damage_event& incoming_damage_event) {
+                                    return accumulated + incoming_damage_event.value;
+                                });
+            combat_stats.health -= (int)total_incoming_damage;
             health_updated = true;
 
             if (combat_stats.health <= 0) {
@@ -398,7 +406,8 @@ void perform_skills(registry_t& registry) {
                 }
             }
 
-            auto& skills_component = registry.get<component::skills_component>(entity);
+            auto& skills_component =
+                registry.get<component::skills_component>(utils::get_owner(entity, registry));
             std::vector<configuration::skill_t> child_skills;
             for (auto&& child_skill_key : skill_configuration.child_skill_keys) {
                 auto& child_skill_configuration =

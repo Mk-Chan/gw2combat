@@ -250,8 +250,8 @@
             "skill_key": "Lightning Strike",
             "weapon_type": "empty_handed",
             "damage_coefficient": 1.1,
-            "strike_on_tick_list": [[0], [0]],
             "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
             "cooldown": [3000, 3000],
             "can_critical_strike": false
         }, {
@@ -422,11 +422,11 @@
             "skill_key": "Whirling Wrath",
             "weapon_type": "greatsword",
             "damage_coefficient": 0.4125,
-            "cast_duration": [2200, 1470],
+            "cast_duration": [2200, 1480],
             "cooldown": [6400, 5120],
             "strike_on_tick_list": [
-                [0, 169, 338, 507, 676, 846, 1015, 1184, 1353, 1523, 1692, 1861, 2030, 2200],
-                [0, 113, 226, 339, 452, 565, 678, 791, 904, 1017, 1130, 1243, 1356, 1470]
+                [157, 314, 471, 628, 785, 942, 1099, 1257, 1414, 1571, 1728, 1885, 2042, 2200],
+                [105, 210, 316, 422, 528, 633, 739, 845, 951, 1056, 1162, 1268, 1374, 1480]
             ]
         }, {
             "skill_key": "Leap of Faith",

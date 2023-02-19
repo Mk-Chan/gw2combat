@@ -24,6 +24,7 @@
 #include "component/actor/static_attributes.hpp"
 #include "component/actor/strike_counter.hpp"
 #include "component/actor/team.hpp"
+#include "component/actor/unchained_skill_triggers_component.hpp"
 #include "component/actor/unique_effects_component.hpp"
 #include "component/effect/is_effect.hpp"
 #include "component/effect/is_unique_effect.hpp"
@@ -51,10 +52,10 @@ namespace gw2combat::utils {
     return child_actor;
 }
 
-[[nodiscard]] static inline entity_t create_child_actor(entity_t parent_actor,
-                                                        const std::string& name,
-                                                        int team_id,
-                                                        registry_t& registry) {
+[[nodiscard]] static inline entity_t create_temporary_rotation_child_actor(entity_t parent_actor,
+                                                                           const std::string& name,
+                                                                           int team_id,
+                                                                           registry_t& registry) {
     auto child_actor = create_persistent_child_actor(parent_actor, name, team_id, registry);
     registry.emplace<component::destroy_after_rotation>(child_actor);
     return child_actor;
@@ -95,6 +96,61 @@ static inline entity_t add_skill_to_actor(configuration::skill_t& skill,
     return skill_entity;
 }
 
+static inline void enqueue_child_skills(entity_t parent_actor,
+                                        const std::string& child_name,
+                                        std::vector<configuration::skill_t>& skills,
+                                        registry_t& registry) {
+    if (skills.empty()) {
+        return;
+    }
+    auto child_actor = utils::create_temporary_rotation_child_actor(
+        parent_actor, child_name, registry.get<component::team>(parent_actor).id, registry);
+    actor::rotation_t rotation;
+    for (auto& skill : skills) {
+        utils::add_skill_to_actor(skill, child_actor, registry);
+        rotation.skill_casts.emplace_back(actor::skill_cast_t{skill.skill_key, 0});
+    }
+    registry.emplace<component::rotation_component>(
+        child_actor, component::rotation_component{rotation, 0, false});
+    spdlog::info("[{}] {}: spawned {}",
+                 utils::get_current_tick(registry),
+                 utils::get_entity_name(parent_actor, registry),
+                 utils::get_entity_name(child_actor, registry));
+}
+
+static inline void enqueue_child_skill(entity_t parent_actor,
+                                       configuration::skill_t& skill,
+                                       registry_t& registry) {
+    auto child_actor =
+        utils::create_temporary_rotation_child_actor(parent_actor,
+                                                     skill.skill_key + " Entity",
+                                                     registry.get<component::team>(parent_actor).id,
+                                                     registry);
+    actor::rotation_t rotation;
+    utils::add_skill_to_actor(skill, child_actor, registry);
+    rotation.skill_casts.emplace_back(actor::skill_cast_t{skill.skill_key, 0});
+    registry.emplace<component::rotation_component>(
+        child_actor, component::rotation_component{rotation, 0, false});
+}
+
+static inline void enqueue_triggered_skill(entity_t parent_actor,
+                                           const actor::skill_t& skill,
+                                           registry_t& registry) {
+    registry.view<component::is_skill_trigger_tracker>().each(
+        [&](entity_t skill_trigger_tracker_entity,
+            const component::is_skill_trigger_tracker& is_skill_trigger_tracker) {
+            if (utils::get_owner(skill_trigger_tracker_entity, registry) != parent_actor ||
+                is_skill_trigger_tracker.skill != skill) {
+                return;
+            }
+            actor::rotation_t rotation;
+            rotation.skill_casts.emplace_back(actor::skill_cast_t{skill, 0});
+            registry.remove<component::no_more_rotation>(skill_trigger_tracker_entity);
+            registry.emplace_or_replace<component::rotation_component>(
+                skill_trigger_tracker_entity, component::rotation_component{rotation, 0, false});
+        });
+}
+
 static inline std::optional<entity_t> add_effect_to_actor(actor::effect_t effect,
                                                           entity_t actor_entity,
                                                           registry_t& registry) {
@@ -104,7 +160,7 @@ static inline std::optional<entity_t> add_effect_to_actor(actor::effect_t effect
     auto effect_entity = registry.create();
     registry.emplace<component::is_effect>(effect_entity, effect);
     registry.emplace<component::owner_component>(effect_entity, actor_entity);
-    registry.emplace<component::source_actor>(effect_entity, actor_entity);
+    registry.emplace<component::source_actor>(effect_entity, utils::get_console_entity());
     registry.emplace<component::duration_component>(
         effect_entity, component::duration_component{1'000'000'000, 0});
 
@@ -219,22 +275,32 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
         auto& skill_triggers_component =
             registry.get_or_emplace<component::skill_triggers_component>(unique_effect_entity);
         for (auto& skill_trigger : unique_effect.skill_triggers) {
+            auto parent_skill_entity = actor_skills_component.find_by(skill_trigger.skill_key);
+            auto& skill_configuration =
+                registry.get<component::skill_configuration_component>(parent_skill_entity)
+                    .skill_configuration;
+
             auto skill_trigger_tracker_entity = create_persistent_child_actor(
                 actor_entity,
                 "Triggered " + skill_trigger.skill_key + " Tracker Entity",
                 registry.get<component::team>(actor_entity).id,
                 registry);
-            auto parent_skill_entity = actor_skills_component.find_by(skill_trigger.skill_key);
-            auto& skill_configuration =
-                registry.get<component::skill_configuration_component>(parent_skill_entity)
-                    .skill_configuration;
             auto tracker_skill_entity = utils::add_skill_to_actor(
                 skill_configuration, skill_trigger_tracker_entity, registry);
             registry.emplace<component::is_skill_trigger_tracker>(
                 skill_trigger_tracker_entity,
                 component::is_skill_trigger_tracker{skill_trigger.skill_key, tracker_skill_entity});
+
             skill_triggers_component.skill_triggers.emplace_back(skill_trigger);
         }
+    }
+    if (!unique_effect.unchained_skill_triggers.empty()) {
+        auto& unchained_skill_triggers_component =
+            registry.get_or_emplace<component::unchained_skill_triggers_component>(
+                unique_effect_entity);
+        std::copy(unique_effect.unchained_skill_triggers.begin(),
+                  unique_effect.unchained_skill_triggers.end(),
+                  std::back_inserter(unchained_skill_triggers_component.skill_triggers));
     }
 
     registry.ctx().emplace_as<std::string>(unique_effect_entity, unique_effect.unique_effect_key);
@@ -262,60 +328,6 @@ static inline std::vector<entity_t> add_unique_effect_to_actor(
         }
     }
     return unique_effect_entities;
-}
-
-static inline void enqueue_child_skills(entity_t parent_actor,
-                                        const std::string& child_name,
-                                        std::vector<configuration::skill_t>& skills,
-                                        registry_t& registry) {
-    if (skills.empty()) {
-        return;
-    }
-    auto child_actor = utils::create_child_actor(
-        parent_actor, child_name, registry.get<component::team>(parent_actor).id, registry);
-    actor::rotation_t rotation;
-    for (auto& skill : skills) {
-        utils::add_skill_to_actor(skill, child_actor, registry);
-        rotation.skill_casts.emplace_back(actor::skill_cast_t{skill.skill_key, 0});
-    }
-    registry.emplace<component::rotation_component>(
-        child_actor, component::rotation_component{rotation, 0, false});
-    spdlog::info("[{}] {}: spawned {}",
-                 utils::get_current_tick(registry),
-                 utils::get_entity_name(parent_actor, registry),
-                 utils::get_entity_name(child_actor, registry));
-}
-
-static inline void enqueue_child_skill(entity_t parent_actor,
-                                       configuration::skill_t& skill,
-                                       registry_t& registry) {
-    auto child_actor = utils::create_child_actor(parent_actor,
-                                                 skill.skill_key + " Entity",
-                                                 registry.get<component::team>(parent_actor).id,
-                                                 registry);
-    actor::rotation_t rotation;
-    utils::add_skill_to_actor(skill, child_actor, registry);
-    rotation.skill_casts.emplace_back(actor::skill_cast_t{skill.skill_key, 0});
-    registry.emplace<component::rotation_component>(
-        child_actor, component::rotation_component{rotation, 0, false});
-}
-
-static inline void enqueue_triggered_skill(entity_t parent_actor,
-                                           const actor::skill_t& skill,
-                                           registry_t& registry) {
-    registry.view<component::is_skill_trigger_tracker>().each(
-        [&](entity_t skill_trigger_tracker_entity,
-            const component::is_skill_trigger_tracker& is_skill_trigger_tracker) {
-            if (utils::get_owner(skill_trigger_tracker_entity, registry) != parent_actor ||
-                is_skill_trigger_tracker.skill != skill) {
-                return;
-            }
-            actor::rotation_t rotation;
-            rotation.skill_casts.emplace_back(actor::skill_cast_t{skill, 0});
-            registry.remove<component::no_more_rotation>(skill_trigger_tracker_entity);
-            registry.emplace_or_replace<component::rotation_component>(
-                skill_trigger_tracker_entity, component::rotation_component{rotation, 0, false});
-        });
 }
 
 }  // namespace gw2combat::utils

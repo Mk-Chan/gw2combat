@@ -17,6 +17,7 @@ struct unique_effect_t {
     std::vector<attribute_modifier_t> attribute_modifiers;
     std::vector<attribute_conversion_t> attribute_conversions;
     std::vector<skill_trigger_t> skill_triggers;
+    std::vector<skill_trigger_t> unchained_skill_triggers;
 
     int max_considered_stacks = 1;
     int max_stored_stacks = 1500;
@@ -34,6 +35,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(unique_effect_t,
                                                 attribute_modifiers,
                                                 attribute_conversions,
                                                 skill_triggers,
+                                                unchained_skill_triggers,
                                                 max_considered_stacks,
                                                 max_stored_stacks)
 

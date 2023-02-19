@@ -6,6 +6,7 @@
 #include "component/actor/profession_component.hpp"
 #include "component/actor/static_attributes.hpp"
 #include "component/actor/team.hpp"
+#include "component/audit/audit_component.hpp"
 #include "component/equipment/weapons.hpp"
 
 #include "configuration/build.hpp"
@@ -25,6 +26,10 @@ void setup_encounter(registry_t& registry) {
         auto actor_entity = registry.create();
         registry.ctx().emplace_as<std::string>(actor_entity, actor.name);
         registry.emplace<component::is_actor>(actor_entity);
+        if (!actor.audit_output_base_path.empty()) {
+            auto& audit_component = registry.emplace<component::audit_component>(actor_entity);
+            audit_component.audit_base_path = actor.audit_output_base_path;
+        }
         registry.emplace<component::team>(actor_entity, actor.team);
         registry.emplace<component::base_class_component>(actor_entity, build.base_class);
         registry.emplace<component::profession_component>(actor_entity, build.profession);

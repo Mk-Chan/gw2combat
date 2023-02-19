@@ -74,13 +74,14 @@ void buffer_condition_damage(registry_t& registry,
     double base_condition_damage_multiplier =
         source_relative_attributes.get(target_entity,
                                        actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER) *
-        (1.0 + source_relative_attributes.get(
-            target_entity, actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP)) *
+        (1.0 +
+         source_relative_attributes.get(
+             target_entity, actor::attribute_t::OUTGOING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP)) *
         target_relative_attributes.get(effect_source_entity,
                                        actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER) *
         (1.0 + target_relative_attributes.get(
-            effect_source_entity,
-            actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP));
+                   effect_source_entity,
+                   actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP));
 
     auto& condition_duration = registry.get<component::duration_component>(effect_entity);
     double damaging_condition_progress_multiplier = condition_duration.progress / 1'000.0;
@@ -93,9 +94,17 @@ void buffer_condition_damage(registry_t& registry,
 
     auto& buffered_condition_damage =
         registry.get_or_emplace<component::buffered_condition_damage>(target_entity);
-    buffered_condition_damage.value += effective_condition_damage;
+    buffered_condition_damage.source_entity_effect_tuple_to_value_map[std::make_tuple(
+        effect_source_entity, this_effect)] += effective_condition_damage;
+
+    double total_buffered_damage = std::accumulate(
+        buffered_condition_damage.source_entity_effect_tuple_to_value_map.begin(),
+        buffered_condition_damage.source_entity_effect_tuple_to_value_map.end(),
+        0.0,
+        [](double accumulated, const auto& entry) { return accumulated + entry.second; });
     spdlog::info(
-        "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} buffered_dmg {}",
+        "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} "
+        "buffered_dmg {}",
         utils::get_current_tick(registry),
         utils::get_entity_name(target_entity, registry),
         utils::to_string(this_effect),
@@ -103,7 +112,7 @@ void buffer_condition_damage(registry_t& registry,
         damaging_condition_progress_multiplier,
         base_condition_damage,
         effective_condition_damage,
-        buffered_condition_damage.value);
+        total_buffered_damage);
 }
 
 void buffer_condition_damage(registry_t& registry, std::optional<entity_t> specific_effect_entity) {
@@ -144,7 +153,15 @@ void apply_condition_damage(registry_t& registry) {
         [&](entity_t entity,
             const component::buffered_condition_damage& buffered_condition_damage) {
             auto& incoming_damage = registry.get_or_emplace<component::incoming_damage>(entity);
-            incoming_damage.value += buffered_condition_damage.value;
+            for (auto&& [source_entity_effect_tuple, buffered_damage] :
+                 buffered_condition_damage.source_entity_effect_tuple_to_value_map) {
+                incoming_damage.incoming_damage_events.emplace_back(
+                    component::incoming_damage_event{utils::get_current_tick(registry),
+                                                     std::get<0>(source_entity_effect_tuple),
+                                                     std::get<1>(source_entity_effect_tuple),
+                                                     "",
+                                                     buffered_damage});
+            }
             registry.remove<component::buffered_condition_damage>(entity);
         });
 }

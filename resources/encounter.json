@@ -1,15 +1,15 @@
 {
     "actors": [
         {
-            "name": "dh",
-            "build_path": "resources/build-dh.json",
-            "rotation_path": "resources/rotation-dh.csv",
+            "name": "slb",
+            "build_path": "resources/build-slb.json",
+            "rotation_path": "resources/rotation-slb.csv",
             "team": 1
-        },
-        {
+        }, {
             "name": "golem",
             "build_path": "resources/build-golem.json",
-            "team": 2
+            "team": 2,
+            "audit_output_base_path": "."
         }
     ]
 }

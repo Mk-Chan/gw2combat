@@ -185,13 +185,13 @@ constexpr static inline std::array BOONS{
         source_relative_attributes.get(target_entity, actor::attribute_t::BOON_DURATION_MULTIPLIER);
     auto calculate_condition_duration = [&](double special_condition_duration_multiplier = 1.0) {
         double effective_condition_duration_multiplier = std::min(
-            1.0,
+            2.0,
             std::max(uniform_condition_duration_multiplier, special_condition_duration_multiplier));
         return (int)((double)base_duration * effective_condition_duration_multiplier);
     };
     auto calculate_boon_duration = [&](double special_boon_duration_multiplier = 1.0) {
       double effective_boon_duration_multiplier = std::min(
-          1.0,
+          2.0,
           std::max(uniform_boon_duration_multiplier, special_boon_duration_multiplier));
       return (int)((double)base_duration * effective_boon_duration_multiplier);
     };
