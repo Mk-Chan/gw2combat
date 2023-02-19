@@ -24,8 +24,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(base_class_t,
                                  {base_class_t::GUARDIAN, "GUARDIAN"},
                                  {base_class_t::GUARDIAN, "guardian"},
 
-                                 {base_class_t::GUARDIAN, "RANGER"},
-                                 {base_class_t::GUARDIAN, "ranger"},
+                                 {base_class_t::RANGER, "RANGER"},
+                                 {base_class_t::RANGER, "ranger"},
                              })
 
 }  // namespace gw2combat::actor
