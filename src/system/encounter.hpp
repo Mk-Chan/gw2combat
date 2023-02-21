@@ -5,7 +5,7 @@
 
 namespace gw2combat::system {
 
-void setup_encounter(registry_t& registry);
+void setup_encounter(registry_t& registry, const std::string& encounter_configuration_path);
 
 }  // namespace gw2combat::system
 

@@ -18,8 +18,8 @@
 
 namespace gw2combat::system {
 
-void setup_encounter(registry_t& registry) {
-    auto encounter = utils::read<configuration::encounter_t>("resources/encounter.json");
+void setup_encounter(registry_t& registry, const std::string& encounter_configuration_path) {
+    auto encounter = utils::read<configuration::encounter_t>(encounter_configuration_path);
     for (auto&& actor : encounter.actors) {
         auto build = utils::read<configuration::build_t>(actor.build_path);
 
