@@ -79,6 +79,9 @@ void update_combat_stats(registry_t& registry) {
 }
 
 void calculate_relative_attributes(registry_t& registry) {
+    if (!registry.view<component::relative_attributes>().empty()) {
+        return;
+    }
     registry
         .view<component::is_actor, component::static_attributes>(
             entt::exclude<component::owner_component, component::relative_attributes>)

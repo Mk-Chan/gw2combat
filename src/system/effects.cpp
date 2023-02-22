@@ -12,6 +12,8 @@
 #include "component/hierarchy/owner_component.hpp"
 #include "component/temporal/duration_component.hpp"
 
+#include "system/actor.hpp"
+
 #include "utils/entity_utils.hpp"
 
 namespace gw2combat::system {
@@ -116,6 +118,8 @@ void buffer_condition_damage(registry_t& registry,
 }
 
 void buffer_condition_damage(registry_t& registry, std::optional<entity_t> specific_effect_entity) {
+    system::calculate_relative_attributes(registry);
+
     if (specific_effect_entity) {
         actor::effect_t this_effect =
             registry.get<component::is_effect>(*specific_effect_entity).effect;
