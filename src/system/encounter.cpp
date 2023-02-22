@@ -10,6 +10,7 @@
 #include "component/equipment/weapons.hpp"
 
 #include "configuration/build.hpp"
+#include "configuration/encounter-server.hpp"
 #include "configuration/encounter.hpp"
 #include "configuration/rotation.hpp"
 
@@ -18,7 +19,13 @@
 
 namespace gw2combat::system {
 
-void setup_encounter(registry_t& registry, const std::string& encounter_configuration_path) {
+void setup_local_encounter(registry_t& registry, const std::string& encounter_configuration_path) {
+    auto console_entity = registry.create();
+    registry.emplace<component::is_actor>(console_entity);
+    registry.emplace<component::static_attributes>(
+        console_entity, component::static_attributes{configuration::build_t{}.attributes});
+    registry.ctx().emplace_as<std::string>(console_entity, "Console");
+
     auto encounter = utils::read<configuration::encounter_t>(encounter_configuration_path);
     for (auto&& actor : encounter.actors) {
         auto build = utils::read<configuration::build_t>(actor.build_path);
@@ -101,6 +108,59 @@ void setup_encounter(registry_t& registry, const std::string& encounter_configur
                     actor_entity, component::rotation_component{rotation, 0, 0, false});
             }
         }
+    }
+}
+
+void setup_server_encounter(registry_t& registry, const std::string& encounter_configuration) {
+    auto console_entity = registry.create();
+    registry.emplace<component::is_actor>(console_entity);
+    registry.emplace<component::static_attributes>(
+        console_entity, component::static_attributes{configuration::build_t{}.attributes});
+    registry.ctx().emplace_as<std::string>(console_entity, "Console");
+
+    auto encounter =
+        nlohmann::json::parse(encounter_configuration).get<configuration::encounter_server_t>();
+    for (auto&& actor : encounter.actors) {
+        auto build = actor.build;
+
+        auto actor_entity = registry.create();
+        registry.ctx().emplace_as<std::string>(actor_entity, actor.name);
+        registry.emplace<component::is_actor>(actor_entity);
+        registry.emplace<component::audit_component>(actor_entity);
+        registry.emplace<component::team>(actor_entity, actor.team);
+        registry.emplace<component::base_class_component>(actor_entity, build.base_class);
+        registry.emplace<component::profession_component>(actor_entity, build.profession);
+        registry.emplace<component::effects_component>(actor_entity);
+        registry.emplace<component::current_weapon_set>(actor_entity);
+        registry.emplace<component::strike_counter>(actor_entity);
+        registry.emplace<component::static_attributes>(actor_entity, build.attributes);
+
+        auto& equipped_weapons = registry.emplace<component::equipped_weapons>(actor_entity);
+        for (auto& weapon_configuration : build.weapons) {
+            equipped_weapons.weapons.emplace_back(
+                component::weapon_t{.type = weapon_configuration.type,
+                                    .position = weapon_configuration.position,
+                                    .set = weapon_configuration.set});
+        }
+
+        for (auto& skill : build.skills) {
+            utils::add_skill_to_actor(skill, actor_entity, registry);
+        }
+        for (auto& permanent_effect : build.permanent_effects) {
+            utils::add_effect_to_actor(permanent_effect, actor_entity, registry);
+        }
+        for (auto& permanent_unique_effect : build.permanent_unique_effects) {
+            utils::add_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);
+        }
+
+        actor::rotation_t converted_rotation{};
+        for (auto&& skill_cast : actor.rotation.skill_casts) {
+            converted_rotation.skill_casts.emplace_back(
+                actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+        }
+        registry.emplace<component::rotation_component>(
+            actor_entity,
+            component::rotation_component{converted_rotation, 0, 0, actor.rotation.repeat});
     }
 }
 

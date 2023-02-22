@@ -12,7 +12,7 @@ include_directories(src include)
 # Global Flags
 ###
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
-add_compile_options(-Wall -Wextra -Wpedantic)
+add_compile_options(-Wall -Wextra -Wpedantic -Wno-deprecated)
 ###
 
 ###

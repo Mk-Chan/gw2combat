@@ -79,20 +79,13 @@ void tick(registry_t& registry) {
     clear_temporary_components(registry);
 }
 
-void combat_loop(const std::string& encounter_configuration_path) {
+void local_combat_loop(const std::string& encounter_configuration_path) {
     registry_t registry;
 
-    entity_t console_entity = registry.create();
-    registry.emplace<component::is_actor>(console_entity);
-    registry.emplace<component::static_attributes>(
-        console_entity, component::static_attributes{configuration::build_t{}.attributes});
-    registry.ctx().emplace_as<std::string>(console_entity, "Console");
-
-    system::setup_encounter(registry, encounter_configuration_path);
+    system::setup_local_encounter(registry, encounter_configuration_path);
 
     tick_t current_tick = 1;
     registry.ctx().emplace<const tick_t&>(current_tick);
-
     tick_t everyone_out_of_rotation_at_tick = 3'000'000'000;
     while (true) {
         tick(registry);
@@ -125,7 +118,49 @@ void combat_loop(const std::string& encounter_configuration_path) {
         ++current_tick;
     }
 end_of_combat_loop:
-    system::audit_report(registry);
+    system::audit_report_to_disk(registry);
+}
+
+std::string server_combat_loop(const std::string& encounter_configuration) {
+    registry_t registry;
+
+    system::setup_server_encounter(registry, encounter_configuration);
+
+    tick_t current_tick = 1;
+    registry.ctx().emplace<const tick_t&>(current_tick);
+    tick_t everyone_out_of_rotation_at_tick = 3'000'000'000;
+    while (true) {
+        tick(registry);
+
+        bool everyone_out_of_rotation = true;
+        auto actors = registry.view<component::is_actor>();
+        for (auto entity : actors) {
+            if (registry.any_of<component::is_downstate>(entity)) {
+                spdlog::info(
+                    "[{}] {} is downstate", current_tick, utils::get_entity_name(entity, registry));
+                goto end_of_combat_loop;
+            }
+            if (!registry.any_of<component::rotation_component>(entity)) {
+                continue;
+            }
+            if (!registry.any_of<component::no_more_rotation>(entity)) {
+                everyone_out_of_rotation = false;
+            }
+        }
+        if (everyone_out_of_rotation) {
+            if (everyone_out_of_rotation_at_tick > current_tick) {
+                everyone_out_of_rotation_at_tick = current_tick;
+            }
+            if (current_tick - everyone_out_of_rotation_at_tick >= 10'000) {
+                spdlog::info("[{}] no one has any rotation left!", current_tick);
+                break;
+            }
+        }
+
+        ++current_tick;
+    }
+end_of_combat_loop:
+    return nlohmann::json{system::get_audit_report(registry)}.dump();
 }
 
 }  // namespace gw2combat

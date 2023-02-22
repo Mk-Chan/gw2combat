@@ -5,7 +5,8 @@
 
 namespace gw2combat {
 
-void combat_loop(const std::string& encounter_configuration_path);
+void local_combat_loop(const std::string& encounter_configuration_path);
+std::string server_combat_loop(const std::string& encounter_configuration);
 
 }  // namespace gw2combat
 

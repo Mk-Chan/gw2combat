@@ -5,9 +5,25 @@
 
 namespace gw2combat::system {
 
+struct audit_report {
+    struct damage_event {
+        std::string damage_source;
+        tick_t time_ms;
+        int damage;
+    };
+    std::vector<damage_event> damage_events;
+};
+
 extern void audit_damage(registry_t& registry);
 
-extern void audit_report(registry_t& registry);
+extern void audit_report_to_disk(registry_t& registry);
+extern audit_report get_audit_report(registry_t& registry);
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(audit_report::damage_event,
+                                                damage_source,
+                                                time_ms,
+                                                damage)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(audit_report, damage_events)
 
 }  // namespace gw2combat::system
 

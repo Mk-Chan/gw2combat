@@ -5,6 +5,7 @@
 #include "component/audit/audit_component.hpp"
 #include "component/damage/incoming_damage.hpp"
 
+#include "component/actor/team.hpp"
 #include "utils/basic_utils.hpp"
 #include "utils/entity_utils.hpp"
 
@@ -20,7 +21,7 @@ void audit_damage(registry_t& registry) {
         });
 }
 
-void audit_report(registry_t& registry) {
+void audit_report_to_disk(registry_t& registry) {
     registry.view<component::audit_component>().each(
         [&](entity_t target_entity, const component::audit_component& audit_component) {
             if (audit_component.audit_base_path.empty()) {
@@ -57,6 +58,32 @@ void audit_report(registry_t& registry) {
                     << damage_source << "|" << (int)incoming_damage_event.value << std::endl;
             }
         });
+}
+
+audit_report get_audit_report(registry_t& registry) {
+    audit_report result;
+    registry.view<component::audit_component, component::team>().each(
+        [&](const component::audit_component& audit_component, const component::team& team) {
+            if (team.id != 2 || !result.damage_events.empty()) {
+                return;
+            }
+            for (auto& incoming_damage_event : audit_component.incoming_damage_events) {
+                std::string damage_source = [&]() {
+                    if (incoming_damage_event.effect != actor::effect_t::INVALID) {
+                        return utils::to_string(incoming_damage_event.effect);
+                    } else if (!incoming_damage_event.skill.empty()) {
+                        return incoming_damage_event.skill;
+                    } else {
+                        throw std::runtime_error("Unknown source for damage!");
+                    }
+                }();
+                result.damage_events.emplace_back(
+                    audit_report::damage_event{damage_source,
+                                               incoming_damage_event.tick,
+                                               static_cast<int>(incoming_damage_event.value)});
+            }
+        });
+    return result;
 }
 
 }  // namespace gw2combat::system
