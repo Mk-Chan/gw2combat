@@ -301,13 +301,13 @@
                         "weapon_type": "longbow",
                         "damage_coefficient": 1.0,
                         "cast_duration": [1020, 680],
-                        "strike_on_tick_list": [[850], [680]]
+                        "strike_on_tick_list": [[1020], [680]]
                     }, {
                         "skill_key": "True Shot",
                         "weapon_type": "longbow",
                         "damage_coefficient": 3.2,
                         "cast_duration": [1020, 680],
-                        "strike_on_tick_list": [[850], [680]],
+                        "strike_on_tick_list": [[1020], [680]],
                         "cooldown": [4000, 3200]
                     }, {
                         "skill_key": "Deflecting Shot",

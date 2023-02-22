@@ -11,28 +11,26 @@ using tcp = asio::ip::tcp;
 asio::awaitable<void> request_handler(tcp::socket socket) {
     try {
         while (socket.is_open()) {
-            std::string buffer;
-            for (std::string temp_buffer;;) {
-                try {
-                    std::size_t bytes_read = co_await asio::async_read_until(
-                        socket, asio::dynamic_buffer(temp_buffer, 1024), "\n", asio::use_awaitable);
-                    if (bytes_read == 0) {
-                        break;
-                    }
-                    buffer.append(temp_buffer.substr(0, bytes_read));
-                    temp_buffer.erase(0, bytes_read);
-                } catch (std::exception& e) {
-                    break;
-                }
+            asio::streambuf buffer;
+            std::size_t bytes_read =
+                co_await asio::async_read_until(socket, buffer, "\n", asio::use_awaitable);
+            if (bytes_read == 0) {
+                throw std::runtime_error("read nothing from socket!");
             }
-            std::string encounter_configuration{buffer};
+            std::istream istream{&buffer};
+            std::string payload;
+            std::getline(istream, payload);
+
+            std::string encounter_configuration{payload};
             auto simulation_result_json = server_combat_loop(encounter_configuration);
             co_await asio::async_write(
                 socket,
                 asio::buffer(simulation_result_json, simulation_result_json.size()),
                 asio::use_awaitable);
         }
+    } catch (asio::system_error& e) {
     } catch (std::exception& e) {
+        spdlog::error("Exception: {}", e.what());
     }
 }
 

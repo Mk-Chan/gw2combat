@@ -153,14 +153,16 @@ void setup_server_encounter(registry_t& registry, const std::string& encounter_c
             utils::add_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);
         }
 
-        actor::rotation_t converted_rotation{};
-        for (auto&& skill_cast : actor.rotation.skill_casts) {
-            converted_rotation.skill_casts.emplace_back(
-                actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+        if (!actor.rotation.skill_casts.empty()) {
+            actor::rotation_t converted_rotation{};
+            for (auto&& skill_cast : actor.rotation.skill_casts) {
+                converted_rotation.skill_casts.emplace_back(
+                    actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+            }
+            registry.emplace<component::rotation_component>(
+                actor_entity,
+                component::rotation_component{converted_rotation, 0, 0, actor.rotation.repeat});
         }
-        registry.emplace<component::rotation_component>(
-            actor_entity,
-            component::rotation_component{converted_rotation, 0, 0, actor.rotation.repeat});
     }
 }
 
