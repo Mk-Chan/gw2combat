@@ -60,7 +60,7 @@ void audit_report_to_disk(registry_t& registry) {
         });
 }
 
-audit_report get_audit_report(registry_t& registry) {
+audit_report get_audit_report(registry_t& registry, bool exclude_console) {
     audit_report result;
     registry.view<component::audit_component, component::team>().each(
         [&](const component::audit_component& audit_component, const component::team& team) {
@@ -68,6 +68,10 @@ audit_report get_audit_report(registry_t& registry) {
                 return;
             }
             for (auto& incoming_damage_event : audit_component.incoming_damage_events) {
+                if (exclude_console && utils::get_entity_name(incoming_damage_event.source_entity,
+                                                              registry) == "Console") {
+                    continue;
+                }
                 std::string damage_source = [&]() {
                     if (incoming_damage_event.effect != actor::effect_t::INVALID) {
                         return utils::to_string(incoming_damage_event.effect);

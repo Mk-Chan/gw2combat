@@ -17,7 +17,7 @@ struct audit_report {
 extern void audit_damage(registry_t& registry);
 
 extern void audit_report_to_disk(registry_t& registry);
-extern audit_report get_audit_report(registry_t& registry);
+extern audit_report get_audit_report(registry_t& registry, bool exclude_console = true);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(audit_report::damage_event,
                                                 damage_source,
