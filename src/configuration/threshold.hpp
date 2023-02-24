@@ -37,7 +37,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(
         {threshold_t::type::LOWER_BOUND_INCLUSIVE, "lower_bound_inclusive"},
     })
 
-inline void to_json(nlohmann::json& nlohmann_json_j, const threshold_t& nlohmann_json_t) {
+static inline void to_json(nlohmann::json& nlohmann_json_j, const threshold_t& nlohmann_json_t) {
     nlohmann_json_j["threshold_type"] = nlohmann_json_t.threshold_type;
     nlohmann_json_j["threshold_value"] = nlohmann_json_t.threshold_value;
     if (nlohmann_json_t.generate_random_number_subject_to_threshold) {
@@ -49,7 +49,7 @@ inline void to_json(nlohmann::json& nlohmann_json_j, const threshold_t& nlohmann
             *nlohmann_json_t.attribute_subject_to_threshold;
     }
 }
-inline void from_json(const nlohmann::json& nlohmann_json_j, threshold_t& nlohmann_json_t) {
+static inline void from_json(const nlohmann::json& nlohmann_json_j, threshold_t& nlohmann_json_t) {
     threshold_t nlohmann_json_default_obj;
     nlohmann_json_t.threshold_type =
         nlohmann_json_j.value("threshold_type", nlohmann_json_default_obj.threshold_type);
