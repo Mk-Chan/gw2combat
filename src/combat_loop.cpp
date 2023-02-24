@@ -1,12 +1,10 @@
 #include "combat_loop.hpp"
 
-#include "component/actor/did_weapon_swap.hpp"
 #include "component/actor/effects_component.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
 #include "component/actor/rotation_component.hpp"
-#include "component/actor/static_attributes.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
@@ -32,7 +30,6 @@ namespace gw2combat {
 void clear_temporary_components(registry_t& registry) {
     registry.clear<component::relative_attributes,
                    component::incoming_damage,
-                   component::did_weapon_swap,
                    component::animation_expired,
                    component::cooldown_expired,
                    component::duration_expired,
@@ -40,8 +37,7 @@ void clear_temporary_components(registry_t& registry) {
                    component::outgoing_effects_component,
                    component::incoming_strikes_component,
                    component::incoming_effects_component,
-                   component::incoming_damage,
-                   component::did_weapon_swap>();
+                   component::incoming_damage>();
 }
 
 void tick(registry_t& registry) {

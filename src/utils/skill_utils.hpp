@@ -2,8 +2,8 @@
 #define GW2COMBAT_UTILS_SKILL_UTILS_HPP
 
 #include "basic_utils.hpp"
-
 #include "entity_utils.hpp"
+#include "io_utils.hpp"
 
 #include "component/actor/skills_component.hpp"
 #include "component/equipment/weapons.hpp"
@@ -13,7 +13,13 @@
 
 namespace gw2combat::utils {
 
-[[nodiscard]] static inline configuration::skill_t
+[[nodiscard]] static inline bool skill_has_tag(const configuration::skill_t& skill,
+                                               const actor::skill_tag_t& skill_tag) {
+    return std::find(skill.skill_tags.cbegin(), skill.skill_tags.cend(), skill_tag) !=
+           skill.skill_tags.cend();
+}
+
+[[nodiscard]] static inline configuration::skill_t&
 get_skill_configuration(const actor::skill_t& skill, entity_t actor_entity, registry_t& registry) {
     auto& skill_component = registry.get<component::skills_component>(actor_entity);
     return registry.get<component::skill_configuration_component>(skill_component.find_by(skill))

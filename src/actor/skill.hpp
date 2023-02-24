@@ -6,6 +6,7 @@
 namespace gw2combat::actor {
 
 using skill_t = std::string;
+using skill_tag_t = std::string;
 
 }  // namespace gw2combat::actor
 

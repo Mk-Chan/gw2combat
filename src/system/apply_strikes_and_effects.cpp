@@ -20,6 +20,7 @@
 #include "utils/condition_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/gear_utils.hpp"
+#include "utils/skill_utils.hpp"
 
 namespace gw2combat::system {
 
@@ -126,6 +127,15 @@ void apply_strikes(registry_t& registry) {
                         for (auto& skill_trigger : skill_triggers_component.skill_triggers) {
                             if (skill_trigger.condition.only_applies_on_strikes &&
                                 *skill_trigger.condition.only_applies_on_strikes &&
+                                (!skill_trigger.condition.only_applies_on_strikes_by_skill ||
+                                 *skill_trigger.condition.only_applies_on_strikes_by_skill ==
+                                     skill_configuration.skill_key) &&
+                                (!skill_trigger.condition
+                                      .only_applies_on_strikes_by_skill_with_tag ||
+                                 utils::skill_has_tag(
+                                     skill_configuration,
+                                     *skill_trigger.condition
+                                          .only_applies_on_strikes_by_skill_with_tag)) &&
                                 utils::conditions_satisfied(skill_trigger.condition,
                                                             strike_source_entity,
                                                             target_entity,
@@ -147,19 +157,24 @@ void apply_strikes(registry_t& registry) {
                              unchained_skill_triggers_component.skill_triggers) {
                             if (skill_trigger.condition.only_applies_on_strikes &&
                                 *skill_trigger.condition.only_applies_on_strikes &&
+                                (!skill_trigger.condition.only_applies_on_strikes_by_skill ||
+                                 *skill_trigger.condition.only_applies_on_strikes_by_skill ==
+                                     skill_configuration.skill_key) &&
+                                (!skill_trigger.condition
+                                      .only_applies_on_strikes_by_skill_with_tag ||
+                                 utils::skill_has_tag(
+                                     skill_configuration,
+                                     *skill_trigger.condition
+                                          .only_applies_on_strikes_by_skill_with_tag)) &&
                                 utils::conditions_satisfied(skill_trigger.condition,
                                                             strike_source_entity,
                                                             target_entity,
                                                             registry)) {
-                                auto& skills_component =
-                                    registry.get<component::skills_component>(strike_source_entity);
-                                auto& skill_configuration =
-                                    registry
-                                        .get<component::skill_configuration_component>(
-                                            skills_component.find_by(skill_trigger.skill_key))
-                                        .skill_configuration;
                                 utils::enqueue_child_skill(
-                                    strike_source_entity, skill_configuration, registry);
+                                    strike_source_entity,
+                                    utils::get_skill_configuration(
+                                        skill_trigger.skill_key, strike_source_entity, registry),
+                                    registry);
                             }
                         }
                     });

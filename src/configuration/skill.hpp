@@ -35,6 +35,7 @@ struct skill_t {
     std::vector<attribute_conversion_t> attribute_conversions{};
 
     std::vector<actor::skill_t> child_skill_keys;
+    std::vector<actor::skill_tag_t> skill_tags;
 
     bool can_critical_strike = true;
 
@@ -59,6 +60,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 attribute_modifiers,
                                                 attribute_conversions,
                                                 child_skill_keys,
+                                                skill_tags,
                                                 can_critical_strike)
 
 }  // namespace gw2combat::configuration

@@ -17,7 +17,7 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline bool conditions_satisfied(const configuration::condition_t& condition,
                                                       entity_t entity,
-                                                      entity_t target_entity,
+                                                      std::optional<entity_t> target_entity,
                                                       registry_t& registry) {
     auto source_entity = utils::get_owner(entity, registry);
     if (condition.weapon_type || condition.weapon_position) {
@@ -74,21 +74,28 @@ namespace gw2combat::utils {
         }
     }
     if (condition.unique_effect_on_target) {
-        if (!registry.any_of<component::unique_effects_component>(target_entity)) {
+        if (!target_entity) {
+            throw std::runtime_error("target_entity must be provided for unique_effect_on_target");
+        }
+        if (!registry.any_of<component::unique_effects_component>(*target_entity)) {
             return false;
         }
-        bool is_satisfied = registry.get<component::unique_effects_component>(target_entity)
+        bool is_satisfied = registry.get<component::unique_effects_component>(*target_entity)
                                 .has(*condition.unique_effect_on_target);
         if (!is_satisfied) {
             return false;
         }
     }
     if (condition.unique_effect_on_target_by_source) {
-        if (!registry.any_of<component::unique_effects_component>(target_entity)) {
+        if (!target_entity) {
+            throw std::runtime_error(
+                "target_entity must be provided for unique_effect_on_target_by_source");
+        }
+        if (!registry.any_of<component::unique_effects_component>(*target_entity)) {
             return false;
         }
         auto unique_effect_entities =
-            registry.get<component::unique_effects_component>(target_entity)
+            registry.get<component::unique_effects_component>(*target_entity)
                 .find_by(*condition.unique_effect_on_target_by_source);
         bool is_satisfied =
             std::any_of(unique_effect_entities.begin(),
@@ -103,10 +110,13 @@ namespace gw2combat::utils {
         }
     }
     if (condition.effect_on_target) {
-        if (!registry.any_of<component::effects_component>(target_entity)) {
+        if (!target_entity) {
+            throw std::runtime_error("target_entity must be provided for effect_on_target");
+        }
+        if (!registry.any_of<component::effects_component>(*target_entity)) {
             return false;
         }
-        bool is_satisfied = registry.get<component::effects_component>(target_entity)
+        bool is_satisfied = registry.get<component::effects_component>(*target_entity)
                                 .has(*condition.effect_on_target);
         if (!is_satisfied) {
             return false;

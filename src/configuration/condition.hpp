@@ -21,8 +21,13 @@ struct condition_t {
     std::optional<actor::unique_effect_t> unique_effect_on_target_by_source = std::nullopt;
     std::optional<actor::effect_t> effect_on_target = std::nullopt;
     std::optional<actor::skill_t> depends_on_skill_off_cooldown = std::nullopt;
-    std::optional<int> strike_count_required = std::nullopt;
     std::optional<bool> only_applies_on_strikes = std::nullopt;
+    std::optional<actor::skill_t> only_applies_on_strikes_by_skill = std::nullopt;
+    std::optional<actor::skill_tag_t> only_applies_on_strikes_by_skill_with_tag = std::nullopt;
+    std::optional<bool> only_applies_on_finished_casting = std::nullopt;
+    std::optional<actor::skill_t> only_applies_on_finished_casting_skill = std::nullopt;
+    std::optional<actor::skill_tag_t> only_applies_on_finished_casting_skill_with_tag =
+        std::nullopt;
 };
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& nlohmann_json_t) {
@@ -55,11 +60,28 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
         nlohmann_json_j["depends_on_skill_off_cooldown"] =
             *nlohmann_json_t.depends_on_skill_off_cooldown;
     }
-    if (nlohmann_json_t.strike_count_required) {
-        nlohmann_json_j["strike_count_required"] = *nlohmann_json_t.strike_count_required;
-    }
     if (nlohmann_json_t.only_applies_on_strikes) {
         nlohmann_json_j["only_applies_on_strikes"] = *nlohmann_json_t.only_applies_on_strikes;
+    }
+    if (nlohmann_json_t.only_applies_on_strikes_by_skill) {
+        nlohmann_json_j["only_applies_on_strikes_by_skill"] =
+            *nlohmann_json_t.only_applies_on_strikes_by_skill;
+    }
+    if (nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag) {
+        nlohmann_json_j["only_applies_on_strikes_by_skill_with_tag"] =
+            *nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag;
+    }
+    if (nlohmann_json_t.only_applies_on_finished_casting) {
+        nlohmann_json_j["only_applies_on_finished_casting"] =
+            *nlohmann_json_t.only_applies_on_finished_casting;
+    }
+    if (nlohmann_json_t.only_applies_on_finished_casting_skill) {
+        nlohmann_json_j["only_applies_on_finished_casting_skill"] =
+            *nlohmann_json_t.only_applies_on_finished_casting_skill;
+    }
+    if (nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag) {
+        nlohmann_json_j["only_applies_on_finished_casting_skill_with_tag"] =
+            *nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag;
     }
 }
 static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t& nlohmann_json_t) {
@@ -102,13 +124,34 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
             nlohmann_json_j.value("depends_on_skill_off_cooldown",
                                   *nlohmann_json_default_obj.depends_on_skill_off_cooldown);
     }
-    if (nlohmann_json_j.contains("strike_count_required")) {
-        nlohmann_json_t.strike_count_required = nlohmann_json_j.value(
-            "strike_count_required", *nlohmann_json_default_obj.strike_count_required);
-    }
     if (nlohmann_json_j.contains("only_applies_on_strikes")) {
         nlohmann_json_t.only_applies_on_strikes = nlohmann_json_j.value(
             "only_applies_on_strikes", *nlohmann_json_default_obj.only_applies_on_strikes);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_strikes_by_skill")) {
+        nlohmann_json_t.only_applies_on_strikes_by_skill =
+            nlohmann_json_j.value("only_applies_on_strikes_by_skill",
+                                  *nlohmann_json_default_obj.only_applies_on_strikes_by_skill);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_strikes_by_skill_with_tag")) {
+        nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag = nlohmann_json_j.value(
+            "only_applies_on_strikes_by_skill_with_tag",
+            *nlohmann_json_default_obj.only_applies_on_strikes_by_skill_with_tag);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_finished_casting")) {
+        nlohmann_json_t.only_applies_on_finished_casting =
+            nlohmann_json_j.value("only_applies_on_finished_casting",
+                                  *nlohmann_json_default_obj.only_applies_on_finished_casting);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_finished_casting_skill")) {
+        nlohmann_json_t.only_applies_on_finished_casting_skill = nlohmann_json_j.value(
+            "only_applies_on_finished_casting_skill",
+            *nlohmann_json_default_obj.only_applies_on_finished_casting_skill);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_finished_casting_skill_with_tag")) {
+        nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag = nlohmann_json_j.value(
+            "only_applies_on_finished_casting_skill_with_tag",
+            *nlohmann_json_default_obj.only_applies_on_finished_casting_skill_with_tag);
     }
 }
 
