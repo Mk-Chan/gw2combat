@@ -8,6 +8,8 @@
 #include "actor/unique_effect.hpp"
 #include "actor/weapon.hpp"
 
+#include "threshold.hpp"
+
 namespace gw2combat::configuration {
 
 struct condition_t {
@@ -28,6 +30,7 @@ struct condition_t {
     std::optional<actor::skill_t> only_applies_on_finished_casting_skill = std::nullopt;
     std::optional<actor::skill_tag_t> only_applies_on_finished_casting_skill_with_tag =
         std::nullopt;
+    std::optional<threshold_t> threshold = std::nullopt;
 };
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& nlohmann_json_t) {
@@ -82,6 +85,9 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     if (nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag) {
         nlohmann_json_j["only_applies_on_finished_casting_skill_with_tag"] =
             *nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag;
+    }
+    if (nlohmann_json_t.threshold) {
+        nlohmann_json_j["threshold"] = *nlohmann_json_t.threshold;
     }
 }
 static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t& nlohmann_json_t) {
@@ -152,6 +158,10 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
         nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag = nlohmann_json_j.value(
             "only_applies_on_finished_casting_skill_with_tag",
             *nlohmann_json_default_obj.only_applies_on_finished_casting_skill_with_tag);
+    }
+    if (nlohmann_json_j.contains("threshold")) {
+        nlohmann_json_t.threshold =
+            nlohmann_json_j.value("threshold", *nlohmann_json_default_obj.threshold);
     }
 }
 
