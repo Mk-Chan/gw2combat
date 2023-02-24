@@ -42,7 +42,8 @@ void apply_strikes(registry_t& registry) {
                         .skill_configuration;
 
                 double skill_intrinsic_damage =
-                    utils::get_weapon_strength(skill_configuration.weapon_type) *
+                    utils::get_weapon_strength(
+                        strike_source_entity, skill_configuration.weapon_type, registry) *
                     skill_configuration.damage_coefficient;
 
                 double critical_chance_multiplier =

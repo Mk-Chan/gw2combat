@@ -135,7 +135,12 @@
             "unchained_skill_triggers": [
                 {
                     "condition": {
-                        "only_applies_on_strikes": true
+                        "only_applies_on_strikes": true,
+                        "threshold": {
+                            "threshold_type": "upper_bound_exclusive",
+                            "threshold_value": 33,
+                            "generate_random_number_subject_to_threshold": true
+                        }
                     },
                     "skill_key": "Sharpened Edges Bleeding Proc"
                 }
@@ -300,7 +305,7 @@
             "on_pulse_effect_applications": [
                 {
                     "effect": "BLEEDING",
-                    "num_stacks": 1,
+                    "num_stacks": 3,
                     "base_duration_ms": 1000,
                     "direction": "OUTGOING"
                 }
@@ -528,7 +533,7 @@
             "cooldown": [60000, 48000]
         }, {
             "skill_key": "Worldly Impact",
-            "weapon_type": "longbow",
+            "weapon_type": "main_hand",
             "damage_coefficient": 1.89,
             "num_targets": 5,
             "cast_duration": [840, 680],
@@ -536,12 +541,12 @@
             "cooldown": [25000, 20000]
         }, {
             "skill_key": "Frenzied Attack",
-            "weapon_type": "longbow",
+            "weapon_type": "main_hand",
             "damage_coefficient": 0.4,
             "cast_duration": [960, 760],
             "strike_on_tick_list": [
-                [240, 480, 720, 960],
-                [190, 380, 570, 760]
+                [192, 384, 576, 768, 960],
+                [152, 304, 456, 608, 760]
             ],
             "cooldown": [20000, 16000]
         }

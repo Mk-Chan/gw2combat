@@ -29,6 +29,8 @@ enum class weapon_type : std::uint32_t
 {
     INVALID,
 
+    MAIN_HAND,
+
     EMPTY_HANDED,
     GREATSWORD,
     LONGBOW,
@@ -76,6 +78,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_position,
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
                              {
                                  {weapon_type::INVALID, "Invalid"},
+
+                                 {weapon_type::MAIN_HAND, "main_hand"},
 
                                  {weapon_type::EMPTY_HANDED, "empty_handed"},
                                  {weapon_type::GREATSWORD, "greatsword"},
