@@ -15,8 +15,7 @@ namespace gw2combat::utils {
 
 [[nodiscard]] static inline bool skill_has_tag(const configuration::skill_t& skill,
                                                const actor::skill_tag_t& skill_tag) {
-    return std::find(skill.skill_tags.cbegin(), skill.skill_tags.cend(), skill_tag) !=
-           skill.skill_tags.cend();
+    return std::find(skill.tags.cbegin(), skill.tags.cend(), skill_tag) != skill.tags.cend();
 }
 
 [[nodiscard]] static inline configuration::skill_t&
