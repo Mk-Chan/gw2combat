@@ -41,6 +41,16 @@ enum class weapon_type : std::uint32_t
     FOCUS,
     KIT_CONJURE,
     TOME,
+    DAGGER,
+    MACE,
+    PISTOL,
+    SHIELD,
+    WARHORN,
+    HAMMER,
+    RIFLE,
+    SHORTBOW,
+    STAFF,
+    AQUATIC
 };
 
 static inline std::unordered_map<weapon_type, std::array<double, 2>>
@@ -57,6 +67,16 @@ static inline std::unordered_map<weapon_type, std::array<double, 2>>
         {weapon_type::FOCUS, {873.0, 927.0}},
         {weapon_type::KIT_CONJURE, {920.0, 1017.0}},
         {weapon_type::TOME, {876.0, 969.0}},
+        {weapon_type::DAGGER, {970.0, 1030.0}},
+        {weapon_type::MACE, {940.0, 1060.0}},
+        {weapon_type::PISTOL, {920.0, 1080.0}},
+        {weapon_type::SHIELD, {846.0, 954.0}},
+        {weapon_type::WARHORN, {855.0, 945.0}},
+        {weapon_type::HAMMER, {1034.0, 1166.0}},
+        {weapon_type::RIFLE, {1035.0, 1265.0}},
+        {weapon_type::SHORTBOW, {950.0, 1050.0}},
+        {weapon_type::STAFF, {1034.0, 1166.0}},
+        {weapon_type::AQUATIC, {950.0, 1050.0}},
     };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_set,
@@ -91,6 +111,16 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
                                  {weapon_type::FOCUS, "focus"},
                                  {weapon_type::KIT_CONJURE, "kit_conjure"},
                                  {weapon_type::TOME, "tome"},
+                                 {weapon_type::DAGGER, "dagger"},
+                                 {weapon_type::MACE, "mace"},
+                                 {weapon_type::PISTOL, "pistol"},
+                                 {weapon_type::SHIELD, "shield"},
+                                 {weapon_type::WARHORN, "warhorn"},
+                                 {weapon_type::HAMMER, "hammer"},
+                                 {weapon_type::RIFLE, "rifle"},
+                                 {weapon_type::SHORTBOW, "shortbow"},
+                                 {weapon_type::STAFF, "staff"},
+                                 {weapon_type::AQUATIC, "aquatic"},
                              })
 
 }  // namespace gw2combat::actor
