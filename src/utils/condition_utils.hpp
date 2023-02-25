@@ -3,6 +3,7 @@
 
 #include "common.hpp"
 
+#include "component/actor/combat_stats.hpp"
 #include "component/actor/effects_component.hpp"
 #include "component/actor/unique_effects_component.hpp"
 #include "component/equipment/bundle.hpp"
@@ -132,53 +133,38 @@ namespace gw2combat::utils {
         }
     }
     if (condition.threshold) {
+        auto threshold_satisfied = [&](double number_subject_to_threshold) {
+            switch (condition.threshold->threshold_type) {
+                case configuration::threshold_t::type::EQUAL:
+                    return number_subject_to_threshold == condition.threshold->threshold_value;
+                case configuration::threshold_t::type::UPPER_BOUND_EXCLUSIVE:
+                    return number_subject_to_threshold < condition.threshold->threshold_value;
+                case configuration::threshold_t::type::UPPER_BOUND_INCLUSIVE:
+                    return number_subject_to_threshold <= condition.threshold->threshold_value;
+                case configuration::threshold_t::type::LOWER_BOUND_EXCLUSIVE:
+                    return number_subject_to_threshold > condition.threshold->threshold_value;
+                case configuration::threshold_t::type::LOWER_BOUND_INCLUSIVE:
+                    return number_subject_to_threshold >= condition.threshold->threshold_value;
+                default:
+                    throw std::runtime_error("threshold_type not implemented yet");
+            }
+        };
         if (condition.threshold->threshold_type == configuration::threshold_t::type::INVALID) {
             throw std::runtime_error("invalid threshold_type");
         }
         if (condition.threshold->generate_random_number_subject_to_threshold &&
             *condition.threshold->generate_random_number_subject_to_threshold) {
-            double number_subject_to_threshold = utils::get_random_0_100();
-            bool is_satisfied = [&]() {
-                switch (condition.threshold->threshold_type) {
-                    case configuration::threshold_t::type::EQUAL:
-                        return number_subject_to_threshold == condition.threshold->threshold_value;
-                    case configuration::threshold_t::type::UPPER_BOUND_EXCLUSIVE:
-                        return number_subject_to_threshold < condition.threshold->threshold_value;
-                    case configuration::threshold_t::type::UPPER_BOUND_INCLUSIVE:
-                        return number_subject_to_threshold <= condition.threshold->threshold_value;
-                    case configuration::threshold_t::type::LOWER_BOUND_EXCLUSIVE:
-                        return number_subject_to_threshold > condition.threshold->threshold_value;
-                    case configuration::threshold_t::type::LOWER_BOUND_INCLUSIVE:
-                        return number_subject_to_threshold >= condition.threshold->threshold_value;
-                    default:
-                        throw std::runtime_error("threshold_type not implemented yet");
-                }
-            }();
-            if (!is_satisfied) {
+            if (!threshold_satisfied(utils::get_random_0_100())) {
                 return false;
             }
         }
-        if (condition.threshold->attribute_subject_to_threshold) {
-            double number_subject_to_threshold =
-                registry.get<component::relative_attributes>(entity).get(
-                    entity, *condition.threshold->attribute_subject_to_threshold);
-            bool is_satisfied = [&]() {
-                switch (condition.threshold->threshold_type) {
-                    case configuration::threshold_t::type::EQUAL:
-                        return number_subject_to_threshold == condition.threshold->threshold_value;
-                    case configuration::threshold_t::type::UPPER_BOUND_EXCLUSIVE:
-                        return number_subject_to_threshold < condition.threshold->threshold_value;
-                    case configuration::threshold_t::type::UPPER_BOUND_INCLUSIVE:
-                        return number_subject_to_threshold <= condition.threshold->threshold_value;
-                    case configuration::threshold_t::type::LOWER_BOUND_EXCLUSIVE:
-                        return number_subject_to_threshold > condition.threshold->threshold_value;
-                    case configuration::threshold_t::type::LOWER_BOUND_INCLUSIVE:
-                        return number_subject_to_threshold >= condition.threshold->threshold_value;
-                    default:
-                        throw std::runtime_error("threshold_type not implemented yet");
-                }
-            }();
-            if (!is_satisfied) {
+        if (condition.threshold->health_pct_subject_to_threshold &&
+            *condition.threshold->health_pct_subject_to_threshold) {
+            double max_health = registry.get<component::relative_attributes>(entity).get(
+                entity, actor::attribute_t::MAX_HEALTH);
+            double current_health = registry.get<component::combat_stats>(entity).health;
+            double current_health_pct = current_health / max_health;
+            if (!threshold_satisfied(current_health_pct)) {
                 return false;
             }
         }

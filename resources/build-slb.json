@@ -219,6 +219,13 @@
             "unique_effect_key": "Oppressive Superiority",
             "attribute_modifiers": [
                 {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 0.9,
+                            "health_pct_subject_to_threshold": true
+                        }
+                    },
                     "attribute": "outgoing_strike_damage_multiplier",
                     "multiplier": 1.1
                 }, {
