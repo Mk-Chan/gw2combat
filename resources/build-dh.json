@@ -49,6 +49,18 @@
         "MIGHT",
         "MIGHT"
     ],
+    "counters": [
+        {
+            "counter_key": "Strike Counter",
+            "initial_value": 0,
+            "reset_at_value": 5,
+            "increment_conditions": [
+                {
+                    "only_applies_on_strikes": true
+                }
+            ]
+        }
+    ],
     "permanent_unique_effects": [
         {
             "unique_effect_key": "Air Sigil",
@@ -126,6 +138,22 @@
                     },
                     "attribute": "outgoing_strike_damage_multiplier_add_group",
                     "addend": 0.03
+                }
+            ]
+        }, {
+            "unique_effect_key": "Virtue of Justice",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 5,
+                            "counter_value_subject_to_threshold": "Strike Counter"
+                        },
+                        "only_applies_on_strikes": true,
+                        "depends_on_skill_off_cooldown": "Spear of Justice"
+                    },
+                    "skill_key": "Virtue of Justice Proc"
                 }
             ]
         }, {
@@ -254,6 +282,20 @@
             "strike_on_tick_list": [[0], [0]],
             "cooldown": [3000, 3000],
             "can_critical_strike": false
+        }, {
+            "skill_key": "Virtue of Justice Proc",
+            "num_targets": 3,
+            "ammo": 50000,
+            "cast_duration": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 2000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cooldown": [0, 0]
         }, {
             "skill_key": "Spear of Justice Pulse",
             "is_child_skill": true,

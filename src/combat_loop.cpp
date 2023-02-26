@@ -75,6 +75,7 @@ void tick(registry_t& registry) {
 
     system::update_combat_stats(registry);
 
+    system::reset_counters(registry);
     system::cleanup_expired_components(registry);
     system::cleanup_expired_effects(registry);
     system::cleanup_finished_casting_skills(registry);

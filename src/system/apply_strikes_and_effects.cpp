@@ -4,9 +4,9 @@
 #include "component/actor/effects_component.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/skills_component.hpp"
-#include "component/actor/strike_counter.hpp"
 #include "component/actor/team.hpp"
 #include "component/actor/unique_effects_component.hpp"
+#include "component/counter/is_counter.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
@@ -113,11 +113,37 @@ void apply_strikes(registry_t& registry) {
                     total_incoming_damage,
                     utils::to_string(skill_configuration.on_strike_effect_applications));
 
-                if (registry.any_of<component::strike_counter>(strike_source_entity)) {
-                    auto& strike_counter =
-                        registry.get<component::strike_counter>(strike_source_entity);
-                    ++strike_counter.value;
-                }
+                registry.view<component::owner_component, component::is_counter>().each(
+                    [&](const component::owner_component& owner_component,
+                        component::is_counter& is_counter) {
+                        if (owner_component.entity != strike_source_entity) {
+                            return;
+                        }
+                        bool increment_value = true;
+                        for (auto& increment_condition :
+                             is_counter.counter_configuration.increment_conditions) {
+                            if (!(increment_condition.only_applies_on_strikes &&
+                                  *increment_condition.only_applies_on_strikes &&
+                                  (!increment_condition.only_applies_on_strikes_by_skill ||
+                                   *increment_condition.only_applies_on_strikes_by_skill ==
+                                       skill_configuration.skill_key) &&
+                                  (!increment_condition.only_applies_on_strikes_by_skill_with_tag ||
+                                   utils::skill_has_tag(
+                                       skill_configuration,
+                                       *increment_condition
+                                            .only_applies_on_strikes_by_skill_with_tag)) &&
+                                  utils::conditions_satisfied(increment_condition,
+                                                              owner_component.entity,
+                                                              target_entity,
+                                                              registry))) {
+                                increment_value = false;
+                                break;
+                            }
+                        }
+                        if (increment_value) {
+                            ++is_counter.value;
+                        }
+                    });
 
                 registry.view<component::source_actor, component::skill_triggers_component>().each(
                     [&](const component::source_actor& source_actor,

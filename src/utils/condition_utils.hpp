@@ -4,8 +4,10 @@
 #include "common.hpp"
 
 #include "component/actor/combat_stats.hpp"
+#include "component/actor/counters_component.hpp"
 #include "component/actor/effects_component.hpp"
 #include "component/actor/unique_effects_component.hpp"
+#include "component/counter/is_counter.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/temporal/cooldown_component.hpp"
@@ -165,6 +167,19 @@ namespace gw2combat::utils {
             double current_health = registry.get<component::combat_stats>(entity).health;
             double current_health_pct = current_health / max_health;
             if (!threshold_satisfied(current_health_pct)) {
+                return false;
+            }
+        }
+        if (condition.threshold->counter_value_subject_to_threshold) {
+            auto counter_entity = registry.get<component::counters_component>(entity).find_by(
+                *condition.threshold->counter_value_subject_to_threshold);
+            if (!counter_entity) {
+                throw std::runtime_error(
+                    fmt::format("counter with name {} not found",
+                                *condition.threshold->counter_value_subject_to_threshold));
+            }
+            int counter_value = registry.get<component::is_counter>(*counter_entity).value;
+            if (!threshold_satisfied(counter_value)) {
                 return false;
             }
         }

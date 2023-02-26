@@ -5,6 +5,8 @@
 
 #include "actor/attributes.hpp"
 
+#include "actor/counter.hpp"
+
 namespace gw2combat::configuration {
 
 struct threshold_t {
@@ -24,6 +26,7 @@ struct threshold_t {
 
     std::optional<bool> generate_random_number_subject_to_threshold = std::nullopt;
     std::optional<bool> health_pct_subject_to_threshold = std::nullopt;
+    std::optional<actor::counter_t> counter_value_subject_to_threshold = std::nullopt;
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(
@@ -48,6 +51,10 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const threshold_t& n
         nlohmann_json_j["health_pct_subject_to_threshold"] =
             *nlohmann_json_t.health_pct_subject_to_threshold;
     }
+    if (nlohmann_json_t.counter_value_subject_to_threshold) {
+        nlohmann_json_j["counter_value_subject_to_threshold"] =
+            *nlohmann_json_t.counter_value_subject_to_threshold;
+    }
 }
 static inline void from_json(const nlohmann::json& nlohmann_json_j, threshold_t& nlohmann_json_t) {
     threshold_t nlohmann_json_default_obj;
@@ -64,6 +71,11 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, threshold_t&
         nlohmann_json_t.health_pct_subject_to_threshold =
             nlohmann_json_j.value("health_pct_subject_to_threshold",
                                   *nlohmann_json_default_obj.health_pct_subject_to_threshold);
+    }
+    if (nlohmann_json_j.contains("counter_value_subject_to_threshold")) {
+        nlohmann_json_t.counter_value_subject_to_threshold =
+            nlohmann_json_j.value("counter_value_subject_to_threshold",
+                                  *nlohmann_json_default_obj.counter_value_subject_to_threshold);
     }
 }
 

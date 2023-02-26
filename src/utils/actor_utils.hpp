@@ -22,7 +22,6 @@
 #include "component/actor/skill_triggers_component.hpp"
 #include "component/actor/skills_component.hpp"
 #include "component/actor/static_attributes.hpp"
-#include "component/actor/strike_counter.hpp"
 #include "component/actor/team.hpp"
 #include "component/actor/unchained_skill_triggers_component.hpp"
 #include "component/actor/unique_effects_component.hpp"

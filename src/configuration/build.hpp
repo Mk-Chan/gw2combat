@@ -9,6 +9,7 @@
 #include "actor/profession.hpp"
 #include "actor/weapon.hpp"
 
+#include "counter_configuration.hpp"
 #include "skill.hpp"
 #include "unique_effect.hpp"
 #include "weapon.hpp"
@@ -23,6 +24,7 @@ struct build_t {
     std::vector<skill_t> skills{};
     std::vector<actor::effect_t> permanent_effects{};
     std::vector<unique_effect_t> permanent_unique_effects{};
+    std::vector<counter_configuration_t> counters{};
 
     build_t() {
         attributes[actor::attribute_t::POWER] = 1000.0;
@@ -88,6 +90,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohm
     nlohmann_json_j["skills"] = nlohmann_json_t.skills;
     nlohmann_json_j["permanent_effects"] = nlohmann_json_t.permanent_effects;
     nlohmann_json_j["permanent_unique_effects"] = nlohmann_json_t.permanent_unique_effects;
+    nlohmann_json_j["counters"] = nlohmann_json_t.counters;
 }
 
 static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlohmann_json_t) {
@@ -101,10 +104,12 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlo
     }
     nlohmann_json_t.weapons = nlohmann_json_j.value("weapons", nlohmann_json_default_obj.weapons);
     nlohmann_json_t.skills = nlohmann_json_j.value("skills", nlohmann_json_default_obj.skills);
-    nlohmann_json_t.permanent_effects = nlohmann_json_j.value(
-        "permanent_effects", nlohmann_json_default_obj.permanent_effects);
+    nlohmann_json_t.permanent_effects =
+        nlohmann_json_j.value("permanent_effects", nlohmann_json_default_obj.permanent_effects);
     nlohmann_json_t.permanent_unique_effects = nlohmann_json_j.value(
         "permanent_unique_effects", nlohmann_json_default_obj.permanent_unique_effects);
+    nlohmann_json_t.counters =
+        nlohmann_json_j.value("counters", nlohmann_json_default_obj.counters);
 }
 
 }  // namespace gw2combat::configuration

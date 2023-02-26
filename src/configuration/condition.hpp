@@ -14,6 +14,7 @@ namespace gw2combat::configuration {
 
 struct condition_t {
     // NOTE: Remember to add conditions to to_json and from_json if adding a member to this
+    // Independent of stage in combat loop
     std::optional<actor::weapon_type> weapon_type = std::nullopt;
     std::optional<actor::weapon_position> weapon_position = std::nullopt;
     std::optional<actor::weapon_set> weapon_set = std::nullopt;
@@ -23,6 +24,9 @@ struct condition_t {
     std::optional<actor::unique_effect_t> unique_effect_on_target_by_source = std::nullopt;
     std::optional<actor::effect_t> effect_on_target = std::nullopt;
     std::optional<actor::skill_t> depends_on_skill_off_cooldown = std::nullopt;
+    std::optional<threshold_t> threshold = std::nullopt;
+
+    // Dependent on stage in combat loop
     std::optional<bool> only_applies_on_strikes = std::nullopt;
     std::optional<actor::skill_t> only_applies_on_strikes_by_skill = std::nullopt;
     std::optional<actor::skill_tag_t> only_applies_on_strikes_by_skill_with_tag = std::nullopt;
@@ -30,7 +34,6 @@ struct condition_t {
     std::optional<actor::skill_t> only_applies_on_finished_casting_skill = std::nullopt;
     std::optional<actor::skill_tag_t> only_applies_on_finished_casting_skill_with_tag =
         std::nullopt;
-    std::optional<threshold_t> threshold = std::nullopt;
 };
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& nlohmann_json_t) {
@@ -63,6 +66,9 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
         nlohmann_json_j["depends_on_skill_off_cooldown"] =
             *nlohmann_json_t.depends_on_skill_off_cooldown;
     }
+    if (nlohmann_json_t.threshold) {
+        nlohmann_json_j["threshold"] = *nlohmann_json_t.threshold;
+    }
     if (nlohmann_json_t.only_applies_on_strikes) {
         nlohmann_json_j["only_applies_on_strikes"] = *nlohmann_json_t.only_applies_on_strikes;
     }
@@ -85,9 +91,6 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     if (nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag) {
         nlohmann_json_j["only_applies_on_finished_casting_skill_with_tag"] =
             *nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag;
-    }
-    if (nlohmann_json_t.threshold) {
-        nlohmann_json_j["threshold"] = *nlohmann_json_t.threshold;
     }
 }
 static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t& nlohmann_json_t) {
@@ -130,6 +133,10 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
             nlohmann_json_j.value("depends_on_skill_off_cooldown",
                                   *nlohmann_json_default_obj.depends_on_skill_off_cooldown);
     }
+    if (nlohmann_json_j.contains("threshold")) {
+        nlohmann_json_t.threshold =
+            nlohmann_json_j.value("threshold", *nlohmann_json_default_obj.threshold);
+    }
     if (nlohmann_json_j.contains("only_applies_on_strikes")) {
         nlohmann_json_t.only_applies_on_strikes = nlohmann_json_j.value(
             "only_applies_on_strikes", *nlohmann_json_default_obj.only_applies_on_strikes);
@@ -158,10 +165,6 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
         nlohmann_json_t.only_applies_on_finished_casting_skill_with_tag = nlohmann_json_j.value(
             "only_applies_on_finished_casting_skill_with_tag",
             *nlohmann_json_default_obj.only_applies_on_finished_casting_skill_with_tag);
-    }
-    if (nlohmann_json_j.contains("threshold")) {
-        nlohmann_json_t.threshold =
-            nlohmann_json_j.value("threshold", *nlohmann_json_default_obj.threshold);
     }
 }
 
