@@ -26,6 +26,10 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
+if (WIN32)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lwsock32 -lws2_32 -m64 -Wa,-mbig-obj")
+endif ()
+
 set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 ###
 
@@ -43,4 +47,5 @@ set_tests_properties(gw2combat_test_run PROPERTIES DEPENDS gw2combat_test_build)
 ###
 file(GLOB gw2combat_src CONFIGURE_DEPENDS "src/*.cpp" "src/system/*.cpp" "src/system/*.hpp" "src/*.hpp")
 add_executable(gw2combat ${gw2combat_src})
+target_link_libraries(gw2combat "-static")
 ###
