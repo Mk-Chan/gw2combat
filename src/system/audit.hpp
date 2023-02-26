@@ -12,6 +12,7 @@ struct audit_report {
         int damage;
     };
     std::vector<damage_event> damage_events;
+    int remaining_health;
 };
 
 extern void audit_damage(registry_t& registry);
@@ -23,7 +24,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(audit_report::damage_event,
                                                 damage_source,
                                                 time_ms,
                                                 damage)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(audit_report, damage_events)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(audit_report, damage_events, remaining_health)
 
 }  // namespace gw2combat::system
 

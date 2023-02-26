@@ -2,10 +2,11 @@
 
 #include <fstream>
 
+#include "component/actor/combat_stats.hpp"
+#include "component/actor/team.hpp"
 #include "component/audit/audit_component.hpp"
 #include "component/damage/incoming_damage.hpp"
 
-#include "component/actor/team.hpp"
 #include "utils/basic_utils.hpp"
 #include "utils/entity_utils.hpp"
 
@@ -63,7 +64,9 @@ void audit_report_to_disk(registry_t& registry) {
 audit_report get_audit_report(registry_t& registry, bool exclude_console) {
     audit_report result;
     registry.view<component::audit_component, component::team>().each(
-        [&](const component::audit_component& audit_component, const component::team& team) {
+        [&](entity_t entity,
+            const component::audit_component& audit_component,
+            const component::team& team) {
             if (team.id != 2 || !result.damage_events.empty()) {
                 return;
             }
@@ -86,6 +89,8 @@ audit_report get_audit_report(registry_t& registry, bool exclude_console) {
                                                incoming_damage_event.tick,
                                                static_cast<int>(incoming_damage_event.value)});
             }
+            auto& combat_stats = registry.get<component::combat_stats>(entity);
+            result.remaining_health = combat_stats.health;
         });
     return result;
 }
