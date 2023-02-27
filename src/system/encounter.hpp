@@ -5,8 +5,8 @@
 
 namespace gw2combat::system {
 
-void setup_local_encounter(registry_t& registry, const std::string& encounter_configuration_path);
-void setup_server_encounter(registry_t& registry, const std::string& encounter_configuration);
+extern void setup_local_encounter(registry_t& registry, const std::string& encounter_configuration_path);
+extern void setup_server_encounter(registry_t& registry, const std::string& encounter_configuration);
 
 }  // namespace gw2combat::system
 
