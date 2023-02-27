@@ -12,14 +12,14 @@
 #include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"
 
-#include "configuration/build.hpp"
-
 #include "system/actor.hpp"
 #include "system/apply_strikes_and_effects.hpp"
+#include "system/attributes.hpp"
 #include "system/audit.hpp"
 #include "system/dispatch_strikes_and_effects.hpp"
 #include "system/effects.hpp"
 #include "system/encounter.hpp"
+#include "system/rotation.hpp"
 #include "system/temporal.hpp"
 
 #include "utils/entity_utils.hpp"

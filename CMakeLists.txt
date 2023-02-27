@@ -45,7 +45,7 @@ set_tests_properties(gw2combat_test_run PROPERTIES DEPENDS gw2combat_test_build)
 ###
 # Targets
 ###
-file(GLOB gw2combat_src CONFIGURE_DEPENDS "src/*.cpp" "src/system/*.cpp" "src/system/*.hpp" "src/*.hpp")
+file(GLOB gw2combat_src CONFIGURE_DEPENDS "src/*.cpp" "src/*/*.cpp" "src/*.hpp" "src/*/*.hpp")
 add_executable(gw2combat ${gw2combat_src})
 if (NOT APPLE)
     target_link_libraries(gw2combat "-static")

@@ -5,6 +5,8 @@
 
 #include "actor/skill.hpp"
 
+#include "utils/io_utils.hpp"
+
 namespace gw2combat::component {
 
 struct skill_entity {

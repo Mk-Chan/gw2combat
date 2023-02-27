@@ -12,7 +12,7 @@
 #include "component/hierarchy/owner_component.hpp"
 #include "component/temporal/duration_component.hpp"
 
-#include "system/actor.hpp"
+#include "system/attributes.hpp"
 
 #include "utils/entity_utils.hpp"
 

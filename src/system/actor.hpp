@@ -6,19 +6,9 @@
 namespace gw2combat::system {
 
 extern void setup_combat_stats(registry_t& registry);
-extern void reset_combat_stats(registry_t& registry);
 extern void update_combat_stats(registry_t& registry);
 
-extern void calculate_relative_attributes(registry_t& registry);
-
-extern void perform_rotations(registry_t& registry);
-extern void perform_skills(registry_t& registry);
-
-extern void increment_counters(registry_t& registry);
-
 extern void reset_counters(registry_t& registry);
-extern void cleanup_finished_casting_skills(registry_t& registry);
-extern void destroy_actors_with_no_rotation(registry_t& registry);
 
 }  // namespace gw2combat::system
 
