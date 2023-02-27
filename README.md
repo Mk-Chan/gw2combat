@@ -16,8 +16,8 @@ Currently the program is extremely accurate at simulating benchmarks as long as 
 It does so by playing out the skills provided in the rotation according to skill definitions and attributes/effects in the build configuration.
 
 Available builds at this time along with comparison to current patch human benchmark:
-    - Power Radiance Dragonhunter (+/- 50dps)
-    - Power Soulbeast (+/- 300dps)
+- Power Radiance Dragonhunter (+/- 50dps)
+- Power Soulbeast (+/- 300dps)
 
 The above numbers speak to the accuracy of the build configurations which are easily modified based on new/updated information.
 Documentation for how to create and edit build configurations is under development.
