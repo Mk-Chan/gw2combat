@@ -87,7 +87,8 @@ void tick(registry_t& registry) {
 void local_combat_loop(const std::string& encounter_configuration_path) {
     registry_t registry;
 
-    system::setup_local_encounter(registry, encounter_configuration_path);
+    auto encounter = utils::read<configuration::encounter_t>(encounter_configuration_path);
+    system::setup_local_encounter(registry, encounter);
 
     tick_t current_tick = 1;
     registry.ctx().emplace<const tick_t&>(current_tick);
@@ -129,7 +130,9 @@ end_of_combat_loop:
 std::string server_combat_loop(const std::string& encounter_configuration) {
     registry_t registry;
 
-    system::setup_server_encounter(registry, encounter_configuration);
+    auto encounter =
+        nlohmann::json::parse(encounter_configuration).get<configuration::encounter_server_t>();
+    system::setup_server_encounter(registry, encounter);
 
     tick_t current_tick = 1;
     registry.ctx().emplace<const tick_t&>(current_tick);

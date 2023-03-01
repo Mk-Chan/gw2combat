@@ -5,7 +5,6 @@
 
 namespace gw2combat {
 
-extern void cleanup_temporary_components(registry_t& registry);
 extern void tick(registry_t& registry);
 
 extern void local_combat_loop(const std::string& encounter_configuration_path);
