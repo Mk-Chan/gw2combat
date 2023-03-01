@@ -35,9 +35,9 @@ void perform_rotations(registry_t& registry) {
                     rotation_component.tick_offset = current_tick;
                 } else {
                     registry.emplace<component::no_more_rotation>(entity);
-                    spdlog::info("[{}] {} has no more rotation",
-                                 utils::get_current_tick(registry),
-                                 utils::get_entity_name(entity, registry));
+                    //spdlog::info("[{}] {} has no more rotation",
+                    //             utils::get_current_tick(registry),
+                    //             utils::get_entity_name(entity, registry));
                     return;
                 }
             }
@@ -65,10 +65,10 @@ void perform_rotations(registry_t& registry) {
                 registry.emplace<component::casting_skill>(
                     entity, component::casting_skill{skill_entity, 0, 0});
 
-                spdlog::info("[{}] {} casting skill {}",
-                             utils::get_current_tick(registry),
-                             utils::get_entity_name(entity, registry),
-                             utils::to_string(next_skill_cast.skill));
+                //spdlog::info("[{}] {} casting skill {}",
+                //             utils::get_current_tick(registry),
+                //             utils::get_entity_name(entity, registry),
+                //             utils::to_string(next_skill_cast.skill));
             }
 
             rotation_component.current_idx += 1;
@@ -128,10 +128,10 @@ void perform_skills(registry_t& registry) {
                     entity, component::finished_casting_skill{casting_skill.skill_entity});
                 utils::put_skill_on_cooldown(
                     utils::get_owner(entity, registry), skill_configuration.skill_key, registry);
-                spdlog::info("[{}] {}: finished casting skill {}",
-                             utils::get_current_tick(registry),
-                             utils::get_entity_name(entity, registry),
-                             utils::to_string(skill_configuration.skill_key));
+                //spdlog::info("[{}] {}: finished casting skill {}",
+                //             utils::get_current_tick(registry),
+                //             utils::get_entity_name(entity, registry),
+                //             utils::to_string(skill_configuration.skill_key));
             }
         });
 

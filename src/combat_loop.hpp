@@ -10,6 +10,8 @@ extern void tick(registry_t& registry);
 extern void local_combat_loop(const std::string& encounter_configuration_path);
 extern std::string server_combat_loop(const std::string& encounter_configuration);
 
+extern void search_rotation_for_encounter(const std::string& encounter_configuration_path);
+
 }  // namespace gw2combat
 
 #endif  // GW2COMBAT_COMBAT_LOOP_HPP

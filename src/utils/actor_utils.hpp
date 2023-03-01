@@ -111,10 +111,10 @@ static inline void enqueue_child_skills(entity_t parent_actor,
     }
     registry.emplace<component::rotation_component>(
         child_actor, component::rotation_component{rotation, 0, false});
-    spdlog::info("[{}] {}: spawned {}",
-                 utils::get_current_tick(registry),
-                 utils::get_entity_name(parent_actor, registry),
-                 utils::get_entity_name(child_actor, registry));
+    //spdlog::info("[{}] {}: spawned {}",
+    //             utils::get_current_tick(registry),
+    //             utils::get_entity_name(parent_actor, registry),
+    //             utils::get_entity_name(child_actor, registry));
 }
 
 static inline void enqueue_child_skill(entity_t parent_actor,

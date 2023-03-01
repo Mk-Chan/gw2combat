@@ -4,6 +4,9 @@
 
 int main(int argc, char** argv) {
     argparse::ArgumentParser parser{"gw2combat"};
+    parser.add_argument("--search-rotation")
+        .default_value(std::string{""})
+        .help("Server mode with hostname:port configuration.");
     parser.add_argument("--server")
         .default_value(std::string{"127.0.0.1:54321"})
         .help("Server mode with hostname:port configuration.");
@@ -20,9 +23,13 @@ int main(int argc, char** argv) {
     }
 
     bool server_mode = parser.is_used("--server");
-    if (!server_mode) {
+    bool search_rotation_mode = parser.is_used("--search-rotation");
+    if (!server_mode && !search_rotation_mode) {
         const auto& encounter = parser.get<std::string>("--encounter");
         gw2combat::local_combat_loop(encounter);
+    } else if (search_rotation_mode) {
+        const auto& encounter = parser.get<std::string>("--encounter");
+        gw2combat::search_rotation_for_encounter(encounter);
     } else {
         const auto& server_configuration = parser.get<std::string>("--server");
         auto delimiter_index = server_configuration.find(':');

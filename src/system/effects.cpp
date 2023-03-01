@@ -104,17 +104,17 @@ void buffer_condition_damage(registry_t& registry,
         buffered_condition_damage.source_entity_effect_tuple_to_value_map.end(),
         0.0,
         [](double accumulated, const auto& entry) { return accumulated + entry.second; });
-    spdlog::info(
-        "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} "
-        "buffered_dmg {}",
-        utils::get_current_tick(registry),
-        utils::get_entity_name(target_entity, registry),
-        utils::to_string(this_effect),
-        base_condition_damage_multiplier,
-        damaging_condition_progress_multiplier,
-        base_condition_damage,
-        effective_condition_damage,
-        total_buffered_damage);
+    //spdlog::info(
+    //    "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} "
+    //    "buffered_dmg {}",
+    //    utils::get_current_tick(registry),
+    //    utils::get_entity_name(target_entity, registry),
+    //    utils::to_string(this_effect),
+    //    base_condition_damage_multiplier,
+    //    damaging_condition_progress_multiplier,
+    //    base_condition_damage,
+    //    effective_condition_damage,
+    //    total_buffered_damage);
 }
 
 void buffer_condition_damage(registry_t& registry, std::optional<entity_t> specific_effect_entity) {

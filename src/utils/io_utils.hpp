@@ -18,6 +18,7 @@ static inline std::string_view get_component_name() {
 
 template <typename T>
 static inline void log_component(registry_t& registry) {
+    return;
     registry.view<T>().each([&](entity_t entity, const T& t) {
         spdlog::info("[{}] {}:{} - {}",
                      get_current_tick(registry),

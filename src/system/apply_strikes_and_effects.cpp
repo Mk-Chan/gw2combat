@@ -100,18 +100,18 @@ void apply_strikes(registry_t& registry) {
                        const component::incoming_damage_event& incoming_damage_event) {
                         return accumulated + incoming_damage_event.value;
                     });
-                spdlog::info(
-                    "[{}] skill {} pow {} strike_mult {} crit_chance {} crit_mult {} this_dmg {} "
-                    "total_incoming_dmg {} outgoing_stuff {}",
-                    utils::get_current_tick(registry),
-                    utils::to_string(skill_configuration.skill_key),
-                    strike_source_relative_attributes.get(target_entity, actor::attribute_t::POWER),
-                    effective_strike_damage_multiplier,
-                    critical_chance_multiplier,
-                    average_critical_damage_multiplier,
-                    final_incoming_damage,
-                    total_incoming_damage,
-                    utils::to_string(skill_configuration.on_strike_effect_applications));
+                //spdlog::info(
+                //    "[{}] skill {} pow {} strike_mult {} crit_chance {} crit_mult {} this_dmg {} "
+                //    "total_incoming_dmg {} outgoing_stuff {}",
+                //    utils::get_current_tick(registry),
+                //    utils::to_string(skill_configuration.skill_key),
+                //    strike_source_relative_attributes.get(target_entity, actor::attribute_t::POWER),
+                //    effective_strike_damage_multiplier,
+                //    critical_chance_multiplier,
+                //    average_critical_damage_multiplier,
+                //    final_incoming_damage,
+                //    total_incoming_damage,
+                //    utils::to_string(skill_configuration.on_strike_effect_applications));
 
                 registry.view<component::owner_component, component::is_counter>().each(
                     [&](const component::owner_component& owner_component,
@@ -234,15 +234,15 @@ void apply_effects(registry_t& registry) {
                                                       application_source_entity,
                                                       target_entity,
                                                       registry);
-                    spdlog::info(
-                        "[{}] {}:{} applied {} stacks of {} duration {} effect on {}",
-                        utils::get_current_tick(registry),
-                        utils::get_entity_name(application_source_entity, registry),
-                        utils::get_entity_name(incoming_application.source_entity, registry),
-                        application.num_stacks,
-                        application.base_duration_ms,
-                        application.unique_effect.unique_effect_key,
-                        utils::get_entity_name(target_entity, registry));
+                    //spdlog::info(
+                    //    "[{}] {}:{} applied {} stacks of {} duration {} effect on {}",
+                    //    utils::get_current_tick(registry),
+                    //    utils::get_entity_name(application_source_entity, registry),
+                    //    utils::get_entity_name(incoming_application.source_entity, registry),
+                    //    application.num_stacks,
+                    //    application.base_duration_ms,
+                    //    application.unique_effect.unique_effect_key,
+                    //    utils::get_entity_name(target_entity, registry));
                 }
                 if (application.effect != actor::effect_t::INVALID) {
                     int effective_duration =
@@ -256,15 +256,15 @@ void apply_effects(registry_t& registry) {
                                                application_source_entity,
                                                target_entity,
                                                registry);
-                    spdlog::info(
-                        "[{}] {}:{} applied {} stacks of {} duration {} effect on {}",
-                        utils::get_current_tick(registry),
-                        utils::get_entity_name(application_source_entity, registry),
-                        utils::get_entity_name(incoming_application.source_entity, registry),
-                        application.num_stacks,
-                        effective_duration,
-                        utils::to_string(application.effect),
-                        utils::get_entity_name(target_entity, registry));
+                    //spdlog::info(
+                    //    "[{}] {}:{} applied {} stacks of {} duration {} effect on {}",
+                    //    utils::get_current_tick(registry),
+                    //    utils::get_entity_name(application_source_entity, registry),
+                    //    utils::get_entity_name(incoming_application.source_entity, registry),
+                    //    application.num_stacks,
+                    //    effective_duration,
+                    //    utils::to_string(application.effect),
+                    //    utils::get_entity_name(target_entity, registry));
                 }
             }
         });
