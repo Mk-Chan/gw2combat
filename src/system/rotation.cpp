@@ -151,6 +151,11 @@ void perform_skills(registry_t& registry) {
                 if (!registry.any_of<component::current_weapon_set>(entity)) {
                     throw std::runtime_error("no equipped_weapon_set on entity");
                 }
+                auto& equipped_weapons = registry.get<component::equipped_weapons>(entity);
+                if (equipped_weapons.weapons.size() == 1) {
+                    throw std::runtime_error(
+                        "cannot weapon swap when there is only 1 weapon set equipped");
+                }
 
                 auto current_set = registry.get<component::current_weapon_set>(entity).set;
                 if (current_set == actor::weapon_set::SET_1) {
