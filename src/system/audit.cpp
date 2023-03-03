@@ -58,36 +58,54 @@ void audit_report_to_disk(registry_t& registry) {
                     << utils::get_entity_name(incoming_damage_event.source_entity, registry) << "|"
                     << damage_source << "|" << (int)incoming_damage_event.value << std::endl;
             }
+            //spdlog::info("{}", utils::to_string(get_audit_report(registry)));
         });
 }
 
-audit_report get_audit_report(registry_t& registry, bool exclude_console) {
-    audit_report result;
+audit_report_t get_audit_report(registry_t& registry) {
+    audit_report_t result;
     registry.view<component::audit_component, component::team>().each(
         [&](entity_t entity,
             const component::audit_component& audit_component,
             const component::team& team) {
-            if (team.id != 2 || !result.damage_events.empty()) {
+            if (team.id != 2 || !result.events.empty()) {
                 return;
             }
             for (auto& incoming_damage_event : audit_component.incoming_damage_events) {
-                if (exclude_console && utils::get_entity_name(incoming_damage_event.source_entity,
-                                                              registry) == "Console") {
-                    continue;
-                }
-                std::string damage_source = [&]() {
+                auto damage_type = [&]() {
                     if (incoming_damage_event.effect != actor::effect_t::INVALID) {
-                        return utils::to_string(incoming_damage_event.effect);
+                        switch (incoming_damage_event.effect) {
+                            case actor::effect_t::BURNING:
+                                return audit_report_t::damage_event_t::damage_type_t::BURNING;
+                            case actor::effect_t::BLEEDING:
+                                return audit_report_t::damage_event_t::damage_type_t::BLEEDING;
+                            case actor::effect_t::TORMENT:
+                                return audit_report_t::damage_event_t::damage_type_t::
+                                    TORMENT_STATIONARY;
+                            case actor::effect_t::POISON:
+                                return audit_report_t::damage_event_t::damage_type_t::POISON;
+                            case actor::effect_t::CONFUSION:
+                                return audit_report_t::damage_event_t::damage_type_t::CONFUSION;
+                            case actor::effect_t::BINDING_BLADE:
+                                return audit_report_t::damage_event_t::damage_type_t::BINDING_BLADE;
+                            default:
+                                throw std::runtime_error("Unknown source for damage!");
+                        }
                     } else if (!incoming_damage_event.skill.empty()) {
-                        return incoming_damage_event.skill;
+                        return audit_report_t::damage_event_t::damage_type_t::STRIKE;
                     } else {
                         throw std::runtime_error("Unknown source for damage!");
                     }
                 }();
-                result.damage_events.emplace_back(
-                    audit_report::damage_event{damage_source,
-                                               incoming_damage_event.tick,
-                                               static_cast<int>(incoming_damage_event.value)});
+                auto source_skill = incoming_damage_event.skill.empty()
+                                        ? "unknown_skill"
+                                        : incoming_damage_event.skill;
+                result.events.emplace_back(audit_report_t::damage_event_t{
+                    .time_ms = incoming_damage_event.tick,
+                    .actor = utils::get_entity_name(incoming_damage_event.source_entity, registry),
+                    .source_skill = source_skill,
+                    .damage_type = damage_type,
+                    .damage = static_cast<int>(incoming_damage_event.value)});
             }
             auto& combat_stats = registry.get<component::combat_stats>(entity);
             result.remaining_health = combat_stats.health;

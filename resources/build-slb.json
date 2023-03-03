@@ -460,24 +460,18 @@
                 [273, 546, 819, 1093, 1366, 1639, 1913, 2186, 2459, 2733, 3006, 3280],
                 [220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200, 2420, 2640]
             ],
-            "on_strike_effect_applications": [
-                {
-                    "effect": "BLEEDING",
-                    "base_duration_ms": 6000,
-                    "num_stacks": 1,
-                    "direction": "OUTGOING"
-                }
-            ],
             "cooldown": [20000, 16000]
         }, {
             "skill_key": "Signet of the Wild",
             "cooldown": [30000, 24000],
-            "attribute_modifiers": [
+            "attribute_conversions": [
                 {
                     "condition": {
                         "depends_on_skill_off_cooldown": "Signet of the Wild"
                     },
-                    "attribute": "ferocity",
+                    "from": "ferocity",
+                    "to": "ferocity",
+                    "multiplier": 0,
                     "addend": 180
                 }
             ]

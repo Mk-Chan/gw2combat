@@ -2,7 +2,6 @@
 
 #include "component/actor/base_class_component.hpp"
 #include "component/actor/counters_component.hpp"
-#include "component/actor/effects_component.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/profession_component.hpp"
 #include "component/actor/static_attributes.hpp"
@@ -41,7 +40,6 @@ void setup_local_encounter(registry_t& registry, const configuration::encounter_
         registry.emplace<component::team>(actor_entity, actor.team);
         registry.emplace<component::base_class_component>(actor_entity, build.base_class);
         registry.emplace<component::profession_component>(actor_entity, build.profession);
-        registry.emplace<component::effects_component>(actor_entity);
         registry.emplace<component::current_weapon_set>(actor_entity);
         registry.emplace<component::static_attributes>(actor_entity, build.attributes);
 
@@ -145,7 +143,6 @@ void setup_server_encounter(registry_t& registry,
         registry.emplace<component::team>(actor_entity, actor.team);
         registry.emplace<component::base_class_component>(actor_entity, build.base_class);
         registry.emplace<component::profession_component>(actor_entity, build.profession);
-        registry.emplace<component::effects_component>(actor_entity);
         registry.emplace<component::current_weapon_set>(actor_entity);
         registry.emplace<component::static_attributes>(actor_entity, build.attributes);
 

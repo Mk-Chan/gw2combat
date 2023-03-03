@@ -3,14 +3,21 @@
 
 #include "common.hpp"
 
+#include "actor/effect.hpp"
+#include "actor/skill.hpp"
+
 namespace gw2combat::component {
 
-struct buffered_condition_damage {
-    std::map<std::tuple<entity_t, actor::effect_t>, double> source_entity_effect_tuple_to_value_map;
+struct condition_damage_t {
+    entity_t effect_source_entity;
+    actor::effect_t effect;
+    actor::skill_t source_skill;
+    double damage;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(buffered_condition_damage,
-                                                source_entity_effect_tuple_to_value_map)
+struct buffered_condition_damage {
+    std::vector<condition_damage_t> condition_damage_buffer;
+};
 
 }  // namespace gw2combat::component
 

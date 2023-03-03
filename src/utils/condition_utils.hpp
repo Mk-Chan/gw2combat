@@ -3,21 +3,22 @@
 
 #include "common.hpp"
 
+#include "basic_utils.hpp"
+#include "entity_utils.hpp"
+
+#include "configuration/condition.hpp"
+
 #include "component/actor/combat_stats.hpp"
 #include "component/actor/counters_component.hpp"
-#include "component/actor/effects_component.hpp"
+#include "component/actor/relative_attributes.hpp"
 #include "component/actor/skills_component.hpp"
-#include "component/actor/unique_effects_component.hpp"
 #include "component/counter/is_counter.hpp"
+#include "component/effect/is_effect.hpp"
+#include "component/effect/is_unique_effect.hpp"
 #include "component/effect/source_actor.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/temporal/cooldown_component.hpp"
-
-#include "configuration/condition.hpp"
-
-#include "basic_utils.hpp"
-#include "entity_utils.hpp"
 
 namespace gw2combat::utils {
 
@@ -60,21 +61,36 @@ namespace gw2combat::utils {
         }
     }
     if (condition.unique_effect_on_source) {
-        if (!registry.any_of<component::unique_effects_component>(source_entity)) {
-            return false;
+        bool is_satisfied = false;
+
+        auto unique_effect_owners =
+            registry.view<component::is_unique_effect, component::owner_component>().each();
+        for (auto&& [effect_entity, is_unique_effect, owner_component] : unique_effect_owners) {
+            if (is_unique_effect.unique_effect.unique_effect_key ==
+                    *condition.unique_effect_on_source &&
+                owner_component.entity == source_entity) {
+                is_satisfied = true;
+                break;
+            }
         }
-        bool is_satisfied = registry.get<component::unique_effects_component>(source_entity)
-                                .has(*condition.unique_effect_on_source);
+
         if (!is_satisfied) {
             return false;
         }
     }
     if (condition.effect_on_source) {
-        if (!registry.any_of<component::effects_component>(source_entity)) {
-            return false;
+        bool is_satisfied = false;
+
+        auto effect_owners =
+            registry.view<component::is_effect, component::owner_component>().each();
+        for (auto&& [effect_entity, is_effect, owner_component] : effect_owners) {
+            if (is_effect.effect == *condition.effect_on_source &&
+                owner_component.entity == source_entity) {
+                is_satisfied = true;
+                break;
+            }
         }
-        bool is_satisfied = registry.get<component::effects_component>(source_entity)
-                                .has(*condition.effect_on_source);
+
         if (!is_satisfied) {
             return false;
         }
@@ -83,11 +99,20 @@ namespace gw2combat::utils {
         if (!target_entity) {
             throw std::runtime_error("target_entity must be provided for unique_effect_on_target");
         }
-        if (!registry.any_of<component::unique_effects_component>(*target_entity)) {
-            return false;
+
+        bool is_satisfied = false;
+
+        auto unique_effect_owners =
+            registry.view<component::is_unique_effect, component::owner_component>().each();
+        for (auto&& [effect_entity, is_unique_effect, owner_component] : unique_effect_owners) {
+            if (is_unique_effect.unique_effect.unique_effect_key ==
+                    *condition.unique_effect_on_target &&
+                owner_component.entity == target_entity) {
+                is_satisfied = true;
+                break;
+            }
         }
-        bool is_satisfied = registry.get<component::unique_effects_component>(*target_entity)
-                                .has(*condition.unique_effect_on_target);
+
         if (!is_satisfied) {
             return false;
         }
@@ -97,20 +122,24 @@ namespace gw2combat::utils {
             throw std::runtime_error(
                 "target_entity must be provided for unique_effect_on_target_by_source");
         }
-        if (!registry.any_of<component::unique_effects_component>(*target_entity)) {
-            return false;
+
+        bool is_satisfied = false;
+
+        auto unique_effect_owners = registry
+                                        .view<component::is_unique_effect,
+                                              component::owner_component,
+                                              component::source_actor>()
+                                        .each();
+        for (auto&& [effect_entity, is_unique_effect, owner_component, source_actor] :
+             unique_effect_owners) {
+            if (is_unique_effect.unique_effect.unique_effect_key ==
+                    *condition.unique_effect_on_target_by_source &&
+                owner_component.entity == target_entity && source_actor.entity == source_entity) {
+                is_satisfied = true;
+                break;
+            }
         }
-        auto unique_effect_entities =
-            registry.get<component::unique_effects_component>(*target_entity)
-                .find_by(*condition.unique_effect_on_target_by_source);
-        bool is_satisfied =
-            std::any_of(unique_effect_entities.begin(),
-                        unique_effect_entities.end(),
-                        [&](entity_t unique_effect_entity) {
-                            auto source_actor_ptr =
-                                registry.try_get<component::source_actor>(unique_effect_entity);
-                            return source_actor_ptr && source_actor_ptr->entity == source_entity;
-                        });
+
         if (!is_satisfied) {
             return false;
         }
@@ -119,11 +148,19 @@ namespace gw2combat::utils {
         if (!target_entity) {
             throw std::runtime_error("target_entity must be provided for effect_on_target");
         }
-        if (!registry.any_of<component::effects_component>(*target_entity)) {
-            return false;
+
+        bool is_satisfied = false;
+
+        auto effect_owners =
+            registry.view<component::is_effect, component::owner_component>().each();
+        for (auto&& [effect_entity, is_effect, owner_component] : effect_owners) {
+            if (is_effect.effect == *condition.effect_on_target &&
+                owner_component.entity == *target_entity) {
+                is_satisfied = true;
+                break;
+            }
         }
-        bool is_satisfied = registry.get<component::effects_component>(*target_entity)
-                                .has(*condition.effect_on_target);
+
         if (!is_satisfied) {
             return false;
         }

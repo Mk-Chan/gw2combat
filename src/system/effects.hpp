@@ -9,7 +9,6 @@ extern void buffer_damage_for_effects_with_no_duration(registry_t& registry);
 extern void apply_condition_damage(registry_t& registry);
 extern void buffer_condition_damage(registry_t& registry,
                                     std::optional<entity_t> specific_effect_entity = std::nullopt);
-extern void cleanup_expired_effects(registry_t& registry);
 
 }  // namespace gw2combat::system
 

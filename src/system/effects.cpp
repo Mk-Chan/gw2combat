@@ -2,18 +2,19 @@
 
 #include "common.hpp"
 
-#include "component/actor/effects_component.hpp"
 #include "component/actor/is_actor.hpp"
-#include "component/actor/unique_effects_component.hpp"
+#include "component/actor/relative_attributes.hpp"
 #include "component/damage/buffered_condition_damage.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/effect/is_effect.hpp"
 #include "component/effect/source_actor.hpp"
+#include "component/effect/source_skill.hpp"
 #include "component/hierarchy/owner_component.hpp"
 #include "component/temporal/duration_component.hpp"
 
 #include "system/attributes.hpp"
 
+#include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
 
 namespace gw2combat::system {
@@ -65,7 +66,6 @@ double calculate_condition_damage(actor::effect_t this_effect,
 }
 
 void buffer_condition_damage(registry_t& registry,
-                             actor::effect_t this_effect,
                              entity_t target_entity,
                              entity_t effect_entity,
                              entity_t effect_source_entity) {
@@ -89,6 +89,7 @@ void buffer_condition_damage(registry_t& registry,
     double damaging_condition_progress_multiplier = condition_duration.progress / 1'000.0;
     condition_duration.duration -= condition_duration.progress;
     condition_duration.progress = 0;
+    auto& this_effect = registry.get<component::is_effect>(effect_entity).effect;
     double base_condition_damage = calculate_condition_damage(
         this_effect, target_entity, source_relative_attributes, base_condition_damage_multiplier);
     double effective_condition_damage =
@@ -96,14 +97,20 @@ void buffer_condition_damage(registry_t& registry,
 
     auto& buffered_condition_damage =
         registry.get_or_emplace<component::buffered_condition_damage>(target_entity);
-    buffered_condition_damage.source_entity_effect_tuple_to_value_map[std::make_tuple(
-        effect_source_entity, this_effect)] += effective_condition_damage;
+    buffered_condition_damage.condition_damage_buffer.emplace_back(component::condition_damage_t{
+        .effect_source_entity = effect_source_entity,
+        .effect = this_effect,
+        .source_skill = registry.get<component::source_skill>(effect_entity).skill,
+        .damage = effective_condition_damage});
 
     double total_buffered_damage = std::accumulate(
-        buffered_condition_damage.source_entity_effect_tuple_to_value_map.begin(),
-        buffered_condition_damage.source_entity_effect_tuple_to_value_map.end(),
+        buffered_condition_damage.condition_damage_buffer.begin(),
+        buffered_condition_damage.condition_damage_buffer.end(),
         0.0,
-        [](double accumulated, const auto& entry) { return accumulated + entry.second; });
+        [](double accumulated, const component::condition_damage_t& condition_damage) {
+            return accumulated + condition_damage.damage;
+        });
+
     spdlog::info(
         "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} "
         "buffered_dmg {}",
@@ -121,9 +128,7 @@ void buffer_condition_damage(registry_t& registry, std::optional<entity_t> speci
     system::calculate_relative_attributes(registry);
 
     if (specific_effect_entity) {
-        actor::effect_t this_effect =
-            registry.get<component::is_effect>(*specific_effect_entity).effect;
-        if (!utils::is_damaging_condition(this_effect)) {
+        if (!registry.any_of<component::is_damaging_effect>(*specific_effect_entity)) {
             return;
         }
         entity_t target_entity =
@@ -131,23 +136,17 @@ void buffer_condition_damage(registry_t& registry, std::optional<entity_t> speci
         entity_t effect_source_entity =
             registry.get<component::source_actor>(*specific_effect_entity).entity;
         buffer_condition_damage(
-            registry, this_effect, target_entity, *specific_effect_entity, effect_source_entity);
+            registry, target_entity, *specific_effect_entity, effect_source_entity);
     } else {
-        registry.view<component::is_actor, component::effects_component>().each(
-            [&](entity_t target_entity, const component::effects_component& effects_component) {
-                for (auto effect_entity : effects_component.effect_entities) {
-                    if (!utils::is_damaging_condition(effect_entity.effect)) {
-                        continue;
-                    }
-                    actor::effect_t this_effect = effect_entity.effect;
-                    entity_t effect_source_entity =
-                        registry.get<component::source_actor>(effect_entity.entity).entity;
-                    buffer_condition_damage(registry,
-                                            this_effect,
-                                            target_entity,
-                                            effect_entity.entity,
-                                            effect_source_entity);
-                }
+        registry
+            .view<component::is_damaging_effect,
+                  component::owner_component,
+                  component::source_actor>()
+            .each([&](entity_t effect_entity,
+                      const component::owner_component& owner_component,
+                      const component::source_actor& source_actor) {
+                buffer_condition_damage(
+                    registry, owner_component.entity, effect_entity, source_actor.entity);
             });
     }
 }
@@ -157,51 +156,21 @@ void apply_condition_damage(registry_t& registry) {
         [&](entity_t entity,
             const component::buffered_condition_damage& buffered_condition_damage) {
             auto& incoming_damage = registry.get_or_emplace<component::incoming_damage>(entity);
-            for (auto&& [source_entity_effect_tuple, buffered_damage] :
-                 buffered_condition_damage.source_entity_effect_tuple_to_value_map) {
+            for (auto& condition_damage : buffered_condition_damage.condition_damage_buffer) {
                 incoming_damage.incoming_damage_events.emplace_back(
                     component::incoming_damage_event{utils::get_current_tick(registry),
-                                                     std::get<0>(source_entity_effect_tuple),
-                                                     std::get<1>(source_entity_effect_tuple),
-                                                     "",
-                                                     buffered_damage});
+                                                     condition_damage.effect_source_entity,
+                                                     condition_damage.effect,
+                                                     condition_damage.source_skill,
+                                                     condition_damage.damage});
             }
             registry.remove<component::buffered_condition_damage>(entity);
         });
 }
 
 void buffer_damage_for_effects_with_no_duration(registry_t& registry) {
-    registry.view<component::duration_expired, component::is_effect>().each(
-        [&](entity_t entity, const component::is_effect& is_effect) {
-            if (utils::is_damaging_condition(is_effect.effect)) {
-                buffer_condition_damage(registry, entity);
-            }
-        });
-}
-
-void cleanup_expired_effects(registry_t& registry) {
-    registry.view<component::effects_component>().each(
-        [&](component::effects_component& effects_component) {
-            for (auto iter = effects_component.effect_entities.begin();
-                 iter != effects_component.effect_entities.end();) {
-                if (!registry.valid(iter->entity)) {
-                    iter = effects_component.effect_entities.erase(iter);
-                } else {
-                    ++iter;
-                }
-            }
-        });
-    registry.view<component::unique_effects_component>().each(
-        [&](component::unique_effects_component& unique_effects_component) {
-            for (auto iter = unique_effects_component.unique_effect_entities.begin();
-                 iter != unique_effects_component.unique_effect_entities.end();) {
-                if (!registry.valid(iter->entity)) {
-                    iter = unique_effects_component.unique_effect_entities.erase(iter);
-                } else {
-                    ++iter;
-                }
-            }
-        });
+    registry.view<component::duration_expired, component::is_damaging_effect>().each(
+        [&](entity_t entity) { buffer_condition_damage(registry, entity); });
 }
 
 }  // namespace gw2combat::system

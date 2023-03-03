@@ -1,11 +1,9 @@
 #include "apply_strikes_and_effects.hpp"
 
 #include "component/actor/attribute_modifiers_component.hpp"
-#include "component/actor/effects_component.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/skills_component.hpp"
 #include "component/actor/team.hpp"
-#include "component/actor/unique_effects_component.hpp"
 #include "component/counter/is_counter.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
@@ -225,9 +223,22 @@ void apply_strikes(registry_t& registry) {
                 auto& outgoing_effects_component =
                     registry.get_or_emplace<component::outgoing_effects_component>(
                         strike_source_entity);
-                std::copy(skill_configuration.on_strike_effect_applications.begin(),
-                          skill_configuration.on_strike_effect_applications.end(),
-                          std::back_inserter(outgoing_effects_component.effect_applications));
+                std::transform(
+                    skill_configuration.on_strike_effect_applications.begin(),
+                    skill_configuration.on_strike_effect_applications.end(),
+                    std::back_inserter(outgoing_effects_component.effect_applications),
+                    [&](const configuration::effect_application_t& effect_application) {
+                        return component::effect_application_t{
+                            .condition = effect_application.condition,
+                            .source_skill = skill_configuration.skill_key,
+                            .effect = effect_application.effect,
+                            .unique_effect = effect_application.unique_effect,
+                            .direction = component::effect_application_t::convert_direction(
+                                effect_application.direction),
+                            .base_duration_ms = effect_application.base_duration_ms,
+                            .num_stacks = effect_application.num_stacks,
+                            .num_targets = effect_application.num_targets};
+                    });
             }
         });
 }
@@ -247,6 +258,7 @@ void apply_effects(registry_t& registry) {
                     utils::add_unique_effect_to_actor(application.unique_effect,
                                                       application.num_stacks,
                                                       application.base_duration_ms,
+                                                      application.source_skill,
                                                       application_source_entity,
                                                       target_entity,
                                                       registry);
@@ -269,6 +281,7 @@ void apply_effects(registry_t& registry) {
                     utils::add_effect_to_actor(application.effect,
                                                application.num_stacks,
                                                effective_duration,
+                                               application.source_skill,
                                                application_source_entity,
                                                target_entity,
                                                registry);

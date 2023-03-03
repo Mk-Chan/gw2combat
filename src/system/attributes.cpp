@@ -2,7 +2,6 @@
 
 #include "component/actor/attribute_conversions_component.hpp"
 #include "component/actor/attribute_modifiers_component.hpp"
-#include "component/actor/effects_component.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/static_attributes.hpp"
@@ -11,6 +10,7 @@
 #include "component/hierarchy/owner_component.hpp"
 
 #include "utils/condition_utils.hpp"
+#include "utils/effect_utils.hpp"
 
 namespace gw2combat::system {
 

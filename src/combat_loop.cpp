@@ -1,9 +1,9 @@
 #include "combat_loop.hpp"
 
-#include "component/actor/effects_component.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
+#include "component/actor/relative_attributes.hpp"
 #include "component/actor/rotation_component.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
@@ -77,7 +77,6 @@ void tick(registry_t& registry) {
 
     system::reset_counters(registry);
     system::cleanup_expired_components(registry);
-    system::cleanup_expired_effects(registry);
     system::cleanup_finished_casting_skills(registry);
     system::destroy_actors_with_no_rotation(registry);
 
@@ -168,7 +167,7 @@ std::string server_combat_loop(const std::string& encounter_configuration) {
         ++current_tick;
     }
 end_of_combat_loop:
-    return nlohmann::json{system::get_audit_report(registry)}.dump();
+    return nlohmann::json{system::get_audit_report(registry)}[0].dump();
 }
 
 }  // namespace gw2combat
