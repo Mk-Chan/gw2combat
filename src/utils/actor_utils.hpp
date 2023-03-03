@@ -167,14 +167,20 @@ static inline std::optional<entity_t> add_effect_to_actor(actor::effect_t effect
         .effect_entities.emplace_back(component::effect_entity{effect, effect_entity});
 
     if (effect == actor::effect_t::MIGHT) {
-        auto& attribute_modifiers_component =
-            registry.get_or_emplace<component::attribute_modifiers_component>(effect_entity);
-        attribute_modifiers_component.attribute_modifiers.emplace_back(
-            configuration::attribute_modifier_t{
-                configuration::condition_t{}, actor::attribute_t::POWER, 1.0, 30.0});
-        attribute_modifiers_component.attribute_modifiers.emplace_back(
-            configuration::attribute_modifier_t{
-                configuration::condition_t{}, actor::attribute_t::CONDITION_DAMAGE, 1.0, 30.0});
+        auto& attribute_conversions_component =
+            registry.get_or_emplace<component::attribute_conversions_component>(effect_entity);
+        attribute_conversions_component.attribute_conversions.emplace_back(
+            configuration::attribute_conversion_t{configuration::condition_t{},
+                                                  actor::attribute_t::POWER,
+                                                  actor::attribute_t::POWER,
+                                                  0.0,
+                                                  30.0});
+        attribute_conversions_component.attribute_conversions.emplace_back(
+            configuration::attribute_conversion_t{configuration::condition_t{},
+                                                  actor::attribute_t::CONDITION_DAMAGE,
+                                                  actor::attribute_t::CONDITION_DAMAGE,
+                                                  0.0,
+                                                  30.0});
     } else if (effect == actor::effect_t::FURY) {
         auto& attribute_modifiers_component =
             registry.get_or_emplace<component::attribute_modifiers_component>(effect_entity);

@@ -575,12 +575,14 @@
             "cast_duration": [750, 500],
             "cooldown": [30000, 24000],
             "strike_on_tick_list": [[750], [500]],
-            "attribute_modifiers": [
+            "attribute_conversions": [
                 {
                     "condition": {
                         "depends_on_skill_off_cooldown": "Bane Signet"
                     },
-                    "attribute": "power",
+                    "from": "power",
+                    "to": "power",
+                    "multiplier": 0,
                     "addend": 180
                 }
             ]
