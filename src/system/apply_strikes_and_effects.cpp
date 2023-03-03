@@ -50,10 +50,17 @@ void apply_strikes(registry_t& registry) {
                     std::min(strike_source_relative_attributes.get(
                                  target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
                              1.0);
+
+                // Will be used instead of average critical_damage_multiplier under some
+                // configuration
+                bool critical_roll =
+                    critical_chance_multiplier == 1.0 ||
+                    utils::check_random_success(100.0 * critical_chance_multiplier);
                 double actual_critical_damage_multiplier =
                     std::max(strike_source_relative_attributes.get(
                                  target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
                              1.5);
+
                 double average_critical_damage_multiplier =
                     (1.0 +
                      (critical_chance_multiplier * (actual_critical_damage_multiplier - 1.0)));
@@ -124,6 +131,9 @@ void apply_strikes(registry_t& registry) {
                              is_counter.counter_configuration.increment_conditions) {
                             if (!(increment_condition.only_applies_on_strikes &&
                                   *increment_condition.only_applies_on_strikes &&
+                                  (!increment_condition.only_applies_on_critical_strikes ||
+                                   (*increment_condition.only_applies_on_critical_strikes &&
+                                    critical_roll)) &&
                                   (!increment_condition.only_applies_on_strikes_by_skill ||
                                    *increment_condition.only_applies_on_strikes_by_skill ==
                                        skill_configuration.skill_key) &&
@@ -154,6 +164,9 @@ void apply_strikes(registry_t& registry) {
                         for (auto& skill_trigger : skill_triggers_component.skill_triggers) {
                             if (skill_trigger.condition.only_applies_on_strikes &&
                                 *skill_trigger.condition.only_applies_on_strikes &&
+                                (!skill_trigger.condition.only_applies_on_critical_strikes ||
+                                 (*skill_trigger.condition.only_applies_on_critical_strikes &&
+                                  critical_roll)) &&
                                 (!skill_trigger.condition.only_applies_on_strikes_by_skill ||
                                  *skill_trigger.condition.only_applies_on_strikes_by_skill ==
                                      skill_configuration.skill_key) &&
@@ -184,6 +197,9 @@ void apply_strikes(registry_t& registry) {
                              unchained_skill_triggers_component.skill_triggers) {
                             if (skill_trigger.condition.only_applies_on_strikes &&
                                 *skill_trigger.condition.only_applies_on_strikes &&
+                                (!skill_trigger.condition.only_applies_on_critical_strikes ||
+                                 (*skill_trigger.condition.only_applies_on_critical_strikes &&
+                                  critical_roll)) &&
                                 (!skill_trigger.condition.only_applies_on_strikes_by_skill ||
                                  *skill_trigger.condition.only_applies_on_strikes_by_skill ==
                                      skill_configuration.skill_key) &&

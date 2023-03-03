@@ -3,6 +3,7 @@
 
 #include "common.hpp"
 
+#include "actor/bundle.hpp"
 #include "actor/skill.hpp"
 
 #include "attribute_conversion.hpp"
@@ -38,6 +39,7 @@ struct skill_t {
     std::vector<actor::skill_tag_t> tags;
 
     bool can_critical_strike = true;
+    actor::bundle_t equip_bundle;
 
     [[nodiscard]] inline bool operator==(const skill_t& rhs) const {
         return this->skill_key == rhs.skill_key;
@@ -61,7 +63,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 attribute_conversions,
                                                 child_skill_keys,
                                                 tags,
-                                                can_critical_strike)
+                                                can_critical_strike,
+                                                equip_bundle)
 
 }  // namespace gw2combat::configuration
 

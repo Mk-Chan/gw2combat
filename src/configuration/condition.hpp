@@ -28,6 +28,7 @@ struct condition_t {
 
     // Dependent on stage in combat loop
     std::optional<bool> only_applies_on_strikes = std::nullopt;
+    std::optional<bool> only_applies_on_critical_strikes = std::nullopt;
     std::optional<actor::skill_t> only_applies_on_strikes_by_skill = std::nullopt;
     std::optional<actor::skill_tag_t> only_applies_on_strikes_by_skill_with_tag = std::nullopt;
     std::optional<bool> only_applies_on_finished_casting = std::nullopt;
@@ -71,6 +72,10 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     }
     if (nlohmann_json_t.only_applies_on_strikes) {
         nlohmann_json_j["only_applies_on_strikes"] = *nlohmann_json_t.only_applies_on_strikes;
+    }
+    if (nlohmann_json_t.only_applies_on_critical_strikes) {
+        nlohmann_json_j["only_applies_on_critical_strikes"] =
+            *nlohmann_json_t.only_applies_on_critical_strikes;
     }
     if (nlohmann_json_t.only_applies_on_strikes_by_skill) {
         nlohmann_json_j["only_applies_on_strikes_by_skill"] =
@@ -140,6 +145,11 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
     if (nlohmann_json_j.contains("only_applies_on_strikes")) {
         nlohmann_json_t.only_applies_on_strikes = nlohmann_json_j.value(
             "only_applies_on_strikes", *nlohmann_json_default_obj.only_applies_on_strikes);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_critical_strikes")) {
+        nlohmann_json_t.only_applies_on_critical_strikes =
+            nlohmann_json_j.value("only_applies_on_critical_strikes",
+                                  *nlohmann_json_default_obj.only_applies_on_critical_strikes);
     }
     if (nlohmann_json_j.contains("only_applies_on_strikes_by_skill")) {
         nlohmann_json_t.only_applies_on_strikes_by_skill =

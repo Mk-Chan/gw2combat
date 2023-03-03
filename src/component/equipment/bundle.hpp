@@ -3,10 +3,12 @@
 
 #include "common.hpp"
 
+#include "actor/bundle.hpp"
+
 namespace gw2combat::component {
 
 struct bundle_component {
-    std::string name;
+    actor::bundle_t name;
 
     [[nodiscard]] inline bool operator==(const bundle_component& rhs) const {
         return name == rhs.name;
