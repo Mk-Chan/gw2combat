@@ -372,6 +372,7 @@
             ]
         }, {
             "skill_key": "Barrage",
+            "weapon_type": "longbow",
             "cast_duration": [2320, 1880],
             "cooldown": [20000, 16000],
             "child_skill_keys": [

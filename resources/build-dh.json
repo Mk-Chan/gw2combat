@@ -51,7 +51,7 @@
     ],
     "counters": [
         {
-            "counter_key": "Strike Counter",
+            "counter_key": "Virtue of Justice Counter",
             "initial_value": 0,
             "reset_at_value": 5,
             "increment_conditions": [
@@ -148,7 +148,7 @@
                         "threshold": {
                             "threshold_type": "lower_bound_inclusive",
                             "threshold_value": 5,
-                            "counter_value_subject_to_threshold": "Strike Counter"
+                            "counter_value_subject_to_threshold": "Virtue of Justice Counter"
                         },
                         "only_applies_on_strikes": true,
                         "depends_on_skill_off_cooldown": "Spear of Justice"
@@ -317,7 +317,7 @@
             ]
         }, {
             "skill_key": "Spear of Justice",
-            "weapon_type": "greatsword",
+            "weapon_type": "main_hand",
             "damage_coefficient": 0.8,
             "cast_duration": [825, 550],
             "cooldown": [20000, 16000],
