@@ -15,9 +15,9 @@ It works by implementing a configuration system which allows someone to define h
 Currently the program is extremely accurate at simulating benchmarks as long as build definitions and rotations are provided correctly.
 It does so by playing out the skills provided in the rotation according to skill definitions and attributes/effects in the build configuration.
 
-Available builds at this time along with comparison to current patch human benchmark:
-- Power Radiance Dragonhunter (+/- 50dps)
-- Power Soulbeast (+/- 300dps)
+Available builds at this time:
+- Power Radiance Dragonhunter
+- Power Soulbeast Longbow
+- Power Soulbeast Greatsword
 
-The above numbers speak to the accuracy of the build configurations which are easily modified based on new/updated information.
 Documentation for how to create and edit build configurations is under development.
