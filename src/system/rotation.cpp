@@ -229,11 +229,53 @@ void perform_skills(registry_t& registry) {
                     ++is_counter.value;
                 }
             });
-
-        registry.view<component::source_actor, component::skill_triggers_component>().each(
-            [&](const component::source_actor& source_actor,
+        registry.view<component::owner_component, component::is_effect_removal>().each(
+            [&](const component::owner_component& owner_component,
+                component::is_effect_removal& is_effect_removal) {
+                if (owner_component.entity != entity) {
+                    return;
+                }
+                auto& effect_removal = is_effect_removal.effect_removal;
+                if (effect_removal.condition.only_applies_on_finished_casting &&
+                    *effect_removal.condition.only_applies_on_finished_casting &&
+                    (!effect_removal.condition.only_applies_on_finished_casting_skill ||
+                     *effect_removal.condition.only_applies_on_finished_casting_skill ==
+                         skill_configuration.skill_key) &&
+                    (!effect_removal.condition.only_applies_on_finished_casting_skill_with_tag ||
+                     utils::skill_has_tag(skill_configuration,
+                                          *effect_removal.condition
+                                               .only_applies_on_finished_casting_skill_with_tag)) &&
+                    utils::conditions_satisfied(
+                        effect_removal.condition, owner_component.entity, std::nullopt, registry)) {
+                    if (effect_removal.effect != actor::effect_t::INVALID) {
+                        registry.view<component::is_effect, component::owner_component>().each(
+                            [&](entity_t effect_entity,
+                                const component::is_effect& is_effect,
+                                const component::owner_component& effect_owner) {
+                                if (effect_owner.entity == entity &&
+                                    is_effect.effect == effect_removal.effect) {
+                                    registry.destroy(effect_entity);
+                                }
+                            });
+                    }
+                    if (!effect_removal.unique_effect.empty()) {
+                        registry.view<component::is_unique_effect, component::owner_component>()
+                            .each([&](entity_t unique_effect_entity,
+                                      const component::is_unique_effect& is_unique_effect,
+                                      const component::owner_component& effect_owner) {
+                                if (effect_owner.entity == entity &&
+                                    is_unique_effect.unique_effect.unique_effect_key ==
+                                        effect_removal.unique_effect) {
+                                    registry.destroy(unique_effect_entity);
+                                }
+                            });
+                    }
+                }
+            });
+        registry.view<component::owner_component, component::skill_triggers_component>().each(
+            [&](const component::owner_component& owner_component,
                 const component::skill_triggers_component& skill_triggers_component) {
-                if (source_actor.entity != entity) {
+                if (owner_component.entity != entity) {
                     return;
                 }
                 for (auto& skill_trigger : skill_triggers_component.skill_triggers) {
@@ -253,12 +295,11 @@ void perform_skills(registry_t& registry) {
                     }
                 }
             });
-
-        registry.view<component::source_actor, component::unchained_skill_triggers_component>()
-            .each([&](const component::source_actor& source_actor,
+        registry.view<component::owner_component, component::unchained_skill_triggers_component>()
+            .each([&](const component::owner_component& owner_component,
                       const component::unchained_skill_triggers_component&
                           unchained_skill_triggers_component) {
-                if (source_actor.entity != entity) {
+                if (owner_component.entity != entity) {
                     return;
                 }
                 for (auto& skill_trigger : unchained_skill_triggers_component.skill_triggers) {

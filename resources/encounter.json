@@ -1,9 +1,9 @@
 {
     "actors": [
         {
-            "name": "slb",
-            "build_path": "resources/build-slb.json",
-            "rotation_path": "resources/rotation-slb.csv",
+            "name": "gs-slb",
+            "build_path": "resources/build-gs-slb.json",
+            "rotation_path": "resources/rotation-gs-slb.csv",
             "team": 1
         }, {
             "name": "golem",

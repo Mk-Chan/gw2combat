@@ -25,6 +25,7 @@
 #include "component/actor/team.hpp"
 #include "component/actor/unchained_skill_triggers_component.hpp"
 #include "component/effect/is_effect.hpp"
+#include "component/effect/is_effect_removal.hpp"
 #include "component/effect/is_unique_effect.hpp"
 #include "component/effect/source_actor.hpp"
 #include "component/effect/source_skill.hpp"
@@ -314,6 +315,12 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
         std::copy(unique_effect.unchained_skill_triggers.begin(),
                   unique_effect.unchained_skill_triggers.end(),
                   std::back_inserter(unchained_skill_triggers_component.skill_triggers));
+    }
+
+    for (auto& effect_removal : unique_effect.effect_removals) {
+        auto effect_removal_entity = registry.create();
+        registry.emplace<component::is_effect_removal>(effect_removal_entity, effect_removal);
+        registry.emplace<component::owner_component>(effect_removal_entity, actor_entity);
     }
 
     registry.ctx().emplace_as<std::string>(unique_effect_entity, unique_effect.unique_effect_key);
