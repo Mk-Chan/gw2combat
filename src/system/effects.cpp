@@ -58,7 +58,7 @@ double calculate_condition_damage(actor::effect_t this_effect,
                    base_condition_damage_multiplier;
         case actor::effect_t::BINDING_BLADE:
             return (160.0 +
-                    0.2 * source_relative_attributes.get(target_entity, actor::attribute_t::POWER));
+                    0.3 * source_relative_attributes.get(target_entity, actor::attribute_t::POWER));
         default:
             throw std::runtime_error(fmt::format("missing damage formula for effect_type: {}",
                                                  utils::to_string(this_effect)));
