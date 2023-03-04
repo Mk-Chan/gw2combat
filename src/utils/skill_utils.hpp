@@ -41,20 +41,29 @@ static inline void assert_can_cast_skill(entity_t actor_entity,
     }
 
     auto& skill_configuration = utils::get_skill_configuration(skill, actor_entity, registry);
-    auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
-    if (!bundle_ptr && skill_configuration.weapon_type != actor::weapon_type::EMPTY_HANDED &&
-        skill_configuration.weapon_type != actor::weapon_type::INVALID &&
-        skill_configuration.weapon_type != actor::weapon_type::MAIN_HAND) {
-        auto& weapons = registry.get<component::equipped_weapons>(actor_entity).weapons;
-        auto current_weapon_set = registry.get<component::current_weapon_set>(actor_entity).set;
-        bool skill_available_on_weapon =
-            std::any_of(weapons.begin(), weapons.end(), [&](const component::weapon_t& weapon) {
-                return weapon.set == current_weapon_set &&
-                       weapon.type == skill_configuration.weapon_type;
-            });
-        if (!skill_available_on_weapon) {
+    if (skill_configuration.required_bundle.empty()) {
+        if (skill_configuration.weapon_type != actor::weapon_type::INVALID &&
+            skill_configuration.weapon_type != actor::weapon_type::EMPTY_HANDED &&
+            skill_configuration.weapon_type != actor::weapon_type::MAIN_HAND &&
+            skill_configuration.weapon_type != actor::weapon_type::KIT_CONJURE &&
+            skill_configuration.weapon_type != actor::weapon_type::TOME) {
+            auto& weapons = registry.get<component::equipped_weapons>(actor_entity).weapons;
+            auto current_weapon_set = registry.get<component::current_weapon_set>(actor_entity).set;
+            bool skill_available_on_weapon =
+                std::any_of(weapons.begin(), weapons.end(), [&](const component::weapon_t& weapon) {
+                    return weapon.set == current_weapon_set &&
+                           weapon.type == skill_configuration.weapon_type;
+                });
+            if (!skill_available_on_weapon) {
+                throw std::runtime_error(
+                    fmt::format("skill {} not available on this weapon set", skill));
+            }
+        }
+    } else {
+        auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
+        if (!bundle_ptr || skill_configuration.required_bundle != bundle_ptr->name) {
             throw std::runtime_error(
-                fmt::format("skill {} not available on this weapon set", skill));
+                fmt::format("skill {} not available on bundle {}", skill, bundle_ptr->name));
         }
     }
 }

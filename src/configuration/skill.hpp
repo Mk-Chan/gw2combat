@@ -17,6 +17,7 @@ namespace gw2combat::configuration {
 struct skill_t {
     actor::skill_t skill_key;
     actor::weapon_type weapon_type = actor::weapon_type::INVALID;
+    actor::bundle_t required_bundle;
 
     double damage_coefficient = 0.0;
     int ammo = 1;
@@ -49,6 +50,7 @@ struct skill_t {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 skill_key,
                                                 weapon_type,
+                                                required_bundle,
                                                 damage_coefficient,
                                                 ammo,
                                                 recharge_duration,
