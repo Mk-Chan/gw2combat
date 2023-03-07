@@ -20,11 +20,11 @@
 namespace gw2combat::system {
 
 void setup_local_encounter(registry_t& registry, const configuration::encounter_t& encounter) {
-    auto console_entity = registry.create();
-    registry.emplace<component::is_actor>(console_entity);
+    auto singleton_entity = registry.create();
+    registry.emplace<component::is_actor>(singleton_entity);
     registry.emplace<component::static_attributes>(
-        console_entity, component::static_attributes{configuration::build_t{}.attributes});
-    registry.ctx().emplace_as<std::string>(console_entity, "Console");
+        singleton_entity, component::static_attributes{configuration::build_t{}.attributes});
+    registry.ctx().emplace_as<std::string>(singleton_entity, "Console");
 
     for (auto&& actor : encounter.actors) {
         auto build = utils::read<configuration::build_t>(actor.build_path);
@@ -125,11 +125,11 @@ void setup_local_encounter(registry_t& registry, const configuration::encounter_
 
 void setup_server_encounter(registry_t& registry,
                             const configuration::encounter_server_t& encounter) {
-    auto console_entity = registry.create();
-    registry.emplace<component::is_actor>(console_entity);
+    auto singleton_entity = registry.create();
+    registry.emplace<component::is_actor>(singleton_entity);
     registry.emplace<component::static_attributes>(
-        console_entity, component::static_attributes{configuration::build_t{}.attributes});
-    registry.ctx().emplace_as<std::string>(console_entity, "Console");
+        singleton_entity, component::static_attributes{configuration::build_t{}.attributes});
+    registry.ctx().emplace_as<std::string>(singleton_entity, "Console");
 
     for (auto&& actor : encounter.actors) {
         auto build = actor.build;

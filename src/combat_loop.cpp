@@ -54,7 +54,10 @@ void clear_temporary_components(registry_t& registry) {
                    component::incoming_strikes_component,
                    component::incoming_effects_component,
                    component::incoming_damage>();
-    clean_children_of_destroyed_owners(registry);
+    if (registry.any_of<component::entity_was_destroyed>(utils::get_singleton_entity())) {
+        clean_children_of_destroyed_owners(registry);
+        registry.remove<component::entity_was_destroyed>(utils::get_singleton_entity());
+    }
 }
 
 void tick(registry_t& registry) {

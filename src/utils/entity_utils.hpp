@@ -4,6 +4,7 @@
 #include "basic_utils.hpp"
 
 #include "component/hierarchy/owner_component.hpp"
+#include "component/singleton/entity_was_destroyed.hpp"
 
 namespace gw2combat::utils {
 
@@ -20,6 +21,11 @@ namespace gw2combat::utils {
         current_entity = registry.get<component::owner_component>(current_entity).entity;
     }
     return current_entity;
+}
+
+static inline void destroy_entity(entity_t entity, registry_t& registry) {
+    registry.destroy(entity);
+    registry.emplace_or_replace<component::entity_was_destroyed>(utils::get_singleton_entity());
 }
 
 }  // namespace gw2combat::utils

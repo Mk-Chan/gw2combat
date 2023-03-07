@@ -28,7 +28,7 @@ template <typename T>
     return registry.ctx().get<const tick_t>();
 }
 
-[[nodiscard]] static inline entity_t get_console_entity() {
+[[nodiscard]] static inline entity_t get_singleton_entity() {
     return entity_t{0};
 }
 

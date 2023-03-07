@@ -179,7 +179,7 @@ void apply_strikes(registry_t& registry) {
                                               const component::owner_component& effect_owner) {
                                         if (effect_owner.entity == strike_source_entity &&
                                             is_effect.effect == effect_removal.effect) {
-                                            registry.destroy(effect_entity);
+                                            utils::destroy_entity(effect_entity, registry);
                                         }
                                     });
                             }
@@ -192,7 +192,7 @@ void apply_strikes(registry_t& registry) {
                                         if (effect_owner.entity == strike_source_entity &&
                                             is_unique_effect.unique_effect.unique_effect_key ==
                                                 effect_removal.unique_effect) {
-                                            registry.destroy(unique_effect_entity);
+                                            utils::destroy_entity(unique_effect_entity, registry);
                                         }
                                     });
                             }

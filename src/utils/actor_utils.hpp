@@ -141,7 +141,7 @@ static inline std::optional<entity_t> add_effect_to_actor(actor::effect_t effect
         registry.emplace<component::is_damaging_effect>(effect_entity);
     }
     registry.emplace<component::owner_component>(effect_entity, actor_entity);
-    registry.emplace<component::source_actor>(effect_entity, utils::get_console_entity());
+    registry.emplace<component::source_actor>(effect_entity, utils::get_singleton_entity());
     registry.emplace<component::source_skill>(effect_entity, component::source_skill{});
     registry.emplace<component::duration_component>(
         effect_entity, component::duration_component{1'000'000'000, 0});

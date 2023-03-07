@@ -243,7 +243,7 @@ void perform_skills(registry_t& registry) {
                                 const component::owner_component& effect_owner) {
                                 if (effect_owner.entity == actor_entity &&
                                     is_effect.effect == effect_removal.effect) {
-                                    registry.destroy(effect_entity);
+                                    utils::destroy_entity(effect_entity, registry);
                                 }
                             });
                     }
@@ -255,34 +255,34 @@ void perform_skills(registry_t& registry) {
                                 if (effect_owner.entity == actor_entity &&
                                     is_unique_effect.unique_effect.unique_effect_key ==
                                         effect_removal.unique_effect) {
-                                    registry.destroy(unique_effect_entity);
+                                    utils::destroy_entity(unique_effect_entity, registry);
                                 }
                             });
                     }
                 }
             });
-        registry.view<component::is_skill_trigger>().each([&](entity_t skill_trigger_entity,
-                                                              const component::is_skill_trigger&
-                                                                  is_skill_trigger) {
-            auto owner_actor = utils::get_owner(skill_trigger_entity, registry);
-            if (owner_actor != actor_entity) {
-                return;
-            }
-            auto& skill_trigger = is_skill_trigger.skill_trigger;
-            if (skill_trigger.condition.only_applies_on_finished_casting &&
-                *skill_trigger.condition.only_applies_on_finished_casting &&
-                (!skill_trigger.condition.only_applies_on_finished_casting_skill ||
-                 *skill_trigger.condition.only_applies_on_finished_casting_skill ==
-                     skill_configuration.skill_key) &&
-                (!skill_trigger.condition.only_applies_on_finished_casting_skill_with_tag ||
-                 utils::skill_has_tag(
-                     skill_configuration,
-                     *skill_trigger.condition.only_applies_on_finished_casting_skill_with_tag)) &&
-                utils::conditions_satisfied(
-                    skill_trigger.condition, owner_actor, std::nullopt, registry)) {
-                utils::enqueue_child_skill(skill_trigger.skill_key, actor_entity, registry);
-            }
-        });
+        registry.view<component::is_skill_trigger>().each(
+            [&](entity_t skill_trigger_entity,
+                const component::is_skill_trigger& is_skill_trigger) {
+                auto owner_actor = utils::get_owner(skill_trigger_entity, registry);
+                if (owner_actor != actor_entity) {
+                    return;
+                }
+                auto& skill_trigger = is_skill_trigger.skill_trigger;
+                if (skill_trigger.condition.only_applies_on_finished_casting &&
+                    *skill_trigger.condition.only_applies_on_finished_casting &&
+                    (!skill_trigger.condition.only_applies_on_finished_casting_skill ||
+                     *skill_trigger.condition.only_applies_on_finished_casting_skill ==
+                         skill_configuration.skill_key) &&
+                    (!skill_trigger.condition.only_applies_on_finished_casting_skill_with_tag ||
+                     utils::skill_has_tag(skill_configuration,
+                                          *skill_trigger.condition
+                                               .only_applies_on_finished_casting_skill_with_tag)) &&
+                    utils::conditions_satisfied(
+                        skill_trigger.condition, owner_actor, std::nullopt, registry)) {
+                    utils::enqueue_child_skill(skill_trigger.skill_key, actor_entity, registry);
+                }
+            });
         registry.view<component::is_unchained_skill_trigger>().each(
             [&](entity_t skill_trigger_entity,
                 const component::is_unchained_skill_trigger& is_unchanged_skill_trigger) {
@@ -302,8 +302,7 @@ void perform_skills(registry_t& registry) {
                                                .only_applies_on_finished_casting_skill_with_tag)) &&
                     utils::conditions_satisfied(
                         skill_trigger.condition, owner_actor, std::nullopt, registry)) {
-                    utils::enqueue_child_skill(
-                        skill_trigger.skill_key, actor_entity, registry);
+                    utils::enqueue_child_skill(skill_trigger.skill_key, actor_entity, registry);
                 }
             });
 
@@ -326,7 +325,7 @@ void destroy_actors_with_no_rotation(registry_t& registry) {
     registry
         .view<component::destroy_after_rotation, component::no_more_rotation>(
             entt::exclude<component::casting_skill>)
-        .each([&](entity_t entity) { registry.destroy(entity); });
+        .each([&](entity_t entity) { utils::destroy_entity(entity, registry); });
 }
 
 }  // namespace gw2combat::system
