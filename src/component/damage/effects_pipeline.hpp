@@ -33,14 +33,14 @@ struct effect_application_t {
     [[nodiscard]] static inline component::effect_application_t::direction_t convert_direction(
         const configuration::direction_t& direction) {
         switch (direction) {
-            case configuration::direction_t::INVALID:
-                return component::effect_application_t::direction_t::INVALID;
             case configuration::direction_t::SELF:
                 return component::effect_application_t::direction_t::SELF;
             case configuration::direction_t::TEAM:
                 return component::effect_application_t::direction_t::TEAM;
             case configuration::direction_t::OUTGOING:
                 return component::effect_application_t::direction_t::OUTGOING;
+            default:
+                return component::effect_application_t::direction_t::INVALID;
         }
     }
 };

@@ -5,29 +5,51 @@
 #include "entity_utils.hpp"
 #include "io_utils.hpp"
 
-#include "component/actor/skills_component.hpp"
+#include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/skill/ammo.hpp"
-#include "component/skill/skill_configuration_component.hpp"
+#include "component/skill/is_skill.hpp"
 #include "component/temporal/cooldown_component.hpp"
+
+#include "configuration/skill.hpp"
 
 namespace gw2combat::utils {
 
-[[nodiscard]] static inline configuration::skill_t&
-get_skill_configuration(const actor::skill_t& skill, entity_t actor_entity, registry_t& registry) {
-    auto& skill_component = registry.get<component::skills_component>(actor_entity);
-    return registry.get<component::skill_configuration_component>(skill_component.find_by(skill))
-        .skill_configuration;
+[[nodiscard]] static inline entity_t get_skill_entity(const actor::skill_t& skill,
+                                                      entity_t actor_entity,
+                                                      registry_t& registry) {
+    for (auto&& [skill_entity, owner_component, is_skill] :
+         registry.view<component::owner_component, component::is_skill>().each()) {
+        if (owner_component.entity == actor_entity &&
+            is_skill.skill_configuration.skill_key == skill) {
+            return skill_entity;
+        }
+    }
+    throw std::runtime_error(fmt::format(
+        "skill {} not found for actor {}", skill, utils::get_entity_name(actor_entity, registry)));
 }
 
-static inline void assert_can_cast_skill(entity_t actor_entity,
-                                         const actor::skill_t& skill,
+[[nodiscard]] static inline configuration::skill_t&
+get_skill_configuration(const actor::skill_t& skill, entity_t actor_entity, registry_t& registry) {
+    for (auto&& [skill_entity, owner_component, is_skill] :
+         registry.view<component::owner_component, component::is_skill>().each()) {
+        if (owner_component.entity == actor_entity &&
+            is_skill.skill_configuration.skill_key == skill) {
+            return is_skill.skill_configuration;
+        }
+    }
+    throw std::runtime_error(fmt::format(
+        "skill {} not found for actor {}", skill, utils::get_entity_name(actor_entity, registry)));
+}
+
+static inline void assert_can_cast_skill(const actor::skill_t& skill,
+                                         entity_t actor_entity,
                                          registry_t& registry) {
     if (registry.any_of<component::owner_component>(actor_entity)) {
         return;
     }
 
-    auto skill_entity = registry.get<component::skills_component>(actor_entity).find_by(skill);
+    auto skill_entity = utils::get_skill_entity(skill, actor_entity, registry);
     // if (registry.any_of<component::internal_cooldown_component>(skill_entity)) {
     //     throw std::runtime_error(fmt::format("skill {} is on internal cooldown", skill));
     // }
@@ -73,10 +95,10 @@ static inline void assert_can_cast_skill(entity_t actor_entity,
     return std::find(skill.tags.cbegin(), skill.tags.cend(), skill_tag) != skill.tags.cend();
 }
 
-static inline void put_skill_on_cooldown(entity_t actor_entity,
-                                         const actor::skill_t& skill,
+static inline void put_skill_on_cooldown(const actor::skill_t& skill,
+                                         entity_t actor_entity,
                                          registry_t& registry) {
-    auto skill_entity = registry.get<component::skills_component>(actor_entity).find_by(skill);
+    auto skill_entity = utils::get_skill_entity(skill, actor_entity, registry);
 
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
     if (skill_ammo.current_ammo <= 0) {
@@ -87,10 +109,7 @@ static inline void put_skill_on_cooldown(entity_t actor_entity,
     }
     --skill_ammo.current_ammo;
 
-    auto& skill_component = registry.get<component::skills_component>(actor_entity);
-    auto& skill_configuration =
-        registry.get<component::skill_configuration_component>(skill_component.find_by(skill))
-            .skill_configuration;
+    auto& skill_configuration = utils::get_skill_configuration(skill, actor_entity, registry);
     if (!registry.any_of<component::cooldown_component>(skill_entity)) {
         registry.emplace<component::cooldown_component>(
             skill_entity, component::cooldown_component{skill_configuration.cooldown});

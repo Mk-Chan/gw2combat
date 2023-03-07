@@ -1,7 +1,6 @@
 #include "encounter.hpp"
 
 #include "component/actor/base_class_component.hpp"
-#include "component/actor/counters_component.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/profession_component.hpp"
 #include "component/actor/static_attributes.hpp"
@@ -50,7 +49,6 @@ void setup_local_encounter(registry_t& registry, const configuration::encounter_
                                     .position = weapon_configuration.position,
                                     .set = weapon_configuration.set});
         }
-
         for (auto& skill : build.skills) {
             utils::add_skill_to_actor(skill, actor_entity, registry);
         }
@@ -60,21 +58,21 @@ void setup_local_encounter(registry_t& registry, const configuration::encounter_
         for (auto& permanent_unique_effect : build.permanent_unique_effects) {
             utils::add_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);
         }
-
-        auto& counters_component = registry.emplace<component::counters_component>(actor_entity);
         for (auto& counter_configuration : build.counters) {
-            if (counters_component.has(counter_configuration.counter_key)) {
-                throw std::runtime_error("multiple counters with the same name are not allowed");
+            for (auto&& [counter_entity, is_counter] :
+                 registry.view<component::is_counter>().each()) {
+                if (counter_configuration.counter_key ==
+                    is_counter.counter_configuration.counter_key) {
+                    throw std::runtime_error(
+                        "multiple counters with the same name are not allowed");
+                }
             }
 
             auto counter_entity = registry.create();
-            registry.emplace<component::owner_component>(counter_entity,
-                                                         component::owner_component{actor_entity});
+            registry.emplace<component::owner_component>(counter_entity, actor_entity);
             registry.emplace<component::is_counter>(
                 counter_entity,
                 component::is_counter{counter_configuration.initial_value, counter_configuration});
-            counters_component.counter_entities.emplace_back(
-                component::counter_entity{counter_configuration.counter_key, counter_entity});
         }
 
         if (!actor.rotation_path.empty()) {
@@ -153,7 +151,6 @@ void setup_server_encounter(registry_t& registry,
                                     .position = weapon_configuration.position,
                                     .set = weapon_configuration.set});
         }
-
         for (auto& skill : build.skills) {
             utils::add_skill_to_actor(skill, actor_entity, registry);
         }
@@ -163,21 +160,21 @@ void setup_server_encounter(registry_t& registry,
         for (auto& permanent_unique_effect : build.permanent_unique_effects) {
             utils::add_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);
         }
-
-        auto& counters_component = registry.emplace<component::counters_component>(actor_entity);
         for (auto& counter_configuration : build.counters) {
-            if (counters_component.has(counter_configuration.counter_key)) {
-                throw std::runtime_error("multiple counters with the same name are not allowed");
+            for (auto&& [counter_entity, is_counter] :
+                 registry.view<component::is_counter>().each()) {
+                if (counter_configuration.counter_key ==
+                    is_counter.counter_configuration.counter_key) {
+                    throw std::runtime_error(
+                        "multiple counters with the same name are not allowed");
+                }
             }
 
             auto counter_entity = registry.create();
-            registry.emplace<component::owner_component>(counter_entity,
-                                                         component::owner_component{actor_entity});
+            registry.emplace<component::owner_component>(counter_entity, actor_entity);
             registry.emplace<component::is_counter>(
                 counter_entity,
                 component::is_counter{counter_configuration.initial_value, counter_configuration});
-            counters_component.counter_entities.emplace_back(
-                component::counter_entity{counter_configuration.counter_key, counter_entity});
         }
 
         if (!actor.rotation.skill_casts.empty()) {

@@ -27,6 +27,22 @@
 
 namespace gw2combat {
 
+void try_clean_entity(registry_t& registry, entity_t entity, entity_t owner_entity) {
+    if (!registry.valid(owner_entity)) {
+        registry.destroy(entity);
+    } else if (registry.any_of<component::owner_component>(owner_entity)) {
+        auto owners_owner_entity = registry.get<component::owner_component>(owner_entity).entity;
+        try_clean_entity(registry, entity, owners_owner_entity);
+    }
+}
+
+void clean_children_of_destroyed_owners(registry_t& registry) {
+    registry.view<component::owner_component>().each(
+        [&](entity_t entity, const component::owner_component& owner_component) {
+            try_clean_entity(registry, entity, owner_component.entity);
+        });
+}
+
 void clear_temporary_components(registry_t& registry) {
     registry.clear<component::relative_attributes,
                    component::incoming_damage,
@@ -38,6 +54,7 @@ void clear_temporary_components(registry_t& registry) {
                    component::incoming_strikes_component,
                    component::incoming_effects_component,
                    component::incoming_damage>();
+    clean_children_of_destroyed_owners(registry);
 }
 
 void tick(registry_t& registry) {

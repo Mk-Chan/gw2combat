@@ -17,7 +17,7 @@ namespace gw2combat::utils {
 [[nodiscard]] static inline entity_t get_owner(entity_t entity, registry_t& registry) {
     entity_t current_entity = entity;
     while (registry.any_of<component::owner_component>(current_entity)) {
-        current_entity = registry.get<component::owner_component>(entity).entity;
+        current_entity = registry.get<component::owner_component>(current_entity).entity;
     }
     return current_entity;
 }

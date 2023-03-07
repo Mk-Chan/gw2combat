@@ -5,13 +5,12 @@
 
 #include "basic_utils.hpp"
 #include "entity_utils.hpp"
+#include "skill_utils.hpp"
 
 #include "configuration/condition.hpp"
 
 #include "component/actor/combat_stats.hpp"
-#include "component/actor/counters_component.hpp"
 #include "component/actor/relative_attributes.hpp"
-#include "component/actor/skills_component.hpp"
 #include "component/counter/is_counter.hpp"
 #include "component/effect/is_effect.hpp"
 #include "component/effect/is_unique_effect.hpp"
@@ -166,8 +165,8 @@ namespace gw2combat::utils {
         }
     }
     if (condition.depends_on_skill_off_cooldown) {
-        auto& skills_component = registry.get<component::skills_component>(source_entity);
-        auto skill_entity = skills_component.find_by(*condition.depends_on_skill_off_cooldown);
+        auto skill_entity = utils::get_skill_entity(
+            *condition.depends_on_skill_off_cooldown, source_entity, registry);
         bool is_satisfied = !registry.any_of<component::cooldown_component>(skill_entity);
         if (!is_satisfied) {
             return false;
@@ -210,14 +209,21 @@ namespace gw2combat::utils {
             }
         }
         if (condition.threshold->counter_value_subject_to_threshold) {
-            auto counter_entity = registry.get<component::counters_component>(entity).find_by(
-                *condition.threshold->counter_value_subject_to_threshold);
-            if (!counter_entity) {
+            bool found = false;
+            int counter_value;
+            for (auto&& [counter_entity, is_counter] :
+                 registry.view<component::is_counter>().each()) {
+                if (is_counter.counter_configuration.counter_key ==
+                    *condition.threshold->counter_value_subject_to_threshold) {
+                    found = true;
+                    counter_value = is_counter.value;
+                }
+            }
+            if (!found) {
                 throw std::runtime_error(
                     fmt::format("counter with name {} not found",
                                 *condition.threshold->counter_value_subject_to_threshold));
             }
-            int counter_value = registry.get<component::is_counter>(*counter_entity).value;
             if (!threshold_satisfied(counter_value)) {
                 return false;
             }

@@ -10,21 +10,6 @@
 
 namespace gw2combat::utils {
 
-constexpr static inline std::array BOONS{
-    actor::effect_t::AEGIS,
-    actor::effect_t::ALACRITY,
-    actor::effect_t::FURY,
-    actor::effect_t::MIGHT,
-    actor::effect_t::QUICKNESS,
-    actor::effect_t::RESOLUTION,
-    actor::effect_t::RESISTANCE,
-    actor::effect_t::PROTECTION,
-    actor::effect_t::REGENERATION,
-    actor::effect_t::VIGOR,
-    actor::effect_t::SWIFTNESS,
-    actor::effect_t::STABILITY,
-};
-
 [[nodiscard]] static inline actor::stacking_t get_effect_stacking_type(
     actor::effect_t effect_type) {
     switch (effect_type) {
@@ -132,7 +117,7 @@ constexpr static inline std::array BOONS{
         case actor::effect_t::POISON:
         case actor::effect_t::CONFUSION:
             return 1500;
-        case actor::effect_t::INVALID:
+        default:
             throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
@@ -190,10 +175,9 @@ constexpr static inline std::array BOONS{
         return (int)((double)base_duration * effective_condition_duration_multiplier);
     };
     auto calculate_boon_duration = [&](double special_boon_duration_multiplier = 1.0) {
-      double effective_boon_duration_multiplier = std::min(
-          2.0,
-          std::max(uniform_boon_duration_multiplier, special_boon_duration_multiplier));
-      return (int)((double)base_duration * effective_boon_duration_multiplier);
+        double effective_boon_duration_multiplier = std::min(
+            2.0, std::max(uniform_boon_duration_multiplier, special_boon_duration_multiplier));
+        return (int)((double)base_duration * effective_boon_duration_multiplier);
     };
 
     switch (effect_type) {
@@ -266,7 +250,7 @@ constexpr static inline std::array BOONS{
         case actor::effect_t::BINDING_BLADE:
             return base_duration;
 
-        case actor::effect_t::INVALID:
+        default:
             throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
@@ -338,7 +322,7 @@ constexpr static inline std::array BOONS{
         case actor::effect_t::WEAKNESS:
         case actor::effect_t::VULNERABILITY:
             return false;
-        case actor::effect_t::INVALID:
+        default:
             throw std::runtime_error("cannot deal with invalid effects!");
     }
 }
