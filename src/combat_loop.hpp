@@ -3,12 +3,14 @@
 
 #include "common.hpp"
 
+#include "configuration/encounter.hpp"
+
 namespace gw2combat {
 
 extern void tick(registry_t& registry);
 
-extern void local_combat_loop(const std::string& encounter_configuration_path);
-extern std::string server_combat_loop(const std::string& encounter_configuration);
+extern std::string combat_loop(const configuration::encounter_t& encounter_configuration,
+                               bool report_to_disk = false);
 
 }  // namespace gw2combat
 

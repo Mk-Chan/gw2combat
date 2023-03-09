@@ -9,7 +9,7 @@
             "name": "golem",
             "build_path": "resources/build-golem.json",
             "team": 2,
-            "audit_output_base_path": "."
+            "audit_base_path": "."
         }
     ]
 }

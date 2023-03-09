@@ -60,8 +60,12 @@ void audit_report_to_disk(registry_t& registry) {
     registry.view<component::audit_component>().each(
         [&](entity_t target_entity, const component::audit_component& audit_component) {
             if (audit_component.audit_base_path.empty()) {
-                throw std::runtime_error("audit base path is empty!");
+                spdlog::info("audit base empty for actor {}. skipping...",
+                             utils::get_entity_name(target_entity, registry));
+                return;
             }
+            spdlog::info("writing audit for actor {}...",
+                         utils::get_entity_name(target_entity, registry));
             std::ofstream audit_output_stream(audit_component.audit_base_path + "/" +
                                                   utils::get_entity_name(target_entity, registry) +
                                                   "-damage-audit.csv",

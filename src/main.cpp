@@ -1,6 +1,74 @@
-#include "argparse/argparse.hpp"
 #include "combat_loop.hpp"
 #include "server.hpp"
+
+#include "configuration/build.hpp"
+#include "configuration/encounter-local.hpp"
+#include "configuration/encounter.hpp"
+
+#include "utils/io_utils.hpp"
+
+#include "argparse/argparse.hpp"
+
+using namespace gw2combat;
+
+configuration::encounter_t convert_encounter(
+    const configuration::encounter_local_t& encounter_local) {
+    configuration::encounter_t converted_encounter;
+    for (auto&& actor : encounter_local.actors) {
+        auto build = utils::read<configuration::build_t>(actor.build_path);
+        configuration::rotation_t converted_rotation;
+        if (!actor.rotation_path.empty()) {
+            if (actor.rotation_path.ends_with(".json")) {
+                auto rotation = utils::read<configuration::rotation_t>(actor.rotation_path);
+                for (auto&& skill_cast : rotation.skill_casts) {
+                    converted_rotation.skill_casts.emplace_back(
+                        configuration::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+                }
+            } else if (actor.rotation_path.ends_with(".csv")) {
+                std::basic_ifstream<char> ifstream{actor.rotation_path, std::ios::in};
+
+                int cast_time_offset_ms = 0;
+                int line_num = -1;
+                for (std::string line; std::getline(ifstream, line); ++line_num) {
+                    if (line_num == -1) {
+                        continue;  // Skip first line (expected to be "rotation")
+                    }
+
+                    auto delimiter_pos = line.find(',');
+                    if (delimiter_pos == std::string::npos) {
+                        throw std::runtime_error(
+                            fmt::format("unable to read rotation. line_num: {}", line_num));
+                    }
+
+                    std::string skill_name = line.substr(0, delimiter_pos);
+                    std::string time_str = line.substr(delimiter_pos + 2);
+
+                    auto last_delimiter_pos = time_str.find(',');
+                    if (last_delimiter_pos == std::string::npos) {
+                        last_delimiter_pos = time_str.length();
+                    }
+                    last_delimiter_pos -= 6;
+
+                    int cast_time_ms =
+                        (int)(std::stod(time_str.substr(6, last_delimiter_pos - 1)) * 1'000);
+                    if (line_num == 0) {
+                        cast_time_offset_ms = -cast_time_ms;
+                    }
+                    converted_rotation.skill_casts.emplace_back(configuration::skill_cast_t{
+                        skill_name, (tick_t)(cast_time_ms + cast_time_offset_ms)});
+                }
+            }
+        }
+        converted_encounter.actors.emplace_back(configuration::actor_t{
+            .name = actor.name,
+            .build = build,
+            .rotation = converted_rotation,
+            .team = actor.team,
+            .audit_base_path = actor.audit_base_path,
+        });
+    }
+    return converted_encounter;
+}
 
 int main(int argc, char** argv) {
     argparse::ArgumentParser parser{"gw2combat"};
@@ -21,15 +89,17 @@ int main(int argc, char** argv) {
 
     bool server_mode = parser.is_used("--server");
     if (!server_mode) {
-        const auto& encounter = parser.get<std::string>("--encounter");
-        gw2combat::local_combat_loop(encounter);
+        const auto& encounter_path = parser.get<std::string>("--encounter");
+        auto encounter_local = utils::read<configuration::encounter_local_t>(encounter_path);
+        auto encounter = convert_encounter(encounter_local);
+        combat_loop(encounter, true);
     } else {
         const auto& server_configuration = parser.get<std::string>("--server");
         auto delimiter_index = server_configuration.find(':');
         const std::string& hostname = server_configuration.substr(0, delimiter_index);
         int port = std::stoi(
             server_configuration.substr(delimiter_index + 1, server_configuration.size()));
-        gw2combat::start_server(hostname, port);
+        start_server(hostname, port);
     }
     return 0;
 }

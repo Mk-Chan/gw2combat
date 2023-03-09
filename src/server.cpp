@@ -21,8 +21,8 @@ asio::awaitable<void> request_handler(tcp::socket socket) {
             std::string payload;
             std::getline(istream, payload);
 
-            std::string encounter_configuration{payload};
-            auto simulation_result_json = server_combat_loop(encounter_configuration);
+            auto encounter = nlohmann::json::parse(payload).get<configuration::encounter_t>();
+            auto simulation_result_json = combat_loop(encounter);
             co_await asio::async_write(
                 socket,
                 asio::buffer(simulation_result_json, simulation_result_json.size()),
