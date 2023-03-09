@@ -16,9 +16,43 @@ void audit_damage(registry_t& registry) {
     registry.view<component::incoming_damage, component::audit_component>().each(
         [&](const component::incoming_damage& incoming_damage,
             component::audit_component& audit_component) {
-            std::copy(incoming_damage.incoming_damage_events.begin(),
-                      incoming_damage.incoming_damage_events.end(),
-                      std::back_inserter(audit_component.incoming_damage_events));
+            for (auto& incoming_damage_event : incoming_damage.incoming_damage_events) {
+                auto damage_type = [&]() {
+                    if (incoming_damage_event.effect != actor::effect_t::INVALID) {
+                        switch (incoming_damage_event.effect) {
+                            case actor::effect_t::BURNING:
+                                return component::audit_damage_event_t::damage_type_t::BURNING;
+                            case actor::effect_t::BLEEDING:
+                                return component::audit_damage_event_t::damage_type_t::BLEEDING;
+                            case actor::effect_t::TORMENT:
+                                return component::audit_damage_event_t::damage_type_t::
+                                    TORMENT_STATIONARY;
+                            case actor::effect_t::POISON:
+                                return component::audit_damage_event_t::damage_type_t::POISON;
+                            case actor::effect_t::CONFUSION:
+                                return component::audit_damage_event_t::damage_type_t::CONFUSION;
+                            case actor::effect_t::BINDING_BLADE:
+                                return component::audit_damage_event_t::damage_type_t::
+                                    BINDING_BLADE;
+                            default:
+                                throw std::runtime_error("Unknown source for damage!");
+                        }
+                    } else if (!incoming_damage_event.skill.empty()) {
+                        return component::audit_damage_event_t::damage_type_t::STRIKE;
+                    } else {
+                        throw std::runtime_error("Unknown source for damage!");
+                    }
+                }();
+                auto source_skill = incoming_damage_event.skill.empty()
+                                        ? "unknown_skill"
+                                        : incoming_damage_event.skill;
+                audit_component.events.emplace_back(component::audit_damage_event_t{
+                    .time_ms = incoming_damage_event.tick,
+                    .actor = utils::get_entity_name(incoming_damage_event.source_entity, registry),
+                    .source_skill = source_skill,
+                    .damage_type = damage_type,
+                    .damage = static_cast<int>(incoming_damage_event.value)});
+            }
         });
 }
 
@@ -32,33 +66,21 @@ void audit_report_to_disk(registry_t& registry) {
                                                   utils::get_entity_name(target_entity, registry) +
                                                   "-damage-audit.csv",
                                               std::ios::trunc);
-            audit_output_stream << "target|tick|source_actor|damage_source|damage" << std::endl;
-            for (auto& incoming_damage_event : audit_component.incoming_damage_events) {
-                std::string damage_source = [&]() {
-                    if (incoming_damage_event.effect != actor::effect_t::INVALID) {
-                        return utils::to_string(incoming_damage_event.effect);
-                    } else if (!incoming_damage_event.skill.empty()) {
-                        return incoming_damage_event.skill;
-                    } else {
-                        throw std::runtime_error("Unknown source for damage!");
-                    }
-                }();
-
-                // spdlog::info("[{}] AUDIT: {} received {} damage due to {} by {} at tick {}",
-                //              utils::get_current_tick(registry),
-                //              utils::get_entity_name(target_entity, registry),
-                //              incoming_damage_event.value,
-                //              damage_source,
-                //              utils::get_entity_name(incoming_damage_event.source_entity,
-                //              registry), incoming_damage_event.tick);
+            audit_output_stream << "target|time_ms|actor|source_skill|damage_type|damage"
+                                << std::endl;
+            for (auto& event : audit_component.events) {
+                if (!std::holds_alternative<component::audit_damage_event_t>(event)) {
+                    continue;
+                }
+                auto& incoming_damage_event = std::get<component::audit_damage_event_t>(event);
 
                 audit_output_stream
                     << utils::get_entity_name(target_entity, registry) << "|"
-                    << incoming_damage_event.tick << "|"
-                    << utils::get_entity_name(incoming_damage_event.source_entity, registry) << "|"
-                    << damage_source << "|" << (int)incoming_damage_event.value << std::endl;
+                    << incoming_damage_event.time_ms << "|" << incoming_damage_event.actor << "|"
+                    << incoming_damage_event.source_skill << "|"
+                    << nlohmann::json{incoming_damage_event.damage_type}[0].get<std::string>()
+                    << "|" << incoming_damage_event.damage << std::endl;
             }
-            //spdlog::info("{}", utils::to_string(get_audit_report(registry)));
         });
 }
 
@@ -71,42 +93,9 @@ audit_report_t get_audit_report(registry_t& registry) {
             if (team.id != 2 || !result.events.empty()) {
                 return;
             }
-            for (auto& incoming_damage_event : audit_component.incoming_damage_events) {
-                auto damage_type = [&]() {
-                    if (incoming_damage_event.effect != actor::effect_t::INVALID) {
-                        switch (incoming_damage_event.effect) {
-                            case actor::effect_t::BURNING:
-                                return audit_report_t::damage_event_t::damage_type_t::BURNING;
-                            case actor::effect_t::BLEEDING:
-                                return audit_report_t::damage_event_t::damage_type_t::BLEEDING;
-                            case actor::effect_t::TORMENT:
-                                return audit_report_t::damage_event_t::damage_type_t::
-                                    TORMENT_STATIONARY;
-                            case actor::effect_t::POISON:
-                                return audit_report_t::damage_event_t::damage_type_t::POISON;
-                            case actor::effect_t::CONFUSION:
-                                return audit_report_t::damage_event_t::damage_type_t::CONFUSION;
-                            case actor::effect_t::BINDING_BLADE:
-                                return audit_report_t::damage_event_t::damage_type_t::BINDING_BLADE;
-                            default:
-                                throw std::runtime_error("Unknown source for damage!");
-                        }
-                    } else if (!incoming_damage_event.skill.empty()) {
-                        return audit_report_t::damage_event_t::damage_type_t::STRIKE;
-                    } else {
-                        throw std::runtime_error("Unknown source for damage!");
-                    }
-                }();
-                auto source_skill = incoming_damage_event.skill.empty()
-                                        ? "unknown_skill"
-                                        : incoming_damage_event.skill;
-                result.events.emplace_back(audit_report_t::damage_event_t{
-                    .time_ms = incoming_damage_event.tick,
-                    .actor = utils::get_entity_name(incoming_damage_event.source_entity, registry),
-                    .source_skill = source_skill,
-                    .damage_type = damage_type,
-                    .damage = static_cast<int>(incoming_damage_event.value)});
-            }
+            std::copy(audit_component.events.begin(),
+                      audit_component.events.end(),
+                      std::back_inserter(result.events));
             auto& combat_stats = registry.get<component::combat_stats>(entity);
             result.remaining_health = combat_stats.health;
         });

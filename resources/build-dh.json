@@ -56,7 +56,8 @@
             "reset_at_value": 5,
             "increment_conditions": [
                 {
-                    "only_applies_on_strikes": true
+                    "only_applies_on_strikes": true,
+                    "depends_on_skill_off_cooldown": "Spear of Justice"
                 }
             ]
         }

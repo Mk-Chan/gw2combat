@@ -19,6 +19,7 @@ struct skill_t {
     actor::weapon_type weapon_type = actor::weapon_type::INVALID;
     actor::bundle_t required_bundle;
 
+    double flat_damage = 0.0;
     double damage_coefficient = 0.0;
     int ammo = 1;
     int recharge_duration = 0;
@@ -51,6 +52,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 skill_key,
                                                 weapon_type,
                                                 required_bundle,
+                                                flat_damage,
                                                 damage_coefficient,
                                                 ammo,
                                                 recharge_duration,
