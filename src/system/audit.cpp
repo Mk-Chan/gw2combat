@@ -60,7 +60,7 @@ void audit_report_to_disk(registry_t& registry) {
     registry.view<component::audit_component>().each(
         [&](entity_t target_entity, const component::audit_component& audit_component) {
             if (audit_component.audit_base_path.empty()) {
-                spdlog::info("audit base empty for actor {}. skipping...",
+                spdlog::info("audit base path empty for actor {}. skipping...",
                              utils::get_entity_name(target_entity, registry));
                 return;
             }
