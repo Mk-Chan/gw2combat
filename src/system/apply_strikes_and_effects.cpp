@@ -125,10 +125,16 @@ void apply_strikes(registry_t& registry) {
                 spdlog::info(
                     "[{}] skill {} pow {} this_dmg {} total_incoming_dmg {}",
                     utils::get_current_tick(registry),
-                    utils::to_string(skill_configuration.skill_key),
+                    skill_configuration.skill_key,
                     strike_source_relative_attributes.get(target_entity, actor::attribute_t::POWER),
                     damage.value,
                     total_incoming_damage);
+
+                // NOTE: Extreme hack to avoid coding a whole new type of damage just for food.
+                //       Implement properly if there are more such instances!
+                if (skill_configuration.skill_key == "Lifesteal Proc") {
+                    return;
+                }
 
                 registry.view<component::is_counter>().each([&](entity_t counter_entity,
                                                                 component::is_counter& is_counter) {

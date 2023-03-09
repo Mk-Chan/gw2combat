@@ -99,6 +99,20 @@
                     "attribute": "ferocity",
                     "addend": 70
                 }
+            ],
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "upper_bound_exclusive",
+                            "threshold_value": 66,
+                            "generate_random_number_subject_to_threshold": true
+                        },
+                        "only_applies_on_strikes": true,
+                        "depends_on_skill_off_cooldown": "Lifesteal Proc"
+                    },
+                    "skill_key": "Lifesteal Proc"
+                }
             ]
         }, {
             "unique_effect_key": "Mighty Infusions",
@@ -275,6 +289,15 @@
             "skill_key": "Weapon Swap",
             "cast_duration": [100, 100],
             "cooldown": [10000, 10000]
+        }, {
+            "NOTE": "This is a hardcoded skill name. Change only flat_damage and nothing else based on traits",
+            "skill_key": "Lifesteal Proc",
+            "weapon_type": "empty_handed",
+            "flat_damage": 325,
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
+            "cooldown": [2000, 2000],
+            "can_critical_strike": false
         }, {
             "skill_key": "Lightning Strike",
             "weapon_type": "empty_handed",

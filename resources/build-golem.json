@@ -2,7 +2,7 @@
     "base_class": "invalid",
     "profession": "invalid",
     "attributes": [
-        ["max_health", 3984725],
+        ["max_health", 4000000],
         ["armor", 2597]
     ],
     "permanent_effects": [
