@@ -92,6 +92,7 @@ void tick(registry_t& registry) {
     }
 
     system::audit_damage(registry);
+    system::audit_skill_casts(registry);
 
     system::update_combat_stats(registry);
 
@@ -103,7 +104,7 @@ void tick(registry_t& registry) {
     clear_temporary_components(registry);
 }
 
-std::string combat_loop(const configuration::encounter_t& encounter, bool report_to_disk) {
+std::string combat_loop(const configuration::encounter_t& encounter) {
     registry_t registry;
     system::setup_server_encounter(registry, encounter);
 
@@ -141,9 +142,6 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool report
         ++current_tick;
     }
 end_of_combat_loop:
-    if (report_to_disk) {
-        system::audit_report_to_disk(registry);
-    }
     return nlohmann::json{system::get_audit_report(registry)}[0].dump();
 }
 

@@ -31,9 +31,7 @@ void setup_server_encounter(registry_t& registry, const configuration::encounter
         auto actor_entity = registry.create();
         registry.ctx().emplace_as<std::string>(actor_entity, actor.name);
         registry.emplace<component::is_actor>(actor_entity);
-        registry.emplace<component::audit_component>(
-            actor_entity,
-            component::audit_component{.audit_base_path = actor.audit_base_path, .events = {}});
+        registry.emplace<component::audit_component>(actor_entity);
         registry.emplace<component::team>(actor_entity, actor.team);
         registry.emplace<component::base_class_component>(actor_entity, build.base_class);
         registry.emplace<component::profession_component>(actor_entity, build.profession);
