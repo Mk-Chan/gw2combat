@@ -10,7 +10,10 @@ namespace gw2combat::system {
 struct audit_report_t {
     int remaining_health = -1;
     // NOTE: Don't forget to update to_json/from_json when adding more variants
-    std::vector<std::variant<component::audit_damage_event_t>> events;
+    std::vector<std::variant<component::audit_damage_event_t,
+                             component::audit_skill_cast_begin_event_t,
+                             component::audit_skill_cast_end_event_t>>
+        events;
 };
 
 extern void audit_damage(registry_t& registry);
@@ -25,6 +28,12 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const audit_report_t
             if (std::holds_alternative<component::audit_damage_event_t>(event)) {
                 nlohmann_json_j["events"].emplace_back(
                     std::get<component::audit_damage_event_t>(event));
+            } else if (std::holds_alternative<component::audit_skill_cast_begin_event_t>(event)) {
+                nlohmann_json_j["events"].emplace_back(
+                    std::get<component::audit_skill_cast_begin_event_t>(event));
+            } else if (std::holds_alternative<component::audit_skill_cast_end_event_t>(event)) {
+                nlohmann_json_j["events"].emplace_back(
+                    std::get<component::audit_skill_cast_end_event_t>(event));
             }
         });
 }
@@ -35,17 +44,35 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j,
     nlohmann_json_t.remaining_health =
         nlohmann_json_j.value("remaining_health", nlohmann_json_default_obj.remaining_health);
 
-    std::vector<std::variant<component::audit_damage_event_t>> const* events_ptr;
+    std::vector<std::variant<component::audit_damage_event_t,
+                             component::audit_skill_cast_begin_event_t,
+                             component::audit_skill_cast_end_event_t>> const* events_ptr;
     if (nlohmann_json_j.contains("events")) {
         events_ptr =
-            (std::vector<std::variant<component::audit_damage_event_t>> const*)(&nlohmann_json_j.at(
-                "events"));
+            (std::vector<
+                std::variant<component::audit_damage_event_t,
+                             component::audit_skill_cast_begin_event_t,
+                             component::audit_skill_cast_end_event_t>> const*)(&nlohmann_json_j
+                                                                                    .at("events"));
     } else {
         events_ptr = &nlohmann_json_default_obj.events;
     }
     std::for_each(events_ptr->begin(), events_ptr->end(), [&](const auto& event) {
         try {
             nlohmann_json_t.events.emplace_back(std::get<component::audit_damage_event_t>(event));
+            return;
+        } catch (std::exception& ignored) {
+        }
+        try {
+            nlohmann_json_t.events.emplace_back(
+                std::get<component::audit_skill_cast_begin_event_t>(event));
+            return;
+        } catch (std::exception& ignored) {
+        }
+        try {
+            nlohmann_json_t.events.emplace_back(
+                std::get<component::audit_skill_cast_end_event_t>(event));
+            return;
         } catch (std::exception& ignored) {
         }
     });
