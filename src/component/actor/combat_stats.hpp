@@ -9,6 +9,8 @@ struct combat_stats {
     int health;
 };
 
+struct combat_stats_updated {};
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(combat_stats, health)
 
 }  // namespace gw2combat::component

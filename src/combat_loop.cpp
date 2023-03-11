@@ -1,5 +1,6 @@
 #include "combat_loop.hpp"
 
+#include "component/actor/combat_stats.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
@@ -23,7 +24,6 @@
 #include "system/temporal.hpp"
 
 #include "utils/entity_utils.hpp"
-#include "utils/io_utils.hpp"
 
 namespace gw2combat {
 
@@ -53,7 +53,8 @@ void clear_temporary_components(registry_t& registry) {
                    component::outgoing_effects_component,
                    component::incoming_strikes_component,
                    component::incoming_effects_component,
-                   component::incoming_damage>();
+                   component::incoming_damage,
+                   component::combat_stats_updated>();
     if (registry.any_of<component::entity_was_destroyed>(utils::get_singleton_entity())) {
         clean_children_of_destroyed_owners(registry);
         registry.remove<component::entity_was_destroyed>(utils::get_singleton_entity());

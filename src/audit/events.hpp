@@ -9,10 +9,11 @@ namespace gw2combat::audit {
 
 enum class event_type_t
 {
-    DAMAGE_EVENT,
     SKILL_CAST_BEGIN_EVENT,
     SKILL_CAST_END_EVENT,
     EFFECT_APPLICATION_EVENT,
+    DAMAGE_EVENT,
+    COMBAT_STATS_UPDATE_EVENT,
 };
 
 struct skill_cast_begin_event_t {
@@ -34,8 +35,8 @@ struct effect_application_event_t {
     std::string source_skill;
     std::string effect;
     std::string unique_effect;
-    int num_stacks = -1;
-    int duration_ms = -1;
+    int num_stacks = 0;
+    int duration_ms = 0;
 };
 
 struct damage_event_t {
@@ -62,14 +63,21 @@ struct damage_event_t {
     int damage = 0;
 };
 
-NLOHMANN_JSON_SERIALIZE_ENUM(event_type_t,
-                             {
-                                 {event_type_t::DAMAGE_EVENT, "damage_event"},
-                                 {event_type_t::SKILL_CAST_BEGIN_EVENT, "skill_cast_begin_event"},
-                                 {event_type_t::SKILL_CAST_END_EVENT, "skill_cast_end_event"},
-                                 {event_type_t::EFFECT_APPLICATION_EVENT,
-                                  "effect_application_event"},
-                             })
+struct combat_stats_update_event_t {
+    event_type_t event_type = event_type_t::COMBAT_STATS_UPDATE_EVENT;
+    tick_t time_ms = 0;
+    int updated_health = 0;
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(
+    event_type_t,
+    {
+        {event_type_t::SKILL_CAST_BEGIN_EVENT, "skill_cast_begin_event"},
+        {event_type_t::SKILL_CAST_END_EVENT, "skill_cast_end_event"},
+        {event_type_t::EFFECT_APPLICATION_EVENT, "effect_application_event"},
+        {event_type_t::DAMAGE_EVENT, "damage_event"},
+        {event_type_t::COMBAT_STATS_UPDATE_EVENT, "combat_stats_update_event"},
+    })
 NLOHMANN_JSON_SERIALIZE_ENUM(damage_event_t::damage_type_t,
                              {
                                  {damage_event_t::damage_type_t::INVALID, "invalid"},
@@ -106,6 +114,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(effect_application_event_t,
                                                 unique_effect,
                                                 num_stacks,
                                                 duration_ms)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(combat_stats_update_event_t,
+                                                event_type,
+                                                time_ms,
+                                                updated_health)
 
 }  // namespace gw2combat::audit
 

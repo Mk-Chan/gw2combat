@@ -47,6 +47,7 @@ void update_combat_stats(registry_t& registry) {
             if (combat_stats.health <= 0) {
                 registry.emplace<component::is_downstate>(entity);
             }
+            registry.emplace_or_replace<component::combat_stats_updated>(entity);
         });
     if (health_updated) {
         utils::log_component<component::combat_stats>(registry);

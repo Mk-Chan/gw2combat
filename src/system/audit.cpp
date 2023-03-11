@@ -13,6 +13,20 @@
 
 namespace gw2combat::system {
 
+void audit_combat_stats_update(registry_t& registry) {
+    registry
+        .view<component::combat_stats_updated,
+              component::combat_stats,
+              component::audit_component>()
+        .each([&](const component::combat_stats& combat_stats,
+                  component::audit_component& audit_component) {
+            audit_component.events.emplace_back(audit::combat_stats_update_event_t{
+                .time_ms = utils::get_current_tick(registry),
+                .updated_health = combat_stats.health,
+            });
+        });
+}
+
 void audit_effect_applications(registry_t& registry) {
     registry.view<component::incoming_effects_component, component::audit_component>().each(
         [&](const component::incoming_effects_component& incoming_effects_component,
@@ -115,19 +129,17 @@ void audit(registry_t& registry) {
     audit_skill_casts(registry);
     audit_effect_applications(registry);
     audit_damage(registry);
+    audit_combat_stats_update(registry);
 }
 
 audit::report_t get_audit_report(registry_t& registry) {
     audit::report_t audit_report;
     registry.view<component::audit_component>().each(
         [&](entity_t actor_entity, const component::audit_component& audit_component) {
-            auto& combat_stats = registry.get<component::combat_stats>(actor_entity);
-            audit::actor_report_t actor_report{
+            audit_report.actors.emplace_back(audit::actor_report_t{
                 .actor = utils::get_entity_name(actor_entity, registry),
-                .remaining_health = combat_stats.health,
                 .events = audit_component.events,
-            };
-            audit_report.actors.emplace_back(actor_report);
+            });
         });
     return audit_report;
 }
