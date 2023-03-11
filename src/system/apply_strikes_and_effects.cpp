@@ -133,7 +133,7 @@ void apply_strikes(registry_t& registry) {
                 // NOTE: Extreme hack to avoid coding a whole new type of damage just for food.
                 //       Implement properly if there are more such instances!
                 if (skill_configuration.skill_key == "Lifesteal Proc") {
-                    return;
+                    continue;
                 }
 
                 registry.view<component::is_counter>().each([&](entity_t counter_entity,
