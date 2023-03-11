@@ -273,7 +273,7 @@
                 }
             ]
         }, {
-            "unique_effect_key": "Sic 'Em! Modifier",
+            "unique_effect_key": "Sic 'Em! Tracker",
             "attribute_modifiers": [
                 {
                     "condition": {
@@ -281,6 +281,23 @@
                     },
                     "attribute": "outgoing_strike_damage_multiplier",
                     "multiplier": 1.25
+                }
+            ]
+        }, {
+            "unique_effect_key": "Twice as Vicious Tracker",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "unique_effect_on_source": "Twice as Vicious Effect"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.10
+                }, {
+                    "condition": {
+                        "unique_effect_on_source": "Twice as Vicious Effect"
+                    },
+                    "attribute": "outgoing_condition_damage_multiplier_add_group",
+                    "addend": 0.10
                 }
             ]
         }, {
@@ -365,18 +382,7 @@
             "on_strike_effect_applications": [
                 {
                     "unique_effect": {
-                        "unique_effect_key": "Twice as Vicious Effect",
-                        "max_considered_stacks": 1,
-                        "attribute_modifiers": [
-                            {
-                                "attribute": "outgoing_strike_damage_multiplier_add_group",
-                                "addend": 0.10
-                            },
-                            {
-                                "attribute": "outgoing_condition_damage_multiplier_add_group",
-                                "addend": 0.10
-                            }
-                        ]
+                        "unique_effect_key": "Twice as Vicious Effect"
                     },
                     "base_duration_ms": 10000,
                     "direction": "SELF"
@@ -444,35 +450,40 @@
             ],
             "cooldown": [8000, 6400]
         }, {
-            "skill_key": "Path of Scars",
+            "skill_key": "Path of Scars Returning Hit",
             "weapon_type": "axe",
             "damage_coefficient": 1.2,
-            "cast_duration": [560, 440],
-            "strike_on_tick_list": [
-                [560, 560],
-                [440, 440]
-            ],
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
             "on_strike_effect_applications": [
                 {
                     "unique_effect": {
-                        "unique_effect_key": "Twice as Vicious Effect",
-                        "max_considered_stacks": 1,
-                        "attribute_modifiers": [
-                            {
-                                "attribute": "outgoing_strike_damage_multiplier_add_group",
-                                "addend": 0.10
-                            },
-                            {
-                                "attribute": "outgoing_condition_damage_multiplier_add_group",
-                                "addend": 0.10
-                            }
-                        ]
+                        "unique_effect_key": "Twice as Vicious Effect"
                     },
                     "base_duration_ms": 10000,
                     "direction": "SELF"
                 }
             ],
-            "cooldown": [12000, 9600]
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "Path of Scars",
+            "weapon_type": "axe",
+            "damage_coefficient": 1.2,
+            "cast_duration": [560, 440],
+            "strike_on_tick_list": [[560], [440]],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Twice as Vicious Effect"
+                    },
+                    "base_duration_ms": 10000,
+                    "direction": "SELF"
+                }
+            ],
+            "cooldown": [12000, 9600],
+            "child_skill_keys": [
+                "Path of Scars Returning Hit"
+            ]
         }, {
             "skill_key": "Whirling Defense",
             "weapon_type": "axe",
