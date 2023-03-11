@@ -81,14 +81,14 @@ static inline std::unordered_map<weapon_type, std::array<double, 2>>
 
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_set,
                              {
-                                 {weapon_set::INVALID, "Invalid"},
+                                 {weapon_set::INVALID, "invalid"},
 
                                  {weapon_set::SET_1, "set_1"},
                                  {weapon_set::SET_2, "set_2"},
                              })
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_position,
                              {
-                                 {weapon_position::INVALID, "Invalid"},
+                                 {weapon_position::INVALID, "invalid"},
 
                                  {weapon_position::UNIVERSAL, "universal"},
                                  {weapon_position::MAIN_HAND, "main_hand"},
@@ -97,7 +97,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_position,
                              })
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
                              {
-                                 {weapon_type::INVALID, "Invalid"},
+                                 {weapon_type::INVALID, "invalid"},
 
                                  {weapon_type::MAIN_HAND, "main_hand"},
 

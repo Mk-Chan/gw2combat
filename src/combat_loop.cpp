@@ -91,10 +91,9 @@ void tick(registry_t& registry) {
         system::apply_condition_damage(registry);
     }
 
-    system::audit_damage(registry);
-    system::audit_skill_casts(registry);
-
     system::update_combat_stats(registry);
+
+    system::audit(registry);
 
     system::reset_counters(registry);
     system::cleanup_expired_components(registry);

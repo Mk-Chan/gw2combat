@@ -6,11 +6,36 @@
 #include "component/actor/combat_stats.hpp"
 #include "component/actor/finished_casting_skill.hpp"
 #include "component/audit/audit_component.hpp"
+#include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 
 namespace gw2combat::system {
+
+void audit_effect_applications(registry_t& registry) {
+    registry.view<component::incoming_effects_component, component::audit_component>().each(
+        [&](const component::incoming_effects_component& incoming_effects_component,
+            component::audit_component& audit_component) {
+            for (auto&& [source_entity, effect_application] :
+                 incoming_effects_component.effect_applications) {
+                auto source_actor =
+                    utils::get_entity_name(utils::get_owner(source_entity, registry), registry);
+                auto effect = effect_application.effect == actor::effect_t::INVALID
+                                  ? ""
+                                  : nlohmann::json{effect_application.effect}[0].get<std::string>();
+                audit_component.events.emplace_back(audit::effect_application_event_t{
+                    .time_ms = utils::get_current_tick(registry),
+                    .source_actor = source_actor,
+                    .source_skill = effect_application.source_skill,
+                    .effect = effect,
+                    .unique_effect = effect_application.unique_effect.unique_effect_key,
+                    .num_stacks = effect_application.num_stacks,
+                    .duration_ms = effect_application.base_duration_ms,
+                });
+            }
+        });
+}
 
 void audit_skill_casts(registry_t& registry) {
     registry
@@ -84,6 +109,12 @@ void audit_damage(registry_t& registry) {
                 });
             }
         });
+}
+
+void audit(registry_t& registry) {
+    audit_skill_casts(registry);
+    audit_effect_applications(registry);
+    audit_damage(registry);
 }
 
 audit::report_t get_audit_report(registry_t& registry) {

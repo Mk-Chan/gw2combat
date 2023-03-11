@@ -7,9 +7,7 @@
 
 namespace gw2combat::system {
 
-extern void audit_skill_casts(registry_t& registry);
-extern void audit_damage(registry_t& registry);
-
+extern void audit(registry_t& registry);
 extern audit::report_t get_audit_report(registry_t& registry);
 
 }  // namespace gw2combat::system

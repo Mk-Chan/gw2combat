@@ -31,7 +31,7 @@ struct effect_application_t {
 
 NLOHMANN_JSON_SERIALIZE_ENUM(direction_t,
                              {
-                                 {direction_t::INVALID, "Invalid"},
+                                 {direction_t::INVALID, "invalid"},
 
                                  {direction_t::SELF, "SELF"},
                                  {direction_t::TEAM, "TEAM"},
