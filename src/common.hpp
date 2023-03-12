@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <string>
+#include <variant>
 
 #include "entt/entt.hpp"
 #include "nlohmann/json.hpp"

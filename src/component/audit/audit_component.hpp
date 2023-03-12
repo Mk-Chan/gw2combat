@@ -3,8 +3,6 @@
 
 #include "common.hpp"
 
-#include <variant>
-
 #include "audit/events.hpp"
 
 namespace gw2combat::component {
