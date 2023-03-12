@@ -9,6 +9,7 @@
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
+#include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
@@ -30,6 +31,8 @@ namespace gw2combat {
 
 void clear_temporary_components(registry_t& registry) {
     registry.clear<component::actor_created,
+                   component::equipped_bundle,
+                   component::dropped_bundle,
                    component::relative_attributes,
                    component::incoming_damage,
                    component::animation_expired,

@@ -103,25 +103,24 @@ void buffer_condition_damage(registry_t& registry,
         .source_skill = registry.get<component::source_skill>(effect_entity).skill,
         .damage = effective_condition_damage});
 
-    double total_buffered_damage = std::accumulate(
-        buffered_condition_damage.condition_damage_buffer.begin(),
-        buffered_condition_damage.condition_damage_buffer.end(),
-        0.0,
-        [](double accumulated, const component::condition_damage_t& condition_damage) {
-            return accumulated + condition_damage.damage;
-        });
-
-    spdlog::info(
-        "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} "
-        "buffered_dmg {}",
-        utils::get_current_tick(registry),
-        utils::get_entity_name(target_entity, registry),
-        utils::to_string(this_effect),
-        base_condition_damage_multiplier,
-        damaging_condition_progress_multiplier,
-        base_condition_damage,
-        effective_condition_damage,
-        total_buffered_damage);
+    // double total_buffered_damage = std::accumulate(
+    //     buffered_condition_damage.condition_damage_buffer.begin(),
+    //     buffered_condition_damage.condition_damage_buffer.end(),
+    //     0.0,
+    //     [](double accumulated, const component::condition_damage_t& condition_damage) {
+    //         return accumulated + condition_damage.damage;
+    //     });
+    //  spdlog::info(
+    //      "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} "
+    //      "buffered_dmg {}",
+    //      utils::get_current_tick(registry),
+    //      utils::get_entity_name(target_entity, registry),
+    //      utils::to_string(this_effect),
+    //      base_condition_damage_multiplier,
+    //      damaging_condition_progress_multiplier,
+    //      base_condition_damage,
+    //      effective_condition_damage,
+    //      total_buffered_damage);
 }
 
 void buffer_condition_damage(registry_t& registry, std::optional<entity_t> specific_effect_entity) {

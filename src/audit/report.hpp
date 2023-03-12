@@ -11,10 +11,13 @@ struct report_t {
     std::vector<std::variant<actor_created_event_t,
                              skill_cast_begin_event_t,
                              skill_cast_end_event_t,
+                             equipped_bundle_event_t,
+                             dropped_bundle_event_t,
                              effect_application_event_t,
                              damage_event_t,
                              combat_stats_update_event_t,
-                             effect_expired_event_t>>
+                             effect_expired_event_t,
+                             actor_downstate_event_t>>
         events;
 };
 

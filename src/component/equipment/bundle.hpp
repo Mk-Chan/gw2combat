@@ -9,10 +9,11 @@ namespace gw2combat::component {
 
 struct bundle_component {
     actor::bundle_t name;
+};
 
-    [[nodiscard]] inline bool operator==(const bundle_component& rhs) const {
-        return name == rhs.name;
-    }
+struct equipped_bundle {};
+struct dropped_bundle {
+    actor::bundle_t name;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(bundle_component, name)

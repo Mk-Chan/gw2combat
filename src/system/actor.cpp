@@ -49,9 +49,9 @@ void update_combat_stats(registry_t& registry) {
             }
             registry.emplace_or_replace<component::combat_stats_updated>(entity);
         });
-    if (health_updated) {
-        utils::log_component<component::combat_stats>(registry);
-    }
+    // if (health_updated) {
+    //     utils::log_component<component::combat_stats>(registry);
+    // }
 }
 
 void reset_counters(registry_t& registry) {

@@ -156,8 +156,9 @@ void perform_skills(registry_t& registry) {
                 .skill_configuration;
 
         if (!skill_configuration.equip_bundle.empty()) {
-            registry.emplace_or_replace<component::bundle_component>(
+            registry.emplace<component::bundle_component>(
                 actor_entity, component::bundle_component{skill_configuration.equip_bundle});
+            registry.emplace_or_replace<component::equipped_bundle>(actor_entity);
             spdlog::info("[{}] {}: equipped bundle {}",
                          utils::get_current_tick(registry),
                          utils::get_entity_name(actor_entity, registry),
@@ -165,11 +166,13 @@ void perform_skills(registry_t& registry) {
         } else if (skill_configuration.skill_key == "Weapon Swap") {
             if (auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
                 bundle_ptr) {
+                registry.emplace_or_replace<component::dropped_bundle>(actor_entity,
+                                                                       bundle_ptr->name);
+                registry.remove<component::bundle_component>(actor_entity);
                 spdlog::info("[{}] {}: dropped bundle {}",
                              utils::get_current_tick(registry),
                              utils::get_entity_name(actor_entity, registry),
                              bundle_ptr->name);
-                registry.remove<component::bundle_component>(actor_entity);
             } else {
                 if (!registry.any_of<component::current_weapon_set>(actor_entity)) {
                     throw std::runtime_error("no equipped_weapon_set on entity");

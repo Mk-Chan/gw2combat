@@ -6,6 +6,7 @@
 #include "component/actor/combat_stats.hpp"
 #include "component/actor/finished_casting_skill.hpp"
 #include "component/actor/is_actor.hpp"
+#include "component/actor/is_downstate.hpp"
 #include "component/audit/audit_component.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
@@ -13,13 +14,43 @@
 #include "component/effect/is_unique_effect.hpp"
 #include "component/effect/source_actor.hpp"
 #include "component/effect/source_skill.hpp"
+#include "component/equipment/bundle.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/duration_component.hpp"
 
 namespace gw2combat::system {
 
-void audit_effect_expirations(registry_t& registry) {
+void audit_bundles(registry_t& registry) {
+    auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
+    registry.view<component::equipped_bundle>().each([&](entity_t actor_entity) {
+        audit_component.events.emplace_back(audit::equipped_bundle_event_t{
+            .time_ms = utils::get_current_tick(registry),
+            .actor = utils::get_entity_name(actor_entity, registry),
+            .bundle = registry.get<component::bundle_component>(actor_entity).name,
+        });
+    });
+    registry.view<component::dropped_bundle>().each(
+        [&](entity_t actor_entity, const component::dropped_bundle& dropped_bundle) {
+            audit_component.events.emplace_back(audit::dropped_bundle_event_t{
+                .time_ms = utils::get_current_tick(registry),
+                .actor = utils::get_entity_name(actor_entity, registry),
+                .bundle = dropped_bundle.name,
+            });
+        });
+}
+
+void audit_actor_downstate(registry_t& registry) {
+    auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
+    registry.view<component::is_downstate>().each([&](entity_t actor_entity) {
+        audit_component.events.emplace_back(audit::actor_downstate_event_t{
+            .time_ms = utils::get_current_tick(registry),
+            .actor = utils::get_entity_name(actor_entity, registry),
+        });
+    });
+}
+
+void audit_effect_expiration(registry_t& registry) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
     registry.view<component::duration_expired>().each([&](entity_t entity) {
         auto actor_entity = utils::get_owner(entity, registry);
@@ -173,7 +204,8 @@ void audit(registry_t& registry) {
     audit_effect_applications(registry);
     audit_damage(registry);
     audit_combat_stats_update(registry);
-    audit_effect_expirations(registry);
+    audit_effect_expiration(registry);
+    audit_actor_downstate(registry);
 }
 
 audit::report_t get_audit_report(registry_t& registry) {
