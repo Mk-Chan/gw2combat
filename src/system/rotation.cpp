@@ -12,6 +12,7 @@
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 
+#include "component/lifecycle/destroy_entity.hpp"
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
 #include "utils/entity_utils.hpp"
@@ -243,7 +244,8 @@ void perform_skills(registry_t& registry) {
                                 const component::owner_component& effect_owner) {
                                 if (effect_owner.entity == actor_entity &&
                                     is_effect.effect == effect_removal.effect) {
-                                    utils::destroy_entity(effect_entity, registry);
+                                    registry.emplace_or_replace<component::destroy_entity>(
+                                        effect_entity);
                                 }
                             });
                     }
@@ -255,7 +257,8 @@ void perform_skills(registry_t& registry) {
                                 if (effect_owner.entity == actor_entity &&
                                     is_unique_effect.unique_effect.unique_effect_key ==
                                         effect_removal.unique_effect) {
-                                    utils::destroy_entity(unique_effect_entity, registry);
+                                    registry.emplace_or_replace<component::destroy_entity>(
+                                        unique_effect_entity);
                                 }
                             });
                     }
@@ -325,7 +328,9 @@ void destroy_actors_with_no_rotation(registry_t& registry) {
     registry
         .view<component::destroy_after_rotation, component::no_more_rotation>(
             entt::exclude<component::casting_skill>)
-        .each([&](entity_t entity) { utils::destroy_entity(entity, registry); });
+        .each([&](entity_t entity) {
+            registry.emplace_or_replace<component::destroy_entity>(entity);
+        });
 }
 
 }  // namespace gw2combat::system

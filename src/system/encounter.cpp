@@ -1,6 +1,7 @@
 #include "encounter.hpp"
 
 #include "component/actor/base_class_component.hpp"
+#include "component/actor/combat_stats.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/profession_component.hpp"
 #include "component/actor/static_attributes.hpp"
@@ -10,7 +11,6 @@
 #include "component/equipment/weapons.hpp"
 
 #include "configuration/build.hpp"
-#include "configuration/encounter-local.hpp"
 #include "configuration/encounter.hpp"
 
 #include "utils/actor_utils.hpp"
@@ -18,9 +18,10 @@
 
 namespace gw2combat::system {
 
-void setup_server_encounter(registry_t& registry, const configuration::encounter_t& encounter) {
+void setup_encounter(registry_t& registry, const configuration::encounter_t& encounter) {
     auto singleton_entity = registry.create();
     registry.emplace<component::is_actor>(singleton_entity);
+    registry.emplace<component::audit_component>(singleton_entity);
     registry.emplace<component::static_attributes>(
         singleton_entity, component::static_attributes{configuration::build_t{}.attributes});
     registry.ctx().emplace_as<std::string>(singleton_entity, "Console");
@@ -31,7 +32,6 @@ void setup_server_encounter(registry_t& registry, const configuration::encounter
         auto actor_entity = registry.create();
         registry.ctx().emplace_as<std::string>(actor_entity, actor.name);
         registry.emplace<component::is_actor>(actor_entity);
-        registry.emplace<component::audit_component>(actor_entity);
         registry.emplace<component::team>(actor_entity, actor.team);
         registry.emplace<component::base_class_component>(actor_entity, build.base_class);
         registry.emplace<component::profession_component>(actor_entity, build.profession);
@@ -81,6 +81,9 @@ void setup_server_encounter(registry_t& registry, const configuration::encounter
                 actor_entity,
                 component::rotation_component{converted_rotation, 0, 0, actor.rotation.repeat});
         }
+
+        registry.emplace_or_replace<component::actor_created>(actor_entity);
+        registry.emplace_or_replace<component::combat_stats_updated>(actor_entity);
     }
 }
 

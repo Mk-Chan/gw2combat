@@ -9,6 +9,7 @@
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
+#include "component/lifecycle/destroy_entity.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"
@@ -27,6 +28,21 @@
 
 namespace gw2combat {
 
+void clear_temporary_components(registry_t& registry) {
+    registry.clear<component::actor_created,
+                   component::relative_attributes,
+                   component::incoming_damage,
+                   component::animation_expired,
+                   component::cooldown_expired,
+                   component::duration_expired,
+                   component::outgoing_strikes_component,
+                   component::outgoing_effects_component,
+                   component::incoming_strikes_component,
+                   component::incoming_effects_component,
+                   component::incoming_damage,
+                   component::combat_stats_updated>();
+}
+
 void try_clean_entity(registry_t& registry, entity_t entity, entity_t owner_entity) {
     if (!registry.valid(owner_entity)) {
         registry.destroy(entity);
@@ -43,21 +59,14 @@ void clean_children_of_destroyed_owners(registry_t& registry) {
         });
 }
 
-void clear_temporary_components(registry_t& registry) {
-    registry.clear<component::relative_attributes,
-                   component::incoming_damage,
-                   component::animation_expired,
-                   component::cooldown_expired,
-                   component::duration_expired,
-                   component::outgoing_strikes_component,
-                   component::outgoing_effects_component,
-                   component::incoming_strikes_component,
-                   component::incoming_effects_component,
-                   component::incoming_damage,
-                   component::combat_stats_updated>();
-    if (registry.any_of<component::entity_was_destroyed>(utils::get_singleton_entity())) {
+void destroy_marked_entities(registry_t& registry) {
+    bool entity_was_destroyed = false;
+    registry.view<component::destroy_entity>().each([&](entity_t entity) {
+        registry.destroy(entity);
+        entity_was_destroyed = true;
+    });
+    if (entity_was_destroyed) {
         clean_children_of_destroyed_owners(registry);
-        registry.remove<component::entity_was_destroyed>(utils::get_singleton_entity());
     }
 }
 
@@ -94,19 +103,20 @@ void tick(registry_t& registry) {
 
     system::update_combat_stats(registry);
 
+    system::cleanup_expired_components(registry);
+    system::destroy_actors_with_no_rotation(registry);
+
     system::audit(registry);
 
     system::reset_counters(registry);
-    system::cleanup_expired_components(registry);
     system::cleanup_finished_casting_skills(registry);
-    system::destroy_actors_with_no_rotation(registry);
-
+    destroy_marked_entities(registry);
     clear_temporary_components(registry);
 }
 
 std::string combat_loop(const configuration::encounter_t& encounter) {
     registry_t registry;
-    system::setup_server_encounter(registry, encounter);
+    system::setup_encounter(registry, encounter);
 
     tick_t current_tick = 1;
     registry.ctx().emplace<const tick_t&>(current_tick);

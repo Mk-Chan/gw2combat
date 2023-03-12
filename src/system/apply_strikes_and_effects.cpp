@@ -11,6 +11,7 @@
 #include "component/effect/is_unique_effect.hpp"
 #include "component/hierarchy/owner_component.hpp"
 
+#include "component/lifecycle/destroy_entity.hpp"
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
 #include "utils/entity_utils.hpp"
@@ -198,7 +199,8 @@ void apply_strikes(registry_t& registry) {
                                               const component::owner_component& effect_owner) {
                                         if (effect_owner.entity == strike_source_entity &&
                                             is_effect.effect == effect_removal.effect) {
-                                            utils::destroy_entity(effect_entity, registry);
+                                            registry.emplace_or_replace<component::destroy_entity>(
+                                                effect_entity);
                                         }
                                     });
                             }
@@ -211,7 +213,8 @@ void apply_strikes(registry_t& registry) {
                                         if (effect_owner.entity == strike_source_entity &&
                                             is_unique_effect.unique_effect.unique_effect_key ==
                                                 effect_removal.unique_effect) {
-                                            utils::destroy_entity(unique_effect_entity, registry);
+                                            registry.emplace_or_replace<component::destroy_entity>(
+                                                unique_effect_entity);
                                         }
                                     });
                             }

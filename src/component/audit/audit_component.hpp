@@ -10,7 +10,8 @@
 namespace gw2combat::component {
 
 struct audit_component {
-    std::vector<std::variant<audit::skill_cast_begin_event_t,
+    std::vector<std::variant<audit::actor_created_event_t,
+                             audit::skill_cast_begin_event_t,
                              audit::skill_cast_end_event_t,
                              audit::effect_application_event_t,
                              audit::damage_event_t,
