@@ -50,15 +50,16 @@ static inline entity_t add_owner_based_component(const ConfigurationType& config
                                                                            const std::string& name,
                                                                            int team_id,
                                                                            registry_t& registry) {
-    auto child_actor = registry.create();
-    registry.ctx().emplace_as<std::string>(child_actor,
-                                           fmt::format("child_actor{}-{}", child_actor, name));
-    registry.emplace<component::is_actor>(child_actor);
-    registry.emplace<component::owner_component>(child_actor,
+    auto child_actor_entity = registry.create();
+    registry.ctx().emplace_as<std::string>(
+        child_actor_entity, fmt::format("child_actor{}-{}", child_actor_entity, name));
+    registry.emplace<component::is_actor>(child_actor_entity);
+    registry.emplace<component::owner_component>(child_actor_entity,
                                                  utils::get_owner(parent_actor, registry));
-    registry.emplace<component::team>(child_actor, team_id);
-    registry.emplace<component::destroy_after_rotation>(child_actor);
-    return child_actor;
+    registry.emplace<component::team>(child_actor_entity, team_id);
+    registry.emplace<component::destroy_after_rotation>(child_actor_entity);
+    registry.emplace_or_replace<component::actor_created>(child_actor_entity);
+    return child_actor_entity;
 }
 
 static inline entity_t add_skill_to_actor(const configuration::skill_t& skill,

@@ -1,7 +1,10 @@
+# Misc
+.DS_Store
+audit.json
+
 # CMake
 cmake-build-*/
 build/
-.DS_Store
 
 # Tools
 tools/

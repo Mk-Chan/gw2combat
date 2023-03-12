@@ -8,8 +8,7 @@
         }, {
             "name": "golem",
             "build_path": "resources/build-golem.json",
-            "team": 2,
-            "audit_base_path": "."
+            "team": 2
         }
     ]
 }

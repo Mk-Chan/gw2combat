@@ -47,7 +47,7 @@ enum class effect_t : std::uint32_t
 
 NLOHMANN_JSON_SERIALIZE_ENUM(effect_t,
                              {
-                                 {effect_t::INVALID, "Invalid"},
+                                 {effect_t::INVALID, "invalid"},
 
                                  {effect_t::AEGIS, "AEGIS"},
                                  {effect_t::ALACRITY, "ALACRITY"},

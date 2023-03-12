@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "combat_loop.hpp"
 #include "server.hpp"
 
@@ -78,6 +80,9 @@ int main(int argc, char** argv) {
     parser.add_argument("--encounter")
         .default_value(std::string{"resources/encounter.json"})
         .help("Path to encounter file. Only applicable in default mode.");
+    parser.add_argument("--audit-path")
+        .default_value(std::string{"audit.json"})
+        .help("Path to audit file. Only applicable in default mode.");
 
     try {
         parser.parse_args(argc, argv);
@@ -90,9 +95,14 @@ int main(int argc, char** argv) {
     bool server_mode = parser.is_used("--server");
     if (!server_mode) {
         const auto& encounter_path = parser.get<std::string>("--encounter");
+        const auto& audit_path = parser.get<std::string>("--audit-path");
         auto encounter_local = utils::read<configuration::encounter_local_t>(encounter_path);
         auto encounter = convert_encounter(encounter_local);
-        combat_loop(encounter, true);
+        std::ofstream audit_path_stream{audit_path, std::ios::trunc};
+
+        auto simulation_result_json = combat_loop(encounter);
+
+        audit_path_stream << simulation_result_json;
     } else {
         const auto& server_configuration = parser.get<std::string>("--server");
         auto delimiter_index = server_configuration.find(':');

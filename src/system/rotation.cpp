@@ -12,6 +12,7 @@
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 
+#include "component/lifecycle/destroy_entity.hpp"
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
 #include "utils/entity_utils.hpp"
@@ -155,8 +156,9 @@ void perform_skills(registry_t& registry) {
                 .skill_configuration;
 
         if (!skill_configuration.equip_bundle.empty()) {
-            registry.emplace_or_replace<component::bundle_component>(
+            registry.emplace<component::bundle_component>(
                 actor_entity, component::bundle_component{skill_configuration.equip_bundle});
+            registry.emplace_or_replace<component::equipped_bundle>(actor_entity);
             spdlog::info("[{}] {}: equipped bundle {}",
                          utils::get_current_tick(registry),
                          utils::get_entity_name(actor_entity, registry),
@@ -164,11 +166,13 @@ void perform_skills(registry_t& registry) {
         } else if (skill_configuration.skill_key == "Weapon Swap") {
             if (auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
                 bundle_ptr) {
+                registry.emplace_or_replace<component::dropped_bundle>(actor_entity,
+                                                                       bundle_ptr->name);
+                registry.remove<component::bundle_component>(actor_entity);
                 spdlog::info("[{}] {}: dropped bundle {}",
                              utils::get_current_tick(registry),
                              utils::get_entity_name(actor_entity, registry),
                              bundle_ptr->name);
-                registry.remove<component::bundle_component>(actor_entity);
             } else {
                 if (!registry.any_of<component::current_weapon_set>(actor_entity)) {
                     throw std::runtime_error("no equipped_weapon_set on entity");
@@ -243,7 +247,8 @@ void perform_skills(registry_t& registry) {
                                 const component::owner_component& effect_owner) {
                                 if (effect_owner.entity == actor_entity &&
                                     is_effect.effect == effect_removal.effect) {
-                                    utils::destroy_entity(effect_entity, registry);
+                                    registry.emplace_or_replace<component::destroy_entity>(
+                                        effect_entity);
                                 }
                             });
                     }
@@ -255,7 +260,8 @@ void perform_skills(registry_t& registry) {
                                 if (effect_owner.entity == actor_entity &&
                                     is_unique_effect.unique_effect.unique_effect_key ==
                                         effect_removal.unique_effect) {
-                                    utils::destroy_entity(unique_effect_entity, registry);
+                                    registry.emplace_or_replace<component::destroy_entity>(
+                                        unique_effect_entity);
                                 }
                             });
                     }
@@ -325,7 +331,9 @@ void destroy_actors_with_no_rotation(registry_t& registry) {
     registry
         .view<component::destroy_after_rotation, component::no_more_rotation>(
             entt::exclude<component::casting_skill>)
-        .each([&](entity_t entity) { utils::destroy_entity(entity, registry); });
+        .each([&](entity_t entity) {
+            registry.emplace_or_replace<component::destroy_entity>(entity);
+        });
 }
 
 }  // namespace gw2combat::system

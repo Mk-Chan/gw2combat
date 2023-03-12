@@ -16,7 +16,7 @@ enum class base_class_t : std::uint8_t
 
 NLOHMANN_JSON_SERIALIZE_ENUM(base_class_t,
                              {
-                                 {base_class_t::INVALID, "Invalid"},
+                                 {base_class_t::INVALID, "invalid"},
 
                                  {base_class_t::UNIVERSAL, "UNIVERSAL"},
                                  {base_class_t::UNIVERSAL, "universal"},

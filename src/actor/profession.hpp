@@ -15,7 +15,7 @@ enum class profession_t : std::uint8_t
 
 NLOHMANN_JSON_SERIALIZE_ENUM(profession_t,
                              {
-                                 {profession_t::INVALID, "Invalid"},
+                                 {profession_t::INVALID, "invalid"},
                                  {profession_t::DRAGONHUNTER, "dragonhunter"},
                                  {profession_t::SOULBEAST, "soulbeast"},
                              })

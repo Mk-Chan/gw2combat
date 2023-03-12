@@ -7,8 +7,7 @@
 
 namespace gw2combat::system {
 
-extern void setup_server_encounter(registry_t& registry,
-                                   const configuration::encounter_t& encounter);
+extern void setup_encounter(registry_t& registry, const configuration::encounter_t& encounter);
 
 }  // namespace gw2combat::system
 

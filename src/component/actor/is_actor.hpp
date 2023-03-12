@@ -4,6 +4,7 @@
 namespace gw2combat::component {
 
 struct is_actor {};
+struct actor_created {};
 
 }  // namespace gw2combat::component
 

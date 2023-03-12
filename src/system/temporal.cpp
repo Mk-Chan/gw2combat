@@ -7,6 +7,7 @@
 #include "component/temporal/has_alacrity.hpp"
 #include "component/temporal/has_quickness.hpp"
 
+#include "component/lifecycle/destroy_entity.hpp"
 #include "utils/actor_utils.hpp"
 
 namespace gw2combat::system {
@@ -85,7 +86,7 @@ void cleanup_expired_components(registry_t& registry) {
     registry.view<component::cooldown_expired>().each(
         [&](entity_t entity) { registry.remove<component::cooldown_component>(entity); });
     registry.view<component::duration_expired>().each(
-        [&](entity_t entity) { utils::destroy_entity(entity, registry); });
+        [&](entity_t entity) { registry.emplace_or_replace<component::destroy_entity>(entity); });
 }
 
 }  // namespace gw2combat::system
