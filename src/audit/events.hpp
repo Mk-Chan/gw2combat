@@ -17,6 +17,7 @@ enum class event_type_t
     EFFECT_APPLICATION_EVENT,
     DAMAGE_EVENT,
     COMBAT_STATS_UPDATE_EVENT,
+    EFFECT_EXPIRED_EVENT,
 };
 
 struct actor_created_event_t {
@@ -83,6 +84,16 @@ struct combat_stats_update_event_t {
     int updated_health = 0;
 };
 
+struct effect_expired_event_t {
+    event_type_t event_type = event_type_t::EFFECT_EXPIRED_EVENT;
+    tick_t time_ms = 0;
+    std::string actor;
+    std::string source_actor;
+    std::string source_skill;
+    std::string effect;
+    std::string unique_effect;
+};
+
 NLOHMANN_JSON_SERIALIZE_ENUM(
     event_type_t,
     {
@@ -93,6 +104,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(
         {event_type_t::EFFECT_APPLICATION_EVENT, "effect_application_event"},
         {event_type_t::DAMAGE_EVENT, "damage_event"},
         {event_type_t::COMBAT_STATS_UPDATE_EVENT, "combat_stats_update_event"},
+        {event_type_t::EFFECT_EXPIRED_EVENT, "effect_expired_event"},
     })
 NLOHMANN_JSON_SERIALIZE_ENUM(damage_event_t::damage_type_t,
                              {
@@ -143,6 +155,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(combat_stats_update_event_t,
                                                 time_ms,
                                                 actor,
                                                 updated_health)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(effect_expired_event_t,
+                                                event_type,
+                                                time_ms,
+                                                actor,
+                                                source_actor,
+                                                source_skill,
+                                                effect,
+                                                unique_effect)
 
 }  // namespace gw2combat::audit
 

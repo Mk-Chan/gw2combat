@@ -9,10 +9,40 @@
 #include "component/audit/audit_component.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
+#include "component/effect/is_effect.hpp"
+#include "component/effect/is_unique_effect.hpp"
+#include "component/effect/source_actor.hpp"
+#include "component/effect/source_skill.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
+#include "component/temporal/duration_component.hpp"
 
 namespace gw2combat::system {
+
+void audit_effect_expirations(registry_t& registry) {
+    auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
+    registry.view<component::duration_expired>().each([&](entity_t entity) {
+        auto actor_entity = utils::get_owner(entity, registry);
+        auto source_actor = registry.get<component::source_actor>(entity);
+        auto source_skill = registry.get<component::source_skill>(entity);
+        auto effect = registry.any_of<component::is_effect>(entity)
+                          ? nlohmann::json{registry.get<component::is_effect>(entity).effect}[0]
+                                .get<std::string>()
+                          : "";
+        auto unique_effect =
+            registry.any_of<component::is_unique_effect>(entity)
+                ? registry.get<component::is_unique_effect>(entity).unique_effect.unique_effect_key
+                : "";
+        audit_component.events.emplace_back(audit::effect_expired_event_t{
+            .time_ms = utils::get_current_tick(registry),
+            .actor = utils::get_entity_name(actor_entity, registry),
+            .source_actor = utils::get_entity_name(source_actor.entity, registry),
+            .source_skill = source_skill.skill,
+            .effect = effect,
+            .unique_effect = unique_effect,
+        });
+    });
+}
 
 void audit_actor_created(registry_t& registry) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
@@ -143,6 +173,7 @@ void audit(registry_t& registry) {
     audit_effect_applications(registry);
     audit_damage(registry);
     audit_combat_stats_update(registry);
+    audit_effect_expirations(registry);
 }
 
 audit::report_t get_audit_report(registry_t& registry) {

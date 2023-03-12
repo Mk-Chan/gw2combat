@@ -15,7 +15,8 @@ struct audit_component {
                              audit::skill_cast_end_event_t,
                              audit::effect_application_event_t,
                              audit::damage_event_t,
-                             audit::combat_stats_update_event_t>>
+                             audit::combat_stats_update_event_t,
+                             audit::effect_expired_event_t>>
         events;
 };
 
