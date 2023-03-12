@@ -121,38 +121,43 @@ std::string combat_loop(const configuration::encounter_t& encounter) {
     registry_t registry;
     system::setup_encounter(registry, encounter);
 
-    tick_t current_tick = 1;
-    registry.ctx().emplace<const tick_t&>(current_tick);
-    tick_t everyone_out_of_rotation_at_tick = 3'000'000'000;
-    while (true) {
-        tick(registry);
+    try {
+        tick_t current_tick = 1;
+        registry.ctx().emplace<const tick_t&>(current_tick);
+        tick_t everyone_out_of_rotation_at_tick = 3'000'000'000;
+        while (true) {
+            tick(registry);
 
-        bool everyone_out_of_rotation = true;
-        auto actors = registry.view<component::is_actor>();
-        for (auto entity : actors) {
-            if (registry.any_of<component::is_downstate>(entity)) {
-                spdlog::info(
-                    "[{}] {} is downstate", current_tick, utils::get_entity_name(entity, registry));
-                goto end_of_combat_loop;
+            bool everyone_out_of_rotation = true;
+            auto actors = registry.view<component::is_actor>();
+            for (auto entity : actors) {
+                if (registry.any_of<component::is_downstate>(entity)) {
+                    spdlog::info("[{}] {} is downstate",
+                                 current_tick,
+                                 utils::get_entity_name(entity, registry));
+                    goto end_of_combat_loop;
+                }
+                if (!registry.any_of<component::rotation_component>(entity)) {
+                    continue;
+                }
+                if (!registry.any_of<component::no_more_rotation>(entity)) {
+                    everyone_out_of_rotation = false;
+                }
             }
-            if (!registry.any_of<component::rotation_component>(entity)) {
-                continue;
+            if (everyone_out_of_rotation) {
+                if (everyone_out_of_rotation_at_tick > current_tick) {
+                    everyone_out_of_rotation_at_tick = current_tick;
+                }
+                if (current_tick - everyone_out_of_rotation_at_tick >= 10'000) {
+                    spdlog::info("[{}] no one has any rotation left!", current_tick);
+                    break;
+                }
             }
-            if (!registry.any_of<component::no_more_rotation>(entity)) {
-                everyone_out_of_rotation = false;
-            }
-        }
-        if (everyone_out_of_rotation) {
-            if (everyone_out_of_rotation_at_tick > current_tick) {
-                everyone_out_of_rotation_at_tick = current_tick;
-            }
-            if (current_tick - everyone_out_of_rotation_at_tick >= 10'000) {
-                spdlog::info("[{}] no one has any rotation left!", current_tick);
-                break;
-            }
-        }
 
-        ++current_tick;
+            ++current_tick;
+        }
+    } catch (std::exception& e) {
+        spdlog::error("Exception: {}", e.what());
     }
 end_of_combat_loop:
     return nlohmann::json{system::get_audit_report(registry)}[0].dump();
