@@ -54,8 +54,9 @@ static inline void assert_can_cast_skill(const actor::skill_t& skill,
     //     throw std::runtime_error(fmt::format("skill {} is on internal cooldown", skill));
     // }
 
+    auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
-    if (skill_ammo.current_ammo <= 0) {
+    if (skill_ammo.current_ammo <= 0 && !(skill == "Weapon Swap" && bundle_ptr)) {
         utils::log_component<component::cooldown_component>(registry);
         throw std::runtime_error(fmt::format("actor {} skill {} doesn't have any more ammo",
                                              get_entity_name(actor_entity, registry),
@@ -82,7 +83,6 @@ static inline void assert_can_cast_skill(const actor::skill_t& skill,
             }
         }
     } else {
-        auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
         if (!bundle_ptr || skill_configuration.required_bundle != bundle_ptr->name) {
             throw std::runtime_error(
                 fmt::format("skill {} not available on bundle {}", skill, bundle_ptr->name));
