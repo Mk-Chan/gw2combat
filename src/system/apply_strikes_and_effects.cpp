@@ -192,18 +192,26 @@ void apply_strikes(registry_t& registry) {
                             utils::conditions_satisfied(
                                 effect_removal.condition, owner_entity, target_entity, registry)) {
                             if (effect_removal.effect != actor::effect_t::INVALID) {
+                                int stacks_to_remove =
+                                    effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
                                 registry.view<component::is_effect, component::owner_component>()
                                     .each([&](entity_t effect_entity,
                                               const component::is_effect& is_effect,
                                               const component::owner_component& effect_owner) {
                                         if (effect_owner.entity == strike_source_entity &&
                                             is_effect.effect == effect_removal.effect) {
+                                            if (stacks_to_remove <= 0) {
+                                                return;
+                                            }
+                                            --stacks_to_remove;
                                             registry.emplace_or_replace<component::destroy_entity>(
                                                 effect_entity);
                                         }
                                     });
                             }
                             if (!effect_removal.unique_effect.empty()) {
+                                int stacks_to_remove =
+                                    effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
                                 registry
                                     .view<component::is_unique_effect, component::owner_component>()
                                     .each([&](entity_t unique_effect_entity,
@@ -212,6 +220,10 @@ void apply_strikes(registry_t& registry) {
                                         if (effect_owner.entity == strike_source_entity &&
                                             is_unique_effect.unique_effect.unique_effect_key ==
                                                 effect_removal.unique_effect) {
+                                            if (stacks_to_remove <= 0) {
+                                                return;
+                                            }
+                                            --stacks_to_remove;
                                             registry.emplace_or_replace<component::destroy_entity>(
                                                 unique_effect_entity);
                                         }
