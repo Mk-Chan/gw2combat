@@ -166,8 +166,9 @@ std::string combat_loop(const configuration::encounter_t& encounter) {
                             termination_condition.actor) {
                             continue;
                         }
-                        int max_health = (int)registry.get<component::static_attributes>(entity)
-                                             .attribute_value_map[actor::attribute_t::MAX_HEALTH];
+                        int max_health = utils::round_to_nearest_even(
+                            registry.get<component::static_attributes>(entity)
+                                .attribute_value_map[actor::attribute_t::MAX_HEALTH]);
                         int current_health = registry.get<component::combat_stats>(entity).health;
                         if (max_health - current_health >= termination_condition.damage) {
                             someone_took_required_damage = true;

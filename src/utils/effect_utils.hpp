@@ -172,12 +172,14 @@ namespace gw2combat::utils {
         double effective_condition_duration_multiplier = std::min(
             2.0,
             std::max(uniform_condition_duration_multiplier, special_condition_duration_multiplier));
-        return (int)((double)base_duration * effective_condition_duration_multiplier);
+        return utils::round_to_nearest_even((double)base_duration *
+                                            effective_condition_duration_multiplier);
     };
     auto calculate_boon_duration = [&](double special_boon_duration_multiplier = 1.0) {
         double effective_boon_duration_multiplier = std::min(
             2.0, std::max(uniform_boon_duration_multiplier, special_boon_duration_multiplier));
-        return (int)((double)base_duration * effective_boon_duration_multiplier);
+        return utils::round_to_nearest_even((double)base_duration *
+                                            effective_boon_duration_multiplier);
     };
 
     switch (effect_type) {

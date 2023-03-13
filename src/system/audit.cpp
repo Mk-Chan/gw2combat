@@ -1,5 +1,6 @@
 #include "audit.hpp"
 
+#include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
 
 #include "component/actor/casting_skill.hpp"
@@ -104,11 +105,20 @@ void audit_effect_applications(registry_t& registry) {
             const component::incoming_effects_component& incoming_effects_component) {
             for (auto&& [source_entity, effect_application] :
                  incoming_effects_component.effect_applications) {
-                auto source_actor =
-                    utils::get_entity_name(utils::get_owner(source_entity, registry), registry);
+                auto actual_source_entity = utils::get_owner(source_entity, registry);
+                auto source_actor = utils::get_entity_name(actual_source_entity, registry);
                 auto effect = effect_application.effect == actor::effect_t::INVALID
                                   ? ""
                                   : nlohmann::json{effect_application.effect}[0].get<std::string>();
+                auto& application_source_relative_attributes =
+                    registry.get<component::relative_attributes>(actual_source_entity);
+                int effective_duration = effect_application.effect == actor::effect_t::INVALID
+                                             ? effect_application.base_duration_ms
+                                             : utils::get_effective_effect_duration(
+                                                   effect_application.base_duration_ms,
+                                                   effect_application.effect,
+                                                   application_source_relative_attributes,
+                                                   actor_entity);
                 audit_component.events.emplace_back(audit::effect_application_event_t{
                     .time_ms = utils::get_current_tick(registry),
                     .actor = utils::get_entity_name(actor_entity, registry),
@@ -117,7 +127,7 @@ void audit_effect_applications(registry_t& registry) {
                     .effect = effect,
                     .unique_effect = effect_application.unique_effect.unique_effect_key,
                     .num_stacks = effect_application.num_stacks,
-                    .duration_ms = effect_application.base_duration_ms,
+                    .duration_ms = effective_duration,
                 });
             }
         });
@@ -192,7 +202,7 @@ void audit_damage(registry_t& registry) {
                         utils::get_entity_name(incoming_damage_event.source_entity, registry),
                     .source_skill = source_skill,
                     .damage_type = damage_type,
-                    .damage = static_cast<int>(incoming_damage_event.value),
+                    .damage = utils::round_to_nearest_even(incoming_damage_event.value),
                 });
             }
         });

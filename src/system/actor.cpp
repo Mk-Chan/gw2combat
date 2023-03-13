@@ -9,7 +9,6 @@
 #include "component/hierarchy/owner_component.hpp"
 
 #include "utils/condition_utils.hpp"
-#include "utils/io_utils.hpp"
 
 namespace gw2combat::system {
 
@@ -20,8 +19,8 @@ void setup_combat_stats(registry_t& registry) {
         .each([&](entity_t entity, const component::static_attributes& static_attributes) {
             registry.emplace<component::combat_stats>(
                 entity,
-                component::combat_stats{
-                    (int)static_attributes.attribute_value_map.at(actor::attribute_t::MAX_HEALTH)});
+                component::combat_stats{utils::round_to_nearest_even(
+                    static_attributes.attribute_value_map.at(actor::attribute_t::MAX_HEALTH))});
         });
 }
 
@@ -41,7 +40,7 @@ void update_combat_stats(registry_t& registry) {
                                    const component::incoming_damage_event& incoming_damage_event) {
                                     return accumulated + incoming_damage_event.value;
                                 });
-            combat_stats.health -= (int)total_incoming_damage;
+            combat_stats.health -= utils::round_to_nearest_even(total_incoming_damage);
             health_updated = true;
 
             if (combat_stats.health <= 0) {

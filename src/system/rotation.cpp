@@ -28,7 +28,7 @@ void perform_rotations(registry_t& registry) {
             auto current_tick = utils::get_current_tick(registry);
 
             if (rotation_component.current_idx >=
-                (int)rotation_component.rotation.skill_casts.size()) {
+                static_cast<int>(rotation_component.rotation.skill_casts.size())) {
                 if (rotation_component.repeat) {
                     rotation_component.current_idx = 0;
                     rotation_component.tick_offset = current_tick;
@@ -90,11 +90,11 @@ void perform_skills(registry_t& registry) {
                 registry.get<component::is_skill>(casting_skill.skill_entity).skill_configuration;
 
             double effective_progress_pct = no_quickness_progress_pct + quickness_progress_pct;
-            int effective_tick =
-                (int)((double)animation_component.duration[0] * effective_progress_pct / 100.0);
+            int effective_tick = utils::round_down((double)animation_component.duration[0] *
+                                                   effective_progress_pct / 100.0);
 
             while (casting_skill.next_pulse_idx <
-                       (int)skill_configuration.pulse_on_tick_list[0].size() &&
+                       static_cast<int>(skill_configuration.pulse_on_tick_list[0].size()) &&
                    effective_tick >=
                        skill_configuration.pulse_on_tick_list[0][casting_skill.next_pulse_idx]) {
                 auto& outgoing_effects_component =
@@ -116,7 +116,7 @@ void perform_skills(registry_t& registry) {
             }
 
             while (casting_skill.next_strike_idx <
-                       (int)skill_configuration.strike_on_tick_list[0].size() &&
+                       static_cast<int>(skill_configuration.strike_on_tick_list[0].size()) &&
                    effective_tick >=
                        skill_configuration.strike_on_tick_list[0][casting_skill.next_strike_idx]) {
                 auto& outgoing_strikes_component =

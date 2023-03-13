@@ -1,3 +1,4 @@
+#include <cfenv>
 #include <fstream>
 
 #include "combat_loop.hpp"
@@ -51,8 +52,8 @@ configuration::encounter_t convert_encounter(
                     }
                     last_delimiter_pos -= 6;
 
-                    int cast_time_ms =
-                        (int)(std::stod(time_str.substr(6, last_delimiter_pos - 1)) * 1'000);
+                    int cast_time_ms = utils::round_down(
+                        std::stod(time_str.substr(6, last_delimiter_pos - 1)) * 1'000.0);
                     if (line_num == 0) {
                         cast_time_offset_ms = -cast_time_ms;
                     }
@@ -76,6 +77,12 @@ configuration::encounter_t convert_encounter(
 }
 
 int main(int argc, char** argv) {
+    if (int error = std::fesetround(FE_TONEAREST); error) {
+        spdlog::warn(
+            "Unable to use banker's/half-to-even rounding! Expect minor inaccuracies in "
+            "simulation.");
+    }
+
     argparse::ArgumentParser parser{"gw2combat"};
     parser.add_argument("--server")
         .default_value(std::string{"127.0.0.1:54321"})

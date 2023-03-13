@@ -67,17 +67,15 @@ void calculate_relative_attributes(registry_t& registry) {
                 }
                 if (effect_modifier_ptr) {
                     if (modifier_effect_and_owner_actor_and_other_actor_to_occurrences_map
-                            [std::make_tuple(effect_modifier_ptr->effect,
-                                             owner_actor,
-                                             other_actor)] >=
+                            [std::make_tuple(
+                                effect_modifier_ptr->effect, owner_actor, other_actor)] >=
                         utils::get_max_considered_stacks_of_effect_type(
                             effect_modifier_ptr->effect)) {
                         return;
                     } else {
                         ++modifier_effect_and_owner_actor_and_other_actor_to_occurrences_map
-                            [std::make_tuple(effect_modifier_ptr->effect,
-                                             owner_actor,
-                                             other_actor)];
+                            [std::make_tuple(
+                                effect_modifier_ptr->effect, owner_actor, other_actor)];
                     }
                 }
                 for (auto& attribute_modifier : is_attribute_modifier.attribute_modifiers) {
@@ -138,17 +136,15 @@ void calculate_relative_attributes(registry_t& registry) {
                 }
                 if (effect_conversion_ptr) {
                     if (conversion_effect_and_owner_actor_and_other_actor_to_occurrences_map
-                            [std::make_tuple(effect_conversion_ptr->effect,
-                                             owner_actor,
-                                             other_actor)] >=
+                            [std::make_tuple(
+                                effect_conversion_ptr->effect, owner_actor, other_actor)] >=
                         utils::get_max_considered_stacks_of_effect_type(
                             effect_conversion_ptr->effect)) {
                         return;
                     } else {
                         ++conversion_effect_and_owner_actor_and_other_actor_to_occurrences_map
-                            [std::make_tuple(effect_conversion_ptr->effect,
-                                             owner_actor,
-                                             other_actor)];
+                            [std::make_tuple(
+                                effect_conversion_ptr->effect, owner_actor, other_actor)];
                     }
                 }
                 for (auto& attribute_conversion : is_attribute_conversion.attribute_conversions) {
@@ -156,9 +152,10 @@ void calculate_relative_attributes(registry_t& registry) {
                             attribute_conversion.condition, owner_actor, other_actor, registry)) {
                         owner_actor_to_attribute_conversion_bonuses[std::make_tuple(
                             owner_actor, attribute_conversion.to)] +=
-                            (int)((relative_attributes.get(other_actor, attribute_conversion.from) *
-                                   attribute_conversion.multiplier) +
-                                  attribute_conversion.addend);
+                            utils::round_to_nearest_even(
+                                (relative_attributes.get(other_actor, attribute_conversion.from) *
+                                 attribute_conversion.multiplier) +
+                                attribute_conversion.addend);
                     }
                 }
             });

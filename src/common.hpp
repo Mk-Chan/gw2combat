@@ -2,6 +2,7 @@
 #define GW2COMBAT_COMMON_HPP
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <string>
 #include <variant>
