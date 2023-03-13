@@ -10,5 +10,18 @@
             "build_path": "resources/build-golem.json",
             "team": 2
         }
+    ],
+    "termination_conditions": [
+        {
+            "type": "DAMAGE",
+            "actor": "golem",
+            "damage": 4000000
+        }, {
+            "type": "ROTATION",
+            "actor": "gs-slb"
+        }, {
+            "type": "TIME",
+            "time": 110000
+        }
     ]
 }

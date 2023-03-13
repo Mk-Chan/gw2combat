@@ -69,6 +69,9 @@ configuration::encounter_t convert_encounter(
             .audit_base_path = actor.audit_base_path,
         });
     }
+    std::copy(encounter_local.termination_conditions.begin(),
+              encounter_local.termination_conditions.end(),
+              std::back_inserter(converted_encounter.termination_conditions));
     return converted_encounter;
 }
 

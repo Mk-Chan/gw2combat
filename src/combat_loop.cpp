@@ -6,6 +6,7 @@
 #include "component/actor/no_more_rotation.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/rotation_component.hpp"
+#include "component/actor/static_attributes.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
@@ -124,33 +125,65 @@ std::string combat_loop(const configuration::encounter_t& encounter) {
     try {
         tick_t current_tick = 1;
         registry.ctx().emplace<const tick_t&>(current_tick);
-        tick_t everyone_out_of_rotation_at_tick = 3'000'000'000;
-        while (true) {
+        bool continue_combat_loop = true;
+        while (continue_combat_loop) {
             tick(registry);
 
-            bool everyone_out_of_rotation = true;
-            auto actors = registry.view<component::is_actor>();
-            for (auto entity : actors) {
+            for (auto entity : registry.view<component::is_actor>()) {
                 if (registry.any_of<component::is_downstate>(entity)) {
                     spdlog::info("[{}] {} is downstate",
                                  current_tick,
                                  utils::get_entity_name(entity, registry));
-                    goto end_of_combat_loop;
-                }
-                if (!registry.any_of<component::rotation_component>(entity)) {
-                    continue;
-                }
-                if (!registry.any_of<component::no_more_rotation>(entity)) {
-                    everyone_out_of_rotation = false;
+                    continue_combat_loop = false;
+                    break;
                 }
             }
-            if (everyone_out_of_rotation) {
-                if (everyone_out_of_rotation_at_tick > current_tick) {
-                    everyone_out_of_rotation_at_tick = current_tick;
-                }
-                if (current_tick - everyone_out_of_rotation_at_tick >= 10'000) {
-                    spdlog::info("[{}] no one has any rotation left!", current_tick);
-                    break;
+
+            for (auto& termination_condition : encounter.termination_conditions) {
+                if (termination_condition.type ==
+                    configuration::termination_condition_t::type_t::ROTATION) {
+                    bool everyone_out_of_rotation = true;
+                    for (auto entity : registry.view<component::is_actor>()) {
+                        if (utils::get_entity_name(entity, registry) !=
+                                termination_condition.actor ||
+                            !registry.any_of<component::rotation_component>(entity)) {
+                            continue;
+                        }
+                        if (!registry.any_of<component::no_more_rotation>(entity)) {
+                            everyone_out_of_rotation = false;
+                            break;
+                        }
+                    }
+                    if (everyone_out_of_rotation) {
+                        continue_combat_loop = false;
+                        break;
+                    }
+                } else if (termination_condition.type ==
+                           configuration::termination_condition_t::type_t::DAMAGE) {
+                    bool someone_took_required_damage = false;
+                    for (auto entity : registry.view<component::is_actor>()) {
+                        if (utils::get_entity_name(entity, registry) !=
+                            termination_condition.actor) {
+                            continue;
+                        }
+                        int max_health = (int)registry.get<component::static_attributes>(entity)
+                                             .attribute_value_map[actor::attribute_t::MAX_HEALTH];
+                        int current_health = registry.get<component::combat_stats>(entity).health;
+                        if (max_health - current_health >= termination_condition.damage) {
+                            someone_took_required_damage = true;
+                            break;
+                        }
+                    }
+                    if (someone_took_required_damage) {
+                        continue_combat_loop = false;
+                        break;
+                    }
+                } else if (termination_condition.type ==
+                           configuration::termination_condition_t::type_t::TIME) {
+                    if (current_tick >= termination_condition.time) {
+                        continue_combat_loop = false;
+                        break;
+                    }
                 }
             }
 
@@ -159,7 +192,7 @@ std::string combat_loop(const configuration::encounter_t& encounter) {
     } catch (std::exception& e) {
         spdlog::error("Exception: {}", e.what());
     }
-end_of_combat_loop:
+
     return nlohmann::json{system::get_audit_report(registry)}[0].dump();
 }
 

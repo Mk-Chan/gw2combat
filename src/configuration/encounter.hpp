@@ -27,7 +27,9 @@ struct termination_condition_t {
         DAMAGE,
     };
     type_t type = type_t::INVALID;
-    int value = 0;
+    tick_t time = 0;
+    std::string actor;
+    int damage = 0;
 };
 
 struct encounter_t {
@@ -46,7 +48,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(termination_condition_t::type_t,
                               {termination_condition_t::type_t::TIME, "TIME"},
                               {termination_condition_t::type_t::ROTATION, "ROTATION"},
                               {termination_condition_t::type_t::DAMAGE, "DAMAGE"}})
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(termination_condition_t, type, value)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(termination_condition_t, type, time, actor, damage)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t, actors, termination_conditions)
 
 }  // namespace gw2combat::configuration
