@@ -1,9 +1,9 @@
 {
     "actors": [
         {
-            "name": "gs-slb",
-            "build_path": "resources/build-gs-slb.json",
-            "rotation_path": "resources/rotation-gs-slb.csv",
+            "name": "cfb",
+            "build_path": "resources/build-cfb.json",
+            "rotation_path": "resources/rotation-cfb.csv",
             "team": 1
         }, {
             "name": "golem",
@@ -18,7 +18,7 @@
             "damage": 4000000
         }, {
             "type": "ROTATION",
-            "actor": "gs-slb"
+            "actor": "cfb"
         }, {
             "type": "TIME",
             "time": 110000
