@@ -2,7 +2,7 @@
     "base_class": "guardian",
     "profession": "dragonhunter",
     "attributes": [
-        ["power", 2249],
+        ["power", 2247],
         ["precision", 1755],
         ["ferocity", 1100],
         ["vitality", 1400]

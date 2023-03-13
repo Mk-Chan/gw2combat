@@ -2,7 +2,7 @@
     "base_class": "ranger",
     "profession": "soulbeast",
     "attributes": [
-        ["power", 2383],
+        ["power", 2382],
         ["precision", 1960],
         ["ferocity", 960]
     ],
