@@ -26,11 +26,14 @@ struct condition_t {
     std::optional<actor::skill_t> depends_on_skill_off_cooldown = std::nullopt;
     std::optional<threshold_t> threshold = std::nullopt;
 
-    // Dependent on stage in combat loop
+    // Dependent on combat stage
+    // on-strike
     std::optional<bool> only_applies_on_strikes = std::nullopt;
     std::optional<bool> only_applies_on_critical_strikes = std::nullopt;
     std::optional<actor::skill_t> only_applies_on_strikes_by_skill = std::nullopt;
     std::optional<actor::skill_tag_t> only_applies_on_strikes_by_skill_with_tag = std::nullopt;
+
+    // on-finished-casting
     std::optional<bool> only_applies_on_finished_casting = std::nullopt;
     std::optional<actor::skill_t> only_applies_on_finished_casting_skill = std::nullopt;
     std::optional<actor::skill_tag_t> only_applies_on_finished_casting_skill_with_tag =

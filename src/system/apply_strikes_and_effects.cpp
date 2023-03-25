@@ -136,38 +136,31 @@ void apply_strikes(registry_t& registry) {
                     continue;
                 }
 
-                registry.view<component::is_counter>().each([&](entity_t counter_entity,
-                                                                component::is_counter& is_counter) {
-                    auto owner_entity = utils::get_owner(counter_entity, registry);
-                    if (owner_entity != strike_source_entity) {
-                        return;
-                    }
-                    bool increment_value = true;
-                    for (auto& increment_condition :
-                         is_counter.counter_configuration.increment_conditions) {
-                        if (!(increment_condition.only_applies_on_strikes &&
-                              *increment_condition.only_applies_on_strikes &&
-                              (!increment_condition.only_applies_on_critical_strikes ||
-                               (*increment_condition.only_applies_on_critical_strikes &&
-                                damage.is_critical)) &&
-                              (!increment_condition.only_applies_on_strikes_by_skill ||
-                               *increment_condition.only_applies_on_strikes_by_skill ==
-                                   skill_configuration.skill_key) &&
-                              (!increment_condition.only_applies_on_strikes_by_skill_with_tag ||
-                               utils::skill_has_tag(
-                                   skill_configuration,
-                                   *increment_condition
-                                        .only_applies_on_strikes_by_skill_with_tag)) &&
-                              utils::conditions_satisfied(
-                                  increment_condition, owner_entity, target_entity, registry))) {
-                            increment_value = false;
-                            break;
+                registry.view<component::is_counter>().each(
+                    [&](entity_t counter_entity, component::is_counter& is_counter) {
+                        auto owner_entity = utils::get_owner(counter_entity, registry);
+                        if (owner_entity != strike_source_entity) {
+                            return;
                         }
-                    }
-                    if (increment_value) {
-                        ++is_counter.value;
-                    }
-                });
+                        bool increment_value = true;
+                        for (auto& increment_condition :
+                             is_counter.counter_configuration.increment_conditions) {
+                            bool on_strike_conditions_satisfied =
+                                utils::on_strike_conditions_satisfied(increment_condition,
+                                                                      owner_entity,
+                                                                      target_entity,
+                                                                      damage.is_critical,
+                                                                      skill_configuration,
+                                                                      registry);
+                            if (!on_strike_conditions_satisfied) {
+                                increment_value = false;
+                                break;
+                            }
+                        }
+                        if (increment_value) {
+                            ++is_counter.value;
+                        }
+                    });
                 registry.view<component::is_effect_removal>().each(
                     [&](entity_t effect_removal_entity,
                         component::is_effect_removal& is_effect_removal) {
@@ -175,22 +168,16 @@ void apply_strikes(registry_t& registry) {
                         if (owner_entity != strike_source_entity) {
                             return;
                         }
+
                         auto& effect_removal = is_effect_removal.effect_removal;
-                        if (effect_removal.condition.only_applies_on_strikes &&
-                            *effect_removal.condition.only_applies_on_strikes &&
-                            (!effect_removal.condition.only_applies_on_critical_strikes ||
-                             (*effect_removal.condition.only_applies_on_critical_strikes &&
-                              damage.is_critical)) &&
-                            (!effect_removal.condition.only_applies_on_strikes_by_skill ||
-                             *effect_removal.condition.only_applies_on_strikes_by_skill ==
-                                 skill_configuration.skill_key) &&
-                            (!effect_removal.condition.only_applies_on_strikes_by_skill_with_tag ||
-                             utils::skill_has_tag(
-                                 skill_configuration,
-                                 *effect_removal.condition
-                                      .only_applies_on_strikes_by_skill_with_tag)) &&
-                            utils::conditions_satisfied(
-                                effect_removal.condition, owner_entity, target_entity, registry)) {
+                        bool on_strike_conditions_satisfied =
+                            utils::on_strike_conditions_satisfied(effect_removal.condition,
+                                                                  owner_entity,
+                                                                  target_entity,
+                                                                  damage.is_critical,
+                                                                  skill_configuration,
+                                                                  registry);
+                        if (on_strike_conditions_satisfied) {
                             if (effect_removal.effect != actor::effect_t::INVALID) {
                                 int stacks_to_remove =
                                     effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
@@ -231,38 +218,32 @@ void apply_strikes(registry_t& registry) {
                             }
                         }
                     });
-                registry.view<component::is_skill_trigger>().each([&](entity_t skill_trigger_entity,
-                                                                      const component::
-                                                                          is_skill_trigger&
-                                                                              is_skill_trigger) {
-                    auto owner_entity = utils::get_owner(skill_trigger_entity, registry);
-                    if (owner_entity != strike_source_entity) {
-                        return;
-                    }
-                    auto& skill_trigger = is_skill_trigger.skill_trigger;
-                    if (skill_trigger.condition.only_applies_on_strikes &&
-                        *skill_trigger.condition.only_applies_on_strikes &&
-                        (!skill_trigger.condition.only_applies_on_critical_strikes ||
-                         (*skill_trigger.condition.only_applies_on_critical_strikes &&
-                          damage.is_critical)) &&
-                        (!skill_trigger.condition.only_applies_on_strikes_by_skill ||
-                         *skill_trigger.condition.only_applies_on_strikes_by_skill ==
-                             skill_configuration.skill_key) &&
-                        (!skill_trigger.condition.only_applies_on_strikes_by_skill_with_tag ||
-                         utils::skill_has_tag(
-                             skill_configuration,
-                             *skill_trigger.condition.only_applies_on_strikes_by_skill_with_tag)) &&
-                        utils::conditions_satisfied(
-                            skill_trigger.condition, owner_entity, target_entity, registry)) {
-                        if (!actor_entity_to_skill_trigger_executed_this_tick_flag[std::make_tuple(
-                                owner_entity, skill_trigger.skill_key)]) {
-                            actor_entity_to_skill_trigger_executed_this_tick_flag[std::make_tuple(
-                                owner_entity, skill_trigger.skill_key)] = true;
-                            utils::enqueue_child_skill(
-                                skill_trigger.skill_key, strike_source_entity, registry);
+                registry.view<component::is_skill_trigger>().each(
+                    [&](entity_t skill_trigger_entity,
+                        const component::is_skill_trigger& is_skill_trigger) {
+                        auto owner_entity = utils::get_owner(skill_trigger_entity, registry);
+                        if (owner_entity != strike_source_entity) {
+                            return;
                         }
-                    }
-                });
+
+                        auto& skill_trigger = is_skill_trigger.skill_trigger;
+                        bool on_strike_conditions_satisfied =
+                            utils::on_strike_conditions_satisfied(skill_trigger.condition,
+                                                                  owner_entity,
+                                                                  target_entity,
+                                                                  damage.is_critical,
+                                                                  skill_configuration,
+                                                                  registry);
+                        if (on_strike_conditions_satisfied) {
+                            if (!actor_entity_to_skill_trigger_executed_this_tick_flag
+                                    [std::make_tuple(owner_entity, skill_trigger.skill_key)]) {
+                                actor_entity_to_skill_trigger_executed_this_tick_flag
+                                    [std::make_tuple(owner_entity, skill_trigger.skill_key)] = true;
+                                utils::enqueue_child_skill(
+                                    skill_trigger.skill_key, strike_source_entity, registry);
+                            }
+                        }
+                    });
                 registry.view<component::is_unchained_skill_trigger>().each(
                     [&](entity_t skill_trigger_entity,
                         const component::is_unchained_skill_trigger& is_unchained_skill_trigger) {
@@ -271,21 +252,14 @@ void apply_strikes(registry_t& registry) {
                             return;
                         }
                         auto& skill_trigger = is_unchained_skill_trigger.skill_trigger;
-                        if (skill_trigger.condition.only_applies_on_strikes &&
-                            *skill_trigger.condition.only_applies_on_strikes &&
-                            (!skill_trigger.condition.only_applies_on_critical_strikes ||
-                             (*skill_trigger.condition.only_applies_on_critical_strikes &&
-                              damage.is_critical)) &&
-                            (!skill_trigger.condition.only_applies_on_strikes_by_skill ||
-                             *skill_trigger.condition.only_applies_on_strikes_by_skill ==
-                                 skill_configuration.skill_key) &&
-                            (!skill_trigger.condition.only_applies_on_strikes_by_skill_with_tag ||
-                             utils::skill_has_tag(
-                                 skill_configuration,
-                                 *skill_trigger.condition
-                                      .only_applies_on_strikes_by_skill_with_tag)) &&
-                            utils::conditions_satisfied(
-                                skill_trigger.condition, owner_entity, target_entity, registry)) {
+                        bool on_strike_conditions_satisfied =
+                            utils::on_strike_conditions_satisfied(skill_trigger.condition,
+                                                                  owner_entity,
+                                                                  target_entity,
+                                                                  damage.is_critical,
+                                                                  skill_configuration,
+                                                                  registry);
+                        if (on_strike_conditions_satisfied) {
                             utils::enqueue_child_skill(
                                 skill_trigger.skill_key, strike_source_entity, registry);
                         }

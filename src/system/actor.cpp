@@ -5,6 +5,7 @@
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/static_attributes.hpp"
+#include "component/counter/is_counter.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/hierarchy/owner_component.hpp"
 

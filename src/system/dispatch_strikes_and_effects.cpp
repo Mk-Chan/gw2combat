@@ -50,10 +50,10 @@ void dispatch_effects(registry_t& registry) {
             for (component::effect_application_t application :
                  outgoing_effects_component.effect_applications) {
                 if (application.direction == component::effect_application_t::direction_t::SELF) {
-                    if (!utils::conditions_satisfied(application.condition,
-                                                     actual_source_entity,
-                                                     actual_source_entity,
-                                                     registry)) {
+                    if (!utils::independent_conditions_satisfied(application.condition,
+                                                                 actual_source_entity,
+                                                                 actual_source_entity,
+                                                                 registry)) {
                         continue;
                     }
 
@@ -75,10 +75,10 @@ void dispatch_effects(registry_t& registry) {
                         .each([&](entity_t other_entity, const component::team& other_team) {
                             if (application.num_targets <= 0 || other_entity == source_entity ||
                                 other_team.id != source_team.id ||
-                                !utils::conditions_satisfied(application.condition,
-                                                             actual_source_entity,
-                                                             other_entity,
-                                                             registry)) {
+                                !utils::independent_conditions_satisfied(application.condition,
+                                                                         actual_source_entity,
+                                                                         other_entity,
+                                                                         registry)) {
                                 return;
                             }
 
@@ -94,10 +94,10 @@ void dispatch_effects(registry_t& registry) {
                     registry.view<component::team>(entt::exclude<component::owner_component>)
                         .each([&](entity_t other_entity, const component::team& other_team) {
                             if (application.num_targets <= 0 || other_team.id == source_team.id ||
-                                !utils::conditions_satisfied(application.condition,
-                                                             actual_source_entity,
-                                                             other_entity,
-                                                             registry)) {
+                                !utils::independent_conditions_satisfied(application.condition,
+                                                                         actual_source_entity,
+                                                                         other_entity,
+                                                                         registry)) {
                                 return;
                             }
 

@@ -2,6 +2,7 @@
 
 #include "utils/condition_utils.hpp"
 #include "utils/effect_utils.hpp"
+#include "utils/entity_utils.hpp"
 
 #include "component/actor/is_actor.hpp"
 #include "component/actor/relative_attributes.hpp"
@@ -79,7 +80,7 @@ void calculate_relative_attributes(registry_t& registry) {
                     }
                 }
                 for (auto& attribute_modifier : is_attribute_modifier.attribute_modifiers) {
-                    if (utils::conditions_satisfied(
+                    if (utils::independent_conditions_satisfied(
                             attribute_modifier.condition, owner_actor, other_actor, registry)) {
                         relative_attributes.set(
                             other_actor,
@@ -148,7 +149,7 @@ void calculate_relative_attributes(registry_t& registry) {
                     }
                 }
                 for (auto& attribute_conversion : is_attribute_conversion.attribute_conversions) {
-                    if (utils::conditions_satisfied(
+                    if (utils::independent_conditions_satisfied(
                             attribute_conversion.condition, owner_actor, other_actor, registry)) {
                         owner_actor_to_attribute_conversion_bonuses[std::make_tuple(
                             owner_actor, attribute_conversion.to)] +=

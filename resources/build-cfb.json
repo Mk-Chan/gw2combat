@@ -271,6 +271,29 @@
                 }
             ]
         }, {
+            "unique_effect_key": "Ashes of the Just With Allies Tracker",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "unique_effect_on_source": "Ashes of the Just With Allies",
+                        "depends_on_skill_off_cooldown": "Ashes of the Just With Allies Proc",
+                        "only_applies_on_strikes": true
+                    },
+                    "skill_key": "Ashes of the Just With Allies Proc"
+                }
+            ],
+            "effect_removals": [
+                {
+                    "condition": {
+                        "unique_effect_on_source": "Ashes of the Just With Allies",
+                        "depends_on_skill_off_cooldown": "Ashes of the Just With Allies Proc",
+                        "only_applies_on_strikes": true
+                    },
+                    "unique_effect": "Ashes of the Just With Allies",
+                    "num_stacks": 1
+                }
+            ]
+        }, {
             "unique_effect_key": "Ashes of the Just Tracker",
             "skill_triggers": [
                 {
@@ -476,12 +499,25 @@
             "on_pulse_effect_applications": [
                 {
                     "unique_effect": {
-                        "unique_effect_key": "Ashes of the Just"
+                        "unique_effect_key": "Ashes of the Just With Allies"
                     },
                     "num_stacks": 3,
                     "num_targets": 5,
                     "base_duration_ms": 10000,
                     "direction": "TEAM"
+                }
+            ]
+        }, {
+            "skill_key": "Ashes of the Just With Allies Proc",
+            "cast_duration": [0, 0],
+            "cooldown": [1000, 1000],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "num_stacks": 5,
+                    "base_duration_ms": 3600,
+                    "direction": "OUTGOING"
                 }
             ]
         }, {
@@ -497,45 +533,12 @@
                 }
             ]
         }, {
-            "skill_key": "Core Cleave Magical Strike",
-            "weapon_type": "axe",
-            "damage_coefficient": 0.36,
-            "cast_duration": [100, 100],
-            "cooldown": [0, 0],
-            "strike_on_tick_list": [[100], [100]],
-            "on_strike_effect_applications": [
-                {
-                    "effect": "BLEEDING",
-                    "base_duration_ms": 1000,
-                    "direction": "OUTGOING"
-                }
-            ],
-            "tags": ["AXE"]
-        }, {
             "skill_key": "Core Cleave",
             "weapon_type": "axe",
             "damage_coefficient": 0.36,
             "cast_duration": [960, 640],
             "cooldown": [0, 0],
-            "strike_on_tick_list": [[960], [640]],
-            "on_strike_effect_applications": [
-                {
-                    "effect": "BLEEDING",
-                    "base_duration_ms": 1000,
-                    "direction": "OUTGOING"
-                }
-            ],
-            "child_skill_keys": [
-                "Core Cleave Magical Strike"
-            ],
-            "tags": ["AXE"]
-        }, {
-            "skill_key": "Bleeding Edge Magical Strike",
-            "weapon_type": "axe",
-            "damage_coefficient": 0.36,
-            "cast_duration": [100, 100],
-            "cooldown": [0, 0],
-            "strike_on_tick_list": [[100], [100]],
+            "strike_on_tick_list": [[860, 960], [540, 640]],
             "on_strike_effect_applications": [
                 {
                     "effect": "BLEEDING",
@@ -550,29 +553,11 @@
             "damage_coefficient": 0.36,
             "cast_duration": [1020, 680],
             "cooldown": [0, 0],
-            "strike_on_tick_list": [[1020], [680]],
+            "strike_on_tick_list": [[920, 1020], [580, 680]],
             "on_strike_effect_applications": [
                 {
                     "effect": "BLEEDING",
                     "base_duration_ms": 1000,
-                    "direction": "OUTGOING"
-                }
-            ],
-            "child_skill_keys": [
-                "Bleeding Edge Magical Strike"
-            ],
-            "tags": ["AXE"]
-        }, {
-            "skill_key": "Searing Slash Magical Strike",
-            "weapon_type": "axe",
-            "damage_coefficient": 1.2,
-            "cast_duration": [100, 100],
-            "cooldown": [0, 0],
-            "strike_on_tick_list": [[100], [100]],
-            "on_strike_effect_applications": [
-                {
-                    "effect": "BURNING",
-                    "base_duration_ms": 2000,
                     "direction": "OUTGOING"
                 }
             ],
@@ -583,16 +568,13 @@
             "damage_coefficient": 1.2,
             "cast_duration": [960, 640],
             "cooldown": [0, 0],
-            "strike_on_tick_list": [[960], [640]],
+            "strike_on_tick_list": [[860, 960], [540, 640]],
             "on_strike_effect_applications": [
                 {
                     "effect": "BURNING",
                     "base_duration_ms": 2000,
                     "direction": "OUTGOING"
                 }
-            ],
-            "child_skill_keys": [
-                "Searing Slash Magical Strike"
             ],
             "tags": ["AXE"]
         }, {
