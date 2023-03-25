@@ -48,7 +48,6 @@ namespace gw2combat::utils {
             return false;
         }
     }
-
     if (condition.weapon_set) {
         if (!registry.any_of<component::current_weapon_set>(source_entity)) {
             return false;
@@ -227,6 +226,38 @@ namespace gw2combat::utils {
             if (!threshold_satisfied(counter_value)) {
                 return false;
             }
+        }
+    }
+    if (!condition.not_conditions.empty()) {
+        bool not_conditions_satisfied =
+            std::any_of(condition.not_conditions.begin(),
+                        condition.not_conditions.end(),
+                        [&](auto&& condition) {
+                            return !independent_conditions_satisfied(
+                                condition, entity, target_entity, registry);
+                        });
+        if (!not_conditions_satisfied) {
+            return false;
+        }
+    }
+    if (!condition.or_conditions.empty()) {
+        bool or_conditions_satisfied = std::any_of(
+            condition.or_conditions.begin(), condition.or_conditions.end(), [&](auto&& condition) {
+                return independent_conditions_satisfied(condition, entity, target_entity, registry);
+            });
+        if (!or_conditions_satisfied) {
+            return false;
+        }
+    }
+    if (!condition.and_conditions.empty()) {
+        bool and_conditions_satisfied = std::all_of(
+            condition.and_conditions.begin(),
+            condition.and_conditions.end(),
+            [&](auto&& condition) {
+                return independent_conditions_satisfied(condition, entity, target_entity, registry);
+            });
+        if (!and_conditions_satisfied) {
+            return false;
         }
     }
     return true;
