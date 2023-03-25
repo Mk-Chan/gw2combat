@@ -6,18 +6,19 @@ It works by implementing a configuration system which allows someone to define h
     - Gear-based stats
     - Effects (standard boons & conditions)
     - Unique Effects (includes traits, food, utils and more)
-    - Skill definitions (cast times, damage cofficients, cast durations and more)
+    - Skill definitions (cast times, damage coefficients, cast durations and more)
     - Other gw2combat specific parts
 
 2. Rotation
     - A list of skills (possibly with the exact times they were cast)
 
-Currently the program is extremely accurate at simulating benchmarks as long as build definitions and rotations are provided correctly.
+Currently, the program is extremely accurate at simulating benchmarks as long as build definitions and rotations are provided correctly.
 It does so by playing out the skills provided in the rotation according to skill definitions and attributes/effects in the build configuration.
 
 Available builds at this time:
 - Power Radiance Dragonhunter
 - Power Soulbeast Longbow
 - Power Soulbeast Greatsword
+- Condition Firebrand
 
 Documentation for how to create and edit build configurations is under development.
