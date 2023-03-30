@@ -73,9 +73,15 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
 
         if (!actor.rotation.skill_casts.empty()) {
             actor::rotation_t converted_rotation{};
+            int offset = 0;
+            bool first = true;
             for (auto&& skill_cast : actor.rotation.skill_casts) {
-                converted_rotation.skill_casts.emplace_back(
-                    actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+                if (first) {
+                    offset = std::min(skill_cast.cast_time_ms, 0);
+                    first = false;
+                }
+                converted_rotation.skill_casts.emplace_back(actor::skill_cast_t{
+                    skill_cast.skill, (tick_t)(skill_cast.cast_time_ms - offset)});
             }
             registry.emplace<component::rotation_component>(
                 actor_entity,
