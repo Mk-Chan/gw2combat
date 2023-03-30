@@ -83,9 +83,14 @@ static inline void assert_can_cast_skill(const actor::skill_t& skill,
             }
         }
     } else {
-        if (!bundle_ptr || skill_configuration.required_bundle != bundle_ptr->name) {
-            throw std::runtime_error(
-                fmt::format("skill {} not available on bundle {}", skill, bundle_ptr->name));
+        if (!bundle_ptr) {
+            throw std::runtime_error(fmt::format(
+                "skill {} requires bundle {}", skill, skill_configuration.required_bundle));
+        } else if (skill_configuration.required_bundle != bundle_ptr->name) {
+            throw std::runtime_error(fmt::format("skill {} requires bundle {}, but current have {}",
+                                                 skill,
+                                                 skill_configuration.required_bundle,
+                                                 bundle_ptr->name));
         }
     }
 }
