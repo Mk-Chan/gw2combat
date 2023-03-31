@@ -87,12 +87,12 @@ void perform_skills(registry_t& registry) {
                                                 : animation_component.progress[1] * 100 /
                                                       (double)animation_component.duration[1];
 
-            auto& skill_configuration =
-                registry.get<component::is_skill>(casting_skill.skill_entity).skill_configuration;
-
             double effective_progress_pct = no_quickness_progress_pct + quickness_progress_pct;
             int effective_tick = utils::round_down((double)animation_component.duration[0] *
                                                    effective_progress_pct / 100.0);
+
+          auto& skill_configuration =
+              registry.get<component::is_skill>(casting_skill.skill_entity).skill_configuration;
 
             while (casting_skill.next_pulse_idx <
                        static_cast<int>(skill_configuration.pulse_on_tick_list[0].size()) &&
