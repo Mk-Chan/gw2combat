@@ -556,7 +556,7 @@
             "skill_key": "Sword of Justice Attack",
             "is_child_skill": true,
             "weapon_type": "empty_handed",
-            "damage_coefficient": 0.72,
+            "damage_coefficient": 0.8,
             "cast_duration": [1850, 1850],
             "cooldown": [0, 0],
             "strike_on_tick_list": [
