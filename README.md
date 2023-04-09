@@ -16,7 +16,8 @@ Currently, the program is extremely accurate at simulating benchmarks as long as
 It does so by playing out the skills provided in the rotation according to skill definitions and attributes/effects in the build configuration.
 
 Available builds at this time:
-- Power Radiance Dragonhunter
+- Power Radiance Dragonhunter (Big Game Hunter)
+- Power Radiance Dragonhunter (Heavy Light)
 - Power Soulbeast Longbow
 - Power Soulbeast Greatsword
 - Condition Firebrand
