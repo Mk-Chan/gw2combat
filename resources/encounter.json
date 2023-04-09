@@ -1,9 +1,9 @@
 {
     "actors": [
         {
-            "name": "cfb",
-            "build_path": "resources/build-cfb.json",
-            "rotation_path": "resources/rotation-cfb.csv",
+            "name": "dh-hl",
+            "build_path": "resources/build-dh-hl.json",
+            "rotation_path": "resources/rotation-dh-hl.csv",
             "team": 1
         }, {
             "name": "golem",
@@ -16,9 +16,6 @@
             "type": "DAMAGE",
             "actor": "golem",
             "damage": 4000000
-        }, {
-            "type": "ROTATION",
-            "actor": "cfb"
         }, {
             "type": "TIME",
             "time": 110000
