@@ -377,6 +377,7 @@
             "cooldown": [10000, 8000]
         }, {
             "skill_key": "Symbol of Energy Initial Attack",
+            "attribute_damage_to_skill": "Symbol of Energy",
             "weapon_type": "longbow",
             "damage_coefficient": 0.897,
             "cast_duration": [0, 0],
@@ -403,6 +404,7 @@
             ]
         }, {
             "skill_key": "Symbol of Energy Usual Attack",
+            "attribute_damage_to_skill": "Symbol of Energy",
             "weapon_type": "longbow",
             "damage_coefficient": 0.897,
             "cast_duration": [4000, 4000],
@@ -438,6 +440,7 @@
             ]
         }, {
             "skill_key": "Hunter's Ward Small Attacks",
+            "attribute_damage_to_skill": "Hunter's Ward",
             "weapon_type": "longbow",
             "damage_coefficient": 0.75,
             "cast_duration": [1250, 1250],
@@ -447,6 +450,7 @@
             ]
         }, {
             "skill_key": "Hunter's Ward Big Attack",
+            "attribute_damage_to_skill": "Hunter's Ward",
             "weapon_type": "longbow",
             "damage_coefficient": 2.5,
             "cast_duration": [300, 300],

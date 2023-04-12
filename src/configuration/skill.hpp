@@ -19,14 +19,16 @@ struct skill_t {
     actor::weapon_type weapon_type = actor::weapon_type::INVALID;
     actor::bundle_t required_bundle;
 
+    actor::skill_t attribute_damage_to_skill;
+
+    std::array<int, 2> cast_duration = {0, 0};
+    std::array<int, 2> cooldown = {0, 0};
+
     double flat_damage = 0.0;
     double damage_coefficient = 0.0;
     int ammo = 1;
     int recharge_duration = 0;
     int num_targets = 1;
-
-    std::array<int, 2> cast_duration = {0, 0};
-    std::array<int, 2> cooldown = {0, 0};
 
     std::array<std::vector<int>, 2> strike_on_tick_list = {std::vector<int>{}, std::vector<int>{}};
     std::array<std::vector<int>, 2> pulse_on_tick_list = {std::vector<int>{}, std::vector<int>{}};
@@ -52,13 +54,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 skill_key,
                                                 weapon_type,
                                                 required_bundle,
+                                                attribute_damage_to_skill,
+                                                cast_duration,
+                                                cooldown,
                                                 flat_damage,
                                                 damage_coefficient,
                                                 ammo,
                                                 recharge_duration,
                                                 num_targets,
-                                                cast_duration,
-                                                cooldown,
                                                 strike_on_tick_list,
                                                 pulse_on_tick_list,
                                                 on_strike_effect_applications,

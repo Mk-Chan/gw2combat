@@ -461,6 +461,7 @@
             ]
         }, {
             "skill_key": "Chapter 4: Scorched Aftermath Attack",
+            "attribute_damage_to_skill": "Chapter 4: Scorched Aftermath",
             "weapon_type": "tome",
             "damage_coefficient": 0.64,
             "cast_duration": [4000, 4000],
@@ -579,6 +580,7 @@
             "tags": ["AXE"]
         }, {
             "skill_key": "Symbol of Vengeance Attack",
+            "attribute_damage_to_skill": "Symbol of Vengeance",
             "weapon_type": "axe",
             "damage_coefficient": 0.6,
             "cast_duration": [4000, 4000],
@@ -628,6 +630,7 @@
             "strike_on_tick_list": [[640], [420]]
         }, {
             "skill_key": "Symbol of Punishment Fist Attack",
+            "attribute_damage_to_skill": "Symbol of Punishment",
             "weapon_type": "scepter",
             "damage_coefficient": 0.2,
             "cast_duration": [4000, 4000],
@@ -647,6 +650,7 @@
             ]
         }, {
             "skill_key": "Symbol of Punishment Symbol Attack",
+            "attribute_damage_to_skill": "Symbol of Punishment",
             "weapon_type": "scepter",
             "damage_coefficient": 0.5,
             "cast_duration": [4000, 4000],
@@ -779,6 +783,7 @@
             ]
         }, {
             "skill_key": "Purging Flames Attack",
+            "attribute_damage_to_skill": "Purging Flames",
             "weapon_type": "empty_handed",
             "damage_coefficient": 0.2,
             "num_targets": 5,

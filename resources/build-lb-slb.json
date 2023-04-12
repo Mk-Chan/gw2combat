@@ -451,6 +451,7 @@
             "cooldown": [8000, 6400]
         }, {
             "skill_key": "Path of Scars Returning Hit",
+            "attribute_damage_to_skill": "Path of Scars",
             "weapon_type": "axe",
             "damage_coefficient": 1.2,
             "cast_duration": [0, 0],
@@ -471,15 +472,6 @@
             "damage_coefficient": 1.2,
             "cast_duration": [560, 440],
             "strike_on_tick_list": [[560], [440]],
-            "on_strike_effect_applications": [
-                {
-                    "unique_effect": {
-                        "unique_effect_key": "Twice as Vicious Effect"
-                    },
-                    "base_duration_ms": 10000,
-                    "direction": "SELF"
-                }
-            ],
             "cooldown": [12000, 9600],
             "child_skill_keys": [
                 "Path of Scars Returning Hit"
@@ -525,6 +517,7 @@
             "cooldown": [28000, 22400]
         }, {
             "skill_key": "Frost Trap Attack",
+            "attribute_damage_to_skill": "Frost Trap",
             "weapon_type": "empty_handed",
             "damage_coefficient": 1.0,
             "num_targets": 5,
@@ -542,6 +535,7 @@
             ]
         }, {
             "skill_key": "One Wolf Pack Attack",
+            "attribute_damage_to_skill": "One Wolf Pack",
             "weapon_type": "empty_handed",
             "damage_coefficient": 0.95,
             "cast_duration": [250, 250],

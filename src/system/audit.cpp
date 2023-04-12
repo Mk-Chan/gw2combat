@@ -2,6 +2,7 @@
 
 #include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
+#include "utils/skill_utils.hpp"
 
 #include "component/actor/casting_skill.hpp"
 #include "component/actor/combat_stats.hpp"
@@ -192,15 +193,25 @@ void audit_damage(registry_t& registry) {
                         throw std::runtime_error("Unknown source for damage!");
                     }
                 }();
-                auto source_skill = incoming_damage_event.skill.empty()
-                                        ? "unknown_skill"
-                                        : incoming_damage_event.skill;
+                auto skill_to_attribute_damage_to = [&]() {
+                    if (incoming_damage_event.skill.empty()) {
+                        return std::string{"unknown_skill"};
+                    } else {
+                        auto& skill_configuration =
+                            utils::get_skill_configuration(incoming_damage_event.skill,
+                                                           incoming_damage_event.source_entity,
+                                                           registry);
+                        return skill_configuration.attribute_damage_to_skill.empty()
+                                   ? skill_configuration.skill_key
+                                   : skill_configuration.attribute_damage_to_skill;
+                    }
+                }();
                 audit_component.events.emplace_back(audit::damage_event_t{
                     .time_ms = incoming_damage_event.tick,
                     .actor = utils::get_entity_name(actor_entity, registry),
                     .source_actor =
                         utils::get_entity_name(incoming_damage_event.source_entity, registry),
-                    .source_skill = source_skill,
+                    .source_skill = skill_to_attribute_damage_to,
                     .damage_type = damage_type,
                     .damage = utils::round_to_nearest_even(incoming_damage_event.value),
                 });
