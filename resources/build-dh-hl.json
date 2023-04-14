@@ -499,11 +499,12 @@
             "skill_key": "Leap of Faith",
             "weapon_type": "greatsword",
             "damage_coefficient": 2.0,
-            "cast_duration": [1000, 800],
+            "cast_duration": [1000, 720],
             "cooldown": [8000, 6400],
-            "strike_on_tick_list": [[1000], [800]]
+            "strike_on_tick_list": [[1000], [720]]
         }, {
             "skill_key": "Symbol of Resolution Attack",
+            "attribute_damage_to_skill": "Symbol of Resolution",
             "is_child_skill": true,
             "weapon_type": "greatsword",
             "damage_coefficient": 0.845,
@@ -575,14 +576,15 @@
             "recharge_duration": 1000
         }, {
             "skill_key": "Procession of Blades Attack",
+            "attribute_damage_to_skill": "Procession of Blades",
             "is_child_skill": true,
             "weapon_type": "empty_handed",
             "damage_coefficient": 0.44,
-            "cast_duration": [4000, 4000],
+            "cast_duration": [3800, 3800],
             "cooldown": [0, 0],
             "strike_on_tick_list": [
-                [400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000],
-                [400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000]
+                [1280, 1560, 1840, 2120, 2400, 2680, 2960, 3240, 3520, 3800],
+                [1280, 1560, 1840, 2120, 2400, 2680, 2960, 3240, 3520, 3800]
             ]
         }, {
             "skill_key": "Procession of Blades",
