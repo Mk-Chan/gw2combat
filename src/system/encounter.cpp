@@ -21,7 +21,13 @@ namespace gw2combat::system {
 void setup_encounter(registry_t& registry, const configuration::encounter_t& encounter) {
     auto singleton_entity = registry.create();
     registry.emplace<component::is_actor>(singleton_entity);
-    registry.emplace<component::audit_component>(singleton_entity);
+    registry.emplace<component::audit_component>(
+        singleton_entity,
+        component::audit_component{
+            .audit_configuration = encounter.audit_configuration,
+            .old_events = {},
+            .events = {},
+        });
     registry.emplace<component::static_attributes>(
         singleton_entity, component::static_attributes{configuration::build_t{}.attributes});
     registry.ctx().emplace_as<std::string>(singleton_entity, "Console");

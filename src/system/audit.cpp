@@ -353,14 +353,40 @@ void audit_damage(registry_t& registry) {
 }
 
 void audit(registry_t& registry) {
-    audit_actor_created(registry);
-    audit_skill_casts(registry);
-    audit_bundles(registry);
-    audit_effect_applications(registry);
-    audit_damage(registry);
-    audit_combat_stats_update(registry);
-    audit_effect_expiration(registry);
-    audit_actor_downstate(registry);
+    auto& audit_configuration =
+        registry.get<component::audit_component>(utils::get_singleton_entity()).audit_configuration;
+    if (audit_configuration.audits_to_perform.contains(
+            configuration::audit_t::audit_type_t::ACTOR_CREATED)) {
+        audit_actor_created(registry);
+    }
+    if (audit_configuration.audits_to_perform.contains(
+            configuration::audit_t::audit_type_t::SKILL_CASTS)) {
+        audit_skill_casts(registry);
+    }
+    if (audit_configuration.audits_to_perform.contains(
+            configuration::audit_t::audit_type_t::BUNDLES)) {
+        audit_bundles(registry);
+    }
+    if (audit_configuration.audits_to_perform.contains(
+            configuration::audit_t::audit_type_t::EFFECT_APPLICATIONS)) {
+        audit_effect_applications(registry);
+    }
+    if (audit_configuration.audits_to_perform.contains(
+            configuration::audit_t::audit_type_t::DAMAGE)) {
+        audit_damage(registry);
+    }
+    if (audit_configuration.audits_to_perform.contains(
+            configuration::audit_t::audit_type_t::COMBAT_STATS)) {
+        audit_combat_stats_update(registry);
+    }
+    if (audit_configuration.audits_to_perform.contains(
+            configuration::audit_t::audit_type_t::EFFECT_EXPIRATION)) {
+        audit_effect_expiration(registry);
+    }
+    if (audit_configuration.audits_to_perform.contains(
+            configuration::audit_t::audit_type_t::ACTOR_DOWNSTATE)) {
+        audit_actor_downstate(registry);
+    }
 }
 
 audit::report_t get_audit_report(registry_t& registry) {

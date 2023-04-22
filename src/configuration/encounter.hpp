@@ -3,6 +3,7 @@
 
 #include "common.hpp"
 
+#include "configuration/audit.hpp"
 #include "configuration/build.hpp"
 #include "configuration/rotation.hpp"
 
@@ -35,6 +36,7 @@ struct termination_condition_t {
 struct encounter_t {
     std::vector<configuration::actor_t> actors;
     std::vector<termination_condition_t> termination_conditions;
+    audit_t audit_configuration;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_t,
@@ -49,7 +51,10 @@ NLOHMANN_JSON_SERIALIZE_ENUM(termination_condition_t::type_t,
                               {termination_condition_t::type_t::ROTATION, "ROTATION"},
                               {termination_condition_t::type_t::DAMAGE, "DAMAGE"}})
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(termination_condition_t, type, time, actor, damage)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t, actors, termination_conditions)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t,
+                                                actors,
+                                                termination_conditions,
+                                                audit_configuration)
 
 }  // namespace gw2combat::configuration
 

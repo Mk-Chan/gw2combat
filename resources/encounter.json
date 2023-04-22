@@ -20,5 +20,17 @@
             "type": "TIME",
             "time": 110000
         }
-    ]
+    ],
+    "audit_configuration": {
+        "audits_to_perform": [
+            "ACTOR_CREATED",
+            "SKILL_CASTS",
+            "BUNDLES",
+            "EFFECT_APPLICATIONS",
+            "DAMAGE",
+            "COMBAT_STATS",
+            "EFFECT_EXPIRATION",
+            "ACTOR_DOWNSTATE"
+        ]
+    }
 }

@@ -73,6 +73,7 @@ configuration::encounter_t convert_encounter(
     std::copy(encounter_local.termination_conditions.begin(),
               encounter_local.termination_conditions.end(),
               std::back_inserter(converted_encounter.termination_conditions));
+    converted_encounter.audit_configuration = encounter_local.audit_configuration;
     return converted_encounter;
 }
 
