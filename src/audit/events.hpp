@@ -25,42 +25,30 @@ enum class event_type_t
 
 struct actor_created_event_t {
     event_type_t event_type = event_type_t::ACTOR_CREATED_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
 };
 
 struct skill_cast_begin_event_t {
     event_type_t event_type = event_type_t::SKILL_CAST_BEGIN_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
     std::string skill;
 };
 
 struct skill_cast_end_event_t {
     event_type_t event_type = event_type_t::SKILL_CAST_END_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
     std::string skill;
 };
 
 struct equipped_bundle_event_t {
     event_type_t event_type = event_type_t::EQUIPPED_BUNDLE_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
     std::string bundle;
 };
 
 struct dropped_bundle_event_t {
     event_type_t event_type = event_type_t::DROPPED_BUNDLE_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
     std::string bundle;
 };
 
 struct effect_application_event_t {
     event_type_t event_type = event_type_t::EFFECT_APPLICATION_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
     std::string source_actor;
     std::string source_skill;
     std::string effect;
@@ -86,8 +74,6 @@ struct damage_event_t {
     };
 
     event_type_t event_type = event_type_t::DAMAGE_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
     std::string source_actor;
     std::string source_skill;
     damage_type_t damage_type = damage_type_t::INVALID;
@@ -96,15 +82,11 @@ struct damage_event_t {
 
 struct combat_stats_update_event_t {
     event_type_t event_type = event_type_t::COMBAT_STATS_UPDATE_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
     int updated_health = 0;
 };
 
 struct effect_expired_event_t {
     event_type_t event_type = event_type_t::EFFECT_EXPIRED_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
     std::string source_actor;
     std::string source_skill;
     std::string effect;
@@ -113,8 +95,6 @@ struct effect_expired_event_t {
 
 struct actor_downstate_event_t {
     event_type_t event_type = event_type_t::ACTOR_DOWNSTATE_EVENT;
-    tick_t time_ms = 0;
-    std::string actor;
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(
@@ -147,39 +127,19 @@ NLOHMANN_JSON_SERIALIZE_ENUM(damage_event_t::damage_type_t,
                                   "torment_stationary"},
                                  {damage_event_t::damage_type_t::TORMENT_MOVING, "torment_moving"},
                              })
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_created_event_t, event_type, time_ms, actor)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_created_event_t, event_type)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(damage_event_t,
                                                 event_type,
-                                                time_ms,
-                                                actor,
                                                 source_actor,
                                                 source_skill,
                                                 damage_type,
                                                 damage)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cast_begin_event_t,
-                                                event_type,
-                                                time_ms,
-                                                actor,
-                                                skill)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cast_end_event_t,
-                                                event_type,
-                                                time_ms,
-                                                actor,
-                                                skill)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(equipped_bundle_event_t,
-                                                event_type,
-                                                time_ms,
-                                                actor,
-                                                bundle)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(dropped_bundle_event_t,
-                                                event_type,
-                                                time_ms,
-                                                actor,
-                                                bundle)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cast_begin_event_t, event_type, skill)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cast_end_event_t, event_type, skill)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(equipped_bundle_event_t, event_type, bundle)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(dropped_bundle_event_t, event_type, bundle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(effect_application_event_t,
                                                 event_type,
-                                                time_ms,
-                                                actor,
                                                 source_actor,
                                                 source_skill,
                                                 effect,
@@ -188,18 +148,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(effect_application_event_t,
                                                 duration_ms)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(combat_stats_update_event_t,
                                                 event_type,
-                                                time_ms,
-                                                actor,
                                                 updated_health)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(effect_expired_event_t,
                                                 event_type,
-                                                time_ms,
-                                                actor,
                                                 source_actor,
                                                 source_skill,
                                                 effect,
                                                 unique_effect)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_downstate_event_t, event_type, time_ms, actor)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_downstate_event_t, event_type)
 
 }  // namespace gw2combat::audit
 

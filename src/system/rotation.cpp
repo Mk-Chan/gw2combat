@@ -91,8 +91,8 @@ void perform_skills(registry_t& registry) {
             int effective_tick = utils::round_down((double)animation_component.duration[0] *
                                                    effective_progress_pct / 100.0);
 
-          auto& skill_configuration =
-              registry.get<component::is_skill>(casting_skill.skill_entity).skill_configuration;
+            auto& skill_configuration =
+                registry.get<component::is_skill>(casting_skill.skill_entity).skill_configuration;
 
             while (casting_skill.next_pulse_idx <
                        static_cast<int>(skill_configuration.pulse_on_tick_list[0].size()) &&
@@ -158,7 +158,8 @@ void perform_skills(registry_t& registry) {
             if (!skill_configuration.equip_bundle.empty()) {
                 registry.emplace<component::bundle_component>(
                     actor_entity, component::bundle_component{skill_configuration.equip_bundle});
-                registry.emplace_or_replace<component::equipped_bundle>(actor_entity);
+                registry.emplace_or_replace<component::equipped_bundle>(
+                    actor_entity, skill_configuration.equip_bundle);
                 spdlog::info("[{}] {}: equipped bundle {}",
                              utils::get_current_tick(registry),
                              utils::get_entity_name(actor_entity, registry),

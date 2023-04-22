@@ -11,7 +11,9 @@ struct bundle_component {
     actor::bundle_t name;
 };
 
-struct equipped_bundle {};
+struct equipped_bundle {
+    actor::bundle_t name;
+};
 struct dropped_bundle {
     actor::bundle_t name;
 };
