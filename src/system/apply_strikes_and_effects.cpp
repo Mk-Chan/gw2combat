@@ -10,8 +10,8 @@
 #include "component/effect/is_effect.hpp"
 #include "component/effect/is_unique_effect.hpp"
 #include "component/hierarchy/owner_component.hpp"
-
 #include "component/lifecycle/destroy_entity.hpp"
+
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
 #include "utils/entity_utils.hpp"
@@ -308,14 +308,16 @@ void apply_effects(registry_t& registry) {
                                                       target_entity,
                                                       registry);
                     spdlog::info(
-                        "[{}] {}:{} applied {} stacks of {} duration {} effect on {}",
+                        "[{}] {}:{} applied {} stacks of {} duration {} unique effect on {} with "
+                        "skill {}",
                         utils::get_current_tick(registry),
                         utils::get_entity_name(application_source_entity, registry),
                         utils::get_entity_name(incoming_application.source_entity, registry),
                         application.num_stacks,
                         application.base_duration_ms,
                         application.unique_effect.unique_effect_key,
-                        utils::get_entity_name(target_entity, registry));
+                        utils::get_entity_name(target_entity, registry),
+                        incoming_application.effect_application.source_skill);
                 }
                 if (application.effect != actor::effect_t::INVALID) {
                     int effective_duration =
@@ -331,14 +333,15 @@ void apply_effects(registry_t& registry) {
                                                target_entity,
                                                registry);
                     spdlog::info(
-                        "[{}] {}:{} applied {} stacks of {} duration {} effect on {}",
+                        "[{}] {}:{} applied {} stacks of {} duration {} effect on {} with skill {}",
                         utils::get_current_tick(registry),
                         utils::get_entity_name(application_source_entity, registry),
                         utils::get_entity_name(incoming_application.source_entity, registry),
                         application.num_stacks,
                         effective_duration,
                         utils::to_string(application.effect),
-                        utils::get_entity_name(target_entity, registry));
+                        utils::get_entity_name(target_entity, registry),
+                        incoming_application.effect_application.source_skill);
                 }
             }
         });

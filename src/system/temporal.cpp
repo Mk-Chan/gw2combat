@@ -1,5 +1,7 @@
 #include "temporal.hpp"
 
+#include "component/actor/casting_skills.hpp"
+#include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
@@ -7,7 +9,6 @@
 #include "component/temporal/has_alacrity.hpp"
 #include "component/temporal/has_quickness.hpp"
 
-#include "component/lifecycle/destroy_entity.hpp"
 #include "utils/actor_utils.hpp"
 
 namespace gw2combat::system {
@@ -38,10 +39,8 @@ void progress_cooldowns(registry_t& registry) {
     registry.view<component::cooldown_component>().each(
         [&](entity_t entity, component::cooldown_component& cooldown) {
             if (cooldown.duration[0] == 0) {
-                auto ammo = registry.try_get<component::ammo>(entity);
-                if (ammo) {
-                    ammo->current_ammo = ammo->max_ammo;
-                }
+                auto& ammo = registry.get<component::ammo>(entity);
+                ammo.current_ammo = ammo.max_ammo;
                 registry.emplace<component::cooldown_expired>(entity);
                 return;
             }
@@ -76,6 +75,23 @@ void progress_durations(registry_t& registry) {
             ++duration.progress;
             if (duration.progress >= duration.duration) {
                 registry.emplace<component::duration_expired>(entity);
+            }
+        });
+}
+
+void progress_casting_skills(registry_t& registry) {
+    registry.view<component::casting_skills_component>(entt::exclude<component::has_quickness>)
+        .each([&](component::casting_skills_component& casting_skills_component) {
+            for (auto& skill_state : casting_skills_component.skills) {
+                ++skill_state.pulse_progress[0];
+                ++skill_state.strike_progress[0];
+            }
+        });
+    registry.view<component::casting_skills_component, component::has_quickness>().each(
+        [&](component::casting_skills_component& casting_skills_component) {
+            for (auto& skill_state : casting_skills_component.skills) {
+                ++skill_state.pulse_progress[1];
+                ++skill_state.strike_progress[1];
             }
         });
 }

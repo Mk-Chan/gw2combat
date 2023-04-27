@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import numpy as np
 
 
 def dps_for_time_ms(time_ms: int):
@@ -11,6 +12,10 @@ def dps_for_time_ms(time_ms: int):
 
 def total_damage(series: pd.Series):
     return sum(series)
+
+
+def mean_damage(series: pd.Series):
+    return np.mean(series)
 
 
 def count(series: pd.Series):
@@ -33,7 +38,7 @@ def main():
     time_to_first_strike_ms = min(combat_df["time_ms"])
     combat_time_ms = max(combat_df["time_ms"]) - time_to_first_strike_ms
     damage_summary = damage_df.groupby(by=["damage_type", "source_skill"], dropna=False)["damage"] \
-        .aggregate([total_damage, count, dps_for_time_ms(combat_time_ms)]) \
+        .aggregate([total_damage, mean_damage, count, dps_for_time_ms(combat_time_ms)]) \
         .reset_index() \
         .sort_values(by=["total_damage"], ascending=[False]) \
         .reset_index(drop=True)

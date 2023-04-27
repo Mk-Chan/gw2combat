@@ -80,6 +80,7 @@ void tick(registry_t& registry) {
     system::perform_rotations(registry);
 
     system::progress_animations(registry);
+    system::progress_casting_skills(registry);
     system::progress_cooldowns(registry);
     system::progress_durations(registry);
 
@@ -113,7 +114,7 @@ void tick(registry_t& registry) {
     system::audit(registry);
 
     system::reset_counters(registry);
-    system::cleanup_finished_casting_skills(registry);
+    system::cleanup_casting_skills(registry);
     destroy_marked_entities(registry);
     clear_temporary_components(registry);
 }
