@@ -502,9 +502,9 @@
             "skill_key": "Leap of Faith",
             "weapon_type": "greatsword",
             "damage_coefficient": 2.0,
-            "cast_duration": [1000, 720],
+            "cast_duration": [1000, 800],
             "cooldown": [8000, 6400],
-            "strike_on_tick_list": [[1000], [720]]
+            "strike_on_tick_list": [[1000], [800]]
         }, {
             "skill_key": "Symbol of Resolution Attack",
             "attribute_damage_to_skill": "Symbol of Resolution",
