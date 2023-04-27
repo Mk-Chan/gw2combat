@@ -390,11 +390,15 @@ void cleanup_casting_skills(registry_t& registry) {
             component::casting_skills_component& casting_skills_component,
             const component::finished_casting_skills& finished_casting_skills) {
             for (auto skill_entity : finished_casting_skills.skill_entities) {
-                std::erase_if(
-                    casting_skills_component.skills,
+                auto skill_pos = std::find_if(
+                    casting_skills_component.skills.cbegin(),
+                    casting_skills_component.skills.cend(),
                     [&](const component::casting_skills_component::skill_state_t& skill_state) {
                         return skill_state.skill_entity == skill_entity;
                     });
+                if (skill_pos != casting_skills_component.skills.cend()) {
+                    casting_skills_component.skills.erase(skill_pos);
+                }
             }
             if (casting_skills_component.skills.empty()) {
                 registry.remove<component::casting_skills_component>(entity);

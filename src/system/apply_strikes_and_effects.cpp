@@ -115,20 +115,21 @@ void apply_strikes(registry_t& registry) {
                                                      skill_configuration.skill_key,
                                                      damage.value});
 
-                // double total_incoming_damage = std::accumulate(
-                //     incoming_damage.incoming_damage_events.begin(),
-                //     incoming_damage.incoming_damage_events.end(),
-                //     0.0,
-                //     [](double accumulated,
-                //        const component::incoming_damage_event& incoming_damage_event) {
-                //         return accumulated + incoming_damage_event.value;
-                //     });
-                //  spdlog::info(
-                //      "[{}] skill {} pow {} this_dmg {} total_incoming_dmg {}",
-                //      utils::get_current_tick(registry),
-                //      skill_configuration.skill_key,
-                //      strike_source_relative_attributes.get(target_entity,
-                //      actor::attribute_t::POWER), damage.value, total_incoming_damage);
+                double total_incoming_damage = std::accumulate(
+                    incoming_damage.incoming_damage_events.begin(),
+                    incoming_damage.incoming_damage_events.end(),
+                    0.0,
+                    [](double accumulated,
+                       const component::incoming_damage_event& incoming_damage_event) {
+                        return accumulated + incoming_damage_event.value;
+                    });
+                spdlog::info(
+                    "[{}] skill {} pow {} this_dmg {} total_incoming_dmg {}",
+                    utils::get_current_tick(registry),
+                    skill_configuration.skill_key,
+                    strike_source_relative_attributes.get(target_entity, actor::attribute_t::POWER),
+                    damage.value,
+                    total_incoming_damage);
 
                 // NOTE: Extreme hack to avoid coding a whole new type of damage just for food.
                 //       Implement properly if there are more such instances!
