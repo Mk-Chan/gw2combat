@@ -49,7 +49,7 @@ def main():
 
     in_combat_filter = \
         ((df["event_type"] == "damage_event") | (
-                    (df["event_type"] == "effect_application_event") & (df["effect"] in CONDITION_EFFECTS))) \
+                    (df["event_type"] == "effect_application_event") & (df["effect"].isin(CONDITION_EFFECTS)))) \
         & (df["source_actor"] != "Console")
 
     combat_df = df[in_combat_filter].reset_index(drop=True)
