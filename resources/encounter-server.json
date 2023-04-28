@@ -623,13 +623,27 @@
     "termination_conditions": [
         {
             "type": "TIME",
-            "value": 200000
+            "time": 200000
         }, {
             "type": "ROTATION",
-            "value": 1
+            "actor": "dh"
         }, {
             "type": "DAMAGE",
-            "value": 5000000
+            "actor": "golem",
+            "damage": 5000000
         }
-    ]
+    ],
+    "audit_configuration": {
+        "audits_to_perform": [
+            "ACTOR_CREATED",
+            "SKILL_CASTS",
+            "BUNDLES",
+            "EFFECT_APPLICATIONS",
+            "DAMAGE",
+            "COMBAT_STATS",
+            "EFFECT_EXPIRATION",
+            "ACTOR_DOWNSTATE"
+        ]
+    },
+    "require_afk_skills": false
 }
