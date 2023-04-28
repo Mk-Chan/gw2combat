@@ -37,6 +37,7 @@ struct encounter_t {
     std::vector<configuration::actor_t> actors;
     std::vector<termination_condition_t> termination_conditions;
     audit_t audit_configuration;
+    bool require_afk_skills = false;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_t,
@@ -54,7 +55,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(termination_condition_t, type, t
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t,
                                                 actors,
                                                 termination_conditions,
-                                                audit_configuration)
+                                                audit_configuration,
+                                                require_afk_skills)
 
 }  // namespace gw2combat::configuration
 

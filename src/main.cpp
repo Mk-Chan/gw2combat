@@ -74,6 +74,7 @@ configuration::encounter_t convert_encounter(
               encounter_local.termination_conditions.end(),
               std::back_inserter(converted_encounter.termination_conditions));
     converted_encounter.audit_configuration = encounter_local.audit_configuration;
+    converted_encounter.require_afk_skills = encounter_local.require_afk_skills;
     return converted_encounter;
 }
 

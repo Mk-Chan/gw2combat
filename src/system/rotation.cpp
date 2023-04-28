@@ -14,6 +14,7 @@
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 
+#include "component/encounter/encounter_configuration_component.hpp"
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
 #include "utils/entity_utils.hpp"
@@ -56,12 +57,15 @@ void perform_rotations(registry_t& registry) {
                 utils::get_skill_configuration(next_skill_cast.skill, entity, registry);
             bool is_instant_cast_skill = skill_configuration.cast_duration[0] == 0;
             if (is_instant_cast_skill || !is_in_animation) {
-                // Just skip until the skill is off cooldown to remove the need for AFK skills in
-                // the rotation
-                if (registry.get<component::ammo>(skill_entity).current_ammo <= 0 &&
-                    !(next_skill_cast.skill == "Weapon Swap" &&
-                      registry.any_of<component::bundle_component>(entity))) {
-                    return;
+                if (!registry
+                         .get<component::encounter_configuration_component>(
+                             utils::get_singleton_entity())
+                         .encounter.require_afk_skills) {
+                    if (registry.get<component::ammo>(skill_entity).current_ammo <= 0 &&
+                        !(next_skill_cast.skill == "Weapon Swap" &&
+                          registry.any_of<component::bundle_component>(entity))) {
+                        return;
+                    }
                 }
 
                 utils::assert_can_cast_skill(next_skill_cast.skill, entity, registry);

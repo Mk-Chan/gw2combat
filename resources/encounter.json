@@ -32,5 +32,6 @@
             "EFFECT_EXPIRATION",
             "ACTOR_DOWNSTATE"
         ]
-    }
+    },
+    "require_afk_skills": false
 }
