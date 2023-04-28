@@ -26,15 +26,18 @@ namespace gw2combat::system {
 
 std::vector<audit::skill_cooldown_t> get_skill_cooldowns(registry_t& registry) {
     std::vector<audit::skill_cooldown_t> skill_cooldowns;
-    registry.view<component::cooldown_component, component::is_skill>().each(
+    registry.view<component::cooldown_component, component::ammo, component::is_skill>().each(
         [&](entity_t skill_entity,
             const component::cooldown_component& cooldown_component,
+            const component::ammo& ammo,
             const component::is_skill& is_skill) {
             bool has_alacrity = registry.any_of<component::has_alacrity>(
                 registry.get<component::owner_component>(skill_entity).entity);
             skill_cooldowns.emplace_back(audit::skill_cooldown_t{
                 .skill = is_skill.skill_configuration.skill_key,
-                .duration = cooldown_component.duration[has_alacrity],
+                .duration = cooldown_component.duration[has_alacrity] -
+                            cooldown_component.progress[has_alacrity],
+                .remaining_ammo = ammo.current_ammo,
             });
         });
     return skill_cooldowns;

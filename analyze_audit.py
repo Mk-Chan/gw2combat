@@ -2,6 +2,24 @@ import json
 import pandas as pd
 import numpy as np
 
+CONDITION_EFFECTS = (
+    "BLEEDING",
+    "BURNING",
+    "CONFUSION",
+    "POISON",
+    "TORMENT",
+
+    "BLINDED",
+    "CHILLED",
+    "CRIPPLED",
+    "FEAR",
+    "IMMOBILIZED",
+    "SLOW",
+    "TAUNT",
+    "WEAKNESS",
+    "VULNERABILITY",
+)
+
 
 def dps_for_time_ms(time_ms: int):
     def dps(series: pd.Series):
@@ -28,9 +46,12 @@ def main():
     df = pd.read_json(json.dumps(audit_json["tick_events"]), orient="records")
     df = df.join(pd.json_normalize(df["event"].tolist()).add_prefix("event.")).drop(["event"], axis=1)
     df.columns = df.columns.str.replace("event.", "")
+
     in_combat_filter = \
-        ((df["event_type"] == "damage_event") | (df["event_type"] == "effect_application_event")) \
+        ((df["event_type"] == "damage_event") | (
+                    (df["event_type"] == "effect_application_event") & (df["effect"] in CONDITION_EFFECTS))) \
         & (df["source_actor"] != "Console")
+
     combat_df = df[in_combat_filter].reset_index(drop=True)
     damage_df = combat_df[
         (combat_df["event_type"] == "damage_event") & (combat_df["source_actor"] != "Console")] \

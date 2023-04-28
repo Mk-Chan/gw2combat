@@ -13,6 +13,7 @@ namespace gw2combat::audit {
 struct skill_cooldown_t {
     actor::skill_t skill;
     int duration = 0;
+    int remaining_ammo = 0;
 };
 
 struct tick_event_t {
@@ -34,7 +35,7 @@ struct tick_event_t {
     //     actor_attributes;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cooldown_t, skill, duration)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cooldown_t, skill, duration, remaining_ammo)
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const tick_event_t& nlohmann_json_t) {
     nlohmann_json_j["time_ms"] = nlohmann_json_t.time_ms;
