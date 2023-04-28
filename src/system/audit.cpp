@@ -4,9 +4,9 @@
 #include "utils/entity_utils.hpp"
 #include "utils/skill_utils.hpp"
 
-#include "component/actor/casting_skill.hpp"
+#include "component/actor/casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
-#include "component/actor/finished_casting_skill.hpp"
+#include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/audit/audit_component.hpp"
@@ -18,21 +18,24 @@
 #include "component/effect/source_skill.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/skill/is_skill.hpp"
-#include "component/temporal/animation_component.hpp"
 #include "component/temporal/duration_component.hpp"
 #include "component/temporal/has_alacrity.hpp"
 
 namespace gw2combat::system {
 
-std::vector<audit::skill_cooldown_t> get_skill_cooldowns(registry_t& registry) {
+std::vector<audit::skill_cooldown_t> get_skill_cooldowns(entity_t actor_entity,
+                                                         registry_t& registry) {
     std::vector<audit::skill_cooldown_t> skill_cooldowns;
     registry.view<component::cooldown_component, component::ammo, component::is_skill>().each(
         [&](entity_t skill_entity,
             const component::cooldown_component& cooldown_component,
             const component::ammo& ammo,
             const component::is_skill& is_skill) {
-            bool has_alacrity = registry.any_of<component::has_alacrity>(
-                registry.get<component::owner_component>(skill_entity).entity);
+            auto owner_entity = registry.get<component::owner_component>(skill_entity).entity;
+            if (owner_entity != actor_entity) {
+                return;
+            }
+            bool has_alacrity = registry.any_of<component::has_alacrity>(owner_entity);
             skill_cooldowns.emplace_back(audit::skill_cooldown_t{
                 .skill = is_skill.skill_configuration.skill_key,
                 .duration = cooldown_component.duration[has_alacrity] -
@@ -63,7 +66,7 @@ audit::tick_event_t create_tick_event(const decltype(audit::tick_event_t::event)
         .time_ms = utils::get_current_tick(registry),
         .actor = utils::get_entity_name(actor_entity, registry),
         .event = event,
-        .skill_cooldowns = get_skill_cooldowns(registry),
+        .skill_cooldowns = get_skill_cooldowns(actor_entity, registry),
         //.actor_attributes = get_actor_attributes(registry),
     };
 }
@@ -72,11 +75,6 @@ void audit_bundles(registry_t& registry) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
     registry.view<component::equipped_bundle>().each(
         [&](entity_t actor_entity, const component::equipped_bundle& equipped_bundle) {
-            audit_component.old_events.emplace_back(audit::old_equipped_bundle_event_t{
-                .time_ms = utils::get_current_tick(registry),
-                .actor = utils::get_entity_name(actor_entity, registry),
-                .bundle = equipped_bundle.name,
-            });
             audit_component.events.emplace_back(create_tick_event(
                 audit::equipped_bundle_event_t{
                     .bundle = equipped_bundle.name,
@@ -86,11 +84,6 @@ void audit_bundles(registry_t& registry) {
         });
     registry.view<component::dropped_bundle>().each(
         [&](entity_t actor_entity, const component::dropped_bundle& dropped_bundle) {
-            audit_component.old_events.emplace_back(audit::old_dropped_bundle_event_t{
-                .time_ms = utils::get_current_tick(registry),
-                .actor = utils::get_entity_name(actor_entity, registry),
-                .bundle = dropped_bundle.name,
-            });
             audit_component.events.emplace_back(create_tick_event(
                 audit::dropped_bundle_event_t{
                     .bundle = dropped_bundle.name,
@@ -103,10 +96,6 @@ void audit_bundles(registry_t& registry) {
 void audit_actor_downstate(registry_t& registry) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
     registry.view<component::is_downstate>().each([&](entity_t actor_entity) {
-        audit_component.old_events.emplace_back(audit::old_actor_downstate_event_t{
-            .time_ms = utils::get_current_tick(registry),
-            .actor = utils::get_entity_name(actor_entity, registry),
-        });
         audit_component.events.emplace_back(
             create_tick_event(audit::actor_downstate_event_t{}, actor_entity, registry));
     });
@@ -126,14 +115,6 @@ void audit_effect_expiration(registry_t& registry) {
             registry.any_of<component::is_unique_effect>(entity)
                 ? registry.get<component::is_unique_effect>(entity).unique_effect.unique_effect_key
                 : "";
-        audit_component.old_events.emplace_back(audit::old_effect_expired_event_t{
-            .time_ms = utils::get_current_tick(registry),
-            .actor = utils::get_entity_name(actor_entity, registry),
-            .source_actor = utils::get_entity_name(source_actor.entity, registry),
-            .source_skill = source_skill.skill,
-            .effect = effect,
-            .unique_effect = unique_effect,
-        });
         audit_component.events.emplace_back(create_tick_event(
             audit::effect_expired_event_t{
                 .source_actor = utils::get_entity_name(source_actor.entity, registry),
@@ -149,10 +130,6 @@ void audit_effect_expiration(registry_t& registry) {
 void audit_actor_created(registry_t& registry) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
     registry.view<component::actor_created>().each([&](entity_t actor_entity) {
-        audit_component.old_events.emplace_back(audit::old_actor_created_event_t{
-            .time_ms = utils::get_current_tick(registry),
-            .actor = utils::get_entity_name(actor_entity, registry),
-        });
         audit_component.events.emplace_back(
             create_tick_event(audit::actor_created_event_t{}, actor_entity, registry));
     });
@@ -162,11 +139,6 @@ void audit_combat_stats_update(registry_t& registry) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
     registry.view<component::combat_stats_updated, component::combat_stats>().each(
         [&](entity_t actor_entity, const component::combat_stats& combat_stats) {
-            audit_component.old_events.emplace_back(audit::old_combat_stats_update_event_t{
-                .time_ms = utils::get_current_tick(registry),
-                .actor = utils::get_entity_name(actor_entity, registry),
-                .updated_health = combat_stats.health,
-            });
             audit_component.events.emplace_back(create_tick_event(
                 audit::combat_stats_update_event_t{
                     .updated_health = combat_stats.health,
@@ -197,16 +169,6 @@ void audit_effect_applications(registry_t& registry) {
                                                    effect_application.effect,
                                                    application_source_relative_attributes,
                                                    actor_entity);
-                audit_component.old_events.emplace_back(audit::old_effect_application_event_t{
-                    .time_ms = utils::get_current_tick(registry),
-                    .actor = utils::get_entity_name(actor_entity, registry),
-                    .source_actor = source_actor,
-                    .source_skill = effect_application.source_skill,
-                    .effect = effect,
-                    .unique_effect = effect_application.unique_effect.unique_effect_key,
-                    .num_stacks = effect_application.num_stacks,
-                    .duration_ms = effective_duration,
-                });
                 audit_component.events.emplace_back(create_tick_event(
                     audit::effect_application_event_t{
                         .source_actor = source_actor,
@@ -224,45 +186,37 @@ void audit_effect_applications(registry_t& registry) {
 
 void audit_skill_casts(registry_t& registry) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
-    registry.view<component::casting_skill, component::animation_component>().each(
+    registry.view<component::casting_skills_component>().each(
         [&](entity_t actor_entity,
-            const component::casting_skill& casting_skill,
-            const component::animation_component& animation_component) {
-            if (animation_component.progress[0] + animation_component.progress[1] > 1) {
-                return;
-            }
+            const component::casting_skills_component& casting_skills_component) {
+            for (auto& casting_skill : casting_skills_component.skills) {
+                if (casting_skill.strike_progress[0] + casting_skill.strike_progress[1] > 1 ||
+                    casting_skill.pulse_progress[0] + casting_skill.pulse_progress[1] > 1) {
+                    continue;
+                }
 
-            audit_component.old_events.emplace_back(audit::old_skill_cast_begin_event_t{
-                .time_ms = utils::get_current_tick(registry),
-                .actor = utils::get_entity_name(actor_entity, registry),
-                .skill = registry.get<component::is_skill>(casting_skill.skill_entity)
-                             .skill_configuration.skill_key,
-            });
-            audit_component.events.emplace_back(create_tick_event(
-                audit::skill_cast_begin_event_t{
-                    .skill = registry.get<component::is_skill>(casting_skill.skill_entity)
-                                 .skill_configuration.skill_key,
-                },
-                actor_entity,
-                registry));
+                audit_component.events.emplace_back(create_tick_event(
+                    audit::skill_cast_begin_event_t{
+                        .skill = registry.get<component::is_skill>(casting_skill.skill_entity)
+                                     .skill_configuration.skill_key,
+                    },
+                    actor_entity,
+                    registry));
+            }
         });
 
-    registry.view<component::finished_casting_skill>().each(
+    registry.view<component::finished_casting_skills>().each(
         [&](entity_t actor_entity,
-            const component::finished_casting_skill& finished_casting_skill) {
-            audit_component.old_events.emplace_back(audit::old_skill_cast_end_event_t{
-                .time_ms = utils::get_current_tick(registry),
-                .actor = utils::get_entity_name(actor_entity, registry),
-                .skill = registry.get<component::is_skill>(finished_casting_skill.skill_entity)
-                             .skill_configuration.skill_key,
-            });
-            audit_component.events.emplace_back(create_tick_event(
-                audit::skill_cast_end_event_t{
-                    .skill = registry.get<component::is_skill>(finished_casting_skill.skill_entity)
-                                 .skill_configuration.skill_key,
-                },
-                actor_entity,
-                registry));
+            const component::finished_casting_skills& finished_casting_skills) {
+            for (auto finished_casting_skill_entity : finished_casting_skills.skill_entities) {
+                audit_component.events.emplace_back(create_tick_event(
+                    audit::skill_cast_end_event_t{
+                        .skill = registry.get<component::is_skill>(finished_casting_skill_entity)
+                                     .skill_configuration.skill_key,
+                    },
+                    actor_entity,
+                    registry));
+            }
         });
 }
 
@@ -271,30 +225,6 @@ void audit_damage(registry_t& registry) {
     registry.view<component::incoming_damage>().each(
         [&](entity_t actor_entity, const component::incoming_damage& incoming_damage) {
             for (auto& incoming_damage_event : incoming_damage.incoming_damage_events) {
-                auto old_damage_type = [&]() {
-                    if (incoming_damage_event.effect != actor::effect_t::INVALID) {
-                        switch (incoming_damage_event.effect) {
-                            case actor::effect_t::BURNING:
-                                return audit::old_damage_event_t::damage_type_t::BURNING;
-                            case actor::effect_t::BLEEDING:
-                                return audit::old_damage_event_t::damage_type_t::BLEEDING;
-                            case actor::effect_t::TORMENT:
-                                return audit::old_damage_event_t::damage_type_t::TORMENT_STATIONARY;
-                            case actor::effect_t::POISON:
-                                return audit::old_damage_event_t::damage_type_t::POISON;
-                            case actor::effect_t::CONFUSION:
-                                return audit::old_damage_event_t::damage_type_t::CONFUSION;
-                            case actor::effect_t::BINDING_BLADE:
-                                return audit::old_damage_event_t::damage_type_t::BINDING_BLADE;
-                            default:
-                                throw std::runtime_error("Unknown source for damage!");
-                        }
-                    } else if (!incoming_damage_event.skill.empty()) {
-                        return audit::old_damage_event_t::damage_type_t::STRIKE;
-                    } else {
-                        throw std::runtime_error("Unknown source for damage!");
-                    }
-                }();
                 auto damage_type = [&]() {
                     if (incoming_damage_event.effect != actor::effect_t::INVALID) {
                         switch (incoming_damage_event.effect) {
@@ -332,15 +262,6 @@ void audit_damage(registry_t& registry) {
                                    : skill_configuration.attribute_damage_to_skill;
                     }
                 }();
-                audit_component.old_events.emplace_back(audit::old_damage_event_t{
-                    .time_ms = incoming_damage_event.tick,
-                    .actor = utils::get_entity_name(actor_entity, registry),
-                    .source_actor =
-                        utils::get_entity_name(incoming_damage_event.source_entity, registry),
-                    .source_skill = skill_to_attribute_damage_to,
-                    .damage_type = old_damage_type,
-                    .damage = utils::round_to_nearest_even(incoming_damage_event.value),
-                });
                 audit_component.events.emplace_back(create_tick_event(
                     audit::damage_event_t{
                         .source_actor =
@@ -396,9 +317,6 @@ audit::report_t get_audit_report(registry_t& registry) {
     audit::report_t audit_report;
     registry.view<component::audit_component>().each(
         [&](const component::audit_component& audit_component) {
-            std::copy(audit_component.old_events.cbegin(),
-                      audit_component.old_events.cend(),
-                      std::back_inserter(audit_report.events));
             std::copy(audit_component.events.cbegin(),
                       audit_component.events.cend(),
                       std::back_inserter(audit_report.tick_events));

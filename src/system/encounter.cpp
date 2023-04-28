@@ -27,7 +27,6 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
         singleton_entity,
         component::audit_component{
             .audit_configuration = encounter.audit_configuration,
-            .old_events = {},
             .events = {},
         });
     registry.emplace<component::static_attributes>(
