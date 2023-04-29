@@ -14,7 +14,6 @@
 #include "configuration/skill.hpp"
 #include "configuration/unique_effect.hpp"
 
-#include "component/actor/actor_skills.hpp"
 #include "component/actor/destroy_after_rotation.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/no_more_rotation.hpp"
@@ -66,12 +65,14 @@ static inline entity_t add_owner_based_component(const ConfigurationType& config
 static inline entity_t add_skill_to_actor(const configuration::skill_t& skill,
                                           entity_t actor_entity,
                                           registry_t& registry) {
-    auto& actor_skills = registry.get_or_emplace<component::actor_skills>(actor_entity);
-    if (actor_skills.skill_key_to_entity_map.contains(skill.skill_key)) {
-        return actor_skills.skill_key_to_entity_map[skill.skill_key];
+    for (auto&& [skill_entity, owner_component, is_skill] :
+         registry.view<component::owner_component, component::is_skill>().each()) {
+        if (owner_component.entity == actor_entity && is_skill.skill_configuration == skill) {
+            return skill_entity;
+        }
     }
+
     auto skill_entity = registry.create();
-    actor_skills.skill_key_to_entity_map[skill.skill_key] = skill_entity;
     registry.emplace<component::is_skill>(skill_entity, skill);
     registry.emplace<component::owner_component>(skill_entity, actor_entity);
 

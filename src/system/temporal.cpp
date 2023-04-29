@@ -1,7 +1,6 @@
 #include "temporal.hpp"
 
 #include "component/actor/casting_skills.hpp"
-#include "component/hierarchy/owner_component.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
 #include "component/temporal/animation_component.hpp"
@@ -37,18 +36,17 @@ void progress_animations(registry_t& registry) {
 }
 
 void progress_cooldowns(registry_t& registry) {
-    registry.view<component::owner_component, component::ammo, component::cooldown_component>()
-        .each([&](entity_t entity,
-                  const component::owner_component& owner_component,
-                  component::ammo& ammo,
-                  component::cooldown_component& cooldown) {
+    registry.view<component::cooldown_component>().each(
+        [&](entity_t entity, component::cooldown_component& cooldown) {
             if (cooldown.duration[0] == 0) {
+                auto& ammo = registry.get<component::ammo>(entity);
                 ammo.current_ammo = ammo.max_ammo;
                 registry.emplace<component::cooldown_expired>(entity);
                 return;
             }
 
-            bool has_alacrity = registry.any_of<component::has_alacrity>(owner_component.entity);
+            bool has_alacrity =
+                registry.any_of<component::has_alacrity>(utils::get_owner(entity, registry));
             cooldown.progress[0] += !has_alacrity;
             cooldown.progress[1] += has_alacrity;
 
@@ -56,11 +54,16 @@ void progress_cooldowns(registry_t& registry) {
             int alacrity_progress_pct = cooldown.progress[1] * 100 / cooldown.duration[1];
 
             if (no_alacrity_progress_pct + alacrity_progress_pct >= 100) {
-                ++ammo.current_ammo;
-                if (ammo.current_ammo == ammo.max_ammo) {
-                    registry.emplace<component::cooldown_expired>(entity);
+                auto ammo = registry.try_get<component::ammo>(entity);
+                if (ammo) {
+                    ++ammo->current_ammo;
+                    if (ammo->current_ammo == ammo->max_ammo) {
+                        registry.emplace<component::cooldown_expired>(entity);
+                    } else {
+                        cooldown.progress = {0, 0};
+                    }
                 } else {
-                    cooldown.progress = {0, 0};
+                    registry.emplace<component::cooldown_expired>(entity);
                 }
             }
         });
