@@ -26,6 +26,8 @@
 #include "system/rotation.hpp"
 #include "system/temporal.hpp"
 
+#include "component/actor/casting_skills.hpp"
+#include "component/actor/finished_casting_skills.hpp"
 #include "utils/entity_utils.hpp"
 
 namespace gw2combat {
@@ -149,6 +151,11 @@ std::string combat_loop(const configuration::encounter_t& encounter) {
                                 termination_condition.actor ||
                             !registry.any_of<component::rotation_component>(entity)) {
                             continue;
+                        }
+                        if (registry.any_of<component::casting_skills_component,
+                                            component::finished_casting_skills>(entity)) {
+                            everyone_out_of_rotation = false;
+                            break;
                         }
                         if (!registry.any_of<component::no_more_rotation>(entity)) {
                             everyone_out_of_rotation = false;

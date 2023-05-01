@@ -19,6 +19,9 @@
         }, {
             "type": "TIME",
             "time": 110000
+        }, {
+            "type": "ROTATION",
+            "actor": "dh-hl"
         }
     ],
     "audit_configuration": {
