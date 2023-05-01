@@ -20,7 +20,7 @@ struct audit_t {
         ACTOR_DOWNSTATE,
     };
 
-    std::unordered_set<audit_type_t> audits_to_perform{
+    std::set<audit_type_t> audits_to_perform{
         audit_type_t::ACTOR_CREATED,
         audit_type_t::SKILL_CASTS,
         audit_type_t::BUNDLES,
