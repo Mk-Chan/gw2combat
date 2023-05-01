@@ -4,7 +4,9 @@
 #include "common.hpp"
 
 #include "actor/attributes.hpp"
+#include "actor/bundle.hpp"
 #include "actor/skill.hpp"
+#include "actor/weapon.hpp"
 
 #include "events.hpp"
 
@@ -31,6 +33,8 @@ struct tick_event_t {
                  actor_downstate_event_t>
         event;
     std::vector<skill_cooldown_t> skill_cooldowns;
+    actor::weapon_set current_weapon_set;
+    actor::bundle_t current_bundle;
     // std::unordered_map<std::string, std::unordered_map<actor::attribute_t, double>>
     //     actor_attributes;
 };
@@ -42,6 +46,8 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const tick_event_t& 
     nlohmann_json_j["actor"] = nlohmann_json_t.actor;
     std::visit([&](auto&& e) { nlohmann_json_j["event"] = e; }, nlohmann_json_t.event);
     nlohmann_json_j["skill_cooldowns"] = nlohmann_json_t.skill_cooldowns;
+    nlohmann_json_j["current_weapon"] = nlohmann_json_t.current_weapon_set;
+    nlohmann_json_j["current_bundle"] = nlohmann_json_t.current_bundle;
     // nlohmann_json_j["actor_attributes"] = nlohmann_json_t.actor_attributes;
 }
 
@@ -57,6 +63,10 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, tick_event_t
     }
     nlohmann_json_t.skill_cooldowns =
         nlohmann_json_j.value("skill_cooldowns", nlohmann_json_default_obj.skill_cooldowns);
+    nlohmann_json_t.current_weapon_set =
+        nlohmann_json_j.value("current_weapon", nlohmann_json_default_obj.current_weapon_set);
+    nlohmann_json_t.current_bundle =
+        nlohmann_json_j.value("current_bundle", nlohmann_json_default_obj.current_bundle);
     // nlohmann_json_t.actor_attributes =
     //     nlohmann_json_j.value("actor_attributes", nlohmann_json_default_obj.actor_attributes);
 }
