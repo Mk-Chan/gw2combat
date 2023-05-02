@@ -1,6 +1,8 @@
 #include "combat_loop.hpp"
 
+#include "component/actor/casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
+#include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
@@ -26,8 +28,6 @@
 #include "system/rotation.hpp"
 #include "system/temporal.hpp"
 
-#include "component/actor/casting_skills.hpp"
-#include "component/actor/finished_casting_skills.hpp"
 #include "utils/entity_utils.hpp"
 
 namespace gw2combat {
