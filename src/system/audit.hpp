@@ -8,7 +8,7 @@
 namespace gw2combat::system {
 
 extern void audit(registry_t& registry);
-extern audit::report_t get_audit_report(registry_t& registry);
+extern audit::report_t get_audit_report(registry_t& registry, const std::string& error = {});
 
 }  // namespace gw2combat::system
 

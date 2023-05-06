@@ -200,6 +200,7 @@ std::string combat_loop(const configuration::encounter_t& encounter) {
         }
     } catch (std::exception& e) {
         spdlog::error("Exception: {}", e.what());
+        return nlohmann::json{system::get_audit_report(registry, e.what())}[0].dump();
     }
 
     return nlohmann::json{system::get_audit_report(registry)}[0].dump();
