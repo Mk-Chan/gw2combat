@@ -19,7 +19,7 @@ add_compile_options(-Wall -Wextra -Wpedantic -Wno-deprecated)
 # Flags
 ###
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -g -fno-omit-frame-pointer")
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -g3 -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3")
 
 if (NOT CMAKE_BUILD_TYPE)

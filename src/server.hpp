@@ -5,7 +5,7 @@
 
 namespace gw2combat {
 
-extern void start_server(const std::string& hostname, int port);
+extern void start_server_tcp(const std::string& hostname, int port);
 
 }  // namespace gw2combat
 

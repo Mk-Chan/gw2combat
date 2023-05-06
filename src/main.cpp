@@ -8,11 +8,63 @@
 #include "configuration/encounter-local.hpp"
 #include "configuration/encounter.hpp"
 
+#include "spdlog/spdlog.h"
 #include "utils/io_utils.hpp"
 
 #include "argparse/argparse.hpp"
 
 using namespace gw2combat;
+
+configuration::encounter_t convert_encounter(
+    const configuration::encounter_local_t& encounter_local);
+
+int main(int argc, char** argv) {
+    if (int error = std::fesetround(FE_TONEAREST); error) {
+        spdlog::warn(
+            "Unable to use banker's/half-to-even rounding! Expect minor inaccuracies in "
+            "simulation.");
+    }
+
+    argparse::ArgumentParser parser{"gw2combat"};
+    parser.add_argument("--server")
+        .default_value(std::string{"127.0.0.1:54321"})
+        .help("Server mode with hostname:port configuration.");
+    parser.add_argument("--encounter")
+        .default_value(std::string{"resources/encounter.json"})
+        .help("Path to encounter file. Only applicable in default mode.");
+    parser.add_argument("--audit-path")
+        .default_value(std::string{"audit.json"})
+        .help("Path to audit file. Only applicable in default mode.");
+
+    try {
+        parser.parse_args(argc, argv);
+    } catch (const std::runtime_error& err) {
+        std::cerr << err.what() << std::endl;
+        std::cerr << parser;
+        std::exit(1);
+    }
+
+    bool server_mode = parser.is_used("--server");
+    if (!server_mode) {
+        const auto& encounter_path = parser.get<std::string>("--encounter");
+        const auto& audit_path = parser.get<std::string>("--audit-path");
+        auto encounter_local = utils::read<configuration::encounter_local_t>(encounter_path);
+        auto encounter = convert_encounter(encounter_local);
+        std::ofstream audit_path_stream{audit_path, std::ios::trunc};
+
+        auto simulation_result_json = combat_loop(encounter);
+
+        audit_path_stream << simulation_result_json;
+    } else {
+        const auto& server_configuration = parser.get<std::string>("--server");
+        auto delimiter_index = server_configuration.find(':');
+        const std::string& hostname = server_configuration.substr(0, delimiter_index);
+        int port = std::stoi(
+            server_configuration.substr(delimiter_index + 1, server_configuration.size()));
+        start_server_tcp(hostname, port);
+    }
+    return 0;
+}
 
 configuration::encounter_t convert_encounter(
     const configuration::encounter_local_t& encounter_local) {
@@ -76,52 +128,4 @@ configuration::encounter_t convert_encounter(
     converted_encounter.audit_configuration = encounter_local.audit_configuration;
     converted_encounter.require_afk_skills = encounter_local.require_afk_skills;
     return converted_encounter;
-}
-
-int main(int argc, char** argv) {
-    if (int error = std::fesetround(FE_TONEAREST); error) {
-        spdlog::warn(
-            "Unable to use banker's/half-to-even rounding! Expect minor inaccuracies in "
-            "simulation.");
-    }
-
-    argparse::ArgumentParser parser{"gw2combat"};
-    parser.add_argument("--server")
-        .default_value(std::string{"127.0.0.1:54321"})
-        .help("Server mode with hostname:port configuration.");
-    parser.add_argument("--encounter")
-        .default_value(std::string{"resources/encounter.json"})
-        .help("Path to encounter file. Only applicable in default mode.");
-    parser.add_argument("--audit-path")
-        .default_value(std::string{"audit.json"})
-        .help("Path to audit file. Only applicable in default mode.");
-
-    try {
-        parser.parse_args(argc, argv);
-    } catch (const std::runtime_error& err) {
-        std::cerr << err.what() << std::endl;
-        std::cerr << parser;
-        std::exit(1);
-    }
-
-    bool server_mode = parser.is_used("--server");
-    if (!server_mode) {
-        const auto& encounter_path = parser.get<std::string>("--encounter");
-        const auto& audit_path = parser.get<std::string>("--audit-path");
-        auto encounter_local = utils::read<configuration::encounter_local_t>(encounter_path);
-        auto encounter = convert_encounter(encounter_local);
-        std::ofstream audit_path_stream{audit_path, std::ios::trunc};
-
-        auto simulation_result_json = combat_loop(encounter);
-
-        audit_path_stream << simulation_result_json;
-    } else {
-        const auto& server_configuration = parser.get<std::string>("--server");
-        auto delimiter_index = server_configuration.find(':');
-        const std::string& hostname = server_configuration.substr(0, delimiter_index);
-        int port = std::stoi(
-            server_configuration.substr(delimiter_index + 1, server_configuration.size()));
-        start_server(hostname, port);
-    }
-    return 0;
 }
