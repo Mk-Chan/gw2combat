@@ -326,7 +326,7 @@ audit::report_t get_audit_report(registry_t& registry, const std::string& error)
                       std::back_inserter(audit_report.tick_events));
         });
     if (!error.empty()) {
-        audit_report.error = audit::error_t{error};
+        audit_report.error = error;
     }
     return audit_report;
 }

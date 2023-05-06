@@ -10,16 +10,10 @@
 
 namespace gw2combat::audit {
 
-struct error_t {
-    std::string error;
-};
-
 struct report_t {
     std::vector<tick_event_t> tick_events;
-    std::optional<error_t> error;
+    std::optional<std::string> error;
 };
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(error_t, error)
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nlohmann_json_t) {
     std::copy(nlohmann_json_t.tick_events.cbegin(),
