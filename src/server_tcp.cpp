@@ -27,6 +27,8 @@ asio::awaitable<void> request_handler(tcp::socket socket) {
                 socket,
                 asio::buffer(simulation_result_json, simulation_result_json.size()),
                 asio::use_awaitable);
+
+            socket.close();
         }
     } catch (asio::system_error& e) {
     } catch (std::exception& e) {
