@@ -10,26 +10,28 @@ using tcp = asio::ip::tcp;
 
 asio::awaitable<void> request_handler(tcp::socket socket) {
     try {
-        while (socket.is_open()) {
-            asio::streambuf buffer;
-            std::size_t bytes_read =
-                co_await asio::async_read_until(socket, buffer, "\n", asio::use_awaitable);
-            if (bytes_read == 0) {
-                throw std::runtime_error("read nothing from socket!");
-            }
-            std::istream istream{&buffer};
-            std::string payload;
-            std::getline(istream, payload);
-
-            auto encounter = nlohmann::json::parse(payload).get<configuration::encounter_t>();
-            auto simulation_result_json = combat_loop(encounter);
-            co_await asio::async_write(
-                socket,
-                asio::buffer(simulation_result_json, simulation_result_json.size()),
-                asio::use_awaitable);
-
-            socket.close();
+        if (!socket.is_open()) {
+            throw std::runtime_error("socket is not open!");
         }
+
+        asio::streambuf buffer;
+        std::size_t bytes_read =
+            co_await asio::async_read_until(socket, buffer, "\n", asio::use_awaitable);
+        if (bytes_read == 0) {
+            throw std::runtime_error("read nothing from socket!");
+        }
+        std::istream istream{&buffer};
+        std::string payload;
+        std::getline(istream, payload);
+
+        auto encounter = nlohmann::json::parse(payload).get<configuration::encounter_t>();
+        auto simulation_result_json = combat_loop(encounter);
+        co_await asio::async_write(
+            socket,
+            asio::buffer(simulation_result_json, simulation_result_json.size()),
+            asio::use_awaitable);
+
+        socket.close();
     } catch (asio::system_error& e) {
     } catch (std::exception& e) {
         spdlog::error("Exception: {}", e.what());
