@@ -322,12 +322,7 @@
                 {
                     "condition": {
                         "only_applies_on_strikes": true,
-                        "only_applies_on_strikes_by_skill_with_tag": "AXE",
-                        "threshold": {
-                            "threshold_type": "upper_bound_exclusive",
-                            "threshold_value": 33,
-                            "generate_random_number_subject_to_threshold": true
-                        }
+                        "only_applies_on_strikes_by_skill_with_tag": "AXE"
                     },
                     "skill_key": "Unrelenting Criticism Proc"
                 }
@@ -399,7 +394,7 @@
             "on_pulse_effect_applications": [
                 {
                     "effect": "BURNING",
-                    "base_duration_ms": 2400,
+                    "base_duration_ms": 1200,
                     "direction": "OUTGOING",
                     "num_targets": 5
                 }
@@ -455,7 +450,7 @@
             "on_strike_effect_applications": [
                 {
                     "effect": "BURNING",
-                    "base_duration_ms": 12000,
+                    "base_duration_ms": 10000,
                     "direction": "OUTGOING"
                 }
             ]
@@ -473,7 +468,7 @@
             "on_strike_effect_applications": [
                 {
                     "effect": "BURNING",
-                    "base_duration_ms": 6000,
+                    "base_duration_ms": 5000,
                     "direction": "OUTGOING"
                 }, {
                     "effect": "BLEEDING",
@@ -517,7 +512,7 @@
                 {
                     "effect": "BURNING",
                     "num_stacks": 5,
-                    "base_duration_ms": 3600,
+                    "base_duration_ms": 3000,
                     "direction": "OUTGOING"
                 }
             ]
@@ -529,7 +524,7 @@
             "on_pulse_effect_applications": [
                 {
                     "effect": "BURNING",
-                    "base_duration_ms": 3600,
+                    "base_duration_ms": 3000,
                     "direction": "OUTGOING"
                 }
             ]

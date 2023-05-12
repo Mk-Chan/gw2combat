@@ -568,7 +568,7 @@
         }, {
             "skill_key": "Sword of Justice",
             "cast_duration": [900, 600],
-            "cooldown": [20000, 16000],
+            "cooldown": [15000, 12000],
             "child_skill_keys": [
                 "Sword of Justice Attack"
             ],
