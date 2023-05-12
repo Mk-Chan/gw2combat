@@ -497,7 +497,7 @@
                     "unique_effect": {
                         "unique_effect_key": "Ashes of the Just With Allies"
                     },
-                    "num_stacks": 3,
+                    "num_stacks": 2,
                     "num_targets": 5,
                     "base_duration_ms": 10000,
                     "direction": "TEAM"
