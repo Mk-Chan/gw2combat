@@ -54,9 +54,7 @@ def main():
         & (df["source_actor"] != "Console")
 
     combat_df = df[in_combat_filter].reset_index(drop=True)
-    damage_df = combat_df[
-        (combat_df["event_type"] == "damage_event") & (combat_df["source_actor"] != "Console")] \
-        .reset_index(drop=True)
+    damage_df = combat_df[combat_df["event_type"] == "damage_event"].reset_index(drop=True)
     time_to_first_strike_ms = min(combat_df["time_ms"])
     combat_time_ms = max(combat_df["time_ms"]) - time_to_first_strike_ms
     damage_summary = damage_df.groupby(by=["damage_type", "source_skill"], dropna=False)["damage"] \

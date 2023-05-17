@@ -107,18 +107,20 @@ void perform_rotations(registry_t& registry) {
                 rotation_component.current_idx += 1;
 
                 if (is_instant_cast_skill) {
-                    spdlog::info("[{}] {} casting instant skill {}",
+                    spdlog::info("[{}] {} casting instant skill {} rotation index {}",
                                  utils::get_current_tick(registry),
                                  utils::get_entity_name(entity, registry),
-                                 utils::to_string(next_skill_cast.skill));
+                                 utils::to_string(next_skill_cast.skill),
+                                 rotation_component.current_idx);
                 } else {
                     registry.emplace<component::animation_component>(
                         entity,
                         component::animation_component{skill_configuration.cast_duration, {0, 0}});
-                    spdlog::info("[{}] {} casting skill {}",
+                    spdlog::info("[{}] {} casting skill {} rotation index {}",
                                  utils::get_current_tick(registry),
                                  utils::get_entity_name(entity, registry),
-                                 utils::to_string(next_skill_cast.skill));
+                                 utils::to_string(next_skill_cast.skill),
+                                 rotation_component.current_idx);
                 }
             }
         });
