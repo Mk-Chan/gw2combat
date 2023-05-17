@@ -8,7 +8,7 @@ namespace gw2combat::system {
 extern void setup_combat_stats(registry_t& registry);
 extern void update_combat_stats(registry_t& registry);
 
-extern void reset_counters(registry_t& registry);
+extern void update_counters(registry_t& registry);
 
 }  // namespace gw2combat::system
 

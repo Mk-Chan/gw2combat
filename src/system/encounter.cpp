@@ -76,6 +76,9 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
             registry.emplace<component::is_counter>(
                 counter_entity,
                 component::is_counter{counter_configuration.initial_value, counter_configuration});
+            utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
+                                             component::is_counter_modifier_t>(
+                counter_configuration.counter_modifiers, actor_entity, registry);
         }
 
         if (!actor.rotation.skill_casts.empty()) {

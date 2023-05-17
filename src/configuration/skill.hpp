@@ -9,6 +9,7 @@
 #include "attribute_conversion.hpp"
 #include "attribute_modifier.hpp"
 #include "condition.hpp"
+#include "counter_modifier.hpp"
 #include "effect_application.hpp"
 #include "weapon.hpp"
 
@@ -38,6 +39,7 @@ struct skill_t {
 
     std::vector<attribute_modifier_t> attribute_modifiers{};
     std::vector<attribute_conversion_t> attribute_conversions{};
+    std::vector<counter_modifier_t> counter_modifiers{};
 
     std::vector<actor::skill_t> child_skill_keys;
     std::vector<actor::skill_tag_t> tags;
@@ -68,6 +70,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 on_pulse_effect_applications,
                                                 attribute_modifiers,
                                                 attribute_conversions,
+                                                counter_modifiers,
                                                 child_skill_keys,
                                                 tags,
                                                 can_critical_strike,

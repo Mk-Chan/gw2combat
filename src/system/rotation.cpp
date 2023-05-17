@@ -7,6 +7,7 @@
 #include "component/counter/is_counter.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/strikes_pipeline.hpp"
+#include "component/encounter/encounter_configuration_component.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/hierarchy/owner_component.hpp"
@@ -14,9 +15,9 @@
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 
-#include "component/encounter/encounter_configuration_component.hpp"
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
+#include "utils/counter_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/skill_utils.hpp"
 
@@ -274,25 +275,24 @@ void perform_skills(registry_t& registry) {
                 }
             }
 
-            registry.view<component::is_counter>().each(
-                [&](entity_t counter_entity, component::is_counter& is_counter) {
-                    auto owner_actor = utils::get_owner(counter_entity, registry);
+            registry.view<component::is_counter_modifier_t>().each(
+                [&](entity_t counter_modifier_entity,
+                    const component::is_counter_modifier_t& is_counter_modifier) {
+                    auto owner_actor = utils::get_owner(counter_modifier_entity, registry);
                     if (owner_actor != actor_entity) {
                         return;
                     }
-                    bool increment_value = true;
-                    for (auto& increment_condition :
-                         is_counter.counter_configuration.increment_conditions) {
+                    for (auto& counter_modifier : is_counter_modifier.counter_modifiers) {
+                        auto& counter = utils::get_counter(counter_modifier.counter_key, registry);
                         bool on_finished_casting_conditions_satisfied =
                             utils::on_finished_casting_conditions_satisfied(
-                                increment_condition, owner_actor, skill_configuration, registry);
-                        if (!on_finished_casting_conditions_satisfied) {
-                            increment_value = false;
-                            break;
+                                counter_modifier.condition,
+                                owner_actor,
+                                skill_configuration,
+                                registry);
+                        if (on_finished_casting_conditions_satisfied) {
+                            utils::apply_counter_modifications(registry, counter, counter_modifier);
                         }
-                    }
-                    if (increment_value) {
-                        ++is_counter.value;
                     }
                 });
             registry.view<component::is_effect_removal>().each(

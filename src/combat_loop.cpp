@@ -115,7 +115,7 @@ void tick(registry_t& registry) {
 
     system::audit(registry);
 
-    system::reset_counters(registry);
+    system::update_counters(registry);
     system::cleanup_casting_skills(registry);
     destroy_marked_entities(registry);
     clear_temporary_components(registry);

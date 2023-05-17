@@ -7,6 +7,7 @@
 
 #include "attribute_conversion.hpp"
 #include "attribute_modifier.hpp"
+#include "counter_modifier.hpp"
 #include "effect_removal.hpp"
 #include "skill_trigger.hpp"
 
@@ -17,6 +18,7 @@ struct unique_effect_t {
 
     std::vector<attribute_modifier_t> attribute_modifiers;
     std::vector<attribute_conversion_t> attribute_conversions;
+    std::vector<counter_modifier_t> counter_modifiers;
     std::vector<skill_trigger_t> skill_triggers;
     std::vector<skill_trigger_t> unchained_skill_triggers;
     std::vector<effect_removal_t> effect_removals;
@@ -36,6 +38,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(unique_effect_t,
                                                 unique_effect_key,
                                                 attribute_modifiers,
                                                 attribute_conversions,
+                                                counter_modifiers,
                                                 skill_triggers,
                                                 unchained_skill_triggers,
                                                 effect_removals,

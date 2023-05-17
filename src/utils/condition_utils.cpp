@@ -21,10 +21,11 @@
 
 namespace gw2combat::utils {
 
-[[nodiscard]] bool independent_conditions_satisfied(const configuration::condition_t& condition,
-                                                    entity_t entity,
-                                                    std::optional<entity_t> target_entity,
-                                                    registry_t& registry) {
+[[nodiscard]] bool stage_independent_conditions_satisfied(
+    const configuration::condition_t& condition,
+    entity_t entity,
+    std::optional<entity_t> target_entity,
+    registry_t& registry) {
     auto source_entity = utils::get_owner(entity, registry);
     if (condition.weapon_type || condition.weapon_position) {
         if (!registry.all_of<component::equipped_weapons, component::current_weapon_set>(
@@ -199,9 +200,9 @@ namespace gw2combat::utils {
         }
         if (condition.threshold->health_pct_subject_to_threshold &&
             *condition.threshold->health_pct_subject_to_threshold) {
-            double max_health = registry.get<component::relative_attributes>(entity).get(
-                entity, actor::attribute_t::MAX_HEALTH);
-            double current_health = registry.get<component::combat_stats>(entity).health;
+            double max_health = registry.get<component::relative_attributes>(source_entity)
+                                    .get(entity, actor::attribute_t::MAX_HEALTH);
+            double current_health = registry.get<component::combat_stats>(source_entity).health;
             double current_health_pct = current_health / max_health;
             if (!threshold_satisfied(current_health_pct)) {
                 return false;
@@ -233,7 +234,7 @@ namespace gw2combat::utils {
             std::any_of(condition.not_conditions.begin(),
                         condition.not_conditions.end(),
                         [&](auto&& condition) {
-                            return !independent_conditions_satisfied(
+                            return !stage_independent_conditions_satisfied(
                                 condition, entity, target_entity, registry);
                         });
         if (!not_conditions_satisfied) {
@@ -243,24 +244,36 @@ namespace gw2combat::utils {
     if (!condition.or_conditions.empty()) {
         bool or_conditions_satisfied = std::any_of(
             condition.or_conditions.begin(), condition.or_conditions.end(), [&](auto&& condition) {
-                return independent_conditions_satisfied(condition, entity, target_entity, registry);
+                return stage_independent_conditions_satisfied(
+                    condition, entity, target_entity, registry);
             });
         if (!or_conditions_satisfied) {
             return false;
         }
     }
     if (!condition.and_conditions.empty()) {
-        bool and_conditions_satisfied = std::all_of(
-            condition.and_conditions.begin(),
-            condition.and_conditions.end(),
-            [&](auto&& condition) {
-                return independent_conditions_satisfied(condition, entity, target_entity, registry);
-            });
+        bool and_conditions_satisfied =
+            std::all_of(condition.and_conditions.begin(),
+                        condition.and_conditions.end(),
+                        [&](auto&& condition) {
+                            return stage_independent_conditions_satisfied(
+                                condition, entity, target_entity, registry);
+                        });
         if (!and_conditions_satisfied) {
             return false;
         }
     }
     return true;
+}
+
+[[nodiscard]] bool independent_conditions_satisfied(const configuration::condition_t& condition,
+                                                    entity_t entity,
+                                                    std::optional<entity_t> target_entity,
+                                                    registry_t& registry) {
+    return (!condition.only_applies_on_strikes || !*condition.only_applies_on_strikes) &&
+           (!condition.only_applies_on_finished_casting ||
+            !*condition.only_applies_on_finished_casting) &&
+           stage_independent_conditions_satisfied(condition, entity, target_entity, registry);
 }
 
 [[nodiscard]] bool on_finished_casting_conditions_satisfied(
@@ -276,7 +289,7 @@ namespace gw2combat::utils {
            (!condition.only_applies_on_finished_casting_skill_with_tag ||
             utils::skill_has_tag(source_skill_configuration,
                                  *condition.only_applies_on_finished_casting_skill_with_tag)) &&
-           independent_conditions_satisfied(condition, entity, std::nullopt, registry);
+           stage_independent_conditions_satisfied(condition, entity, std::nullopt, registry);
 }
 
 [[nodiscard]] bool on_strike_conditions_satisfied(
@@ -294,7 +307,7 @@ namespace gw2combat::utils {
            (!condition.only_applies_on_strikes_by_skill_with_tag ||
             utils::skill_has_tag(source_skill_configuration,
                                  *condition.only_applies_on_strikes_by_skill_with_tag)) &&
-           independent_conditions_satisfied(condition, entity, target_entity, registry);
+           stage_independent_conditions_satisfied(condition, entity, target_entity, registry);
 }
 
 }  // namespace gw2combat::utils

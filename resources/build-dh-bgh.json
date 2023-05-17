@@ -52,12 +52,27 @@
     "counters": [
         {
             "counter_key": "Virtue of Justice Counter",
-            "initial_value": 0,
-            "reset_at_value": 5,
-            "increment_conditions": [
+            "initial_value": 4,
+            "counter_modifiers": [
                 {
-                    "only_applies_on_strikes": true,
-                    "depends_on_skill_off_cooldown": "Spear of Justice"
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "depends_on_skill_off_cooldown": "Spear of Justice"
+                    },
+                    "counter_key": "Virtue of Justice Counter",
+                    "operation": "add",
+                    "value": 1
+                }, {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 5,
+                            "counter_value_subject_to_threshold": "Virtue of Justice Counter"
+                        }
+                    },
+                    "counter_key": "Virtue of Justice Counter",
+                    "operation": "subtract",
+                    "value": 5
                 }
             ]
         }

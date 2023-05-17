@@ -22,6 +22,7 @@
 #include "component/actor/team.hpp"
 #include "component/attributes/is_attribute_conversion.hpp"
 #include "component/attributes/is_attribute_modifier.hpp"
+#include "component/counter/is_counter_modifier.hpp"
 #include "component/effect/is_effect.hpp"
 #include "component/effect/is_effect_removal.hpp"
 #include "component/effect/is_skill_trigger.hpp"
@@ -84,6 +85,9 @@ static inline entity_t add_skill_to_actor(const configuration::skill_t& skill,
     utils::add_owner_based_component<std::vector<configuration::attribute_modifier_t>,
                                      component::is_attribute_modifier>(
         skill.attribute_modifiers, actor_entity, registry);
+    utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
+                                     component::is_counter_modifier_t>(
+        skill.counter_modifiers, actor_entity, registry);
 
     registry.ctx().emplace_as<std::string>(skill_entity, skill.skill_key);
 
@@ -252,6 +256,9 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
     utils::add_owner_based_component<std::vector<configuration::attribute_modifier_t>,
                                      component::is_attribute_modifier>(
         unique_effect.attribute_modifiers, unique_effect_entity, registry);
+    utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
+                                     component::is_counter_modifier_t>(
+        unique_effect.counter_modifiers, unique_effect_entity, registry);
     for (auto& skill_trigger : unique_effect.skill_triggers) {
         utils::add_owner_based_component<configuration::skill_trigger_t,
                                          component::is_skill_trigger>(

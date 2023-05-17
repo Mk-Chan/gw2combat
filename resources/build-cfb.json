@@ -2,10 +2,10 @@
     "base_class": "guardian",
     "profession": "dragonhunter",
     "attributes": [
-        ["power", 2079],
-        ["precision", 1762],
-        ["condition_damage", 1264],
-        ["expertise", 381],
+        ["power", 2173],
+        ["precision", 1633],
+        ["condition_damage", 1173],
+        ["expertise", 633],
         ["vitality", 1000]
     ],
     "weapons": [
@@ -62,10 +62,25 @@
         {
             "counter_key": "Virtue of Justice Counter",
             "initial_value": 2,
-            "reset_at_value": 3,
-            "increment_conditions": [
+            "counter_modifiers": [
                 {
-                    "only_applies_on_strikes": true
+                    "condition": {
+                        "only_applies_on_strikes": true
+                    },
+                    "counter_key": "Virtue of Justice Counter",
+                    "operation": "add",
+                    "value": 1
+                }, {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 3,
+                            "counter_value_subject_to_threshold": "Virtue of Justice Counter"
+                        }
+                    },
+                    "counter_key": "Virtue of Justice Counter",
+                    "operation": "subtract",
+                    "value": 3
                 }
             ]
         }
@@ -80,37 +95,19 @@
                 }
             ]
         }, {
-            "unique_effect_key": "Torment Sigil",
-            "skill_triggers": [
+            "unique_effect_key": "Smoldering Sigil",
+            "attribute_modifiers": [
                 {
-                    "condition": {
-                        "depends_on_skill_off_cooldown": "Torment Sigil Proc",
-                        "only_applies_on_strikes": true,
-                        "only_applies_on_critical_strikes": true,
-                        "weapon_set": "set_1"
-                    },
-                    "skill_key": "Torment Sigil Proc"
-                }
-            ]
-        }, {
-            "unique_effect_key": "Geomancy Sigil",
-            "skill_triggers": [
-                {
-                    "condition": {
-                        "depends_on_skill_off_cooldown": "Geomancy Sigil Proc",
-                        "only_applies_on_finished_casting": true,
-                        "only_applies_on_finished_casting_skill": "Weapon Swap",
-                        "weapon_set": "set_2"
-                    },
-                    "skill_key": "Geomancy Sigil Proc"
+                    "attribute": "burning_duration_multiplier",
+                    "addend": 0.20
                 }
             ]
         }, {
             "unique_effect_key": "Bursting Sigil",
             "attribute_modifiers": [
                 {
-                    "attribute": "outgoing_condition_damage_multiplier",
-                    "multiplier": 1.05
+                    "attribute": "outgoing_condition_damage_multiplier_add_group",
+                    "addend": 0.05
                 }
             ]
         }, {
@@ -118,43 +115,40 @@
             "attribute_modifiers": [
                 {
                     "attribute": "condition_damage",
-                    "addend": 90
+                    "addend": 50
                 }
             ]
         }, {
-            "unique_effect_key": "Balthazar Rune",
+            "unique_effect_key": "Spiteful Infusions",
+            "attribute_modifiers": [
+                {
+                    "attribute": "expertise",
+                    "addend": 40
+                }
+            ]
+        }, {
+            "unique_effect_key": "Renegade Rune",
             "attribute_modifiers": [
                 {
                     "attribute": "condition_damage",
                     "addend": 175
                 }, {
-                    "attribute": "burning_duration_multiplier",
-                    "addend": 0.5
+                    "attribute": "ferocity",
+                    "addend": 100
+                }, {
+                    "attribute": "outgoing_condition_damage_multiplier_add_group",
+                    "addend": 0.07
                 }
             ]
         }, {
-            "unique_effect_key": "Cilantro and Cured Meat Flatbread",
+            "unique_effect_key": "Fishy Rice Bowl",
             "attribute_modifiers": [
                 {
-                    "attribute": "condition_damage",
-                    "addend": 100
+                    "attribute": "burning_duration_multiplier",
+                    "addend": 0.15
                 }, {
-                    "attribute": "expertise",
+                    "attribute": "condition_damage",
                     "addend": 70
-                }
-            ],
-            "skill_triggers": [
-                {
-                    "condition": {
-                        "threshold": {
-                            "threshold_type": "upper_bound_exclusive",
-                            "threshold_value": 66,
-                            "generate_random_number_subject_to_threshold": true
-                        },
-                        "only_applies_on_strikes": true,
-                        "depends_on_skill_off_cooldown": "Lifesteal Proc"
-                    },
-                    "skill_key": "Lifesteal Proc"
                 }
             ]
         }, {
@@ -408,7 +402,7 @@
             "on_pulse_effect_applications": [
                 {
                     "effect": "BLEEDING",
-                    "base_duration_ms": 3000,
+                    "base_duration_ms": 4000,
                     "direction": "OUTGOING"
                 }
             ]

@@ -5,21 +5,20 @@
 
 #include "actor/counter.hpp"
 #include "condition.hpp"
+#include "counter_modifier.hpp"
 
 namespace gw2combat::configuration {
 
 struct counter_configuration_t {
     actor::counter_t counter_key;
     int initial_value = 0;
-    int reset_at_value = 1;
-    std::vector<condition_t> increment_conditions;
+    std::vector<counter_modifier_t> counter_modifiers{};
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(counter_configuration_t,
                                                 counter_key,
                                                 initial_value,
-                                                reset_at_value,
-                                                increment_conditions)
+                                                counter_modifiers)
 
 }  // namespace gw2combat::configuration
 
