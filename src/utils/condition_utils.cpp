@@ -1,6 +1,3 @@
-#ifndef GW2COMBAT_UTILS_CONDITION_UTILS_HPP
-#define GW2COMBAT_UTILS_CONDITION_UTILS_HPP
-
 #include "common.hpp"
 
 #include "basic_utils.hpp"
@@ -311,5 +308,3 @@ namespace gw2combat::utils {
 }
 
 }  // namespace gw2combat::utils
-
-#endif  // GW2COMBAT_UTILS_CONDITION_UTILS_HPP

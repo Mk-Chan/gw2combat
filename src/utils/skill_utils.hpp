@@ -2,6 +2,7 @@
 #define GW2COMBAT_UTILS_SKILL_UTILS_HPP
 
 #include "basic_utils.hpp"
+#include "condition_utils.hpp"
 #include "entity_utils.hpp"
 #include "io_utils.hpp"
 
@@ -92,6 +93,11 @@ static inline void assert_can_cast_skill(const actor::skill_t& skill,
                                                  skill_configuration.required_bundle,
                                                  bundle_ptr->name));
         }
+    }
+
+    if (!independent_conditions_satisfied(
+            skill_configuration.cast_condition, actor_entity, std::nullopt, registry)) {
+        throw std::runtime_error(fmt::format("skill {} cast condition not satisfied", skill));
     }
 }
 

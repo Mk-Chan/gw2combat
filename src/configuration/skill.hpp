@@ -47,6 +47,8 @@ struct skill_t {
     bool can_critical_strike = true;
     actor::bundle_t equip_bundle;
 
+    condition_t cast_condition{};
+
     [[nodiscard]] inline bool operator==(const skill_t& rhs) const {
         return this->skill_key == rhs.skill_key;
     }
@@ -74,7 +76,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 child_skill_keys,
                                                 tags,
                                                 can_critical_strike,
-                                                equip_bundle)
+                                                equip_bundle,
+                                                cast_condition)
 
 }  // namespace gw2combat::configuration
 

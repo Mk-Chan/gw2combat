@@ -5,6 +5,7 @@
 
 #include "actor/attributes.hpp"
 #include "actor/bundle.hpp"
+#include "actor/counter.hpp"
 #include "actor/skill.hpp"
 #include "actor/weapon.hpp"
 
@@ -16,6 +17,11 @@ struct skill_cooldown_t {
     actor::skill_t skill;
     int duration = 0;
     int remaining_ammo = 0;
+};
+
+struct counter_value_t {
+    actor::counter_t counter;
+    int value = 0;
 };
 
 struct tick_event_t {
@@ -33,19 +39,23 @@ struct tick_event_t {
                  actor_downstate_event_t>
         event;
     std::vector<skill_cooldown_t> skill_cooldowns;
-    actor::weapon_set current_weapon_set;
+    std::vector<counter_value_t> counter_values;
+    actor::weapon_set current_weapon_set = actor::weapon_set::INVALID;
     actor::bundle_t current_bundle;
+
     // std::unordered_map<std::string, std::unordered_map<actor::attribute_t, double>>
     //     actor_attributes;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cooldown_t, skill, duration, remaining_ammo)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(counter_value_t, counter, value)
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const tick_event_t& nlohmann_json_t) {
     nlohmann_json_j["time_ms"] = nlohmann_json_t.time_ms;
     nlohmann_json_j["actor"] = nlohmann_json_t.actor;
     std::visit([&](auto&& e) { nlohmann_json_j["event"] = e; }, nlohmann_json_t.event);
     nlohmann_json_j["skill_cooldowns"] = nlohmann_json_t.skill_cooldowns;
+    nlohmann_json_j["counter_values"] = nlohmann_json_t.counter_values;
     nlohmann_json_j["current_weapon"] = nlohmann_json_t.current_weapon_set;
     nlohmann_json_j["current_bundle"] = nlohmann_json_t.current_bundle;
     // nlohmann_json_j["actor_attributes"] = nlohmann_json_t.actor_attributes;
@@ -63,6 +73,8 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, tick_event_t
     }
     nlohmann_json_t.skill_cooldowns =
         nlohmann_json_j.value("skill_cooldowns", nlohmann_json_default_obj.skill_cooldowns);
+    nlohmann_json_t.counter_values =
+        nlohmann_json_j.value("counter_values", nlohmann_json_default_obj.counter_values);
     nlohmann_json_t.current_weapon_set =
         nlohmann_json_j.value("current_weapon", nlohmann_json_default_obj.current_weapon_set);
     nlohmann_json_t.current_bundle =
