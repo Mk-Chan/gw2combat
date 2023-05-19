@@ -203,7 +203,15 @@ void perform_skills(registry_t& registry) {
                     ++casting_skill.next_strike_idx;
                 }
 
-                if (strike_effective_progress_pct >= 100 && pulse_effective_progress_pct >= 100) {
+                if (strike_effective_progress_pct == 0 && pulse_effective_progress_pct == 0) {
+                    auto side_effect_condition_fn =
+                        [&](const configuration::condition_t& condition) {
+                            return utils::on_begun_casting_conditions_satisfied(
+                                condition, entity, skill_configuration, registry);
+                        };
+                    utils::apply_side_effects(registry, entity, side_effect_condition_fn);
+                } else if (strike_effective_progress_pct >= 100 &&
+                           pulse_effective_progress_pct >= 100) {
                     auto& finished_casting_skills =
                         registry.get_or_emplace<component::finished_casting_skills>(entity);
                     finished_casting_skills.skill_entities.emplace_back(casting_skill.skill_entity);

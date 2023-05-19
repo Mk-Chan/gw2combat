@@ -273,6 +273,21 @@ namespace gw2combat::utils {
            stage_independent_conditions_satisfied(condition, entity, target_entity, registry);
 }
 
+[[nodiscard]] bool on_begun_casting_conditions_satisfied(
+    const configuration::condition_t& condition,
+    entity_t entity,
+    const configuration::skill_t& source_skill_configuration,
+    registry_t& registry) {
+    return condition.only_applies_on_begun_casting && *condition.only_applies_on_begun_casting &&
+           (!condition.only_applies_on_begun_casting_skill ||
+            *condition.only_applies_on_begun_casting_skill ==
+                source_skill_configuration.skill_key) &&
+           (!condition.only_applies_on_begun_casting_skill_with_tag ||
+            utils::skill_has_tag(source_skill_configuration,
+                                 *condition.only_applies_on_begun_casting_skill_with_tag)) &&
+           stage_independent_conditions_satisfied(condition, entity, std::nullopt, registry);
+}
+
 [[nodiscard]] bool on_finished_casting_conditions_satisfied(
     const configuration::condition_t& condition,
     entity_t entity,

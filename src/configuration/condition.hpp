@@ -38,6 +38,11 @@ struct condition_t {
     std::optional<actor::skill_t> only_applies_on_strikes_by_skill = std::nullopt;
     std::optional<actor::skill_tag_t> only_applies_on_strikes_by_skill_with_tag = std::nullopt;
 
+    // on-begun-casting
+    std::optional<bool> only_applies_on_begun_casting = std::nullopt;
+    std::optional<actor::skill_t> only_applies_on_begun_casting_skill = std::nullopt;
+    std::optional<actor::skill_tag_t> only_applies_on_begun_casting_skill_with_tag = std::nullopt;
+
     // on-finished-casting
     std::optional<bool> only_applies_on_finished_casting = std::nullopt;
     std::optional<actor::skill_t> only_applies_on_finished_casting_skill = std::nullopt;
@@ -101,6 +106,18 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     if (nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag) {
         nlohmann_json_j["only_applies_on_strikes_by_skill_with_tag"] =
             *nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag;
+    }
+    if (nlohmann_json_t.only_applies_on_begun_casting) {
+        nlohmann_json_j["only_applies_on_begun_casting"] =
+            *nlohmann_json_t.only_applies_on_begun_casting;
+    }
+    if (nlohmann_json_t.only_applies_on_begun_casting_skill) {
+        nlohmann_json_j["only_applies_on_begun_casting_skill"] =
+            *nlohmann_json_t.only_applies_on_begun_casting_skill;
+    }
+    if (nlohmann_json_t.only_applies_on_begun_casting_skill_with_tag) {
+        nlohmann_json_j["only_applies_on_begun_casting_skill_with_tag"] =
+            *nlohmann_json_t.only_applies_on_begun_casting_skill_with_tag;
     }
     if (nlohmann_json_t.only_applies_on_finished_casting) {
         nlohmann_json_j["only_applies_on_finished_casting"] =
@@ -189,6 +206,21 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
         nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag = nlohmann_json_j.value(
             "only_applies_on_strikes_by_skill_with_tag",
             *nlohmann_json_default_obj.only_applies_on_strikes_by_skill_with_tag);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_begun_casting")) {
+        nlohmann_json_t.only_applies_on_begun_casting =
+            nlohmann_json_j.value("only_applies_on_begun_casting",
+                                  *nlohmann_json_default_obj.only_applies_on_begun_casting);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_begun_casting_skill")) {
+        nlohmann_json_t.only_applies_on_begun_casting_skill =
+            nlohmann_json_j.value("only_applies_on_begun_casting_skill",
+                                  *nlohmann_json_default_obj.only_applies_on_begun_casting_skill);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_begun_casting_skill_with_tag")) {
+        nlohmann_json_t.only_applies_on_begun_casting_skill_with_tag = nlohmann_json_j.value(
+            "only_applies_on_begun_casting_skill_with_tag",
+            *nlohmann_json_default_obj.only_applies_on_begun_casting_skill_with_tag);
     }
     if (nlohmann_json_j.contains("only_applies_on_finished_casting")) {
         nlohmann_json_t.only_applies_on_finished_casting =
