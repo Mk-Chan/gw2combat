@@ -7,6 +7,7 @@ namespace gw2combat::component {
 
 struct is_skill_trigger {
     configuration::skill_trigger_t skill_trigger;
+    bool already_triggered = false;
 };
 
 struct is_unchained_skill_trigger {

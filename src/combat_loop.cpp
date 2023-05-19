@@ -12,6 +12,7 @@
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
+#include "component/effect/is_skill_trigger.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/temporal/animation_component.hpp"
@@ -28,7 +29,9 @@
 #include "system/rotation.hpp"
 #include "system/temporal.hpp"
 
+#include "utils/condition_utils.hpp"
 #include "utils/entity_utils.hpp"
+#include "utils/side_effect_utils.hpp"
 
 namespace gw2combat {
 
@@ -47,6 +50,10 @@ void clear_temporary_components(registry_t& registry) {
                    component::incoming_effects_component,
                    component::incoming_damage,
                    component::combat_stats_updated>();
+    registry.view<component::is_skill_trigger>().each(
+        [&](component::is_skill_trigger& is_skill_trigger) {
+            is_skill_trigger.already_triggered = false;
+        });
 }
 
 void try_clean_entity(registry_t& registry, entity_t entity, entity_t owner_entity) {
@@ -85,6 +92,15 @@ void tick(registry_t& registry) {
     system::progress_casting_skills(registry);
     system::progress_cooldowns(registry);
     system::progress_durations(registry);
+
+    registry.view<component::is_actor>(entt::exclude<component::owner_component>)
+        .each([&](entity_t actor_entity) {
+            auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
+                return utils::independent_conditions_satisfied(
+                    condition, actor_entity, std::nullopt, registry);
+            };
+            utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
+        });
 
     system::perform_skills(registry);
     system::dispatch_strikes(registry);

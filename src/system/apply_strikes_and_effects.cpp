@@ -8,15 +8,13 @@
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
 #include "component/effect/is_effect.hpp"
-#include "component/effect/is_unique_effect.hpp"
 #include "component/hierarchy/owner_component.hpp"
-#include "component/lifecycle/destroy_entity.hpp"
 
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
-#include "utils/counter_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/gear_utils.hpp"
+#include "utils/side_effect_utils.hpp"
 #include "utils/skill_utils.hpp"
 
 namespace gw2combat::system {
@@ -84,8 +82,6 @@ damage_result_t calculate_damage(
 }
 
 void apply_strikes(registry_t& registry) {
-    std::map<std::tuple<entity_t, std::string>, bool>
-        actor_entity_to_skill_trigger_executed_this_tick_flag;
     registry
         .view<component::relative_attributes, component::incoming_strikes_component>(
             entt::exclude<component::owner_component>)
@@ -138,132 +134,15 @@ void apply_strikes(registry_t& registry) {
                     continue;
                 }
 
-                registry.view<component::is_counter_modifier_t>().each(
-                    [&](entity_t counter_modifier_entity,
-                        const component::is_counter_modifier_t& is_counter_modifier) {
-                        auto owner_actor = utils::get_owner(counter_modifier_entity, registry);
-                        if (owner_actor != strike_source_entity) {
-                            return;
-                        }
-                        for (auto& counter_modifier : is_counter_modifier.counter_modifiers) {
-                            auto& counter =
-                                utils::get_counter(counter_modifier.counter_key, registry);
-                            bool on_strike_conditions_satisfied =
-                                utils::on_strike_conditions_satisfied(counter_modifier.condition,
-                                                                      owner_actor,
-                                                                      target_entity,
-                                                                      damage.is_critical,
-                                                                      skill_configuration,
-                                                                      registry);
-                            if (on_strike_conditions_satisfied) {
-                                utils::apply_counter_modifications(
-                                    registry, counter, counter_modifier);
-                            }
-                        }
-                    });
-                registry.view<component::is_effect_removal>().each(
-                    [&](entity_t effect_removal_entity,
-                        component::is_effect_removal& is_effect_removal) {
-                        auto owner_entity = utils::get_owner(effect_removal_entity, registry);
-                        if (owner_entity != strike_source_entity) {
-                            return;
-                        }
-
-                        auto& effect_removal = is_effect_removal.effect_removal;
-                        bool on_strike_conditions_satisfied =
-                            utils::on_strike_conditions_satisfied(effect_removal.condition,
-                                                                  owner_entity,
-                                                                  target_entity,
-                                                                  damage.is_critical,
-                                                                  skill_configuration,
-                                                                  registry);
-                        if (on_strike_conditions_satisfied) {
-                            if (effect_removal.effect != actor::effect_t::INVALID) {
-                                int stacks_to_remove =
-                                    effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
-                                registry.view<component::is_effect, component::owner_component>()
-                                    .each([&](entity_t effect_entity,
-                                              const component::is_effect& is_effect,
-                                              const component::owner_component& effect_owner) {
-                                        if (effect_owner.entity == strike_source_entity &&
-                                            is_effect.effect == effect_removal.effect) {
-                                            if (stacks_to_remove <= 0) {
-                                                return;
-                                            }
-                                            --stacks_to_remove;
-                                            registry.emplace_or_replace<component::destroy_entity>(
-                                                effect_entity);
-                                        }
-                                    });
-                            }
-                            if (!effect_removal.unique_effect.empty()) {
-                                int stacks_to_remove =
-                                    effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
-                                registry
-                                    .view<component::is_unique_effect, component::owner_component>()
-                                    .each([&](entity_t unique_effect_entity,
-                                              const component::is_unique_effect& is_unique_effect,
-                                              const component::owner_component& effect_owner) {
-                                        if (effect_owner.entity == strike_source_entity &&
-                                            is_unique_effect.unique_effect.unique_effect_key ==
-                                                effect_removal.unique_effect) {
-                                            if (stacks_to_remove <= 0) {
-                                                return;
-                                            }
-                                            --stacks_to_remove;
-                                            registry.emplace_or_replace<component::destroy_entity>(
-                                                unique_effect_entity);
-                                        }
-                                    });
-                            }
-                        }
-                    });
-                registry.view<component::is_skill_trigger>().each(
-                    [&](entity_t skill_trigger_entity,
-                        const component::is_skill_trigger& is_skill_trigger) {
-                        auto owner_entity = utils::get_owner(skill_trigger_entity, registry);
-                        if (owner_entity != strike_source_entity) {
-                            return;
-                        }
-
-                        auto& skill_trigger = is_skill_trigger.skill_trigger;
-                        bool on_strike_conditions_satisfied =
-                            utils::on_strike_conditions_satisfied(skill_trigger.condition,
-                                                                  owner_entity,
-                                                                  target_entity,
-                                                                  damage.is_critical,
-                                                                  skill_configuration,
-                                                                  registry);
-                        if (on_strike_conditions_satisfied) {
-                            if (!actor_entity_to_skill_trigger_executed_this_tick_flag
-                                    [std::make_tuple(owner_entity, skill_trigger.skill_key)]) {
-                                actor_entity_to_skill_trigger_executed_this_tick_flag
-                                    [std::make_tuple(owner_entity, skill_trigger.skill_key)] = true;
-                                utils::enqueue_child_skill(
-                                    skill_trigger.skill_key, strike_source_entity, registry);
-                            }
-                        }
-                    });
-                registry.view<component::is_unchained_skill_trigger>().each(
-                    [&](entity_t skill_trigger_entity,
-                        const component::is_unchained_skill_trigger& is_unchained_skill_trigger) {
-                        auto owner_entity = utils::get_owner(skill_trigger_entity, registry);
-                        if (owner_entity != strike_source_entity) {
-                            return;
-                        }
-                        auto& skill_trigger = is_unchained_skill_trigger.skill_trigger;
-                        bool on_strike_conditions_satisfied =
-                            utils::on_strike_conditions_satisfied(skill_trigger.condition,
-                                                                  owner_entity,
-                                                                  target_entity,
-                                                                  damage.is_critical,
-                                                                  skill_configuration,
-                                                                  registry);
-                        if (on_strike_conditions_satisfied) {
-                            utils::enqueue_child_skill(
-                                skill_trigger.skill_key, strike_source_entity, registry);
-                        }
-                    });
+                auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
+                    return utils::on_strike_conditions_satisfied(condition,
+                                                                 strike_source_entity,
+                                                                 target_entity,
+                                                                 damage.is_critical,
+                                                                 skill_configuration,
+                                                                 registry);
+                };
+                utils::apply_side_effects(registry, strike_source_entity, side_effect_condition_fn);
 
                 auto& outgoing_effects_component =
                     registry.get_or_emplace<component::outgoing_effects_component>(
