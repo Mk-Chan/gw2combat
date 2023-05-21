@@ -93,16 +93,17 @@ void tick(registry_t& registry) {
     system::progress_cooldowns(registry);
     system::progress_durations(registry);
 
+    system::perform_skills(registry);
+
     registry.view<component::is_actor>(entt::exclude<component::owner_component>)
         .each([&](entity_t actor_entity) {
-            auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
-                return utils::independent_conditions_satisfied(
-                    condition, actor_entity, std::nullopt, registry);
-            };
-            utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
+          auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
+            return utils::independent_conditions_satisfied(
+                condition, actor_entity, std::nullopt, registry);
+          };
+          utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
         });
 
-    system::perform_skills(registry);
     system::dispatch_strikes(registry);
 
     if (!registry.view<component::incoming_strikes_component>().empty()) {
