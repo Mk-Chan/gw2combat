@@ -270,6 +270,8 @@ namespace gw2combat::utils {
     return (!condition.only_applies_on_strikes || !*condition.only_applies_on_strikes) &&
            (!condition.only_applies_on_finished_casting ||
             !*condition.only_applies_on_finished_casting) &&
+           (!condition.only_applies_on_begun_casting ||
+            !*condition.only_applies_on_begun_casting) &&
            stage_independent_conditions_satisfied(condition, entity, target_entity, registry);
 }
 
