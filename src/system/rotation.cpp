@@ -203,15 +203,7 @@ void perform_skills(registry_t& registry) {
                     ++casting_skill.next_strike_idx;
                 }
 
-                if (strike_effective_progress_pct == 0 && pulse_effective_progress_pct == 0) {
-                    auto side_effect_condition_fn =
-                        [&](const configuration::condition_t& condition) {
-                            return utils::on_begun_casting_conditions_satisfied(
-                                condition, entity, skill_configuration, registry);
-                        };
-                    utils::apply_side_effects(registry, entity, side_effect_condition_fn);
-                } else if (strike_effective_progress_pct >= 100 &&
-                           pulse_effective_progress_pct >= 100) {
+                if (strike_effective_progress_pct >= 100 && pulse_effective_progress_pct >= 100) {
                     auto& finished_casting_skills =
                         registry.get_or_emplace<component::finished_casting_skills>(entity);
                     finished_casting_skills.skill_entities.emplace_back(casting_skill.skill_entity);
@@ -231,6 +223,24 @@ void perform_skills(registry_t& registry) {
                                  utils::get_current_tick(registry),
                                  utils::get_entity_name(entity, registry),
                                  utils::to_string(skill_configuration.skill_key));
+                }
+            }
+        });
+
+    registry.view<component::casting_skills_component>().each(
+        [&](entity_t entity, component::casting_skills_component& casting_skills_component) {
+            for (auto& casting_skill : casting_skills_component.skills) {
+                auto& skill_configuration =
+                    registry.get<component::is_skill>(casting_skill.skill_entity)
+                        .skill_configuration;
+                if (casting_skill.strike_progress[0] + casting_skill.strike_progress[1] == 0 &&
+                    casting_skill.pulse_progress[0] + casting_skill.pulse_progress[1] == 0) {
+                    auto side_effect_condition_fn =
+                        [&](const configuration::condition_t& condition) {
+                            return utils::on_begun_casting_conditions_satisfied(
+                                condition, entity, skill_configuration, registry);
+                        };
+                    utils::apply_side_effects(registry, entity, side_effect_condition_fn);
                 }
             }
         });
