@@ -1,5 +1,6 @@
 #include "combat_loop.hpp"
 
+#include "component/actor/begun_casting_skills.hpp"
 #include "component/actor/casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
 #include "component/actor/finished_casting_skills.hpp"
@@ -41,6 +42,7 @@ void clear_temporary_components(registry_t& registry) {
                    component::dropped_bundle,
                    component::relative_attributes,
                    component::incoming_damage,
+                   component::begun_casting_skills,
                    component::animation_expired,
                    component::cooldown_expired,
                    component::duration_expired,
@@ -95,13 +97,25 @@ void tick(registry_t& registry) {
 
     system::perform_skills(registry);
 
+    registry.view<component::begun_casting_skills>().each(
+        [&](entity_t entity, component::begun_casting_skills& begun_casting_skills) {
+            for (auto casting_skill_entity : begun_casting_skills.skill_entities) {
+                auto& skill_configuration =
+                    registry.get<component::is_skill>(casting_skill_entity).skill_configuration;
+                auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
+                    return utils::on_begun_casting_conditions_satisfied(
+                        condition, entity, skill_configuration, registry);
+                };
+                utils::apply_side_effects(registry, entity, side_effect_condition_fn);
+            }
+        });
     registry.view<component::is_actor>(entt::exclude<component::owner_component>)
         .each([&](entity_t actor_entity) {
-          auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
-            return utils::independent_conditions_satisfied(
-                condition, actor_entity, std::nullopt, registry);
-          };
-          utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
+            auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
+                return utils::independent_conditions_satisfied(
+                    condition, actor_entity, std::nullopt, registry);
+            };
+            utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
         });
 
     system::dispatch_strikes(registry);
@@ -129,10 +143,10 @@ void tick(registry_t& registry) {
 
     system::cleanup_expired_components(registry);
     system::destroy_actors_with_no_rotation(registry);
+    system::update_counters(registry);
 
     system::audit(registry);
 
-    system::update_counters(registry);
     system::cleanup_casting_skills(registry);
     destroy_marked_entities(registry);
     clear_temporary_components(registry);

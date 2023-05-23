@@ -1,5 +1,6 @@
 #include "rotation.hpp"
 
+#include "component/actor/begun_casting_skills.hpp"
 #include "component/actor/casting_skills.hpp"
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/no_more_rotation.hpp"
@@ -58,71 +59,75 @@ void perform_rotations(registry_t& registry) {
             auto& skill_configuration =
                 utils::get_skill_configuration(next_skill_cast.skill, entity, registry);
             bool is_instant_cast_skill = skill_configuration.cast_duration[0] == 0;
-            if (is_instant_cast_skill || !is_in_animation) {
-                if (!registry
-                         .get<component::encounter_configuration_component>(
-                             utils::get_singleton_entity())
-                         .encounter.require_afk_skills) {
-                    if (registry.get<component::ammo>(skill_entity).current_ammo <= 0 &&
-                        !(next_skill_cast.skill == "Weapon Swap" &&
-                          registry.any_of<component::bundle_component>(entity))) {
-                        return;
-                    }
+            if (!is_instant_cast_skill && is_in_animation) {
+                return;
+            }
+            if (!registry
+                     .get<component::encounter_configuration_component>(
+                         utils::get_singleton_entity())
+                     .encounter.require_afk_skills) {
+                if (registry.get<component::ammo>(skill_entity).current_ammo <= 0 &&
+                    !(next_skill_cast.skill == "Weapon Swap" &&
+                      registry.any_of<component::bundle_component>(entity))) {
+                    return;
                 }
+            }
 
-                utils::assert_can_cast_skill(next_skill_cast.skill, entity, registry);
+            utils::assert_can_cast_skill(next_skill_cast.skill, entity, registry);
 
-                int pulse_no_quickness_duration =
-                    std::max(skill_configuration.pulse_on_tick_list[0].empty()
-                                 ? 0
-                                 : skill_configuration.pulse_on_tick_list[0].back(),
-                             skill_configuration.cast_duration[0]);
-                int pulse_quickness_duration =
-                    std::max(skill_configuration.pulse_on_tick_list[1].empty()
-                                 ? 0
-                                 : skill_configuration.pulse_on_tick_list[1].back(),
-                             skill_configuration.cast_duration[1]);
-                int strike_no_quickness_duration =
-                    std::max(skill_configuration.strike_on_tick_list[0].empty()
-                                 ? 0
-                                 : skill_configuration.strike_on_tick_list[0].back(),
-                             skill_configuration.cast_duration[0]);
-                int strike_quickness_duration =
-                    std::max(skill_configuration.strike_on_tick_list[1].empty()
-                                 ? 0
-                                 : skill_configuration.strike_on_tick_list[1].back(),
-                             skill_configuration.cast_duration[1]);
+            int pulse_no_quickness_duration =
+                std::max(skill_configuration.pulse_on_tick_list[0].empty()
+                             ? 0
+                             : skill_configuration.pulse_on_tick_list[0].back(),
+                         skill_configuration.cast_duration[0]);
+            int pulse_quickness_duration =
+                std::max(skill_configuration.pulse_on_tick_list[1].empty()
+                             ? 0
+                             : skill_configuration.pulse_on_tick_list[1].back(),
+                         skill_configuration.cast_duration[1]);
+            int strike_no_quickness_duration =
+                std::max(skill_configuration.strike_on_tick_list[0].empty()
+                             ? 0
+                             : skill_configuration.strike_on_tick_list[0].back(),
+                         skill_configuration.cast_duration[0]);
+            int strike_quickness_duration =
+                std::max(skill_configuration.strike_on_tick_list[1].empty()
+                             ? 0
+                             : skill_configuration.strike_on_tick_list[1].back(),
+                         skill_configuration.cast_duration[1]);
 
-                auto& casting_skills_component =
-                    registry.get_or_emplace<component::casting_skills_component>(entity);
-                casting_skills_component.skills.emplace_back(
-                    component::casting_skills_component::skill_state_t{
-                        skill_entity,
-                        {0, 0},
-                        {pulse_no_quickness_duration, pulse_quickness_duration},
-                        {0, 0},
-                        {strike_no_quickness_duration, strike_quickness_duration},
-                        0,
-                        0});
+            auto& casting_skills_component =
+                registry.get_or_emplace<component::casting_skills_component>(entity);
+            casting_skills_component.skills.emplace_back(
+                component::casting_skills_component::skill_state_t{
+                    skill_entity,
+                    {0, 0},
+                    {pulse_no_quickness_duration, pulse_quickness_duration},
+                    {0, 0},
+                    {strike_no_quickness_duration, strike_quickness_duration},
+                    0,
+                    0});
+            auto& begun_casting_skills_component =
+                registry.get_or_emplace<component::begun_casting_skills>(entity);
+            begun_casting_skills_component.skill_entities.emplace_back(skill_entity);
 
-                rotation_component.current_idx += 1;
+            rotation_component.current_idx += 1;
 
-                if (is_instant_cast_skill) {
-                    spdlog::info("[{}] {} casting instant skill {} rotation index {}",
-                                 utils::get_current_tick(registry),
-                                 utils::get_entity_name(entity, registry),
-                                 utils::to_string(next_skill_cast.skill),
-                                 rotation_component.current_idx);
-                } else {
-                    registry.emplace<component::animation_component>(
-                        entity,
-                        component::animation_component{skill_configuration.cast_duration, {0, 0}});
-                    spdlog::info("[{}] {} casting skill {} rotation index {}",
-                                 utils::get_current_tick(registry),
-                                 utils::get_entity_name(entity, registry),
-                                 utils::to_string(next_skill_cast.skill),
-                                 rotation_component.current_idx);
-                }
+            if (is_instant_cast_skill) {
+                spdlog::info("[{}] {} casting instant skill {} rotation index {}",
+                             utils::get_current_tick(registry),
+                             utils::get_entity_name(entity, registry),
+                             utils::to_string(next_skill_cast.skill),
+                             rotation_component.current_idx);
+            } else {
+                registry.emplace<component::animation_component>(
+                    entity,
+                    component::animation_component{skill_configuration.cast_duration, {0, 0}});
+                spdlog::info("[{}] {} casting skill {} rotation index {}",
+                             utils::get_current_tick(registry),
+                             utils::get_entity_name(entity, registry),
+                             utils::to_string(next_skill_cast.skill),
+                             rotation_component.current_idx);
             }
         });
 }
@@ -223,24 +228,6 @@ void perform_skills(registry_t& registry) {
                                  utils::get_current_tick(registry),
                                  utils::get_entity_name(entity, registry),
                                  utils::to_string(skill_configuration.skill_key));
-                }
-            }
-        });
-
-    registry.view<component::casting_skills_component>().each(
-        [&](entity_t entity, component::casting_skills_component& casting_skills_component) {
-            for (auto& casting_skill : casting_skills_component.skills) {
-                auto& skill_configuration =
-                    registry.get<component::is_skill>(casting_skill.skill_entity)
-                        .skill_configuration;
-                if (casting_skill.strike_progress[0] + casting_skill.strike_progress[1] == 0 &&
-                    casting_skill.pulse_progress[0] + casting_skill.pulse_progress[1] == 0) {
-                    auto side_effect_condition_fn =
-                        [&](const configuration::condition_t& condition) {
-                            return utils::on_begun_casting_conditions_satisfied(
-                                condition, entity, skill_configuration, registry);
-                        };
-                    utils::apply_side_effects(registry, entity, side_effect_condition_fn);
                 }
             }
         });
