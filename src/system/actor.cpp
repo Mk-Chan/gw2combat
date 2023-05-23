@@ -5,13 +5,9 @@
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/static_attributes.hpp"
-#include "component/counter/is_counter.hpp"
-#include "component/counter/is_counter_modifier.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/hierarchy/owner_component.hpp"
 
-#include "utils/condition_utils.hpp"
-#include "utils/counter_utils.hpp"
 #include "utils/io_utils.hpp"
 
 namespace gw2combat::system {
@@ -55,22 +51,6 @@ void update_combat_stats(registry_t& registry) {
     // if (health_updated) {
     //     utils::log_component<component::combat_stats>(registry);
     // }
-}
-
-void update_counters(registry_t& registry) {
-    registry.view<component::is_counter_modifier_t>().each(
-        [&](entity_t counter_modifier_entity,
-            const component::is_counter_modifier_t& is_counter_modifier) {
-            auto owner_actor = utils::get_owner(counter_modifier_entity, registry);
-            for (auto& counter_modifier : is_counter_modifier.counter_modifiers) {
-                auto& counter = utils::get_counter(counter_modifier.counter_key, registry);
-                bool independent_conditions_satisfied = utils::independent_conditions_satisfied(
-                    counter_modifier.condition, owner_actor, std::nullopt, registry);
-                if (independent_conditions_satisfied) {
-                    utils::apply_counter_modifications(registry, counter, counter_modifier);
-                }
-            }
-        });
 }
 
 }  // namespace gw2combat::system

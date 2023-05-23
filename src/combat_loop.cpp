@@ -98,15 +98,15 @@ void tick(registry_t& registry) {
     system::perform_skills(registry);
 
     registry.view<component::begun_casting_skills>().each(
-        [&](entity_t entity, component::begun_casting_skills& begun_casting_skills) {
+        [&](entity_t actor_entity, component::begun_casting_skills& begun_casting_skills) {
             for (auto casting_skill_entity : begun_casting_skills.skill_entities) {
                 auto& skill_configuration =
                     registry.get<component::is_skill>(casting_skill_entity).skill_configuration;
                 auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
                     return utils::on_begun_casting_conditions_satisfied(
-                        condition, entity, skill_configuration, registry);
+                        condition, actor_entity, skill_configuration, registry);
                 };
-                utils::apply_side_effects(registry, entity, side_effect_condition_fn);
+                utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
             }
         });
     registry.view<component::is_actor>(entt::exclude<component::owner_component>)
@@ -143,7 +143,6 @@ void tick(registry_t& registry) {
 
     system::cleanup_expired_components(registry);
     system::destroy_actors_with_no_rotation(registry);
-    system::update_counters(registry);
 
     system::audit(registry);
 
