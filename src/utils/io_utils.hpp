@@ -10,6 +10,12 @@
 namespace gw2combat::utils {
 
 template <typename T>
+static inline std::string_view get_component_name_with_prefix() {
+    std::string_view name = entt::type_id<T>().name();
+    return name;
+}
+
+template <typename T>
 static inline std::string_view get_component_name() {
     std::string_view name = entt::type_id<T>().name();
     name.remove_prefix(strlen("gw2combat::component::"));

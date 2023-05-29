@@ -42,6 +42,10 @@ static inline entity_t add_owner_based_component(const ConfigurationType& config
                                                  entity_t parent_entity,
                                                  registry_t& registry) {
     auto component_type_holder_entity = registry.create();
+    registry.ctx().emplace_as<std::string>(
+        component_type_holder_entity,
+        std::string{utils::get_component_name_with_prefix<ConfigurationType>()} + " holder entity");
+
     registry.emplace<component::owner_component>(component_type_holder_entity, parent_entity);
     registry.emplace<ComponentType>(component_type_holder_entity, configuration_type_value);
     return component_type_holder_entity;
@@ -74,6 +78,8 @@ static inline entity_t add_skill_to_actor(const configuration::skill_t& skill,
     }
 
     auto skill_entity = registry.create();
+    registry.ctx().emplace_as<std::string>(skill_entity, skill.skill_key + " skill holder entity");
+
     registry.emplace<component::is_skill>(skill_entity, skill);
     registry.emplace<component::owner_component>(skill_entity, actor_entity);
 
@@ -88,8 +94,6 @@ static inline entity_t add_skill_to_actor(const configuration::skill_t& skill,
     utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
                                      component::is_counter_modifier_t>(
         skill.counter_modifiers, actor_entity, registry);
-
-    registry.ctx().emplace_as<std::string>(skill_entity, skill.skill_key);
 
     for (auto& child_skill : skill.child_skill_keys) {
         auto& child_skill_configuration = utils::get_skill_configuration(
@@ -141,6 +145,9 @@ static inline std::optional<entity_t> add_effect_to_actor(actor::effect_t effect
     // TODO: Differentiate between stacking duration / intensity
 
     auto effect_entity = registry.create();
+    registry.ctx().emplace_as<std::string>(effect_entity,
+                                           utils::to_string(effect) + " effect holder entity");
+
     registry.emplace<component::is_effect>(effect_entity, effect);
     if (utils::is_damaging_condition(effect)) {
         registry.emplace<component::is_damaging_effect>(effect_entity);
@@ -196,8 +203,6 @@ static inline std::optional<entity_t> add_effect_to_actor(actor::effect_t effect
             registry);
     }
 
-    registry.ctx().emplace_as<std::string>(effect_entity, utils::to_string(effect));
-
     return effect_entity;
 }
 
@@ -243,6 +248,9 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
     }
 
     auto unique_effect_entity = registry.create();
+    registry.ctx().emplace_as<std::string>(
+        unique_effect_entity, unique_effect.unique_effect_key + " unique-effect holder entity");
+
     registry.emplace<component::is_unique_effect>(unique_effect_entity, unique_effect);
     registry.emplace<component::owner_component>(unique_effect_entity, actor_entity);
     registry.emplace<component::source_actor>(unique_effect_entity, actor_entity);
@@ -274,8 +282,6 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
                                          component::is_effect_removal>(
             effect_removal, unique_effect_entity, registry);
     }
-
-    registry.ctx().emplace_as<std::string>(unique_effect_entity, unique_effect.unique_effect_key);
 
     return unique_effect_entity;
 }
