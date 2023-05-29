@@ -9,7 +9,8 @@ namespace gw2combat {
 
 extern void tick(registry_t& registry);
 
-extern std::string combat_loop(const configuration::encounter_t& encounter_configuration);
+extern std::string combat_loop(const configuration::encounter_t& encounter_configuration,
+                               bool enable_caching = false);
 
 }  // namespace gw2combat
 

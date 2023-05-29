@@ -1,5 +1,7 @@
 #include "combat_loop.hpp"
 
+#include "mru_cache.hpp"
+
 #include "component/actor/begun_casting_skills.hpp"
 #include "component/actor/casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
@@ -32,6 +34,7 @@
 
 #include "utils/condition_utils.hpp"
 #include "utils/entity_utils.hpp"
+#include "utils/registry_utils.hpp"
 #include "utils/side_effect_utils.hpp"
 
 namespace gw2combat {
@@ -151,89 +154,158 @@ void tick(registry_t& registry) {
     clear_temporary_components(registry);
 }
 
-std::string combat_loop(const configuration::encounter_t& encounter) {
-    registry_t registry;
-    system::setup_encounter(registry, encounter);
+mru_cache_t<registry_t>::key_type convert_encounter_to_cache_key(
+    const configuration::encounter_t& encounter) {
+    return mru_cache_t<registry_t>::djb2_hash(utils::to_string(encounter));
+}
 
-    try {
-        tick_t current_tick = 1;
-        registry.ctx().emplace<const tick_t&>(current_tick);
-        bool continue_combat_loop = true;
-        while (continue_combat_loop) {
-            tick(registry);
+bool continue_combat_loop(registry_t& registry, const configuration::encounter_t& encounter) {
+    for (auto entity : registry.view<component::is_actor>()) {
+        if (registry.any_of<component::is_downstate>(entity)) {
+            spdlog::info("[{}] {} is downstate",
+                         utils::get_current_tick(registry),
+                         utils::get_entity_name(entity, registry));
+            return false;
+        }
+    }
 
+    for (auto& termination_condition : encounter.termination_conditions) {
+        if (termination_condition.type ==
+            configuration::termination_condition_t::type_t::ROTATION) {
+            bool everyone_out_of_rotation = true;
             for (auto entity : registry.view<component::is_actor>()) {
-                if (registry.any_of<component::is_downstate>(entity)) {
-                    spdlog::info("[{}] {} is downstate",
-                                 current_tick,
-                                 utils::get_entity_name(entity, registry));
-                    continue_combat_loop = false;
+                if (utils::get_entity_name(entity, registry) != termination_condition.actor ||
+                    !registry.any_of<component::rotation_component>(entity)) {
+                    continue;
+                }
+                if (registry.any_of<component::casting_skills_component,
+                                    component::finished_casting_skills>(entity)) {
+                    everyone_out_of_rotation = false;
+                    break;
+                }
+                if (!registry.any_of<component::no_more_rotation>(entity)) {
+                    everyone_out_of_rotation = false;
                     break;
                 }
             }
-
-            for (auto& termination_condition : encounter.termination_conditions) {
-                if (termination_condition.type ==
-                    configuration::termination_condition_t::type_t::ROTATION) {
-                    bool everyone_out_of_rotation = true;
-                    for (auto entity : registry.view<component::is_actor>()) {
-                        if (utils::get_entity_name(entity, registry) !=
-                                termination_condition.actor ||
-                            !registry.any_of<component::rotation_component>(entity)) {
-                            continue;
-                        }
-                        if (registry.any_of<component::casting_skills_component,
-                                            component::finished_casting_skills>(entity)) {
-                            everyone_out_of_rotation = false;
-                            break;
-                        }
-                        if (!registry.any_of<component::no_more_rotation>(entity)) {
-                            everyone_out_of_rotation = false;
-                            break;
-                        }
-                    }
-                    if (everyone_out_of_rotation) {
-                        continue_combat_loop = false;
-                        break;
-                    }
-                } else if (termination_condition.type ==
-                           configuration::termination_condition_t::type_t::DAMAGE) {
-                    bool someone_took_required_damage = false;
-                    for (auto entity : registry.view<component::is_actor>()) {
-                        if (utils::get_entity_name(entity, registry) !=
-                            termination_condition.actor) {
-                            continue;
-                        }
-                        int max_health = utils::round_to_nearest_even(
-                            registry.get<component::static_attributes>(entity)
-                                .attribute_value_map[actor::attribute_t::MAX_HEALTH]);
-                        int current_health = registry.get<component::combat_stats>(entity).health;
-                        if (max_health - current_health >= termination_condition.damage) {
-                            someone_took_required_damage = true;
-                            break;
-                        }
-                    }
-                    if (someone_took_required_damage) {
-                        continue_combat_loop = false;
-                        break;
-                    }
-                } else if (termination_condition.type ==
-                           configuration::termination_condition_t::type_t::TIME) {
-                    if (current_tick >= termination_condition.time) {
-                        continue_combat_loop = false;
-                        break;
-                    }
+            if (everyone_out_of_rotation) {
+                spdlog::info("qau");
+                return false;
+            }
+        } else if (termination_condition.type ==
+                   configuration::termination_condition_t::type_t::DAMAGE) {
+            bool someone_took_required_damage = false;
+            for (auto&& [entity, static_attributes, combat_stats] :
+                 registry
+                     .view<component::is_actor,
+                           component::static_attributes,
+                           component::combat_stats>()
+                     .each()) {
+                if (utils::get_entity_name(entity, registry) != termination_condition.actor) {
+                    continue;
+                }
+                int max_health = utils::round_to_nearest_even(
+                    static_attributes.attribute_value_map[actor::attribute_t::MAX_HEALTH]);
+                int current_health = combat_stats.health;
+                if (max_health - current_health >= termination_condition.damage) {
+                    someone_took_required_damage = true;
+                    break;
                 }
             }
+            if (someone_took_required_damage) {
+                spdlog::info("wau");
+                return false;
+            }
+        } else if (termination_condition.type ==
+                   configuration::termination_condition_t::type_t::TIME) {
+            if (utils::get_current_tick(registry) >= termination_condition.time) {
+                spdlog::info("mau");
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
-            ++current_tick;
+std::string combat_loop(const configuration::encounter_t& encounter, bool enable_caching) {
+    auto& registry_cache = mru_cache_t<registry_t>::instance();
+
+    registry_t registry;
+    if (enable_caching) {
+        auto actor = encounter.actors[0];
+        size_t max_depth = actor.rotation.skill_casts.size();
+
+        bool is_cache_miss = true;
+        configuration::encounter_t current_encounter{encounter};
+        for (size_t depth = 0; depth < max_depth && is_cache_miss; ++depth) {
+            if (depth > 0) {
+                current_encounter.actors[0].rotation.skill_casts.pop_back();
+            }
+
+            auto cache_key = convert_encounter_to_cache_key(current_encounter);
+            if (registry_cache.contains(cache_key)) {
+                registry.clear();
+                utils::copy_registry(registry_cache.get(cache_key), registry);
+                is_cache_miss = false;
+                break;
+            }
+        }
+        if (is_cache_miss) {
+            registry.ctx().emplace<tick_t>(0);
+            system::setup_encounter(registry, encounter);
+        } else {
+            for (auto&& [actor_entity] :
+                 registry.view<component::is_actor>(entt::exclude<component::owner_component>)
+                     .each()) {
+                if (utils::get_entity_name(actor_entity, registry) == actor.name) {
+                    registry.remove<component::no_more_rotation>(actor_entity);
+                    actor::rotation_t converted_rotation{};
+                    int offset = 0;
+                    bool first = true;
+                    for (auto&& skill_cast : actor.rotation.skill_casts) {
+                        if (first) {
+                            offset = std::min(skill_cast.cast_time_ms, 0);
+                            first = false;
+                        }
+                        converted_rotation.skill_casts.emplace_back(actor::skill_cast_t{
+                            skill_cast.skill, (tick_t)(skill_cast.cast_time_ms - offset)});
+                    }
+                    auto& existing_rotation_component =
+                        registry.get<component::rotation_component>(actor_entity);
+                    registry.replace<component::rotation_component>(
+                        actor_entity,
+                        component::rotation_component{converted_rotation,
+                                                      existing_rotation_component.current_idx,
+                                                      existing_rotation_component.tick_offset,
+                                                      actor.rotation.repeat});
+                    break;
+                }
+            }
+        }
+    } else {
+        registry.ctx().emplace<tick_t>(0);
+        system::setup_encounter(registry, encounter);
+    }
+
+    std::string result;
+    try {
+        while (continue_combat_loop(registry, encounter)) {
+            registry.ctx().get<tick_t>() += 1;
+            tick(registry);
         }
     } catch (std::exception& e) {
         spdlog::error("Exception: {}", e.what());
-        return nlohmann::json{system::get_audit_report(registry, e.what())}[0].dump();
+        return utils::to_string(system::get_audit_report(registry, e.what()));
     }
 
-    return nlohmann::json{system::get_audit_report(registry)}[0].dump();
+    result = utils::to_string(system::get_audit_report(registry));
+    if (enable_caching) {
+        auto cache_key = convert_encounter_to_cache_key(encounter);
+        if (!registry_cache.contains(cache_key)) {
+            registry_cache.put(convert_encounter_to_cache_key(encounter), std::move(registry));
+        }
+    }
+    return result;
 }
 
 }  // namespace gw2combat

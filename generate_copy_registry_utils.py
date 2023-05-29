@@ -68,7 +68,7 @@ def main():
     namespace gw2combat::utils {
 
     void copy_registry(registry_t& source_registry, registry_t& destination_registry) {
-        destination_registry.ctx().emplace<const tick_t&>(source_registry.ctx().get<const tick_t&>());
+        destination_registry.ctx().emplace<tick_t>(source_registry.ctx().get<tick_t>());
     """
     code += """
         source_registry.each([&](auto entity) {
