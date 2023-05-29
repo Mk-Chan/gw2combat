@@ -5,6 +5,7 @@
 #include "component/actor/alacrity.hpp"
 #include "component/actor/animation.hpp"
 #include "component/actor/base_class_component.hpp"
+#include "component/actor/begun_casting_skills.hpp"
 #include "component/actor/casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
 #include "component/actor/destroy_after_rotation.hpp"
@@ -154,6 +155,11 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
         if (source_registry.all_of<gw2combat::component::team>(entity)) {
             destination_registry.emplace<gw2combat::component::team>(
                 destination_entity, source_registry.get<gw2combat::component::team>(entity));
+        }
+        if (source_registry.all_of<gw2combat::component::begun_casting_skills>(entity)) {
+            destination_registry.emplace<gw2combat::component::begun_casting_skills>(
+                destination_entity,
+                source_registry.get<gw2combat::component::begun_casting_skills>(entity));
         }
         if (source_registry.all_of<gw2combat::component::static_attributes>(entity)) {
             destination_registry.emplace<gw2combat::component::static_attributes>(
