@@ -13,6 +13,7 @@ namespace gw2combat::audit {
 struct report_t {
     std::vector<tick_event_t> tick_events;
     std::optional<std::string> error;
+    int offset = 0;
 };
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nlohmann_json_t) {
@@ -22,6 +23,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nloh
     if (nlohmann_json_t.error) {
         nlohmann_json_j["error"] = *nlohmann_json_t.error;
     }
+    nlohmann_json_j["offset"] = nlohmann_json_t.offset;
 }
 
 static inline void from_json(const nlohmann::json& nlohmann_json_j, report_t& nlohmann_json_t) {
@@ -31,6 +33,7 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, report_t& nl
     if (nlohmann_json_j.contains("error")) {
         nlohmann_json_t.error = nlohmann_json_j.value("error", *nlohmann_json_default_obj.error);
     }
+    nlohmann_json_t.offset = nlohmann_json_j.value("offset", nlohmann_json_default_obj.offset);
 }
 
 }  // namespace gw2combat::audit
