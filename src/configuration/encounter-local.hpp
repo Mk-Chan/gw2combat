@@ -21,7 +21,7 @@ struct encounter_local_t {
     std::vector<termination_condition_t> termination_conditions;
     audit_t audit_configuration;
     bool require_afk_skills = false;
-    bool incremental_audit = false;
+    int audit_offset = 0;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_local_t,
@@ -35,7 +35,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_local_t,
                                                 termination_conditions,
                                                 audit_configuration,
                                                 require_afk_skills,
-                                                incremental_audit)
+                                                audit_offset)
 
 }  // namespace gw2combat::configuration
 

@@ -646,5 +646,5 @@
         ]
     },
     "require_afk_skills": false,
-    "incremental_audit": false
+    "audit_offset": 0
 }

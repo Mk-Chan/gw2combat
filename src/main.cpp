@@ -127,6 +127,6 @@ configuration::encounter_t convert_encounter(
               std::back_inserter(converted_encounter.termination_conditions));
     converted_encounter.audit_configuration = encounter_local.audit_configuration;
     converted_encounter.require_afk_skills = encounter_local.require_afk_skills;
-    converted_encounter.incremental_audit = encounter_local.incremental_audit;
+    converted_encounter.audit_offset = encounter_local.audit_offset;
     return converted_encounter;
 }
