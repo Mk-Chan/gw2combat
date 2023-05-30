@@ -12,6 +12,7 @@
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/rotation_component.hpp"
 #include "component/actor/static_attributes.hpp"
+#include "component/audit/audit_component.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
@@ -228,6 +229,7 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
     auto& registry_cache = mru_cache_t<registry_t>::instance();
 
     registry_t registry;
+    int audit_offset = 0;
     if (enable_caching) {
         auto actor = encounter.actors[0];
         size_t max_depth = actor.rotation.skill_casts.size();
@@ -251,6 +253,11 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
             registry.ctx().emplace<tick_t>(0);
             system::setup_encounter(registry, encounter);
         } else {
+            if (encounter.incremental_audit) {
+                audit_offset = static_cast<int>(
+                    registry.get<component::audit_component>(utils::get_singleton_entity())
+                        .events.size());
+            }
             for (auto&& [actor_entity] :
                  registry.view<component::is_actor>(entt::exclude<component::owner_component>)
                      .each()) {
@@ -292,10 +299,10 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
         }
     } catch (std::exception& e) {
         spdlog::error("Exception: {}", e.what());
-        return utils::to_string(system::get_audit_report(registry, e.what()));
+        return utils::to_string(system::get_audit_report(registry, audit_offset, e.what()));
     }
 
-    result = utils::to_string(system::get_audit_report(registry));
+    result = utils::to_string(system::get_audit_report(registry, audit_offset));
     if (enable_caching) {
         auto cache_key = convert_encounter_to_cache_key(encounter);
         if (!registry_cache.contains(cache_key)) {
