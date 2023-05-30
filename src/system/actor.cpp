@@ -21,6 +21,7 @@ void setup_combat_stats(registry_t& registry) {
                 entity,
                 component::combat_stats{utils::round_to_nearest_even(
                     static_attributes.attribute_value_map.at(actor::attribute_t::MAX_HEALTH))});
+            registry.emplace_or_replace<component::combat_stats_updated>(entity);
         });
 }
 

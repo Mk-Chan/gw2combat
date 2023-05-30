@@ -189,7 +189,6 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
                 }
             }
             if (everyone_out_of_rotation) {
-                spdlog::info("qau");
                 return false;
             }
         } else if (termination_condition.type ==
@@ -213,13 +212,11 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
                 }
             }
             if (someone_took_required_damage) {
-                spdlog::info("wau");
                 return false;
             }
         } else if (termination_condition.type ==
                    configuration::termination_condition_t::type_t::TIME) {
             if (utils::get_current_tick(registry) >= termination_condition.time) {
-                spdlog::info("mau");
                 return false;
             }
         }

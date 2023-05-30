@@ -1,7 +1,8 @@
 #include "encounter.hpp"
 
+#include "audit.hpp"
+
 #include "component/actor/base_class_component.hpp"
-#include "component/actor/combat_stats.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/profession_component.hpp"
 #include "component/actor/static_attributes.hpp"
@@ -21,23 +22,29 @@ namespace gw2combat::system {
 
 void setup_encounter(registry_t& registry, const configuration::encounter_t& encounter) {
     auto singleton_entity = registry.create();
+    registry.ctx().emplace_as<std::string>(singleton_entity, "Console");
+
     registry.emplace<component::encounter_configuration_component>(singleton_entity, encounter);
     registry.emplace<component::is_actor>(singleton_entity);
-    registry.emplace<component::audit_component>(
+    registry.emplace<component::static_attributes>(
+        singleton_entity, component::static_attributes{configuration::build_t{}.attributes});
+
+    auto& audit_component = registry.emplace<component::audit_component>(
         singleton_entity,
         component::audit_component{
             .audit_configuration = encounter.audit_configuration,
             .events = {},
         });
-    registry.emplace<component::static_attributes>(
-        singleton_entity, component::static_attributes{configuration::build_t{}.attributes});
-    registry.ctx().emplace_as<std::string>(singleton_entity, "Console");
+    // NOTE: This system is responsible for its own audit because it doesn't run in the combat loop
+    audit_component.events.emplace_back(
+        create_tick_event(audit::actor_created_event_t{}, singleton_entity, registry));
 
     for (auto&& actor : encounter.actors) {
         auto build = actor.build;
 
         auto actor_entity = registry.create();
         registry.ctx().emplace_as<std::string>(actor_entity, actor.name);
+
         registry.emplace<component::is_actor>(actor_entity);
         registry.emplace<component::team>(actor_entity, actor.team);
         registry.emplace<component::base_class_component>(actor_entity, build.base_class);
@@ -98,8 +105,8 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
                 component::rotation_component{converted_rotation, 0, 0, actor.rotation.repeat});
         }
 
-        registry.emplace_or_replace<component::actor_created>(actor_entity);
-        registry.emplace_or_replace<component::combat_stats_updated>(actor_entity);
+        audit_component.events.emplace_back(
+            create_tick_event(audit::actor_created_event_t{}, actor_entity, registry));
     }
 }
 

@@ -7,6 +7,9 @@
 
 namespace gw2combat::system {
 
+extern audit::tick_event_t create_tick_event(const decltype(audit::tick_event_t::event)& event,
+                                             entity_t actor_entity,
+                                             registry_t& registry);
 extern void audit(registry_t& registry);
 extern audit::report_t get_audit_report(registry_t& registry, const std::string& error = {});
 
