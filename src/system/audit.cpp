@@ -347,9 +347,7 @@ audit::report_t get_audit_report(registry_t& registry, int offset, const std::st
     if (!error.empty()) {
         audit_report.error = error;
     }
-    if (offset > 0) {
-        audit_report.offset = offset;
-    }
+    audit_report.offset = offset;
     return audit_report;
 }
 
