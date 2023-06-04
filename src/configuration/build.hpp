@@ -19,7 +19,7 @@ namespace gw2combat::configuration {
 struct build_t {
     actor::base_class_t base_class = actor::base_class_t::INVALID;
     actor::profession_t profession = actor::profession_t::INVALID;
-    std::unordered_map<actor::attribute_t, double> attributes;
+    std::map<actor::attribute_t, double> attributes;
     std::vector<weapon_t> weapons{};
     std::vector<skill_t> skills{};
     std::vector<actor::effect_t> permanent_effects{};
