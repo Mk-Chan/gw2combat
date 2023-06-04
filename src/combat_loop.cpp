@@ -157,7 +157,9 @@ void tick(registry_t& registry) {
 
 mru_cache_t<registry_t>::key_type convert_encounter_to_cache_key(
     const configuration::encounter_t& encounter) {
-    return mru_cache_t<registry_t>::djb2_hash(utils::to_string(encounter));
+    configuration::encounter_t normalized_encounter{encounter};
+    normalized_encounter.audit_offset = 0;
+    return mru_cache_t<registry_t>::djb2_hash(utils::to_string(normalized_encounter));
 }
 
 bool continue_combat_loop(registry_t& registry, const configuration::encounter_t& encounter) {
