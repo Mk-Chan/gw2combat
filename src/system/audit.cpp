@@ -64,11 +64,9 @@ std::vector<audit::counter_value_t> get_counter_values(entity_t actor_entity,
     return counter_values;
 }
 
-[[maybe_unused]] std::unordered_map<std::basic_string<char>,
-                                    std::unordered_map<actor::attribute_t, double>>
+[[maybe_unused]] std::map<std::basic_string<char>, std::map<actor::attribute_t, double>>
 get_actor_attributes(registry_t& registry) {
-    std::unordered_map<std::basic_string<char>, std::unordered_map<actor::attribute_t, double>>
-        actor_attributes;
+    std::map<std::basic_string<char>, std::map<actor::attribute_t, double>> actor_attributes;
     registry.view<component::is_actor, component::relative_attributes>().each(
         [&](entity_t actor_entity, const component::relative_attributes& relative_attributes) {
             actor_attributes[utils::get_entity_name(actor_entity, registry)] =

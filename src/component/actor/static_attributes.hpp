@@ -6,7 +6,7 @@
 namespace gw2combat::component {
 
 struct static_attributes {
-    std::unordered_map<actor::attribute_t, double> attribute_value_map;
+    std::map<actor::attribute_t, double> attribute_value_map;
 };
 
 }  // namespace gw2combat::component
