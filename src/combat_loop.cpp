@@ -225,7 +225,7 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
     return true;
 }
 
-std::string combat_loop(const configuration::encounter_t& encounter, bool enable_caching) {
+audit::report_t combat_loop(const configuration::encounter_t& encounter, bool enable_caching) {
     auto& registry_cache = mru_cache_t<registry_t>::instance();
 
     registry_t registry;
@@ -285,7 +285,6 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
         system::setup_encounter(registry, encounter);
     }
 
-    std::string result;
     try {
         while (continue_combat_loop(registry, encounter)) {
             registry.ctx().get<tick_t>() += 1;
@@ -293,11 +292,10 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
         }
     } catch (std::exception& e) {
         spdlog::error("Exception: {}", e.what());
-        return utils::to_string(
-            system::get_audit_report(registry, encounter.audit_offset, e.what()));
+        return system::get_audit_report(registry, encounter.audit_offset, e.what());
     }
 
-    result = utils::to_string(system::get_audit_report(registry, encounter.audit_offset));
+    auto result = system::get_audit_report(registry, encounter.audit_offset);
     if (enable_caching) {
         auto cache_key = convert_encounter_to_cache_key(encounter);
         if (!registry_cache.contains(cache_key)) {

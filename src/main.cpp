@@ -35,6 +35,9 @@ int main(int argc, char** argv) {
     parser.add_argument("--audit-path")
         .default_value(std::string{"audit.json"})
         .help("Path to audit file. Only applicable in default mode.");
+    parser.add_argument("--search-rotation")
+        .default_value(std::string{""})
+        .help("Search for a rotation");
 
     try {
         parser.parse_args(argc, argv);
@@ -44,6 +47,15 @@ int main(int argc, char** argv) {
         std::exit(1);
     }
 
+    bool search_rotation_mode = parser.is_used("--search-rotation");
+    if (search_rotation_mode) {
+        spdlog::set_level(spdlog::level::off);
+        const auto& encounter_path = parser.get<std::string>("--encounter");
+        auto encounter_local = utils::read<configuration::encounter_local_t>(encounter_path);
+        auto encounter = convert_encounter(encounter_local);
+        search_rotation_for_encounter(encounter);
+        return 0;
+    }
     bool server_mode = parser.is_used("--server");
     if (!server_mode) {
         const auto& encounter_path = parser.get<std::string>("--encounter");
@@ -52,9 +64,9 @@ int main(int argc, char** argv) {
         auto encounter = convert_encounter(encounter_local);
         std::ofstream audit_path_stream{audit_path, std::ios::trunc};
 
-        auto simulation_result_json = combat_loop(encounter);
+        auto simulation_audit = combat_loop(encounter);
 
-        audit_path_stream << simulation_result_json;
+        audit_path_stream << utils::to_string(simulation_audit);
     } else {
         const auto& server_configuration = parser.get<std::string>("--server");
         auto delimiter_index = server_configuration.find(':');

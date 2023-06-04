@@ -2,6 +2,8 @@
 
 #include "asio/asio.hpp"
 
+#include "utils/basic_utils.hpp"
+
 #include "combat_loop.hpp"
 
 namespace gw2combat {
@@ -25,7 +27,8 @@ asio::awaitable<void> request_handler(tcp::socket socket) {
         std::getline(istream, payload);
 
         auto encounter = nlohmann::json::parse(payload).get<configuration::encounter_t>();
-        auto simulation_result_json = combat_loop(encounter, true);
+        auto simulation_audit = combat_loop(encounter, true);
+        auto simulation_result_json = utils::to_string(simulation_audit);
         co_await asio::async_write(
             socket,
             asio::buffer(simulation_result_json, simulation_result_json.size()),

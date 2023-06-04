@@ -1,9 +1,9 @@
 {
     "actors": [
         {
-            "name": "dh-hl",
-            "build_path": "resources/build-dh-hl.json",
-            "rotation_path": "resources/rotation-dh-hl.csv",
+            "name": "lb-slb",
+            "build_path": "resources/build-lb-slb.json",
+            "rotation_path": "resources/rotation-lb-slb.csv",
             "team": 1
         }, {
             "name": "golem",
@@ -16,12 +16,6 @@
             "type": "DAMAGE",
             "actor": "golem",
             "damage": 4000000
-        }, {
-            "type": "TIME",
-            "time": 110000
-        }, {
-            "type": "ROTATION",
-            "actor": "dh-hl"
         }
     ],
     "audit_configuration": {

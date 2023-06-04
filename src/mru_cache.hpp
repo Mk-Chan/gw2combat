@@ -13,7 +13,7 @@ struct mru_cache_t {
     using key_type = unsigned long;
 
     [[nodiscard]] static mru_cache_t<T>& instance() {
-        static mru_cache_t<T> instance(7000);  // TODO: Make this configurable
+        static mru_cache_t<T> instance(70000);  // TODO: Make this configurable
         return instance;
     }
 

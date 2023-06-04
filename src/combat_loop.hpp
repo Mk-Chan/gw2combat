@@ -3,14 +3,18 @@
 
 #include "common.hpp"
 
+#include "audit/report.hpp"
 #include "configuration/encounter.hpp"
 
 namespace gw2combat {
 
 extern void tick(registry_t& registry);
 
-extern std::string combat_loop(const configuration::encounter_t& encounter_configuration,
-                               bool enable_caching = false);
+extern audit::report_t combat_loop(const configuration::encounter_t& encounter_configuration,
+                                   bool enable_caching = false);
+
+extern void search_rotation_for_encounter(
+    const configuration::encounter_t& encounter_configuration);
 
 }  // namespace gw2combat
 
