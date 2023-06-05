@@ -1,5 +1,7 @@
 #include "combat_loop.hpp"
 
+#include <iostream>
+
 #include "mru_cache.hpp"
 
 #include "component/actor/begun_casting_skills.hpp"
@@ -227,7 +229,12 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
     return true;
 }
 
+static std::uint64_t simulations = 0;
+static std::uint64_t cache_hits = 0;
+static std::uint64_t cache_lookups = 0;
+
 audit::report_t combat_loop(const configuration::encounter_t& encounter, bool enable_caching) {
+    ++simulations;
     auto& registry_cache = mru_cache_t<registry_t>::instance();
 
     registry_t registry;
@@ -237,13 +244,15 @@ audit::report_t combat_loop(const configuration::encounter_t& encounter, bool en
 
         bool is_cache_miss = true;
         configuration::encounter_t current_encounter{encounter};
-        for (size_t depth = 0; depth < max_depth && is_cache_miss; ++depth) {
+        for (size_t depth = 1; depth < max_depth && is_cache_miss; ++depth) {
             if (depth > 0) {
                 current_encounter.actors[0].rotation.skill_casts.pop_back();
             }
 
             auto cache_key = convert_encounter_to_cache_key(current_encounter);
+            ++cache_lookups;
             if (registry_cache.contains(cache_key)) {
+                ++cache_hits;
                 registry.clear();
                 utils::copy_registry(registry_cache.get(cache_key), registry);
                 is_cache_miss = false;
@@ -293,8 +302,16 @@ audit::report_t combat_loop(const configuration::encounter_t& encounter, bool en
             tick(registry);
         }
     } catch (std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
         spdlog::error("Exception: {}", e.what());
         return system::get_audit_report(registry, encounter.audit_offset, e.what());
+    }
+
+    if (simulations % 10'000 == 0) {
+        std::cout << "Simulations: " << simulations << ", Cache hits: " << cache_hits
+                  << ", Cache lookups: " << cache_lookups
+                  << ", Cache hit rate: " << cache_hits * 100.0 / (double)cache_lookups
+                  << std::endl;
     }
 
     auto result = system::get_audit_report(registry, encounter.audit_offset);

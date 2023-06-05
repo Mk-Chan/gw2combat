@@ -111,55 +111,18 @@ void print_rotation(const configuration::rotation_t& rotation) {
     }
 }
 
-tick_t calculate_rotation_cast_time(const configuration::encounter_t& encounter,
-                                    const actor::rotation_t& rotation) {
-    auto& actor = encounter.actors[0];
-    tick_t current = 1;
-    for (auto& skill_cast : rotation.skill_casts) {
-        for (auto& skill_configuration : actor.build.skills) {
-            if (skill_configuration.skill_key != skill_cast.skill) {
-                continue;
-            }
-            current += skill_configuration.cast_duration[1];
-        }
-    }
-    return current;
-}
-
-entity_t get_actor_entity_by_name(registry_t& registry, const std::string& name) {
-    for (auto entity : registry.view<component::is_actor>()) {
-        if (utils::get_entity_name(entity, registry) == name) {
-            return entity;
-        }
-    }
-    throw std::runtime_error(fmt::format("no entity with name {} found!", name));
-}
-
-int cast_time_for_skill(const configuration::encounter_t& encounter, const actor::skill_t& skill) {
-    static auto& actor = encounter.actors[0];
-    for (auto& skill_configuration : actor.build.skills) {
-        if (skill_configuration.skill_key != skill) {
-            continue;
-        }
-        return skill_configuration.cast_duration[1];
-    }
-    throw std::runtime_error("skill configuration not found");
-}
-
 double calculate_rotation_score(const configuration::encounter_t& encounter,
-                                const configuration::rotation_t& rotation,
-                                tick_t horizon,
-                                tick_t rotation_cast_time) {
+                                const configuration::rotation_t& rotation) {
     configuration::encounter_t next_encounter{encounter};
     next_encounter.actors[0].rotation = rotation;
-    next_encounter.termination_conditions.emplace_back(
-        configuration::termination_condition_t::type_t::TIME, rotation_cast_time + horizon);
+    next_encounter.termination_conditions.emplace_back(configuration::termination_condition_t{
+        configuration::termination_condition_t::type_t::ROTATION, 0, "lb-slb", 0});
 
     try {
         auto audit = combat_loop(next_encounter, true);
         auto accumulator_visitor = []<typename T>(T&& t) {
             if constexpr (std::is_same_v<std::decay_t<decltype(t)>, audit::damage_event_t>) {
-                return t.damage;
+                return t.source_actor == "lb-slb" ? t.damage : 0;
             } else {
                 return 0;
             }
@@ -182,11 +145,20 @@ double calculate_rotation_score(const configuration::encounter_t& encounter,
 }
 
 double calculate_skill_damage(const configuration::encounter_t& encounter,
-                              const actor::skill_t& skill) {
+                              const configuration::skill_t& skill) {
+    configuration::encounter_t copy_encounter{encounter};
     configuration::rotation_t next_rotation;
-    next_rotation.skill_casts.emplace_back(skill, 0);
-    return calculate_rotation_score(
-        encounter, next_rotation, 10'000, cast_time_for_skill(encounter, skill));
+    if (skill.weapon_type == actor::weapon_type::AXE) {
+        for (auto& weapon : copy_encounter.actors[0].build.weapons) {
+            if (weapon.set == actor::weapon_set::SET_1) {
+                weapon.set = actor::weapon_set::SET_2;
+            } else {
+                weapon.set = actor::weapon_set::SET_1;
+            }
+        }
+    }
+    next_rotation.skill_casts.emplace_back(skill.skill_key, 0);
+    return calculate_rotation_score(copy_encounter, next_rotation);
 }
 
 bool is_skill_available_to_cast(const skills_state_t& skills_state, const actor::skill_t& skill) {
@@ -229,10 +201,23 @@ void update_skills_state(skills_state_t& skills_state, const actor::skill_t& nex
 }
 
 double calculate_skill_score(const configuration::encounter_t& encounter,
-                             const actor::skill_t& skill) {
-    if (skill == "Sic 'Em!") {
+                             const configuration::skill_t& skill) {
+    if (skill.skill_key == "Long Range Shot") {
+        return 0;  // Worst lb-slb skill
+    }
+    if (skill.skill_key == "One Wolf Pack") {
+        return 99'999;  // Hack to order One Wolf Pack well in the skill list
+    }
+    if (skill.skill_key == "Sic 'Em!") {
         return 100'000;  // Hack to order Sic 'Em! well in the skill list
     }
+    if (skill.skill_key == "Barrage") {
+        return 99'998;  // Hack to order Barrage well in the skill list
+    }
+    if (skill.skill_key == "Frost Trap") {
+        return 99'997;  // Hack to order Frost Trap well in the skill list
+    }
+
     return calculate_skill_damage(encounter, skill);
 }
 
@@ -241,6 +226,19 @@ skills_state_t new_skills_state(const configuration::encounter_t& encounter) {
     std::unordered_map<actor::skill_t, compact_skill_t> skill_map;
     for (auto& skill_configuration : actor.build.skills) {
         const auto& skill_key = skill_configuration.skill_key;
+        if (skill_configuration.weapon_type != actor::weapon_type::AXE) {
+            auto& lb_allowed_skills = allowed_skills_by_weapon[0];
+            if (std::find(lb_allowed_skills.cbegin(), lb_allowed_skills.cend(), skill_key) ==
+                lb_allowed_skills.cend()) {
+                continue;
+            }
+        } else if (skill_configuration.weapon_type != actor::weapon_type::LONGBOW) {
+            auto& axe_allowed_skills = allowed_skills_by_weapon[1];
+            if (std::find(axe_allowed_skills.cbegin(), axe_allowed_skills.cend(), skill_key) ==
+                axe_allowed_skills.cend()) {
+                continue;
+            }
+        }
         skill_map[skill_key] =
             compact_skill_t{.skill = skill_key,
                             .cast_duration = skill_configuration.cast_duration[1],
@@ -249,20 +247,33 @@ skills_state_t new_skills_state(const configuration::encounter_t& encounter) {
                             .current_ammo = skill_configuration.ammo,
                             .current_cooldown = 0,
                             .last_casted_tick = 0,
-                            .static_score = calculate_skill_score(encounter, skill_key)};
+                            .static_score = calculate_skill_score(encounter, skill_configuration)};
+    }
+    // loop the skill_map in descending order of static_score and print
+    std::vector<actor::skill_t> sorted_skill_list;
+    for (const auto& [skill, compact_skill] : skill_map) {
+        sorted_skill_list.emplace_back(skill);
+    }
+    std::sort(sorted_skill_list.begin(),
+              sorted_skill_list.end(),
+              [&](const actor::skill_t& lhs, const actor::skill_t& rhs) {
+                  return skill_map.at(lhs).static_score > skill_map.at(rhs).static_score;
+              });
+    for (const auto& skill : sorted_skill_list) {
+        std::cout << "skill " << skill << " static_score " << skill_map[skill].static_score
+                  << std::endl;
     }
     return skills_state_t{.skill_map = skill_map, .latest_skill = "", .current_tick = 1};
 }
 
-search_result_t depth_first_search(const configuration::encounter_t& encounter,
-                                   const skills_state_t& skills_state,
-                                   tick_t horizon,
-                                   double best_score,
-                                   const configuration::rotation_t& prior_rotation,
-                                   int prior_rotation_cast_time,
-                                   int remaining_depth,
-                                   int ply,
-                                   int weapon) {
+double depth_first_search(const configuration::encounter_t& encounter,
+                          const skills_state_t& skills_state,
+                          double best_score,
+                          configuration::rotation_t& best_rotation,
+                          const configuration::rotation_t& prior_rotation,
+                          int remaining_depth,
+                          int ply,
+                          int weapon) {
     std::vector<actor::skill_t> sorted_skill_list;
     for (const actor::skill_t& candidate_skill : allowed_skills_by_weapon[weapon]) {
         if (is_skill_available_to_cast(skills_state, candidate_skill)) {
@@ -276,65 +287,57 @@ search_result_t depth_first_search(const configuration::encounter_t& encounter,
                   return (skill_map.at(skill1).static_score) > (skill_map.at(skill2).static_score);
               });
 
-    double current_best_score = 0.0;
-    configuration::rotation_t current_best_rotation;
+    configuration::rotation_t next_rotation;
+    std::copy(prior_rotation.skill_casts.cbegin(),
+              prior_rotation.skill_casts.cend(),
+              std::back_inserter(next_rotation.skill_casts));
     for (const actor::skill_t& candidate_skill : sorted_skill_list) {
-        configuration::rotation_t next_rotation;
-        std::copy(prior_rotation.skill_casts.cbegin(),
-                  prior_rotation.skill_casts.cend(),
-                  std::back_inserter(next_rotation.skill_casts));
-        next_rotation.skill_casts.emplace_back(
-            configuration::skill_cast_t{candidate_skill, prior_rotation_cast_time});
-        int next_rotation_cast_time =
-            prior_rotation_cast_time + cast_time_for_skill(encounter, candidate_skill);
+        next_rotation.skill_casts.emplace_back(configuration::skill_cast_t{candidate_skill, 0});
 
-        search_result_t search_result;
+        double search_score;
         if (remaining_depth == 1) {
-            auto score = calculate_rotation_score(
-                encounter, next_rotation, horizon, next_rotation_cast_time);
-            search_result = search_result_t{score, next_rotation};
+            search_score = calculate_rotation_score(encounter, next_rotation);
         } else {
             skills_state_t updated_skills_state = skills_state;
             update_skills_state(updated_skills_state, candidate_skill);
-            search_result =
+            search_score =
                 depth_first_search(encounter,
                                    updated_skills_state,
-                                   horizon,
                                    best_score,
+                                   best_rotation,
                                    next_rotation,
-                                   next_rotation_cast_time,
                                    remaining_depth - 1,
                                    ply + 1,
                                    candidate_skill == "Weapon Swap" ? weapon ^ 1 : weapon);
         }
 
-        if (search_result.score > current_best_score) {
-            current_best_score = search_result.score;
-            current_best_rotation = search_result.rotation;
-
-            if (current_best_score > best_score) {
-                best_score = current_best_score;
-                if (remaining_depth == 1) {
-                    std::cout << "info ply " << ply << " best_score " << best_score << " rotation ";
-                    print_rotation(current_best_rotation);
-                    std::cout << std::endl;
-                }
+        if (search_score > best_score) {
+            best_score = search_score;
+            std::copy(next_rotation.skill_casts.cbegin(),
+                      next_rotation.skill_casts.cend(),
+                      std::back_inserter(best_rotation.skill_casts));
+            if (remaining_depth == 1) {
+                std::cout << "info ply " << ply << " best_score " << best_score << " rotation ";
+                print_rotation(best_rotation);
+                std::cout << std::endl;
             }
         }
+        next_rotation.skill_casts.pop_back();
     }
 
-    return search_result_t{current_best_score, current_best_rotation};
+    return best_score;
 }
 
 void search_rotation_for_encounter(const configuration::encounter_t& encounter) {
-    tick_t horizon = 10'000;
-    configuration::rotation_t prior_rotation;
+    int max_depth = 15;
     auto skills_state = new_skills_state(encounter);
-    for (int depth = 1; depth < 15; ++depth) {
+    configuration::rotation_t best_rotation;
+    for (int depth = max_depth; depth <= max_depth; ++depth) {
+        configuration::rotation_t prior_rotation;
         auto result = depth_first_search(
-            encounter, skills_state, horizon, 0.0, prior_rotation, tick_t{0}, depth, 1, 0);
-        std::cout << "info depth " << depth << " best_score " << result.score << " rotation ";
-        print_rotation(result.rotation);
+            encounter, skills_state, 0.0, best_rotation, prior_rotation, depth, 1, 0);
+        std::cout << "info depth " << depth << " best_score " << result << " rotation ";
+        print_rotation(best_rotation);
         std::cout << std::endl;
     }
 }
