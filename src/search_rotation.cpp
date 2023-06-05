@@ -313,6 +313,7 @@ double depth_first_search(const configuration::encounter_t& encounter,
 
         if (search_score > best_score) {
             best_score = search_score;
+            best_rotation.skill_casts.clear();
             std::copy(next_rotation.skill_casts.cbegin(),
                       next_rotation.skill_casts.cend(),
                       std::back_inserter(best_rotation.skill_casts));
