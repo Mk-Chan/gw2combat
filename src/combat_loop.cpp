@@ -232,6 +232,8 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
 static std::uint64_t simulations = 0;
 static std::uint64_t cache_hits = 0;
 static std::uint64_t cache_lookups = 0;
+static std::chrono::time_point<std::chrono::steady_clock> start_time =
+    std::chrono::steady_clock::now();
 
 audit::report_t combat_loop(const configuration::encounter_t& encounter, bool enable_caching) {
     ++simulations;
@@ -307,11 +309,15 @@ audit::report_t combat_loop(const configuration::encounter_t& encounter, bool en
         return system::get_audit_report(registry, encounter.audit_offset, e.what());
     }
 
-    if (simulations % 10'000 == 0) {
-        std::cout << "Simulations: " << simulations << ", Cache hits: " << cache_hits
-                  << ", Cache lookups: " << cache_lookups
-                  << ", Cache hit rate: " << cache_hits * 100.0 / (double)cache_lookups
-                  << std::endl;
+    if (simulations % 1'000 == 0) {
+        std::chrono::time_point<std::chrono::steady_clock> end_time =
+            std::chrono::steady_clock::now();
+        std::cout
+            << "Simulations: " << simulations << ", Cache hits: " << cache_hits
+            << ", Cache lookups: " << cache_lookups
+            << ", Cache hit rate: " << cache_hits * 100.0 / (double)cache_lookups << ", Time: "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
+            << "ms" << std::endl;
     }
 
     auto result = system::get_audit_report(registry, encounter.audit_offset);

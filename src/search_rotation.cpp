@@ -298,6 +298,8 @@ double depth_first_search(const configuration::encounter_t& encounter,
         if (remaining_depth == 1) {
             search_score = calculate_rotation_score(encounter, next_rotation);
         } else {
+            calculate_rotation_score(encounter, next_rotation);
+
             skills_state_t updated_skills_state = skills_state;
             update_skills_state(updated_skills_state, candidate_skill);
             search_score =
