@@ -63,7 +63,7 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
             utils::add_skill_to_actor(skill, actor_entity, registry);
         }
         for (auto& permanent_effect : build.permanent_effects) {
-            utils::add_effect_to_actor(permanent_effect, actor_entity, registry);
+            utils::add_permanent_effect_to_actor(permanent_effect, actor_entity, registry);
         }
         for (auto& permanent_unique_effect : build.permanent_unique_effects) {
             utils::add_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);

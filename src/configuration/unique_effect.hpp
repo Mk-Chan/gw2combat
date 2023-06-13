@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "actor/stacking.hpp"
 #include "actor/unique_effect.hpp"
 
 #include "attribute_conversion.hpp"
@@ -26,6 +27,8 @@ struct unique_effect_t {
     int max_considered_stacks = 1;
     int max_stored_stacks = 1500;
 
+    actor::stacking_t stacking_type = actor::stacking_t::STACKING_INTENSITY;
+
     [[nodiscard]] inline bool operator==(const unique_effect_t& rhs) const {
         return this->unique_effect_key == rhs.unique_effect_key;
     }
@@ -43,7 +46,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(unique_effect_t,
                                                 unchained_skill_triggers,
                                                 effect_removals,
                                                 max_considered_stacks,
-                                                max_stored_stacks)
+                                                max_stored_stacks,
+                                                stacking_type)
 
 }  // namespace gw2combat::configuration
 

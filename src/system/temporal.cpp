@@ -101,8 +101,17 @@ void cleanup_expired_components(registry_t& registry) {
         [&](entity_t entity) { registry.remove<component::animation_component>(entity); });
     registry.view<component::cooldown_expired>().each(
         [&](entity_t entity) { registry.remove<component::cooldown_component>(entity); });
-    registry.view<component::duration_expired>().each(
-        [&](entity_t entity) { registry.emplace_or_replace<component::destroy_entity>(entity); });
+    registry.view<component::duration_expired>().each([&](entity_t entity) {
+        if (registry.any_of<component::is_effect>(entity)) {
+            auto& is_effect = registry.get<component::is_effect>(entity);
+            if (is_effect.effect == actor::effect_t::QUICKNESS) {
+                registry.remove<component::has_quickness>(utils::get_owner(entity, registry));
+            } else if (is_effect.effect == actor::effect_t::ALACRITY) {
+                registry.remove<component::has_alacrity>(utils::get_owner(entity, registry));
+            }
+        }
+        registry.emplace_or_replace<component::destroy_entity>(entity);
+    });
 }
 
 }  // namespace gw2combat::system
