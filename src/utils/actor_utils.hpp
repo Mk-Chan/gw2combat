@@ -139,71 +139,6 @@ static inline void enqueue_child_skill(const actor::skill_t& skill,
     enqueue_child_skills(parent_actor, "Temporary " + skill + " Entity", skills, registry);
 }
 
-static inline std::optional<entity_t> add_permanent_effect_to_actor(actor::effect_t effect,
-                                                                    entity_t actor_entity,
-                                                                    registry_t& registry) {
-    auto effect_entity = registry.create();
-    registry.ctx().emplace_as<std::string>(effect_entity,
-                                           utils::to_string(effect) + " effect holder entity");
-
-    registry.emplace<component::is_effect>(effect_entity, effect);
-    if (utils::is_damaging_condition(effect)) {
-        registry.emplace<component::is_damaging_effect>(effect_entity);
-    }
-    registry.emplace<component::owner_component>(effect_entity, actor_entity);
-    registry.emplace<component::source_actor>(effect_entity, utils::get_singleton_entity());
-    registry.emplace<component::source_skill>(effect_entity, component::source_skill{});
-    registry.emplace<component::duration_component>(
-        effect_entity, component::duration_component{1'000'000'000, 0});
-
-    if (effect == actor::effect_t::MIGHT) {
-        utils::add_owner_based_component<std::vector<configuration::attribute_conversion_t>,
-                                         component::is_attribute_conversion>(
-            {configuration::attribute_conversion_t{configuration::condition_t{},
-                                                   actor::attribute_t::CONDITION_DAMAGE,
-                                                   actor::attribute_t::CONDITION_DAMAGE,
-                                                   0.0,
-                                                   30.0},
-             configuration::attribute_conversion_t{configuration::condition_t{},
-                                                   actor::attribute_t::POWER,
-                                                   actor::attribute_t::POWER,
-                                                   0.0,
-                                                   30.0}},
-            effect_entity,
-            registry);
-    } else if (effect == actor::effect_t::FURY) {
-        utils::add_owner_based_component<std::vector<configuration::attribute_modifier_t>,
-                                         component::is_attribute_modifier>(
-            {configuration::attribute_modifier_t{configuration::condition_t{},
-                                                 actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER,
-                                                 1.0,
-                                                 0.25}},
-            effect_entity,
-            registry);
-    } else if (effect == actor::effect_t::QUICKNESS) {
-        registry.emplace_or_replace<component::has_quickness>(actor_entity);
-    } else if (effect == actor::effect_t::ALACRITY) {
-        registry.emplace_or_replace<component::has_alacrity>(actor_entity);
-    } else if (effect == actor::effect_t::VULNERABILITY) {
-        utils::add_owner_based_component<std::vector<configuration::attribute_modifier_t>,
-                                         component::is_attribute_modifier>(
-            {configuration::attribute_modifier_t{
-                 configuration::condition_t{},
-                 actor::attribute_t::INCOMING_STRIKE_DAMAGE_MULTIPLIER_ADD_GROUP,
-                 1.0,
-                 0.01},
-             configuration::attribute_modifier_t{
-                 configuration::condition_t{},
-                 actor::attribute_t::INCOMING_CONDITION_DAMAGE_MULTIPLIER_ADD_GROUP,
-                 1.0,
-                 0.01}},
-            effect_entity,
-            registry);
-    }
-
-    return effect_entity;
-}
-
 static inline entity_t add_effect_to_actor(actor::effect_t effect,
                                            entity_t actor_entity,
                                            entity_t source_actor,
@@ -295,6 +230,13 @@ static inline entity_t add_effect_to_actor(actor::effect_t effect,
     return effect_entity;
 }
 
+static inline std::optional<entity_t> add_permanent_effect_to_actor(actor::effect_t effect,
+                                                                    entity_t actor_entity,
+                                                                    registry_t& registry) {
+    return add_effect_to_actor(
+        effect, actor_entity, utils::get_singleton_entity(), {}, 1'000'000'000, registry);
+}
+
 static inline std::vector<entity_t> add_effect_to_actor(actor::effect_t effect,
                                                         int num_stacks,
                                                         int duration,
@@ -314,14 +256,28 @@ static inline std::vector<entity_t> add_effect_to_actor(actor::effect_t effect,
 static inline std::optional<entity_t> add_unique_effect_to_actor(
     const configuration::unique_effect_t& unique_effect,
     entity_t actor_entity,
+    entity_t source_actor,
+    const actor::skill_t& source_skill,
+    int duration,
     registry_t& registry) {
     int stacks_count = 0;
     auto unique_effect_owners =
         registry.view<component::is_unique_effect, component::owner_component>().each();
     for (auto&& [unique_effect_entity, is_unique_effect, owner_component] : unique_effect_owners) {
-        if (is_unique_effect.unique_effect.unique_effect_key == unique_effect.unique_effect_key &&
-            owner_component.entity == actor_entity) {
-            ++stacks_count;
+        if (owner_component.entity != actor_entity ||
+            is_unique_effect.unique_effect.unique_effect_key != unique_effect.unique_effect_key) {
+            continue;
+        }
+        ++stacks_count;
+        auto& duration_component =
+            registry.get<component::duration_component>(unique_effect_entity);
+        if (unique_effect.stacking_type == actor::stacking_t::STACKING_DURATION) {
+            duration_component.duration = std::max(duration_component.duration + duration,
+                                                   is_unique_effect.unique_effect.max_duration);
+            return unique_effect_entity;
+        } else if (unique_effect.stacking_type == actor::stacking_t::REPLACE) {
+            duration_component.progress = duration_component.duration;
+            registry.emplace_or_replace<component::destroy_entity>(unique_effect_entity);
         }
     }
     if (stacks_count >= unique_effect.max_stored_stacks) {
@@ -334,10 +290,10 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
 
     registry.emplace<component::is_unique_effect>(unique_effect_entity, unique_effect);
     registry.emplace<component::owner_component>(unique_effect_entity, actor_entity);
-    registry.emplace<component::source_actor>(unique_effect_entity, actor_entity);
-    registry.emplace<component::source_skill>(unique_effect_entity, component::source_skill{});
-    registry.emplace<component::duration_component>(
-        unique_effect_entity, component::duration_component{1'000'000'000, 0});
+    registry.emplace<component::source_actor>(unique_effect_entity, source_actor);
+    registry.emplace<component::source_skill>(unique_effect_entity, source_skill);
+    registry.emplace<component::duration_component>(unique_effect_entity,
+                                                    component::duration_component{duration, 0});
 
     utils::add_owner_based_component<std::vector<configuration::attribute_conversion_t>,
                                      component::is_attribute_conversion>(
@@ -367,6 +323,14 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
     return unique_effect_entity;
 }
 
+static inline std::optional<entity_t> add_permanent_unique_effect_to_actor(
+    const configuration::unique_effect_t& unique_effect,
+    entity_t actor_entity,
+    registry_t& registry) {
+    return add_unique_effect_to_actor(
+        unique_effect, actor_entity, utils::get_singleton_entity(), {}, 1'000'000'000, registry);
+}
+
 static inline std::vector<entity_t> add_unique_effect_to_actor(
     const configuration::unique_effect_t& unique_effect,
     int num_stacks,
@@ -377,17 +341,8 @@ static inline std::vector<entity_t> add_unique_effect_to_actor(
     registry_t& registry) {
     std::vector<entity_t> unique_effect_entities;
     for (; num_stacks > 0; --num_stacks) {
-        std::optional<entity_t> unique_effect_entity =
-            add_unique_effect_to_actor(unique_effect, target_entity, registry);
-        if (unique_effect_entity) {
-            unique_effect_entities.emplace_back(*unique_effect_entity);
-            registry.emplace_or_replace<component::source_actor>(
-                *unique_effect_entity, component::source_actor{source_entity});
-            registry.emplace_or_replace<component::source_skill>(
-                *unique_effect_entity, component::source_skill{source_skill});
-            registry.emplace_or_replace<component::duration_component>(
-                *unique_effect_entity, component::duration_component{duration, 0});
-        }
+        add_unique_effect_to_actor(
+            unique_effect, target_entity, source_entity, source_skill, duration, registry);
     }
     return unique_effect_entities;
 }

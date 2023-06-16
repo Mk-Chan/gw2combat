@@ -26,6 +26,7 @@ struct unique_effect_t {
 
     int max_considered_stacks = 1;
     int max_stored_stacks = 1500;
+    int max_duration = 30'000;
 
     actor::stacking_t stacking_type = actor::stacking_t::STACKING_INTENSITY;
 
@@ -47,6 +48,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(unique_effect_t,
                                                 effect_removals,
                                                 max_considered_stacks,
                                                 max_stored_stacks,
+                                                max_duration,
                                                 stacking_type)
 
 }  // namespace gw2combat::configuration
