@@ -465,8 +465,8 @@
             "attribute_damage_to_skill": "Hunter's Ward",
             "weapon_type": "longbow",
             "damage_coefficient": 2.5,
-            "cast_duration": [520, 520],
-            "strike_on_tick_list": [[520], [520]]
+            "cast_duration": [1520, 1520],
+            "strike_on_tick_list": [[1520], [1520]]
         }, {
             "skill_key": "Hunter's Ward",
             "weapon_type": "longbow",

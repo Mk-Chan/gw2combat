@@ -33,10 +33,6 @@ void progress_animations(registry_t& registry) {
             int quickness_progress_pct = animation.progress[1] * 100 / animation.duration[1];
 
             if (no_quickness_progress_pct + quickness_progress_pct >= 100) {
-                spdlog::info("[{}] {}: mau skill {}",
-                             utils::get_current_tick(registry),
-                             utils::get_entity_name(entity, registry),
-                             utils::get_entity_name(animation.skill_entity, registry));
                 registry.emplace_or_replace<component::animation_expired>(entity);
                 utils::finish_casting_skill(entity, animation.skill_entity, registry);
             }
