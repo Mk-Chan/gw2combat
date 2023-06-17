@@ -6,9 +6,9 @@
 namespace gw2combat::system {
 
 extern void perform_rotations(registry_t& registry);
-extern void perform_skills(registry_t& skill_trigger_entity);
+extern void perform_skills(registry_t& registry);
 
-extern void cleanup_casting_skills(registry_t& registry);
+extern void cleanup_skill_actions(registry_t& registry);
 extern void destroy_actors_with_no_rotation(registry_t& registry);
 
 }  // namespace gw2combat::system

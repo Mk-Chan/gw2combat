@@ -3,16 +3,14 @@
 #include "mru_cache.hpp"
 
 #include "component/actor/begun_casting_skills.hpp"
-#include "component/actor/casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
-#include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/rotation_component.hpp"
+#include "component/actor/skills_actions_component.hpp"
 #include "component/actor/static_attributes.hpp"
-#include "component/audit/audit_component.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
@@ -150,7 +148,7 @@ void tick(registry_t& registry) {
 
     system::audit(registry);
 
-    system::cleanup_casting_skills(registry);
+    system::cleanup_skill_actions(registry);
     destroy_marked_entities(registry);
     clear_temporary_components(registry);
 }
@@ -181,8 +179,8 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
                     !registry.any_of<component::rotation_component>(entity)) {
                     continue;
                 }
-                if (registry.any_of<component::casting_skills_component,
-                                    component::finished_casting_skills>(entity)) {
+                if (registry.any_of<component::skills_actions_component,
+                                    component::finished_skills_actions_component>(entity)) {
                     everyone_out_of_rotation = false;
                     break;
                 }

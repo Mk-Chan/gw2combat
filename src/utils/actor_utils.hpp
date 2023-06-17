@@ -15,6 +15,7 @@
 #include "configuration/unique_effect.hpp"
 
 #include "component/actor/destroy_after_rotation.hpp"
+#include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/no_more_rotation.hpp"
 #include "component/actor/rotation_component.hpp"
@@ -32,6 +33,7 @@
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
 #include "component/skill/is_skill.hpp"
+#include "component/temporal/animation_component.hpp"
 #include "component/temporal/duration_component.hpp"
 #include "component/temporal/has_alacrity.hpp"
 #include "component/temporal/has_quickness.hpp"
@@ -345,6 +347,29 @@ static inline std::vector<entity_t> add_unique_effect_to_actor(
             unique_effect, target_entity, source_entity, source_skill, duration, registry);
     }
     return unique_effect_entities;
+}
+
+static inline void finish_casting_skill(entity_t actor_entity,
+                                        entity_t skill_entity,
+                                        registry_t& registry) {
+    auto& finished_casting_skills =
+        registry.get_or_emplace<component::finished_casting_skills>(actor_entity);
+    finished_casting_skills.skill_entities.emplace_back(skill_entity);
+
+    auto& skill_configuration = registry.get<component::is_skill>(skill_entity).skill_configuration;
+    if (skill_configuration.cooldown[0] != 0 &&
+        !(skill_configuration.skill_key == "Weapon Swap" &&
+          registry.any_of<component::bundle_component>(actor_entity))) {
+        utils::put_skill_on_cooldown(skill_configuration.skill_key, actor_entity, registry);
+        auto owner_entity = utils::get_owner(actor_entity, registry);
+        if (actor_entity != owner_entity) {
+            utils::put_skill_on_cooldown(skill_configuration.skill_key, owner_entity, registry);
+        }
+    }
+    spdlog::info("[{}] {}: finished casting skill {}",
+                 utils::get_current_tick(registry),
+                 utils::get_entity_name(actor_entity, registry),
+                 utils::to_string(skill_configuration.skill_key));
 }
 
 }  // namespace gw2combat::utils

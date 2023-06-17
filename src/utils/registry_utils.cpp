@@ -6,7 +6,6 @@
 #include "component/actor/animation.hpp"
 #include "component/actor/base_class_component.hpp"
 #include "component/actor/begun_casting_skills.hpp"
-#include "component/actor/casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
 #include "component/actor/destroy_after_rotation.hpp"
 #include "component/actor/finished_casting_skills.hpp"
@@ -17,6 +16,7 @@
 #include "component/actor/quickness.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/rotation_component.hpp"
+#include "component/actor/skills_actions_component.hpp"
 #include "component/actor/static_attributes.hpp"
 #include "component/actor/team.hpp"
 #include "component/attributes/is_attribute_conversion.hpp"
@@ -185,10 +185,10 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
                 destination_entity,
                 source_registry.get<gw2combat::component::base_class_component>(entity));
         }
-        if (source_registry.all_of<gw2combat::component::casting_skills_component>(entity)) {
-            destination_registry.emplace<gw2combat::component::casting_skills_component>(
+        if (source_registry.all_of<gw2combat::component::skills_actions_component>(entity)) {
+            destination_registry.emplace<gw2combat::component::skills_actions_component>(
                 destination_entity,
-                source_registry.get<gw2combat::component::casting_skills_component>(entity));
+                source_registry.get<gw2combat::component::skills_actions_component>(entity));
         }
         if (source_registry.all_of<gw2combat::component::rotation_component>(entity)) {
             destination_registry.emplace<gw2combat::component::rotation_component>(

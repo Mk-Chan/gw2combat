@@ -391,6 +391,7 @@
             "cooldown": [15000, 12000]
         }, {
             "skill_key": "Barrage Attack",
+            "attribute_damage_to_skill": "Barrage",
             "weapon_type": "longbow",
             "damage_coefficient": 0.5,
             "num_targets": 5,
@@ -401,7 +402,6 @@
             ]
         }, {
             "skill_key": "Barrage",
-            "weapon_type": "longbow",
             "cast_duration": [2320, 1880],
             "cooldown": [20000, 16000],
             "child_skill_keys": [

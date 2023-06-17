@@ -4,11 +4,11 @@
 #include "utils/entity_utils.hpp"
 #include "utils/skill_utils.hpp"
 
-#include "component/actor/casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
+#include "component/actor/skills_actions_component.hpp"
 #include "component/audit/audit_component.hpp"
 #include "component/counter/is_counter.hpp"
 #include "component/damage/effects_pipeline.hpp"
@@ -207,9 +207,9 @@ void audit_effect_applications(registry_t& registry) {
 
 void audit_skill_casts(registry_t& registry) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
-    registry.view<component::casting_skills_component>().each(
+    registry.view<component::skills_actions_component>().each(
         [&](entity_t actor_entity,
-            const component::casting_skills_component& casting_skills_component) {
+            const component::skills_actions_component& casting_skills_component) {
             for (auto& casting_skill : casting_skills_component.skills) {
                 if (casting_skill.strike_progress[0] + casting_skill.strike_progress[1] > 1 ||
                     casting_skill.pulse_progress[0] + casting_skill.pulse_progress[1] > 1) {

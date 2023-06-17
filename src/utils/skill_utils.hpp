@@ -59,7 +59,7 @@ static inline void assert_can_cast_skill(const actor::skill_t& skill,
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
     if (skill_ammo.current_ammo <= 0 && !(skill == "Weapon Swap" && bundle_ptr)) {
         utils::log_component<component::cooldown_component>(registry);
-        throw std::runtime_error(fmt::format("actor {} skill {} doesn't have any more ammo",
+        throw std::runtime_error(fmt::format("assert: actor {} skill {} doesn't have any more ammo",
                                              get_entity_name(actor_entity, registry),
                                              to_string(skill)));
     }
@@ -114,9 +114,10 @@ static inline void put_skill_on_cooldown(const actor::skill_t& skill,
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
     if (skill_ammo.current_ammo <= 0) {
         utils::log_component<component::cooldown_component>(registry);
-        throw std::runtime_error(fmt::format("actor {} skill {} doesn't have any more ammo",
-                                             get_entity_name(actor_entity, registry),
-                                             to_string(skill)));
+        throw std::runtime_error(
+            fmt::format("put_skill_on_cooldown: actor {} skill {} doesn't have any more ammo",
+                        get_entity_name(actor_entity, registry),
+                        to_string(skill)));
     }
     --skill_ammo.current_ammo;
 
@@ -125,6 +126,10 @@ static inline void put_skill_on_cooldown(const actor::skill_t& skill,
         registry.emplace<component::cooldown_component>(
             skill_entity, component::cooldown_component{skill_configuration.cooldown});
     }
+    spdlog::info("[{}] {}: put_skill_on_cooldown: skill {}",
+                 utils::get_current_tick(registry),
+                 get_entity_name(actor_entity, registry),
+                 to_string(skill));
 }
 
 }  // namespace gw2combat::utils

@@ -293,6 +293,10 @@
     ],
     "skills": [
         {
+            "skill_key": "AFK 10ms",
+            "cast_duration": [10, 10],
+            "cooldown": [0, 0]
+        }, {
             "skill_key": "AFK 50ms",
             "cast_duration": [50, 50],
             "cooldown": [0, 0]
@@ -358,7 +362,7 @@
             "skill_key": "Spear of Justice",
             "weapon_type": "main_hand",
             "damage_coefficient": 0.8,
-            "cast_duration": [825, 550],
+            "cast_duration": [840, 560],
             "cooldown": [20000, 16000],
             "strike_on_tick_list": [[825], [550]],
             "on_strike_effect_applications": [
@@ -457,30 +461,23 @@
                 "Symbol of Energy Usual Attack"
             ]
         }, {
-            "skill_key": "Hunter's Ward Small Attacks",
-            "attribute_damage_to_skill": "Hunter's Ward",
-            "weapon_type": "longbow",
-            "damage_coefficient": 0.75,
-            "cast_duration": [1250, 1250],
-            "strike_on_tick_list": [
-                [650, 950, 1250],
-                [650, 950, 1250]
-            ]
-        }, {
             "skill_key": "Hunter's Ward Big Attack",
             "attribute_damage_to_skill": "Hunter's Ward",
             "weapon_type": "longbow",
             "damage_coefficient": 2.5,
-            "cast_duration": [300, 300],
-            "strike_on_tick_list": [[300], [300]]
+            "cast_duration": [520, 520],
+            "strike_on_tick_list": [[520], [520]]
         }, {
             "skill_key": "Hunter's Ward",
             "weapon_type": "longbow",
-            "damage_coefficient": 0.0,
-            "cast_duration": [950, 760],
-            "cooldown": [20000, 13333],
+            "damage_coefficient": 0.75,
+            "cast_duration": [1080, 720],
+            "strike_on_tick_list": [
+                [1040, 1560, 2080],
+                [680, 1200, 1720]
+            ],
+            "cooldown": [20000, 16000],
             "child_skill_keys": [
-                "Hunter's Ward Small Attacks",
                 "Hunter's Ward Big Attack"
             ]
         }, {
@@ -517,9 +514,9 @@
             "skill_key": "Leap of Faith",
             "weapon_type": "greatsword",
             "damage_coefficient": 2.0,
-            "cast_duration": [1000, 800],
+            "cast_duration": [1000, 720],
             "cooldown": [8000, 6400],
-            "strike_on_tick_list": [[1000], [800]]
+            "strike_on_tick_list": [[1000], [720]]
         }, {
             "skill_key": "Symbol of Resolution Attack",
             "attribute_damage_to_skill": "Symbol of Resolution",
@@ -561,9 +558,9 @@
             "skill_key": "Binding Blade",
             "weapon_type": "greatsword",
             "damage_coefficient": 1.5,
-            "cast_duration": [750, 500],
+            "cast_duration": [750, 480],
             "cooldown": [20000, 16000],
-            "strike_on_tick_list": [[750], [500]],
+            "strike_on_tick_list": [[750], [480]],
             "on_strike_effect_applications": [
                 {
                     "effect": "BINDING_BLADE",
@@ -636,9 +633,9 @@
             "is_child_skill": true,
             "weapon_type": "empty_handed",
             "damage_coefficient": 3.6,
-            "cast_duration": [500, 500],
+            "cast_duration": [1240, 1240],
             "cooldown": [0, 0],
-            "strike_on_tick_list": [[500], [500]]
+            "strike_on_tick_list": [[1240], [1240]]
         }, {
             "skill_key": "Dragon's Maw",
             "weapon_type": "empty_handed",
