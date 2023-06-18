@@ -1,7 +1,7 @@
 {
     "actors": [
         {
-            "name": "dh-hl",
+            "name": "dh-bgh",
             "build_path": "resources/build-dh-bgh.json",
             "rotation_path": "resources/rotation-dh-bgh-may2.csv",
             "team": 1
@@ -21,7 +21,7 @@
             "time": 110000
         }, {
             "type": "ROTATION",
-            "actor": "dh-hl"
+            "actor": "dh-bgh"
         }
     ],
     "audit_configuration": {

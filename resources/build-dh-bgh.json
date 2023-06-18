@@ -18,6 +18,7 @@
             "set": "set_2"
         }
     ],
+    "initial_weapon_set": "set_1",
     "permanent_effects": [
         "QUICKNESS",
         "ALACRITY",
