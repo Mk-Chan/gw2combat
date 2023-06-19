@@ -23,3 +23,7 @@ Available builds at this time:
 - Condition Firebrand
 
 Documentation for how to create and edit build configurations is under development.
+
+Build the program with a single command: `make`. (faster with `make -j<number of cores>`)
+
+Reference implementations for some classes are provided in resources/. The starting point for any simulation is an encounter json `resources/encounter.json`.
