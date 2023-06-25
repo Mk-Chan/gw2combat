@@ -175,6 +175,18 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
                 destination_entity,
                 source_registry.get<gw2combat::component::combat_stats>(entity));
         }
+        if (source_registry.all_of<gw2combat::component::skills_actions_component>(entity)) {
+            destination_registry.emplace<gw2combat::component::skills_actions_component>(
+                destination_entity,
+                source_registry.get<gw2combat::component::skills_actions_component>(entity));
+        }
+        if (source_registry.all_of<gw2combat::component::finished_skills_actions_component>(
+                entity)) {
+            destination_registry.emplace<gw2combat::component::finished_skills_actions_component>(
+                destination_entity,
+                source_registry.get<gw2combat::component::finished_skills_actions_component>(
+                    entity));
+        }
         if (source_registry.all_of<gw2combat::component::finished_casting_skills>(entity)) {
             destination_registry.emplace<gw2combat::component::finished_casting_skills>(
                 destination_entity,
@@ -184,11 +196,6 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
             destination_registry.emplace<gw2combat::component::base_class_component>(
                 destination_entity,
                 source_registry.get<gw2combat::component::base_class_component>(entity));
-        }
-        if (source_registry.all_of<gw2combat::component::skills_actions_component>(entity)) {
-            destination_registry.emplace<gw2combat::component::skills_actions_component>(
-                destination_entity,
-                source_registry.get<gw2combat::component::skills_actions_component>(entity));
         }
         if (source_registry.all_of<gw2combat::component::rotation_component>(entity)) {
             destination_registry.emplace<gw2combat::component::rotation_component>(

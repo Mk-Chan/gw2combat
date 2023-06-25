@@ -121,10 +121,14 @@ void apply_strikes(registry_t& registry) {
                         return accumulated + incoming_damage_event.value;
                     });
                 spdlog::info(
-                    "[{}] skill {} pow {} this_dmg {} total_incoming_dmg {}",
+                    "[{}] skill {} pow {} crit% {} crit_mult {} this_dmg {} total_incoming_dmg {}",
                     utils::get_current_tick(registry),
                     skill_configuration.skill_key,
                     strike_source_relative_attributes.get(target_entity, actor::attribute_t::POWER),
+                    strike_source_relative_attributes.get(
+                        target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
+                    strike_source_relative_attributes.get(
+                        target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
                     damage.value,
                     total_incoming_damage);
 
