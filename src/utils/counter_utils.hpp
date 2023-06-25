@@ -24,23 +24,25 @@ static inline void apply_counter_modifications(
             case configuration::counter_modifier_t::operation_t::SET:
                 is_counter.value = modifier;
                 break;
-            case configuration::counter_modifier_t::operation_t::RESET:
-                is_counter.value = is_counter.counter_configuration.initial_value;
-                break;
             default:
                 break;
         }
     };
-    if (counter_modifier.counter_value) {
-        registry.view<component::is_counter>().each([&](component::is_counter& referenced_counter) {
-            if (is_counter.counter_configuration.counter_key ==
-                referenced_counter.counter_configuration.counter_key) {
-                operation_fn(referenced_counter.value);
-            }
-        });
-    }
-    if (counter_modifier.value) {
-        operation_fn(*counter_modifier.value);
+    if (counter_modifier.operation == configuration::counter_modifier_t::operation_t::RESET) {
+        is_counter.value = is_counter.counter_configuration.initial_value;
+    } else {
+        if (counter_modifier.counter_value) {
+            registry.view<component::is_counter>().each(
+                [&](component::is_counter& referenced_counter) {
+                    if (is_counter.counter_configuration.counter_key ==
+                        referenced_counter.counter_configuration.counter_key) {
+                        operation_fn(referenced_counter.value);
+                    }
+                });
+        }
+        if (counter_modifier.value) {
+            operation_fn(*counter_modifier.value);
+        }
     }
 }
 
