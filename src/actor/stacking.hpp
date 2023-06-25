@@ -15,7 +15,9 @@ enum class stacking_t : std::uint8_t
 NLOHMANN_JSON_SERIALIZE_ENUM(stacking_t,
                              {
                                  {stacking_t::STACKING_INTENSITY, "stacking_intensity"},
+                                 {stacking_t::STACKING_INTENSITY, "intensity"},
                                  {stacking_t::STACKING_DURATION, "stacking_duration"},
+                                 {stacking_t::STACKING_DURATION, "duration"},
                                  {stacking_t::REPLACE, "replace"},
                              })
 

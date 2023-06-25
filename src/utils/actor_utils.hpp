@@ -160,8 +160,12 @@ static inline entity_t add_effect_to_actor(actor::effect_t effect,
 
             auto& duration_component = registry.get<component::duration_component>(effect_entity);
             if (stacking_type == actor::stacking_t::STACKING_DURATION) {
-                duration_component.duration = std::max(duration_component.duration + duration,
+                duration_component.duration = std::min(duration_component.duration + duration,
                                                        utils::get_max_effect_duration(effect));
+                int remaining_duration = duration_component.duration - duration_component.progress;
+                duration_component.progress = 0;
+                duration_component.duration =
+                    std::min(remaining_duration + duration, utils::get_max_effect_duration(effect));
                 return effect_entity;
             } else {
                 duration_component.progress = duration_component.duration;
@@ -274,7 +278,9 @@ static inline std::optional<entity_t> add_unique_effect_to_actor(
         auto& duration_component =
             registry.get<component::duration_component>(unique_effect_entity);
         if (unique_effect.stacking_type == actor::stacking_t::STACKING_DURATION) {
-            duration_component.duration = std::max(duration_component.duration + duration,
+            int remaining_duration = duration_component.duration - duration_component.progress;
+            duration_component.progress = 0;
+            duration_component.duration = std::min(remaining_duration + duration,
                                                    is_unique_effect.unique_effect.max_duration);
             return unique_effect_entity;
         } else if (unique_effect.stacking_type == actor::stacking_t::REPLACE) {
