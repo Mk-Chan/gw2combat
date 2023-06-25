@@ -41,10 +41,7 @@ void progress_animations(registry_t& registry) {
     registry.view<component::finished_casting_skills>().each([&](entity_t actor_entity,
                                                                  component::finished_casting_skills&
                                                                      finished_casting_skills) {
-        for (auto iter = finished_casting_skills.skill_entities.begin();
-             iter != finished_casting_skills.skill_entities.end();
-             finished_casting_skills.skill_entities.erase(iter)) {
-            auto finished_casting_skill_entity = *iter;
+        for (auto finished_casting_skill_entity : finished_casting_skills.skill_entities) {
             auto& skill_configuration =
                 registry.get<component::is_skill>(finished_casting_skill_entity)
                     .skill_configuration;

@@ -58,6 +58,10 @@ void clear_temporary_components(registry_t& registry) {
         [&](component::is_skill_trigger& is_skill_trigger) {
             is_skill_trigger.already_triggered = false;
         });
+    registry.view<component::finished_casting_skills>().each(
+        [&](component::finished_casting_skills& finished_casting_skills) {
+            finished_casting_skills.skill_entities.clear();
+        });
 }
 
 void try_clean_entity(registry_t& registry, entity_t entity, entity_t owner_entity) {
