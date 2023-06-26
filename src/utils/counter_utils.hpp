@@ -34,7 +34,7 @@ static inline void apply_counter_modifications(
         if (counter_modifier.counter_value) {
             registry.view<component::is_counter>().each(
                 [&](component::is_counter& referenced_counter) {
-                    if (is_counter.counter_configuration.counter_key ==
+                    if (*counter_modifier.counter_value ==
                         referenced_counter.counter_configuration.counter_key) {
                         operation_fn(referenced_counter.value);
                     }
