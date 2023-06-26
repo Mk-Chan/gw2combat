@@ -1,0 +1,341 @@
+{
+    "base_class": "mesmer",
+    "profession": "virtuoso",
+    "attributes": [
+        ["power", 2047],
+        ["precision", 2055],
+        ["condition_damage", 1249],
+        ["expertise", 271],
+        ["vitality", 1050]
+    ],
+    "weapons": [
+        {
+            "type": "dagger",
+            "position": "main_hand",
+            "set": "set_1"
+        }, {
+            "type": "sword",
+            "position": "off_hand",
+            "set": "set_1"
+        }, {
+            "type": "dagger",
+            "position": "main_hand",
+            "set": "set_2"
+        }, {
+            "type": "focus",
+            "position": "off_hand",
+            "set": "set_2"
+        }
+    ],
+    "initial_weapon_set": "set_1",
+    "permanent_effects": [
+        "QUICKNESS",
+        "ALACRITY",
+        "FURY",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT"
+    ],
+    "counters": [
+        {
+            "counter_key": "Blades Counter",
+            "initial_value": 5
+        }, {
+            "counter_key": "Bladesong Harmony Blades Counter",
+            "initial_value": 0,
+            "counter_modifiers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_exclusive",
+                            "threshold_value": 0,
+                            "counter_value_subject_to_threshold": "Bladesong Harmony Blades Counter"
+                        },
+                        "only_applies_on_begun_casting": true,
+                        "only_applies_on_begun_casting_skill": "Bladesong Harmony Blade"
+                    },
+                    "counter_key": "Bladesong Harmony Blades Counter",
+                    "operation": "subtract",
+                    "value": 1
+                }
+            ]
+        }, {
+            "NOTE": "This counter is _actually_ per target, not on the source, but that's not supported yet.",
+            "counter_key": "Cutter Burst Counter",
+            "initial_value": 0,
+            "counter_modifiers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 3,
+                            "counter_value_subject_to_threshold": "Cutter Burst Counter"
+                        }
+                    },
+                    "counter_key": "Cutter Burst Counter",
+                    "operation": "reset"
+                }, {
+                    "condition": {
+                        "not": [
+                            {
+                                "unique_effect_on_source": "Cutter Burst Timer"
+                            }
+                        ]
+                    },
+                    "counter_key": "Cutter Burst Counter",
+                    "operation": "reset"
+                }
+            ]
+        }
+    ],
+    "permanent_unique_effects": [
+        {
+            "unique_effect_key": "Quiet Intensity",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "effect_on_source": "FURY"
+                    },
+                    "attribute": "critical_chance_multiplier",
+                    "addend": 0.15
+                }
+            ],
+            "attribute_conversions": [
+                {
+                    "from": "vitality",
+                    "to": "ferocity",
+                    "multiplier": 0.1
+                }
+            ]
+        }, {
+            "unique_effect_key": "Bowl of Fancy Potato and Leek Soup",
+            "attribute_modifiers": [
+                {
+                    "attribute": "precision",
+                    "addend": 100
+                }, {
+                    "attribute": "condition_damage",
+                    "addend": 70
+                }
+            ]
+        }, {
+            "unique_effect_key": "Bladesong Harmony Tracker",
+            "NOTE": "Cannot put stage-based conditions into the and/or/not conditions, so must spread them out.",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_exclusive",
+                            "threshold_value": 0,
+                            "counter_value_subject_to_threshold": "Bladesong Harmony Blades Counter"
+                        },
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill": "Bladesong Harmony"
+                    },
+                    "skill_key": "Bladesong Harmony Blade"
+                }, {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_exclusive",
+                            "threshold_value": 0,
+                            "counter_value_subject_to_threshold": "Bladesong Harmony Blades Counter"
+                        },
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill": "Bladesong Harmony Blade"
+                    },
+                    "skill_key": "Bladesong Harmony Blade"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Cutter Burst Tracker",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 3,
+                            "counter_value_subject_to_threshold": "Cutter Burst Counter"
+                        },
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_strikes_by_skill": "Flying Cutter"
+                    },
+                    "skill_key": "Cutter Burst"
+                }
+            ]
+        }
+    ],
+    "skills": [
+        {
+            "skill_key": "AFK 40ms",
+            "cast_duration": [40, 40],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "AFK 1000ms",
+            "cast_duration": [1000, 1000],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "Weapon Swap",
+            "cast_duration": [80, 80],
+            "cooldown": [10000, 10000]
+        }, {
+            "NOTE": "This is a hardcoded skill name. Change only flat_damage and nothing else based on traits",
+            "skill_key": "Lifesteal Proc",
+            "weapon_type": "empty_handed",
+            "flat_damage": 325,
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
+            "cooldown": [2000, 2000],
+            "can_critical_strike": false
+        }, {
+            "skill_key": "Earth Sigil Proc",
+            "cast_duration": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BLEEDING",
+                    "base_duration_ms": 6000,
+                    "num_stacks": 1,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cooldown": [2000, 2000]
+        }, {
+            "skill_key": "Bladesong Harmony Blade",
+            "weapon_type": "main_hand",
+            "cast_duration": [160, 160],
+            "damage_coefficient": 0.7,
+            "strike_on_tick_list": [[160], [160]],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "Bladesong Harmony",
+            "weapon_type": "main_hand",
+            "cast_duration": [960, 640],
+            "cooldown": [12000, 9600],
+            "counter_modifiers": [
+                {
+                    "condition": {
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill": "Bladesong Harmony"
+                    },
+                    "counter_key": "Bladesong Harmony Blades Counter",
+                    "operation": "set",
+                    "counter_value": "Blades Counter"
+                }, {
+                    "condition": {
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill": "Bladesong Harmony"
+                    },
+                    "counter_key": "Blades Counter",
+                    "operation": "set",
+                    "value": 0
+                }
+            ],
+            "tags": ["BLADESONG"]
+        }, {
+            "skill_key": "Cutter Burst",
+            "weapon_type": "main_hand",
+            "cast_duration": [400, 400],
+            "damage_coefficient": 0.2,
+            "strike_on_tick_list": [
+                [280, 360, 400],
+                [280, 360, 400]
+            ],
+            "cooldown": [0, 0],
+            "tags": ["BLADE"]
+        }, {
+            "skill_key": "Flying Cutter",
+            "weapon_type": "dagger",
+            "cast_duration": [640, 440],
+            "damage_coefficient": 0.5,
+            "strike_on_tick_list": [[640], [440]],
+            "cooldown": [0, 0],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Cutter Burst Timer",
+                        "stacking_type": "duration",
+                        "max_duration": 5000
+                    },
+                    "base_duration_ms": 5000,
+                    "direction": "SELF"
+                }
+            ],
+            "counter_modifiers": [
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_strikes_by_skill": "Flying Cutter"
+                    },
+                    "counter_key": "Cutter Burst Counter",
+                    "operation": "add",
+                    "value": 1
+                }
+            ],
+            "tags": ["BLADE"]
+        }, {
+            "skill_key": "Bladecall Return",
+            "attribute_damage_to_skill": "Bladecall",
+            "weapon_type": "dagger",
+            "cast_duration": [2520, 2520],
+            "damage_coefficient": 0.5,
+            "strike_on_tick_list": [
+                [2520, 2520, 2520],
+                [2520, 2520, 2520]
+            ],
+            "cooldown": [0, 0],
+            "tags": ["BLADE"]
+        }, {
+            "skill_key": "Bladecall",
+            "weapon_type": "dagger",
+            "cast_duration": [640, 440],
+            "damage_coefficient": 0.5,
+            "strike_on_tick_list": [
+                [640, 640, 640],
+                [440, 440, 440]
+            ],
+            "counter_modifiers": [
+                {
+                    "condition": {
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill": "Bladecall",
+                        "threshold": {
+                            "threshold_type": "upper_bound_exclusive",
+                            "threshold_value": 5,
+                            "counter_value_subject_to_threshold": "Blades Counter"
+                        }
+                    },
+                    "counter_key": "Blades Counter",
+                    "operation": "add",
+                    "value": 1
+                }
+            ],
+            "cooldown": [5000, 4000],
+            "tags": ["BLADE"],
+            "child_skill_keys": [
+                "Bladecall Return"
+            ]
+        }
+    ]
+}
