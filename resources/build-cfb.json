@@ -402,7 +402,7 @@
             "on_pulse_effect_applications": [
                 {
                     "effect": "BLEEDING",
-                    "base_duration_ms": 4000,
+                    "base_duration_ms": 6000,
                     "direction": "OUTGOING"
                 }
             ]
