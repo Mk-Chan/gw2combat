@@ -16,6 +16,13 @@
 
 namespace gw2combat::configuration {
 
+struct recipe_t {
+    std::vector<counter_configuration_t> counters{};
+    std::vector<actor::effect_t> permanent_effects{};
+    std::vector<unique_effect_t> permanent_unique_effects{};
+    std::vector<skill_t> skills{};
+};
+
 struct build_t {
     actor::base_class_t base_class = actor::base_class_t::INVALID;
     actor::profession_t profession = actor::profession_t::INVALID;
@@ -26,6 +33,7 @@ struct build_t {
     std::vector<actor::effect_t> permanent_effects{};
     std::vector<unique_effect_t> permanent_unique_effects{};
     std::vector<counter_configuration_t> counters{};
+    std::vector<recipe_t> recipes;
 
     build_t() {
         attributes[actor::attribute_t::POWER] = 1000.0;
@@ -83,6 +91,12 @@ struct build_t {
     }
 };
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(recipe_t,
+                                                counters,
+                                                permanent_effects,
+                                                permanent_unique_effects,
+                                                skills)
+
 static inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohmann_json_t) {
     nlohmann_json_j["base_class"] = nlohmann_json_t.base_class;
     nlohmann_json_j["profession"] = nlohmann_json_t.profession;
@@ -93,6 +107,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohm
     nlohmann_json_j["permanent_effects"] = nlohmann_json_t.permanent_effects;
     nlohmann_json_j["permanent_unique_effects"] = nlohmann_json_t.permanent_unique_effects;
     nlohmann_json_j["counters"] = nlohmann_json_t.counters;
+    nlohmann_json_j["recipes"] = nlohmann_json_t.recipes;
 }
 
 static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlohmann_json_t) {
@@ -114,6 +129,7 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlo
         "permanent_unique_effects", nlohmann_json_default_obj.permanent_unique_effects);
     nlohmann_json_t.counters =
         nlohmann_json_j.value("counters", nlohmann_json_default_obj.counters);
+    nlohmann_json_t.recipes = nlohmann_json_j.value("recipes", nlohmann_json_default_obj.recipes);
 }
 
 }  // namespace gw2combat::configuration

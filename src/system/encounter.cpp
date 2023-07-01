@@ -20,6 +20,41 @@
 
 namespace gw2combat::system {
 
+void add_recipe_items_to_actor(
+    const std::vector<configuration::counter_configuration_t>& counters,
+    const std::vector<actor::effect_t>& permanent_effects,
+    const std::vector<configuration::unique_effect_t>& permanent_unique_effects,
+    const std::vector<configuration::skill_t>& skills,
+    entity_t actor_entity,
+    registry_t& registry) {
+    for (auto& counter_configuration : counters) {
+        for (auto&& [counter_entity, is_counter] : registry.view<component::is_counter>().each()) {
+            if (counter_configuration.counter_key == is_counter.counter_configuration.counter_key) {
+                throw std::runtime_error("multiple counters with the same name are not allowed");
+            }
+        }
+
+        auto counter_entity = registry.create();
+        registry.emplace<component::owner_component>(counter_entity, actor_entity);
+        registry.emplace<component::is_counter>(
+            counter_entity,
+            component::is_counter{counter_configuration.initial_value, counter_configuration});
+        utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
+                                         component::is_counter_modifier_t>(
+            counter_configuration.counter_modifiers, actor_entity, registry);
+    }
+    for (auto& skill : skills) {
+        utils::add_skill_to_actor(skill, actor_entity, registry);
+    }
+    for (auto& permanent_effect : permanent_effects) {
+        utils::add_permanent_effect_to_actor(permanent_effect, actor_entity, registry);
+    }
+    for (auto& permanent_unique_effect : permanent_unique_effects) {
+        utils::add_permanent_unique_effect_to_actor(
+            permanent_unique_effect, actor_entity, registry);
+    }
+}
+
 void setup_encounter(registry_t& registry, const configuration::encounter_t& encounter) {
     auto singleton_entity = registry.create();
     registry.ctx().emplace_as<std::string>(singleton_entity, "Console");
@@ -59,33 +94,19 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
                                     .position = weapon_configuration.position,
                                     .set = weapon_configuration.set});
         }
-        for (auto& skill : build.skills) {
-            utils::add_skill_to_actor(skill, actor_entity, registry);
-        }
-        for (auto& permanent_effect : build.permanent_effects) {
-            utils::add_permanent_effect_to_actor(permanent_effect, actor_entity, registry);
-        }
-        for (auto& permanent_unique_effect : build.permanent_unique_effects) {
-            utils::add_permanent_unique_effect_to_actor(permanent_unique_effect, actor_entity, registry);
-        }
-        for (auto& counter_configuration : build.counters) {
-            for (auto&& [counter_entity, is_counter] :
-                 registry.view<component::is_counter>().each()) {
-                if (counter_configuration.counter_key ==
-                    is_counter.counter_configuration.counter_key) {
-                    throw std::runtime_error(
-                        "multiple counters with the same name are not allowed");
-                }
-            }
-
-            auto counter_entity = registry.create();
-            registry.emplace<component::owner_component>(counter_entity, actor_entity);
-            registry.emplace<component::is_counter>(
-                counter_entity,
-                component::is_counter{counter_configuration.initial_value, counter_configuration});
-            utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
-                                             component::is_counter_modifier_t>(
-                counter_configuration.counter_modifiers, actor_entity, registry);
+        add_recipe_items_to_actor(build.counters,
+                                  build.permanent_effects,
+                                  build.permanent_unique_effects,
+                                  build.skills,
+                                  actor_entity,
+                                  registry);
+        for (auto& recipe : build.recipes) {
+            add_recipe_items_to_actor(recipe.counters,
+                                      recipe.permanent_effects,
+                                      recipe.permanent_unique_effects,
+                                      recipe.skills,
+                                      actor_entity,
+                                      registry);
         }
 
         if (!actor.rotation.skill_casts.empty()) {
