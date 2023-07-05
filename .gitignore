@@ -38,6 +38,10 @@ tools/
 *.a
 *.lib
 
+# Virtual envs
+venv/
+.venv/
+
 # Executables
 *.exe
 *.out
