@@ -5,6 +5,8 @@
 
 #include "actor/weapon.hpp"
 
+#include "component/equipment/weapons.hpp"
+
 namespace gw2combat::utils {
 
 [[nodiscard]] static inline double get_weapon_strength(entity_t actor_entity,

@@ -2,13 +2,17 @@
 
 #include "audit.hpp"
 
+#include "actor/rotation.hpp"
+
 #include "component/actor/base_class_component.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/profession_component.hpp"
+#include "component/actor/rotation_component.hpp"
 #include "component/actor/static_attributes.hpp"
 #include "component/actor/team.hpp"
 #include "component/audit/audit_component.hpp"
 #include "component/counter/is_counter.hpp"
+#include "component/counter/is_counter_modifier.hpp"
 #include "component/encounter/encounter_configuration_component.hpp"
 #include "component/equipment/weapons.hpp"
 

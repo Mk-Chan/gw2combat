@@ -4,6 +4,7 @@
 
 #include "component/actor/begun_casting_skills.hpp"
 #include "component/actor/combat_stats.hpp"
+#include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
@@ -17,6 +18,7 @@
 #include "component/effect/is_skill_trigger.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
+#include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"

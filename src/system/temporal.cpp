@@ -2,8 +2,11 @@
 
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/skills_actions_component.hpp"
+#include "component/equipment/bundle.hpp"
+#include "component/equipment/weapons.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
+#include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"
@@ -11,6 +14,7 @@
 #include "component/temporal/has_quickness.hpp"
 
 #include "utils/actor_utils.hpp"
+#include "utils/condition_utils.hpp"
 #include "utils/side_effect_utils.hpp"
 
 namespace gw2combat::system {

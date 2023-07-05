@@ -12,6 +12,7 @@
 
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"
+#include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/gear_utils.hpp"
 #include "utils/side_effect_utils.hpp"

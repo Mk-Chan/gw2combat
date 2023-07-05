@@ -1,6 +1,7 @@
 #include "rotation.hpp"
 
 #include "component/actor/begun_casting_skills.hpp"
+#include "component/actor/destroy_after_rotation.hpp"
 #include "component/actor/no_more_rotation.hpp"
 #include "component/actor/rotation_component.hpp"
 #include "component/actor/skills_actions_component.hpp"

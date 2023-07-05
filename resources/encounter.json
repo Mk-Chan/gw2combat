@@ -2,8 +2,8 @@
     "actors": [
         {
             "name": "dh-bgh",
-            "build_path": "resources/build-dh-bgh.json",
-            "rotation_path": "resources/rotation-dh-bgh-may2.csv",
+            "build_path": "resources/build-cfb.json",
+            "rotation_path": "resources/rotation-cfb.csv",
             "team": 1
         }, {
             "name": "golem",
