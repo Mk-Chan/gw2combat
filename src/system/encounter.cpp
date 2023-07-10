@@ -112,6 +112,15 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
                                       actor_entity,
                                       registry);
         }
+        for (auto& recipe_path : build.recipe_paths) {
+            auto recipe = utils::read<configuration::recipe_t>(recipe_path);
+            add_recipe_items_to_actor(recipe.counters,
+                                      recipe.permanent_effects,
+                                      recipe.permanent_unique_effects,
+                                      recipe.skills,
+                                      actor_entity,
+                                      registry);
+        }
 
         if (!actor.rotation.skill_casts.empty()) {
             actor::rotation_t converted_rotation{};

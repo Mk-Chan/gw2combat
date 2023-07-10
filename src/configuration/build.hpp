@@ -33,7 +33,8 @@ struct build_t {
     std::vector<actor::effect_t> permanent_effects{};
     std::vector<unique_effect_t> permanent_unique_effects{};
     std::vector<counter_configuration_t> counters{};
-    std::vector<recipe_t> recipes;
+    std::vector<recipe_t> recipes{};
+    std::vector<std::string> recipe_paths{};
 
     build_t() {
         attributes[actor::attribute_t::POWER] = 1000.0;
@@ -108,6 +109,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohm
     nlohmann_json_j["permanent_unique_effects"] = nlohmann_json_t.permanent_unique_effects;
     nlohmann_json_j["counters"] = nlohmann_json_t.counters;
     nlohmann_json_j["recipes"] = nlohmann_json_t.recipes;
+    nlohmann_json_j["recipe_paths"] = nlohmann_json_t.recipe_paths;
 }
 
 static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlohmann_json_t) {
@@ -130,6 +132,8 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlo
     nlohmann_json_t.counters =
         nlohmann_json_j.value("counters", nlohmann_json_default_obj.counters);
     nlohmann_json_t.recipes = nlohmann_json_j.value("recipes", nlohmann_json_default_obj.recipes);
+    nlohmann_json_t.recipe_paths =
+        nlohmann_json_j.value("recipe_paths", nlohmann_json_default_obj.recipe_paths);
 }
 
 }  // namespace gw2combat::configuration

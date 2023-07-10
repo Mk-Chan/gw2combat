@@ -116,6 +116,7 @@ void progress_cooldowns(registry_t& registry) {
             if (cooldown.duration[0] == 0) {
                 auto& ammo = registry.get<component::ammo>(entity);
                 ammo.current_ammo = ammo.max_ammo;
+                registry.emplace<component::ammo_gained>(entity);
                 registry.emplace<component::cooldown_expired>(entity);
                 return;
             }
@@ -132,6 +133,7 @@ void progress_cooldowns(registry_t& registry) {
                 auto ammo = registry.try_get<component::ammo>(entity);
                 if (ammo) {
                     ++ammo->current_ammo;
+                    registry.emplace<component::ammo_gained>(entity);
                     if (ammo->current_ammo == ammo->max_ammo) {
                         registry.emplace<component::cooldown_expired>(entity);
                     } else {

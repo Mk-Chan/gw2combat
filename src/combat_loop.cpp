@@ -18,6 +18,7 @@
 #include "component/effect/is_skill_trigger.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
+#include "component/skill/ammo.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
@@ -50,6 +51,7 @@ void clear_temporary_components(registry_t& registry) {
                    component::animation_expired,
                    component::cooldown_expired,
                    component::duration_expired,
+                   component::ammo_gained,
                    component::outgoing_strikes_component,
                    component::outgoing_effects_component,
                    component::incoming_strikes_component,
@@ -105,6 +107,15 @@ void tick(registry_t& registry) {
 
     system::perform_skills(registry);
 
+    registry.view<component::is_skill, component::ammo_gained>().each(
+        [&](entity_t skill_entity, const component::is_skill& is_skill) {
+            auto actor_entity = utils::get_owner(skill_entity, registry);
+            auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
+                return utils::on_ammo_gain_conditions_satisfied(
+                    condition, actor_entity, is_skill.skill_configuration, registry);
+            };
+            utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
+        });
     registry.view<component::begun_casting_skills>().each(
         [&](entity_t actor_entity, component::begun_casting_skills& begun_casting_skills) {
             for (auto casting_skill_entity : begun_casting_skills.skill_entities) {

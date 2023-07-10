@@ -108,22 +108,23 @@ static inline void assert_can_cast_skill(const actor::skill_t& skill,
 
 static inline void put_skill_on_cooldown(const actor::skill_t& skill,
                                          entity_t actor_entity,
-                                         registry_t& registry) {
+                                         registry_t& registry,
+                                         bool force = false) {
     auto skill_entity = utils::get_skill_entity(skill, actor_entity, registry);
 
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
-    if (skill_ammo.current_ammo <= 0) {
+    if (skill_ammo.current_ammo <= 0 && !force) {
         utils::log_component<component::cooldown_component>(registry);
         throw std::runtime_error(
             fmt::format("put_skill_on_cooldown: actor {} skill {} doesn't have any more ammo",
                         get_entity_name(actor_entity, registry),
                         to_string(skill)));
     }
-    --skill_ammo.current_ammo;
+    skill_ammo.current_ammo = std::max(skill_ammo.current_ammo - 1, 0);
 
     auto& skill_configuration = utils::get_skill_configuration(skill, actor_entity, registry);
     if (!registry.any_of<component::cooldown_component>(skill_entity)) {
-        registry.emplace<component::cooldown_component>(
+        registry.emplace_or_replace<component::cooldown_component>(
             skill_entity, component::cooldown_component{skill_configuration.cooldown});
     }
     spdlog::info("[{}] {}: put_skill_on_cooldown: skill {}",

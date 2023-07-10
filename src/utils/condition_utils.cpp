@@ -272,6 +272,7 @@ namespace gw2combat::utils {
             !*condition.only_applies_on_finished_casting) &&
            (!condition.only_applies_on_begun_casting ||
             !*condition.only_applies_on_begun_casting) &&
+           (!condition.only_applies_on_ammo_gain_of_skill) &&
            stage_independent_conditions_satisfied(condition, entity, target_entity, registry);
 }
 
@@ -322,6 +323,16 @@ namespace gw2combat::utils {
             utils::skill_has_tag(source_skill_configuration,
                                  *condition.only_applies_on_strikes_by_skill_with_tag)) &&
            stage_independent_conditions_satisfied(condition, entity, target_entity, registry);
+}
+
+[[nodiscard]] bool on_ammo_gain_conditions_satisfied(
+    const configuration::condition_t& condition,
+    entity_t entity,
+    const configuration::skill_t& source_skill_configuration,
+    registry_t& registry) {
+    return condition.only_applies_on_ammo_gain_of_skill &&
+           *condition.only_applies_on_ammo_gain_of_skill == source_skill_configuration.skill_key &&
+           stage_independent_conditions_satisfied(condition, entity, std::nullopt, registry);
 }
 
 }  // namespace gw2combat::utils

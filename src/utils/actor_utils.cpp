@@ -347,13 +347,14 @@ void finish_casting_skill(entity_t actor_entity, entity_t skill_entity, registry
           registry.any_of<component::bundle_component>(actor_entity))) {
         utils::put_skill_on_cooldown(skill_configuration.skill_key, actor_entity, registry);
         for (auto& skill_to_put_on_cooldown : skill_configuration.skills_to_put_on_cooldown) {
-            utils::put_skill_on_cooldown(skill_to_put_on_cooldown, actor_entity, registry);
+            utils::put_skill_on_cooldown(skill_to_put_on_cooldown, actor_entity, registry, true);
         }
         auto owner_entity = utils::get_owner(actor_entity, registry);
         if (actor_entity != owner_entity) {
             utils::put_skill_on_cooldown(skill_configuration.skill_key, owner_entity, registry);
             for (auto& skill_to_put_on_cooldown : skill_configuration.skills_to_put_on_cooldown) {
-                utils::put_skill_on_cooldown(skill_to_put_on_cooldown, actor_entity, registry);
+                utils::put_skill_on_cooldown(
+                    skill_to_put_on_cooldown, actor_entity, registry, true);
             }
         }
     }

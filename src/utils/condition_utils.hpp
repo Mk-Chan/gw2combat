@@ -32,6 +32,11 @@ namespace gw2combat::utils {
     bool is_critical,
     const configuration::skill_t& source_skill_configuration,
     registry_t& registry);
+[[nodiscard]] bool on_ammo_gain_conditions_satisfied(
+    const configuration::condition_t& condition,
+    entity_t entity,
+    const configuration::skill_t& source_skill_configuration,
+    registry_t& registry);
 
 }  // namespace gw2combat::utils
 
