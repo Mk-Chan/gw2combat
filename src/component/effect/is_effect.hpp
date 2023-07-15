@@ -7,6 +7,7 @@ namespace gw2combat::component {
 
 struct is_effect {
     actor::effect_t effect;
+    int grouped_with_num_stacks;
 };
 
 struct is_damaging_effect {};

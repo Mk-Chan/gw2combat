@@ -6,7 +6,7 @@
 namespace gw2combat::component {
 
 struct combat_stats {
-    int health;
+    double health = 0.0;
 };
 
 struct combat_stats_updated {};

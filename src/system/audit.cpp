@@ -289,7 +289,7 @@ void audit_damage(registry_t& registry) {
                             utils::get_entity_name(incoming_damage_event.source_entity, registry),
                         .source_skill = skill_to_attribute_damage_to,
                         .damage_type = damage_type,
-                        .damage = utils::round_to_nearest_even(incoming_damage_event.value),
+                        .damage = incoming_damage_event.value,
                     },
                     actor_entity,
                     registry));

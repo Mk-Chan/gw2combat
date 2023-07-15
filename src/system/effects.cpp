@@ -16,6 +16,7 @@
 
 #include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
+#include "utils/skill_utils.hpp"
 
 namespace gw2combat::system {
 
@@ -51,8 +52,8 @@ double calculate_condition_damage(actor::effect_t this_effect,
                    base_condition_damage_multiplier;
         case actor::effect_t::CONFUSION:
             // FIXME: This is idle-only confusion damage for golem logs
-            return (11.0 + 0.03 * source_relative_attributes.get(
-                                      target_entity, actor::attribute_t::CONDITION_DAMAGE)) *
+            return (18.25 + 0.05 * source_relative_attributes.get(
+                                       target_entity, actor::attribute_t::CONDITION_DAMAGE)) *
                    source_relative_attributes.get(target_entity,
                                                   actor::attribute_t::CONFUSION_DAMAGE_MULTIPLIER) *
                    base_condition_damage_multiplier;
@@ -89,11 +90,15 @@ void buffer_condition_damage(registry_t& registry,
     double damaging_condition_progress_multiplier = condition_duration.progress / 1'000.0;
     condition_duration.duration -= condition_duration.progress;
     condition_duration.progress = 0;
-    auto& this_effect = registry.get<component::is_effect>(effect_entity).effect;
+    auto& is_effect = registry.get<component::is_effect>(effect_entity);
+    auto& this_effect = is_effect.effect;
     double base_condition_damage = calculate_condition_damage(
         this_effect, target_entity, source_relative_attributes, base_condition_damage_multiplier);
     double effective_condition_damage =
-        base_condition_damage * damaging_condition_progress_multiplier;
+        utils::round_to_nearest_even(base_condition_damage *
+                                     damaging_condition_progress_multiplier *
+                                     is_effect.grouped_with_num_stacks) /
+        (double)is_effect.grouped_with_num_stacks;
 
     auto& buffered_condition_damage =
         registry.get_or_emplace<component::buffered_condition_damage>(target_entity);
@@ -110,17 +115,20 @@ void buffer_condition_damage(registry_t& registry,
     //     [](double accumulated, const component::condition_damage_t& condition_damage) {
     //         return accumulated + condition_damage.damage;
     //     });
-    //  spdlog::info(
-    //      "[{}] {}:effect {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} "
-    //      "buffered_dmg {}",
-    //      utils::get_current_tick(registry),
-    //      utils::get_entity_name(target_entity, registry),
-    //      utils::to_string(this_effect),
-    //      base_condition_damage_multiplier,
-    //      damaging_condition_progress_multiplier,
-    //      base_condition_damage,
-    //      effective_condition_damage,
-    //      total_buffered_damage);
+    // spdlog::info(
+    //     "[{}] {}:effect {}:{} condi_dmg {} base_mult {} progress_mult {} base_dmg {} eff_dmg {} "
+    //     "buffered_dmg {}",
+    //     utils::get_current_tick(registry),
+    //     utils::get_entity_name(target_entity, registry),
+    //     registry.get<component::source_skill>(effect_entity).skill,
+    //     utils::to_string(this_effect),
+    //     registry.get<component::relative_attributes>(effect_source_entity)
+    //         .get(target_entity, actor::attribute_t::CONDITION_DAMAGE),
+    //     base_condition_damage_multiplier,
+    //     damaging_condition_progress_multiplier,
+    //     base_condition_damage,
+    //     effective_condition_damage,
+    //     utils::round_to_nearest_even(total_buffered_damage));
 }
 
 void buffer_condition_damage(registry_t& registry, std::optional<entity_t> specific_effect_entity) {

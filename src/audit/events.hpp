@@ -77,12 +77,12 @@ struct damage_event_t {
     std::string source_actor;
     std::string source_skill;
     damage_type_t damage_type = damage_type_t::INVALID;
-    int damage = 0;
+    double damage = 0.0;
 };
 
 struct combat_stats_update_event_t {
     event_type_t event_type = event_type_t::COMBAT_STATS_UPDATE_EVENT;
-    int updated_health = 0;
+    double updated_health = 0.0;
 };
 
 struct effect_expired_event_t {

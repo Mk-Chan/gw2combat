@@ -127,6 +127,7 @@ entity_t add_effect_to_actor(actor::effect_t effect,
                              entity_t source_actor,
                              const actor::skill_t& source_skill,
                              int duration,
+                             int grouped_with_num_stacks,
                              registry_t& registry) {
     // TODO: Check for crossing maximum stacks here.
     auto stacking_type = utils::get_effect_stacking_type(effect);
@@ -159,7 +160,8 @@ entity_t add_effect_to_actor(actor::effect_t effect,
     registry.ctx().emplace_as<std::string>(effect_entity,
                                            utils::to_string(effect) + " effect holder entity");
 
-    registry.emplace<component::is_effect>(effect_entity, effect);
+    registry.emplace<component::is_effect>(effect_entity,
+                                           component::is_effect{effect, grouped_with_num_stacks});
     if (utils::is_damaging_condition(effect)) {
         registry.emplace<component::is_damaging_effect>(effect_entity);
     }
@@ -221,7 +223,7 @@ std::optional<entity_t> add_permanent_effect_to_actor(actor::effect_t effect,
                                                       entity_t actor_entity,
                                                       registry_t& registry) {
     return add_effect_to_actor(
-        effect, actor_entity, utils::get_singleton_entity(), {}, 1'000'000'000, registry);
+        effect, actor_entity, utils::get_singleton_entity(), {}, 1'000'000'000, 1, registry);
 }
 
 std::vector<entity_t> add_effect_to_actor(actor::effect_t effect,
@@ -232,9 +234,9 @@ std::vector<entity_t> add_effect_to_actor(actor::effect_t effect,
                                           entity_t target_entity,
                                           registry_t& registry) {
     std::vector<entity_t> effect_entities;
-    for (; num_stacks > 0; --num_stacks) {
+    for (int i = 0; i < num_stacks; ++i) {
         auto effect_entity = add_effect_to_actor(
-            effect, target_entity, source_entity, source_skill, duration, registry);
+            effect, target_entity, source_entity, source_skill, duration, num_stacks, registry);
         effect_entities.emplace_back(effect_entity);
     }
     return effect_entities;

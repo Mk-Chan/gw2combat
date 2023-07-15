@@ -78,7 +78,7 @@ damage_result_t calculate_damage(
                                                                 target_armor;
     return damage_result_t{
         .is_critical = is_critical,
-        .value = damage_value,
+        .value = (double)utils::round_to_nearest_even(damage_value),
     };
 }
 
@@ -122,10 +122,13 @@ void apply_strikes(registry_t& registry) {
                         return accumulated + incoming_damage_event.value;
                     });
                 spdlog::info(
-                    "[{}] skill {} pow {} crit% {} crit_mult {} this_dmg {} total_incoming_dmg {}",
+                    "[{}] skill {} pow {} fero {} crit% {} crit_mult {} this_dmg {} "
+                    "total_incoming_dmg {}",
                     utils::get_current_tick(registry),
                     skill_configuration.skill_key,
                     strike_source_relative_attributes.get(target_entity, actor::attribute_t::POWER),
+                    strike_source_relative_attributes.get(target_entity,
+                                                          actor::attribute_t::FEROCITY),
                     strike_source_relative_attributes.get(
                         target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
                     strike_source_relative_attributes.get(

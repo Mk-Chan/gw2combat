@@ -3,6 +3,8 @@
 
 #include "actor/attributes.hpp"
 
+#include "utils/basic_utils.hpp"
+
 namespace gw2combat::component {
 
 struct relative_attributes {

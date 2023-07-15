@@ -15,6 +15,10 @@ namespace gw2combat::utils {
     return static_cast<int>(std::nearbyint(value));
 }
 
+[[nodiscard]] static inline double round_to_nearest_n_digits(double value, int n) {
+    return utils::round_to_nearest_even(value * std::pow(10.0, n)) / std::pow(10.0, n);
+}
+
 template <typename T>
 [[nodiscard]] static inline std::string to_string(T t) {
     return nlohmann::json{t}[0].dump();

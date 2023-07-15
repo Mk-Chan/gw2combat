@@ -205,37 +205,37 @@ void calculate_relative_attributes(registry_t& registry) {
                         actor::attribute_t::CONDITION_DURATION_MULTIPLIER,
                         relative_attributes.get(other_actor,
                                                 actor::attribute_t::CONDITION_DURATION_MULTIPLIER) +
-                            expertise / 1500.0);
+                            utils::round_to_nearest_n_digits(expertise / 1500.0, 2));
                     relative_attributes.set(
                         other_actor,
                         actor::attribute_t::BLEEDING_DURATION_MULTIPLIER,
                         relative_attributes.get(other_actor,
                                                 actor::attribute_t::BLEEDING_DURATION_MULTIPLIER) +
-                            expertise / 1500.0);
+                            utils::round_to_nearest_n_digits(expertise / 1500.0, 2));
                     relative_attributes.set(
                         other_actor,
                         actor::attribute_t::BURNING_DURATION_MULTIPLIER,
                         relative_attributes.get(other_actor,
                                                 actor::attribute_t::BURNING_DURATION_MULTIPLIER) +
-                            expertise / 1500.0);
+                            utils::round_to_nearest_n_digits(expertise / 1500.0, 2));
                     relative_attributes.set(
                         other_actor,
                         actor::attribute_t::CONFUSION_DURATION_MULTIPLIER,
                         relative_attributes.get(other_actor,
                                                 actor::attribute_t::CONFUSION_DURATION_MULTIPLIER) +
-                            expertise / 1500.0);
+                            utils::round_to_nearest_n_digits(expertise / 1500.0, 2));
                     relative_attributes.set(
                         other_actor,
                         actor::attribute_t::POISON_DURATION_MULTIPLIER,
                         relative_attributes.get(other_actor,
                                                 actor::attribute_t::POISON_DURATION_MULTIPLIER) +
-                            expertise / 1500.0);
+                            utils::round_to_nearest_n_digits(expertise / 1500.0, 2));
                     relative_attributes.set(
                         other_actor,
                         actor::attribute_t::TORMENT_DURATION_MULTIPLIER,
                         relative_attributes.get(other_actor,
                                                 actor::attribute_t::TORMENT_DURATION_MULTIPLIER) +
-                            expertise / 1500.0);
+                            utils::round_to_nearest_n_digits(expertise / 1500.0, 2));
                 });
         });
 }

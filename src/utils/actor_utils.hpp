@@ -43,6 +43,7 @@ entity_t add_effect_to_actor(actor::effect_t effect,
                              entity_t source_actor,
                              const actor::skill_t& source_skill,
                              int duration,
+                             int grouped_with_num_stacks,
                              registry_t& registry);
 std::optional<entity_t> add_permanent_effect_to_actor(actor::effect_t effect,
                                                       entity_t actor_entity,
