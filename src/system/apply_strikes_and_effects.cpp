@@ -78,7 +78,7 @@ damage_result_t calculate_damage(
                                                                 target_armor;
     return damage_result_t{
         .is_critical = is_critical,
-        .value = (double)utils::round_to_nearest_even(damage_value),
+        .value = (double)utils::round_down(damage_value),
     };
 }
 
