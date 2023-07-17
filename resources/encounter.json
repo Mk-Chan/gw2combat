@@ -2,8 +2,8 @@
     "actors": [
         {
             "name": "dh-bgh",
-            "build_path": "resources/build-cfb.json",
-            "rotation_path": "resources/rotation-cfb.csv",
+            "build_path": "resources/build-lb-sw-axe-slb.json",
+            "rotation_path": "resources/rotation-lb-sw-axe-slb.csv",
             "team": 1
         }, {
             "name": "golem",
@@ -37,5 +37,6 @@
         ]
     },
     "require_afk_skills": false,
-    "audit_offset": 0
+    "audit_offset": 0,
+    "weapon_strength_mode": "MEAN"
 }

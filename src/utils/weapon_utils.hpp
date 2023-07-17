@@ -7,12 +7,16 @@
 
 #include "component/equipment/weapons.hpp"
 
+#include "configuration/encounter.hpp"
+
+#include "utils/basic_utils.hpp"
+
 namespace gw2combat::utils {
 
 [[nodiscard]] static inline double get_weapon_strength(entity_t actor_entity,
                                                        actor::weapon_type type,
-                                                       registry_t& registry,
-                                                       bool random = false) {
+                                                       configuration::weapon_strength_mode_t mode,
+                                                       registry_t& registry) {
     if (type == actor::weapon_type::INVALID) {
         throw std::runtime_error("invalid weapon_type");
     }
@@ -34,7 +38,18 @@ namespace gw2combat::utils {
         }
     }();
     auto& range = actor::weapon_type_to_strength_range_map.at(effective_weapon_type);
-    return random ? utils::get_random(range[0], range[1]) : (range[0] + range[1]) / 2.0;
+    switch (mode) {
+        case configuration::weapon_strength_mode_t::MEAN:
+            return (range[0] + range[1]) / 2.0;
+        case configuration::weapon_strength_mode_t::RANDOM_UNIFORM:
+            return utils::get_random(range[0], range[1]);
+        case configuration::weapon_strength_mode_t::LOWEST:
+            return range[0];
+        case configuration::weapon_strength_mode_t::HIGHEST:
+            return range[1];
+        default:
+            throw std::runtime_error("invalid weapon_strength_mode");
+    }
 }
 
 }  // namespace gw2combat::utils

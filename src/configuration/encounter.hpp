@@ -33,12 +33,21 @@ struct termination_condition_t {
     int damage = 0;
 };
 
+enum class weapon_strength_mode_t
+{
+    MEAN,
+    RANDOM_UNIFORM,
+    LOWEST,
+    HIGHEST,
+};
+
 struct encounter_t {
     std::vector<configuration::actor_t> actors;
     std::vector<termination_condition_t> termination_conditions;
     audit_t audit_configuration;
     bool require_afk_skills = false;
     int audit_offset = 0;
+    weapon_strength_mode_t weapon_strength_mode = weapon_strength_mode_t::MEAN;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_t,
@@ -53,12 +62,18 @@ NLOHMANN_JSON_SERIALIZE_ENUM(termination_condition_t::type_t,
                               {termination_condition_t::type_t::ROTATION, "ROTATION"},
                               {termination_condition_t::type_t::DAMAGE, "DAMAGE"}})
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(termination_condition_t, type, time, actor, damage)
+NLOHMANN_JSON_SERIALIZE_ENUM(weapon_strength_mode_t,
+                             {{weapon_strength_mode_t::MEAN, "MEAN"},
+                              {weapon_strength_mode_t::RANDOM_UNIFORM, "RANDOM"},
+                              {weapon_strength_mode_t::LOWEST, "LOWEST"},
+                              {weapon_strength_mode_t::HIGHEST, "HIGHEST"}})
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t,
                                                 actors,
                                                 termination_conditions,
                                                 audit_configuration,
                                                 require_afk_skills,
-                                                audit_offset)
+                                                audit_offset,
+                                                weapon_strength_mode)
 
 }  // namespace gw2combat::configuration
 

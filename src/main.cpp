@@ -128,5 +128,6 @@ configuration::encounter_t convert_encounter(
     converted_encounter.audit_configuration = encounter_local.audit_configuration;
     converted_encounter.require_afk_skills = encounter_local.require_afk_skills;
     converted_encounter.audit_offset = encounter_local.audit_offset;
+    converted_encounter.weapon_strength_mode = encounter_local.weapon_strength_mode;
     return converted_encounter;
 }

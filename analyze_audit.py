@@ -50,7 +50,8 @@ def main():
 
     in_combat_filter = \
         ((df["event_type"] == "damage_event") | (
-                (df["event_type"] == "effect_application_event") & (df["effect"].isin(CONDITION_EFFECTS)))) \
+                (df["event_type"] == "effect_application_event") & (
+                    "effect" in df and df["effect"].isin(CONDITION_EFFECTS)))) \
         & (df["source_actor"] != "Console")
 
     combat_df = df[in_combat_filter].reset_index(drop=True)
@@ -62,8 +63,8 @@ def main():
         .reset_index() \
         .sort_values(by=["total_damage"], ascending=[False]) \
         .reset_index(drop=True)
-    golem_hp_updates = df[(df['event_type'] == 'combat_stats_update_event') & (df['actor'] == 'golem')][
-        'updated_health']
+    golem_hp_updates = df[(df["event_type"] == "combat_stats_update_event") & (df["actor"] == "golem")][
+        "updated_health"]
     print(damage_summary.to_string(index=False))
     print()
     print(f"Time to First Strike: {time_to_first_strike_ms / 1000.0}s")

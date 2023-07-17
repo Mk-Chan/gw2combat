@@ -442,7 +442,7 @@
             "weapon_type": "tome",
             "damage_coefficient": 0.55,
             "cast_duration": [900, 600],
-            "cooldown": [4000, 3200],
+            "cooldown": [8000, 6400],
             "strike_on_tick_list": [[900], [600]],
             "on_strike_effect_applications": [
                 {
@@ -478,7 +478,7 @@
             "weapon_type": "tome",
             "damage_coefficient": 0.0,
             "cast_duration": [1380, 920],
-            "cooldown": [10000, 8000],
+            "cooldown": [15000, 12000],
             "child_skill_keys": [
                 "Chapter 4: Scorched Aftermath Attack"
             ]
@@ -678,6 +678,14 @@
             ]
         }, {
             "skill_key": "Zealot's Flame",
+            "cast_duration": [0, 0],
+            "cooldown": [12000, 9600],
+            "ammo": 50000,
+            "child_skill_keys": [
+                "Zealot's Flame Pulse"
+            ]
+        }, {
+            "skill_key": "Zealot's Flame Radiant Fire",
             "cast_duration": [0, 0],
             "cooldown": [12000, 9600],
             "ammo": 50000,

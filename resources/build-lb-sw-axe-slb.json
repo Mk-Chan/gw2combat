@@ -1,0 +1,596 @@
+{
+    "base_class": "ranger",
+    "profession": "soulbeast",
+    "attributes": [
+        ["power", 2382],
+        ["precision", 1960],
+        ["ferocity", 961]
+    ],
+    "weapons": [
+        {
+            "type": "longbow",
+            "position": "two_handed",
+            "set": "set_1"
+        }, {
+            "type": "sword",
+            "position": "main_hand",
+            "set": "set_2"
+        }, {
+            "type": "axe",
+            "position": "off_hand",
+            "set": "set_2"
+        }
+    ],
+    "permanent_effects": [
+        "QUICKNESS",
+        "ALACRITY",
+        "FURY",
+        "RESOLUTION",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT"
+    ],
+    "permanent_unique_effects": [
+        {
+            "unique_effect_key": "Air Sigil",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "depends_on_skill_off_cooldown": "Lightning Strike",
+                        "only_applies_on_strikes": true,
+                        "weapon_set": "set_1"
+                    },
+                    "skill_key": "Lightning Strike"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Superior Sharpening Stone",
+            "attribute_conversions": [
+                {
+                    "from": "precision",
+                    "to": "power",
+                    "multiplier": 0.03
+                }, {
+                    "from": "ferocity",
+                    "to": "power",
+                    "multiplier": 0.06
+                }
+            ]
+        }, {
+            "unique_effect_key": "Cilantro Lime Sous-Vide Steak",
+            "attribute_modifiers": [
+                {
+                    "attribute": "power",
+                    "addend": 100
+                }, {
+                    "attribute": "ferocity",
+                    "addend": 70
+                }
+            ],
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "upper_bound_exclusive",
+                            "threshold_value": 66,
+                            "generate_random_number_subject_to_threshold": true
+                        },
+                        "only_applies_on_strikes": true,
+                        "depends_on_skill_off_cooldown": "Lifesteal Proc"
+                    },
+                    "skill_key": "Lifesteal Proc"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Mighty Infusions",
+            "attribute_modifiers": [
+                {
+                    "attribute": "power",
+                    "addend": 90
+                }
+            ]
+        }, {
+            "unique_effect_key": "Scholar Rune",
+            "attribute_modifiers": [
+                {
+                    "attribute": "power",
+                    "addend": 175
+                }, {
+                    "attribute": "ferocity",
+                    "addend": 225
+                }, {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.05
+                }
+            ]
+        }, {
+            "unique_effect_key": "Force Sigil",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.05
+                }
+            ]
+        }, {
+            "unique_effect_key": "Impact Sigil",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "weapon_set": "set_2"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.03
+                }
+            ]
+        }, {
+            "unique_effect_key": "Sharpened Edges",
+            "unchained_skill_triggers": [
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "threshold": {
+                            "threshold_type": "upper_bound_exclusive",
+                            "threshold_value": 33,
+                            "generate_random_number_subject_to_threshold": true
+                        }
+                    },
+                    "skill_key": "Sharpened Edges Bleeding Proc"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Strider's Strength",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "weapon_type": "sword"
+                    },
+                    "attribute": "power",
+                    "addend": 120
+                }
+            ],
+            "attribute_conversions": [
+                {
+                    "from": "power",
+                    "to": "power",
+                    "multiplier": 0,
+                    "addend": 120
+                }
+            ]
+        }, {
+            "unique_effect_key": "Hunter's Tactics",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.15
+                }, {
+                    "attribute": "critical_chance_multiplier",
+                    "addend": 0.1
+                }
+            ]
+        }, {
+            "unique_effect_key": "Vicious Quarry",
+            "attribute_modifiers": [
+                {
+                    "attribute": "critical_chance_multiplier",
+                    "addend": 0.15
+                }
+            ],
+            "attribute_conversions": [
+                {
+                    "from": "ferocity",
+                    "to": "ferocity",
+                    "multiplier": 0,
+                    "addend": 250
+                }
+            ]
+        }, {
+            "unique_effect_key": "Loud Whistle",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.1
+                }
+            ]
+        }, {
+            "unique_effect_key": "Honed Axes",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "weapon_type": "axe"
+                    },
+                    "attribute": "ferocity",
+                    "addend": 120
+                }
+            ],
+            "attribute_conversions": [
+                {
+                    "from": "ferocity",
+                    "to": "ferocity",
+                    "multiplier": 0,
+                    "addend": 120
+                }
+            ]
+        }, {
+            "unique_effect_key": "Furious Strength",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.15
+                }
+            ]
+        }, {
+            "unique_effect_key": "Oppressive Superiority",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 0.9,
+                            "health_pct_subject_to_threshold": true
+                        }
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.1
+                }, {
+                    "attribute": "condition_duration_multiplier",
+                    "addend": 0.1
+                }
+            ]
+        }, {
+            "unique_effect_key": "Soulbeast Merge Red Moa",
+            "attribute_conversions": [
+                {
+                    "from": "power",
+                    "to": "power",
+                    "multiplier": 0,
+                    "addend": 300
+                }, {
+                    "from": "precision",
+                    "to": "precision",
+                    "multiplier": 0,
+                    "addend": 150
+                }, {
+                    "from": "ferocity",
+                    "to": "ferocity",
+                    "multiplier": 0,
+                    "addend": 520
+                }, {
+                    "from": "condition_damage",
+                    "to": "condition_damage",
+                    "multiplier": 0,
+                    "addend": 150
+                }
+            ]
+        }, {
+            "unique_effect_key": "Sic 'Em! Tracker",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "unique_effect_on_target_by_source": "Sic 'Em!"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.25
+                }
+            ]
+        }, {
+            "unique_effect_key": "Twice as Vicious Tracker",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "unique_effect_on_source": "Twice as Vicious Effect"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.10
+                }, {
+                    "condition": {
+                        "unique_effect_on_source": "Twice as Vicious Effect"
+                    },
+                    "attribute": "outgoing_condition_damage_multiplier_add_group",
+                    "addend": 0.10
+                }
+            ]
+        }, {
+            "unique_effect_key": "One Wolf Pack Tracker",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "unique_effect_on_source": "One Wolf Pack Effect",
+                        "depends_on_skill_off_cooldown": "One Wolf Pack Proc",
+                        "only_applies_on_strikes": true
+                    },
+                    "skill_key": "One Wolf Pack Proc"
+                }
+            ]
+        }
+    ],
+    "skills": [
+        {
+            "skill_key": "AFK 50ms",
+            "cast_duration": [50, 50],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "AFK 100ms",
+            "cast_duration": [100, 100],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "Weapon Swap",
+            "cast_duration": [100, 100],
+            "cooldown": [10000, 10000]
+        }, {
+            "NOTE": "This is a hardcoded skill name. Change only flat_damage and nothing else based on traits",
+            "skill_key": "Lifesteal Proc",
+            "weapon_type": "empty_handed",
+            "flat_damage": 325,
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
+            "cooldown": [2000, 2000],
+            "can_critical_strike": false
+        }, {
+            "skill_key": "Lightning Strike",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 1.1,
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
+            "cooldown": [3000, 3000],
+            "can_critical_strike": false
+        }, {
+            "skill_key": "Sharpened Edges Bleeding Proc",
+            "ammo": 50000,
+            "cast_duration": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BLEEDING",
+                    "num_stacks": 3,
+                    "base_duration_ms": 1000,
+                    "direction": "OUTGOING"
+                }
+            ]
+        }, {
+            "skill_key": "Long Range Shot",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.9,
+            "cast_duration": [850, 680],
+            "strike_on_tick_list": [[850], [680]]
+        }, {
+            "skill_key": "Rapid Fire",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.375,
+            "cast_duration": [2400, 1920],
+            "strike_on_tick_list": [
+                [240, 480, 720, 960, 1200, 1440, 1680, 1920, 2160, 2400],
+                [192, 384, 576, 768, 960, 1152, 1344, 1536, 1728, 1920]
+            ],
+            "cooldown": [10000, 8000]
+        }, {
+            "skill_key": "Point-Blank Shot",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.8,
+            "cast_duration": [450, 360],
+            "strike_on_tick_list": [[450], [360]],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Twice as Vicious Effect"
+                    },
+                    "base_duration_ms": 10000,
+                    "direction": "SELF"
+                }
+            ],
+            "cooldown": [15000, 12000]
+        }, {
+            "skill_key": "Barrage Attack",
+            "attribute_damage_to_skill": "Barrage",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.5,
+            "num_targets": 5,
+            "cast_duration": [5400, 5400],
+            "strike_on_tick_list": [
+                [450, 900, 1350, 1800, 2250, 2700, 3150, 3600, 4050, 4500, 4950, 5400],
+                [450, 900, 1350, 1800, 2250, 2700, 3150, 3600, 4050, 4500, 4950, 5400]
+            ]
+        }, {
+            "skill_key": "Barrage",
+            "cast_duration": [2320, 1880],
+            "cooldown": [20000, 16000],
+            "child_skill_keys": [
+                "Barrage Attack"
+            ]
+        }, {
+            "skill_key": "Slash",
+            "cast_duration": [600, 480],
+            "cooldown": [0, 0],
+            "weapon_type": "sword",
+            "damage_coefficient": 0.9,
+            "strike_on_tick_list": [[600], [480]]
+        }, {
+            "skill_key": "Crippling Thrust",
+            "cast_duration": [400, 320],
+            "cooldown": [0, 0],
+            "weapon_type": "sword",
+            "damage_coefficient": 0.9,
+            "strike_on_tick_list": [[400], [320]]
+        }, {
+            "skill_key": "Precision Swipe",
+            "cast_duration": [760, 600],
+            "cooldown": [0, 0],
+            "weapon_type": "sword",
+            "damage_coefficient": 1.4,
+            "strike_on_tick_list": [[760], [600]]
+        }, {
+            "skill_key": "Pounce",
+            "cast_duration": [1040, 840],
+            "cooldown": [6000, 4800],
+            "NOTE": "Original damage coefficient is 2.2, but 20% more on disabled/defiant or movement-impaired foes",
+            "weapon_type": "sword",
+            "damage_coefficient": 2.64,
+            "strike_on_tick_list": [[1040], [840]]
+        }, {
+            "skill_key": "Serpent's Strike",
+            "cast_duration": [1280, 1000],
+            "cooldown": [8000, 6400],
+            "weapon_type": "sword",
+            "damage_coefficient": 3.0,
+            "strike_on_tick_list": [[1280], [1000]],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "POISON",
+                    "base_duration_ms": 6000,
+                    "direction": "OUTGOING"
+                }
+            ]
+        }, {
+            "skill_key": "Path of Scars Returning Hit",
+            "attribute_damage_to_skill": "Path of Scars",
+            "weapon_type": "axe",
+            "damage_coefficient": 1.2,
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Twice as Vicious Effect"
+                    },
+                    "base_duration_ms": 10000,
+                    "direction": "SELF"
+                }
+            ],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "Path of Scars",
+            "weapon_type": "axe",
+            "damage_coefficient": 1.2,
+            "cast_duration": [560, 440],
+            "strike_on_tick_list": [[560], [440]],
+            "cooldown": [12000, 9600],
+            "child_skill_keys": [
+                "Path of Scars Returning Hit"
+            ]
+        }, {
+            "skill_key": "Whirling Defense",
+            "weapon_type": "axe",
+            "damage_coefficient": 0.66,
+            "num_targets": 5,
+            "cast_duration": [3280, 2640],
+            "strike_on_tick_list": [
+                [273, 546, 819, 1093, 1366, 1639, 1913, 2186, 2459, 2733, 3006, 3280],
+                [220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200, 2420, 2640]
+            ],
+            "cooldown": [20000, 16000]
+        }, {
+            "skill_key": "Signet of the Wild",
+            "cooldown": [30000, 24000],
+            "attribute_conversions": [
+                {
+                    "condition": {
+                        "depends_on_skill_off_cooldown": "Signet of the Wild"
+                    },
+                    "from": "ferocity",
+                    "to": "ferocity",
+                    "multiplier": 0,
+                    "addend": 180
+                }
+            ]
+        }, {
+            "skill_key": "Sic 'Em!",
+            "cast_duration": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Sic 'Em!"
+                    },
+                    "base_duration_ms": 10000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cooldown": [28000, 22400]
+        }, {
+            "skill_key": "Frost Trap Attack",
+            "attribute_damage_to_skill": "Frost Trap",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 1.0,
+            "num_targets": 5,
+            "cast_duration": [4000, 4000],
+            "strike_on_tick_list": [
+                [0, 1000, 2000, 3000, 4000],
+                [0, 1000, 2000, 3000, 4000]
+            ]
+        }, {
+            "skill_key": "Frost Trap",
+            "cast_duration": [600, 480],
+            "cooldown": [30000, 24000],
+            "child_skill_keys": [
+                "Frost Trap Attack"
+            ]
+        }, {
+            "skill_key": "One Wolf Pack Attack",
+            "attribute_damage_to_skill": "One Wolf Pack",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.95,
+            "cast_duration": [250, 250],
+            "strike_on_tick_list": [[250], [250]]
+        }, {
+            "skill_key": "One Wolf Pack Proc",
+            "cast_duration": [0, 0],
+            "cooldown": [1000, 1000],
+            "child_skill_keys": [
+                "One Wolf Pack Attack"
+            ]
+        }, {
+            "skill_key": "One Wolf Pack",
+            "cast_duration": [520, 400],
+            "pulse_on_tick_list": [[520], [400]],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "One Wolf Pack Effect"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF"
+                }
+            ],
+            "cooldown": [60000, 48000]
+        }, {
+            "skill_key": "Worldly Impact",
+            "weapon_type": "main_hand",
+            "damage_coefficient": 1.89,
+            "num_targets": 5,
+            "cast_duration": [840, 680],
+            "strike_on_tick_list": [[840], [680]],
+            "cooldown": [25000, 20000]
+        }, {
+            "skill_key": "Frenzied Attack",
+            "weapon_type": "main_hand",
+            "damage_coefficient": 0.4,
+            "cast_duration": [960, 760],
+            "strike_on_tick_list": [
+                [192, 384, 576, 768, 960],
+                [152, 304, 456, 608, 760]
+            ],
+            "cooldown": [20000, 16000]
+        }
+    ]
+}

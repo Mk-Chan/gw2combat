@@ -547,7 +547,7 @@
             ]
         }, {
             "skill_key": "Symbol of Resolution",
-            "weapon_type": "GREATSWORD",
+            "weapon_type": "greatsword",
             "damage_coefficient": 0.0,
             "cast_duration": [360, 240],
             "cooldown": [9600, 7680],
