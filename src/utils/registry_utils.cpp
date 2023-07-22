@@ -315,6 +315,9 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
         if (source_registry.all_of<gw2combat::component::has_alacrity>(entity)) {
             destination_registry.emplace<gw2combat::component::has_alacrity>(destination_entity);
         }
+        if (source_registry.all_of<gw2combat::component::ammo_gained>(entity)) {
+            destination_registry.emplace<gw2combat::component::ammo_gained>(destination_entity);
+        }
         if (source_registry.all_of<gw2combat::component::destroy_entity>(entity)) {
             destination_registry.emplace<gw2combat::component::destroy_entity>(destination_entity);
         }
