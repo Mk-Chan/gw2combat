@@ -10,6 +10,7 @@
 #include "component/effect/is_effect.hpp"
 #include "component/encounter/encounter_configuration_component.hpp"
 #include "component/hierarchy/owner_component.hpp"
+#include "component/skill/is_skill.hpp"
 
 #include "utils/actor_utils.hpp"
 #include "utils/condition_utils.hpp"

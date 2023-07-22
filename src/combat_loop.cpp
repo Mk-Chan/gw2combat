@@ -132,7 +132,8 @@ void tick(registry_t& registry) {
         .each([&](entity_t actor_entity) {
             auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
                 return utils::independent_conditions_satisfied(
-                    condition, actor_entity, std::nullopt, registry);
+                           condition, actor_entity, std::nullopt, registry)
+                    .satisfied;
             };
             utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
         });

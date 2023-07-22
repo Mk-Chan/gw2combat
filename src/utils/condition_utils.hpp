@@ -10,7 +10,12 @@
 
 namespace gw2combat::utils {
 
-[[nodiscard]] extern bool independent_conditions_satisfied(
+struct condition_result_t {
+    bool satisfied;
+    std::string reason;
+};
+
+[[nodiscard]] extern condition_result_t independent_conditions_satisfied(
     const configuration::condition_t& condition,
     entity_t entity,
     std::optional<entity_t> target_entity,

@@ -10,6 +10,7 @@
 #include "component/encounter/encounter_configuration_component.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
+#include "component/skill/ammo.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 
@@ -67,7 +68,15 @@ void perform_rotations(registry_t& registry) {
                 }
             }
 
-            utils::assert_can_cast_skill(next_skill_cast.skill, entity, registry);
+            auto skill_castability = utils::can_cast_skill(next_skill_cast.skill, entity, registry);
+            if (!skill_castability.can_cast) {
+                spdlog::error("[{}] {}: cannot cast skill {}. Reason: {}",
+                              utils::get_current_tick(registry),
+                              utils::get_entity_name(entity, registry),
+                              next_skill_cast.skill,
+                              skill_castability.reason);
+                throw std::runtime_error("cannot cast skill");
+            }
 
             int pulse_no_quickness_duration =
                 std::max(skill_configuration.pulse_on_tick_list[0].empty()

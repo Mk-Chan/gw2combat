@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -Wpedantic -Wno-deprecated -pipe -Isrc/ -Iinclude/ $(EXTRACXXFLAGS)
 LDFLAGS = -pthread $(CXXFLAGS) $(EXTRALDFLAGS)
 
-SRCS = src/main.cpp src/system/encounter.cpp src/system/temporal.cpp src/system/actor.cpp src/system/attributes.cpp src/system/rotation.cpp src/system/effects.cpp src/system/dispatch_strikes_and_effects.cpp src/system/apply_strikes_and_effects.cpp src/system/audit.cpp src/combat_loop.cpp src/server_tcp.cpp src/utils/condition_utils.cpp src/utils/registry_utils.cpp src/utils/actor_utils.cpp
+SRCS = src/main.cpp src/system/encounter.cpp src/system/temporal.cpp src/system/actor.cpp src/system/attributes.cpp src/system/rotation.cpp src/system/effects.cpp src/system/dispatch_strikes_and_effects.cpp src/system/apply_strikes_and_effects.cpp src/system/audit.cpp src/combat_loop.cpp src/server_tcp.cpp src/utils/condition_utils.cpp src/utils/registry_utils.cpp src/utils/actor_utils.cpp src/utils/skill_utils.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 EXE = gw2combat

@@ -53,7 +53,8 @@ void dispatch_effects(registry_t& registry) {
                     if (!utils::independent_conditions_satisfied(application.condition,
                                                                  actual_source_entity,
                                                                  actual_source_entity,
-                                                                 registry)) {
+                                                                 registry)
+                             .satisfied) {
                         continue;
                     }
 
@@ -78,7 +79,8 @@ void dispatch_effects(registry_t& registry) {
                                 !utils::independent_conditions_satisfied(application.condition,
                                                                          actual_source_entity,
                                                                          other_entity,
-                                                                         registry)) {
+                                                                         registry)
+                                     .satisfied) {
                                 return;
                             }
 
@@ -97,7 +99,8 @@ void dispatch_effects(registry_t& registry) {
                                 !utils::independent_conditions_satisfied(application.condition,
                                                                          actual_source_entity,
                                                                          other_entity,
-                                                                         registry)) {
+                                                                         registry)
+                                     .satisfied) {
                                 return;
                             }
 

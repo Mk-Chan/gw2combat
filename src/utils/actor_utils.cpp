@@ -28,6 +28,7 @@
 #include "component/effect/is_unique_effect.hpp"
 #include "component/effect/source_actor.hpp"
 #include "component/effect/source_skill.hpp"
+#include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
 #include "component/skill/is_skill.hpp"

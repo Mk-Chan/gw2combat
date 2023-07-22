@@ -18,7 +18,10 @@
 #include "component/effect/source_actor.hpp"
 #include "component/effect/source_skill.hpp"
 #include "component/equipment/bundle.hpp"
+#include "component/equipment/weapons.hpp"
+#include "component/skill/ammo.hpp"
 #include "component/skill/is_skill.hpp"
+#include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"
 #include "component/temporal/has_alacrity.hpp"
 

@@ -81,7 +81,8 @@ void calculate_relative_attributes(registry_t& registry) {
                 }
                 for (auto& attribute_modifier : is_attribute_modifier.attribute_modifiers) {
                     if (utils::independent_conditions_satisfied(
-                            attribute_modifier.condition, owner_actor, other_actor, registry)) {
+                            attribute_modifier.condition, owner_actor, other_actor, registry)
+                            .satisfied) {
                         relative_attributes.set(
                             other_actor,
                             attribute_modifier.attribute,
@@ -150,7 +151,8 @@ void calculate_relative_attributes(registry_t& registry) {
                 }
                 for (auto& attribute_conversion : is_attribute_conversion.attribute_conversions) {
                     if (utils::independent_conditions_satisfied(
-                            attribute_conversion.condition, owner_actor, other_actor, registry)) {
+                            attribute_conversion.condition, owner_actor, other_actor, registry)
+                            .satisfied) {
                         owner_actor_to_attribute_conversion_bonuses[std::make_tuple(
                             owner_actor, attribute_conversion.to)] +=
                             (relative_attributes.get(other_actor, attribute_conversion.from) *
