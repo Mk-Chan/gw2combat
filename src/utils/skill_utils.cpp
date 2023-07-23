@@ -39,11 +39,11 @@ skill_castability_t can_cast_skill(const actor::skill_t& skill,
                 break;
             }
         }
-        spdlog::info("[{}] {}: can_cast_skill: skill {} doesn't have any more ammo, cooldown {}",
-                     utils::get_current_tick(registry),
-                     utils::get_entity_name(actor_entity, registry),
-                     to_string(skill),
-                     cooldown_component);
+        // spdlog::info("[{}] {}: can_cast_skill: skill {} doesn't have any more ammo, cooldown {}",
+        //              utils::get_current_tick(registry),
+        //              utils::get_entity_name(actor_entity, registry),
+        //              to_string(skill),
+        //              cooldown_component);
         return {.can_cast = false,
                 .reason = skill_ammo.max_ammo > 1 ? "skill doesn't have any more ammo"
                                                   : "skill is on cooldown"};
