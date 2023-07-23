@@ -70,12 +70,11 @@ void perform_rotations(registry_t& registry) {
 
             auto skill_castability = utils::can_cast_skill(next_skill_cast.skill, entity, registry);
             if (!skill_castability.can_cast) {
-                spdlog::error("[{}] {}: cannot cast skill {}. Reason: {}",
-                              utils::get_current_tick(registry),
-                              utils::get_entity_name(entity, registry),
-                              next_skill_cast.skill,
-                              skill_castability.reason);
-                throw std::runtime_error("cannot cast skill");
+                throw std::runtime_error(fmt::format("[{}] {}: cannot cast skill {}. Reason: {}",
+                                                     utils::get_current_tick(registry),
+                                                     utils::get_entity_name(entity, registry),
+                                                     next_skill_cast.skill,
+                                                     skill_castability.reason));
             }
 
             int pulse_no_quickness_duration =

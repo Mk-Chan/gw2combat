@@ -39,11 +39,14 @@ skill_castability_t can_cast_skill(const actor::skill_t& skill,
                 break;
             }
         }
+        spdlog::info("[{}] {}: can_cast_skill: skill {} doesn't have any more ammo, cooldown {}",
+                     utils::get_current_tick(registry),
+                     utils::get_entity_name(actor_entity, registry),
+                     to_string(skill),
+                     cooldown_component);
         return {.can_cast = false,
-                .reason = fmt::format("actor {} skill {} doesn't have any more ammo. cooldown: {}",
-                                      get_entity_name(actor_entity, registry),
-                                      utils::to_string(skill),
-                                      cooldown_component)};
+                .reason = skill_ammo.max_ammo > 1 ? "skill doesn't have any more ammo"
+                                                  : "skill is on cooldown"};
     }
 
     auto& skill_configuration = utils::get_skill_configuration(skill, actor_entity, registry);
@@ -61,8 +64,7 @@ skill_castability_t can_cast_skill(const actor::skill_t& skill,
                            weapon.type == skill_configuration.weapon_type;
                 });
             if (!skill_available_on_weapon) {
-                return {.can_cast = false,
-                        .reason = fmt::format("skill {} not available on this weapon set", skill)};
+                return {.can_cast = false, .reason = "skill not available on this weapon set"};
             }
         }
     } else {
@@ -72,8 +74,7 @@ skill_castability_t can_cast_skill(const actor::skill_t& skill,
                         "skill {} requires bundle {}", skill, skill_configuration.required_bundle)};
         } else if (skill_configuration.required_bundle != bundle_ptr->name) {
             return {.can_cast = false,
-                    .reason = fmt::format("skill {} requires bundle {}, but currently have {}",
-                                          skill,
+                    .reason = fmt::format("skill requires bundle {}, but currently have {}",
                                           skill_configuration.required_bundle,
                                           bundle_ptr->name)};
         }
@@ -83,8 +84,8 @@ skill_castability_t can_cast_skill(const actor::skill_t& skill,
         skill_configuration.cast_condition, actor_entity, std::nullopt, registry);
     if (!condition_result.satisfied) {
         return {.can_cast = false,
-                .reason = fmt::format(
-                    "skill {} cast condition not satisfied: {}", skill, condition_result.reason)};
+                .reason =
+                    fmt::format("skill cast condition not satisfied: {}", condition_result.reason)};
     }
     return {.can_cast = true, .reason = ""};
 }

@@ -174,7 +174,7 @@ namespace gw2combat::utils {
         bool is_satisfied = !registry.any_of<component::cooldown_component>(skill_entity);
         if (!is_satisfied) {
             return {.satisfied = false,
-                    .reason = fmt::format("skill {} is on cooldown",
+                    .reason = fmt::format("skill is on cooldown",
                                           *condition.depends_on_skill_off_cooldown)};
         }
     }

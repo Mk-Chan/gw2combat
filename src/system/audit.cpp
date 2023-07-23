@@ -27,8 +27,8 @@
 
 namespace gw2combat::system {
 
-std::vector<audit::skill_cooldown_t> get_skill_cooldowns(entity_t actor_entity,
-                                                         registry_t& registry) {
+[[nodiscard]] std::vector<audit::skill_cooldown_t> get_skill_cooldowns(entity_t actor_entity,
+                                                                       registry_t& registry) {
     std::vector<audit::skill_cooldown_t> skill_cooldowns;
     registry.view<component::cooldown_component, component::ammo, component::is_skill>().each(
         [&](entity_t skill_entity,
@@ -50,8 +50,8 @@ std::vector<audit::skill_cooldown_t> get_skill_cooldowns(entity_t actor_entity,
     return skill_cooldowns;
 }
 
-std::vector<audit::counter_value_t> get_counter_values(entity_t actor_entity,
-                                                       registry_t& registry) {
+[[nodiscard]] std::vector<audit::counter_value_t> get_counter_values(entity_t actor_entity,
+                                                                     registry_t& registry) {
     std::vector<audit::counter_value_t> counter_values;
     registry.view<component::is_counter>().each(
         [&](entity_t counter_entity, const component::is_counter& counter) {
@@ -65,6 +65,39 @@ std::vector<audit::counter_value_t> get_counter_values(entity_t actor_entity,
             });
         });
     return counter_values;
+}
+
+[[nodiscard]] std::unordered_map<actor::skill_t, audit::uncastable_skill_t> get_uncastable_skills(
+    entity_t actor_entity,
+    registry_t& registry) {
+    std::unordered_map<std::string, audit::uncastable_skill_t> uncastable_skills;
+    registry.view<component::is_skill, component::owner_component>().each(
+        [&](entity_t skill_entity,
+            const component::is_skill& is_skill,
+            component::owner_component& owner_component) {
+            if (owner_component.entity != actor_entity) {
+                return;
+            }
+            auto skill_castability = utils::can_cast_skill(
+                is_skill.skill_configuration.skill_key, actor_entity, registry);
+            if (!skill_castability.can_cast) {
+                auto cooldown_component =
+                    registry.try_get<component::cooldown_component>(skill_entity);
+                auto ammo = registry.try_get<component::ammo>(skill_entity);
+                bool has_alacrity = registry.any_of<component::has_alacrity>(actor_entity);
+                int remaining_cooldown = cooldown_component
+                                             ? cooldown_component->duration[has_alacrity] -
+                                                   cooldown_component->progress[has_alacrity]
+                                             : 0;
+                int remaining_ammo = ammo ? ammo->current_ammo : 0;
+                uncastable_skills[is_skill.skill_configuration.skill_key] = {
+                    .reason = skill_castability.reason,
+                    .remaining_cooldown = remaining_cooldown,
+                    .remaining_ammo = remaining_ammo,
+                };
+            }
+        });
+    return uncastable_skills;
 }
 
 [[maybe_unused]] std::map<std::basic_string<char>, std::map<actor::attribute_t, double>>
@@ -91,6 +124,7 @@ audit::tick_event_t create_tick_event(const decltype(audit::tick_event_t::event)
         .counter_values = get_counter_values(actor_entity, registry),
         .current_weapon_set = weapon_set_ptr ? weapon_set_ptr->set : actor::weapon_set::INVALID,
         .current_bundle = bundle_ptr ? bundle_ptr->name : "",
+        .uncastable_skills = get_uncastable_skills(actor_entity, registry),
         //.actor_attributes = get_actor_attributes(registry),
     };
 }
