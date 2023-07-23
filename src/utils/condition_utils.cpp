@@ -295,7 +295,8 @@ namespace gw2combat::utils {
     std::optional<entity_t> target_entity,
     registry_t& registry) {
     if ((condition.only_applies_on_strikes && *condition.only_applies_on_strikes) ||
-        (condition.only_applies_on_finished_casting && *condition.only_applies_on_finished_casting) ||
+        (condition.only_applies_on_finished_casting &&
+         *condition.only_applies_on_finished_casting) ||
         (condition.only_applies_on_begun_casting && *condition.only_applies_on_begun_casting) ||
         condition.only_applies_on_ammo_gain_of_skill) {
         return {.satisfied = false, .reason = "stage dependent condition"};
