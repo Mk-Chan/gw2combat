@@ -70,8 +70,8 @@ skill_castability_t can_cast_skill(const actor::skill_t& skill,
     } else {
         if (!bundle_ptr) {
             return {.can_cast = false,
-                    .reason = fmt::format(
-                        "skill {} requires bundle {}", skill, skill_configuration.required_bundle)};
+                    .reason = fmt::format("skill requires bundle {}",
+                                          skill_configuration.required_bundle)};
         } else if (skill_configuration.required_bundle != bundle_ptr->name) {
             return {.can_cast = false,
                     .reason = fmt::format("skill requires bundle {}, but currently have {}",
