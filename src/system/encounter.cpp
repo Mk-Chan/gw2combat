@@ -98,12 +98,6 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
                                     .position = weapon_configuration.position,
                                     .set = weapon_configuration.set});
         }
-        add_recipe_items_to_actor(build.counters,
-                                  build.permanent_effects,
-                                  build.permanent_unique_effects,
-                                  build.skills,
-                                  actor_entity,
-                                  registry);
         for (auto& recipe : build.recipes) {
             add_recipe_items_to_actor(recipe.counters,
                                       recipe.permanent_effects,
@@ -121,6 +115,12 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
                                       actor_entity,
                                       registry);
         }
+        add_recipe_items_to_actor(build.counters,
+                                  build.permanent_effects,
+                                  build.permanent_unique_effects,
+                                  build.skills,
+                                  actor_entity,
+                                  registry);
 
         if (!actor.rotation.skill_casts.empty()) {
             actor::rotation_t converted_rotation{};
