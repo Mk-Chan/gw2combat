@@ -218,10 +218,10 @@ void perform_skills(registry_t& registry) {
                             entity);
                     finished_skills_actions_component.skill_entities.emplace_back(
                         casting_skill.skill_entity);
-                    spdlog::info("[{}] {}: finished skill actions for {}",
-                                 utils::get_current_tick(registry),
-                                 utils::get_entity_name(entity, registry),
-                                 utils::to_string(skill_configuration.skill_key));
+                    //spdlog::info("[{}] {}: finished skill actions for {}",
+                    //             utils::get_current_tick(registry),
+                    //             utils::get_entity_name(entity, registry),
+                    //             utils::to_string(skill_configuration.skill_key));
                 }
             }
         });

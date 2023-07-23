@@ -361,10 +361,10 @@ void finish_casting_skill(entity_t actor_entity, entity_t skill_entity, registry
             }
         }
     }
-    spdlog::info("[{}] {}: finished casting skill {}",
-                 utils::get_current_tick(registry),
-                 utils::get_entity_name(actor_entity, registry),
-                 utils::to_string(skill_configuration.skill_key));
+    //spdlog::info("[{}] {}: finished casting skill {}",
+    //             utils::get_current_tick(registry),
+    //             utils::get_entity_name(actor_entity, registry),
+    //             utils::to_string(skill_configuration.skill_key));
 }
 
 }  // namespace gw2combat::utils
