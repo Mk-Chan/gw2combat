@@ -1,0 +1,854 @@
+{
+    "base_class": "guardian",
+    "profession": "dragonhunter",
+    "attributes": [
+        ["power", 2320],
+        ["precision", 2022],
+        ["ferocity", 960],
+        ["vitality", 1000]
+    ],
+    "weapons": [
+        {
+            "type": "longbow",
+            "position": "two_handed",
+            "set": "set_1"
+        }, {
+            "type": "greatsword",
+            "position": "two_handed",
+            "set": "set_2"
+        }
+    ],
+    "permanent_effects": [
+        "QUICKNESS",
+        "ALACRITY",
+        "FURY",
+        "RESOLUTION",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "VIGOR",
+        "PROTECTION",
+        "REGENERATION",
+        "SWIFTNESS",
+        "AEGIS"
+    ],
+    "counters": [
+        {
+            "counter_key": "Virtue of Justice Counter",
+            "initial_value": 0,
+            "reset_at_value": 3,
+            "increment_conditions": [
+                {
+                    "only_applies_on_strikes": true,
+                    "depends_on_skill_off_cooldown": "Spear of Justice"
+                }
+            ]
+        }
+    ],
+    "permanent_unique_effects": [
+        {
+            "unique_effect_key": "Virtue of Justice",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 3,
+                            "counter_value_subject_to_threshold": "Virtue of Justice Counter"
+                        },
+                        "only_applies_on_strikes": true,
+                        "depends_on_skill_off_cooldown": "Spear of Justice"
+                    },
+                    "skill_key": "Virtue of Justice Proc"
+                }
+            ]
+        },
+        {
+            "unique_effect_key": "Furious Sharpening Stone",
+            "attribute_conversions": [
+                {
+                    "from": "precision",
+                    "to": "power",
+                    "multiplier": 0.03
+                }, {
+                    "from": "precision",
+                    "to": "ferocity",
+                    "multiplier": 0.03
+                }
+            ]
+        },  {
+            "unique_effect_key": "Cilantro Lime Sous-Vide Steak",
+            "attribute_modifiers": [
+                {
+                    "attribute": "power",
+                    "addend": 100
+                }, {
+                    "attribute": "ferocity",
+                    "addend": 70
+                }
+            ],
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "upper_bound_exclusive",
+                            "threshold_value": 66,
+                            "generate_random_number_subject_to_threshold": true
+                        },
+                        "only_applies_on_strikes": true,
+                        "depends_on_skill_off_cooldown": "Lifesteal Proc"
+                    },
+                    "skill_key": "Lifesteal Proc"
+                }
+            ]
+        },  {
+            "unique_effect_key": "Mighty Infusions",
+            "attribute_modifiers": [
+                {
+                    "attribute": "power",
+                    "addend": 90
+                }
+            ]
+        }, {
+            "unique_effect_key": "Thief Rune",
+            "attribute_modifiers": [
+                {
+                    "attribute": "critical_chance_multiplier",
+                    "addend": 0.142857
+                }, {
+                    "attribute": "condition_damage",
+                    "addend": 100
+                }, {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.10
+                }
+            ]
+        }, {
+            "unique_effect_key": "Force Sigil",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.05
+                }
+            ]
+        }, {
+            "unique_effect_key": "Accuracy Sigil",
+            "attribute_modifiers": [
+                {
+                    "attribute": "critical_chance_multiplier",
+                    "addend": 0.07
+                }
+            ]
+        }, {
+            "unique_effect_key": "Fiery Wrath",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.07
+                }
+            ]
+        }, {
+            "unique_effect_key": "Symbolic Exposure",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.05
+                }
+            ]
+        }, {
+            "unique_effect_key": "Zealous Blade",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "weapon_type": "greatsword"
+                    },
+                    "attribute": "power",
+                    "addend": 120
+                }
+            ],
+            "attribute_conversions": [
+                {
+                    "from": "power",
+                    "to": "power",
+                    "multiplier": 0,
+                    "addend": 120
+                }
+            ]
+        }, {
+            "unique_effect_key": "Zealot's Aggression",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "effect_on_target": "CRIPPLED"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.1
+                }
+            ]
+        }, {
+            "unique_effect_key": "Pure of Sight",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.05
+                }
+            ]
+        }, {
+            "unique_effect_key": "Big Game Hunter",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "unique_effect_on_target_by_source": "Spear of Justice Effect"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.20
+                }
+            ]
+        }, {
+            "unique_effect_key": "Unscathed Contender Aegis",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "effect_on_source": "AEGIS"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.07
+                }
+            ]
+        }, {
+            "unique_effect_key": "Unscathed Contender 90%",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.07
+                }
+            ]
+        }, {
+            "unique_effect_key": "Inspiring Virtue",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "unique_effect_on_source": "Inspiring Virtue Effect"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.10
+                }
+            ]
+        }, {
+            "unique_effect_key": "Power of the Virtuous",
+            "attribute_conversions": [
+                {
+                    "from": "vitality",
+                    "to": "condition_damage",
+                    "multiplier": 0.13
+                }
+            ]
+        }, {
+            "unique_effect_key": "Inspired Virtue",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "effect_on_source": "RESOLUTION"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "STABILITY"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "PROTECTION"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "MIGHT"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "FURY"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "ALACRITY"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "QUICKNESS"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "RESISTANCE"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "REGENERATION"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "SWIFTNESS"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "VIGOR"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }, {
+                    "condition": {
+                        "effect_on_source": "AEGIS"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.01
+                }
+            ]
+        }
+    ],
+    "skills": [
+        {
+            "skill_key": "AFK 10ms",
+            "cast_duration": [10, 10],
+            "cooldown": [0, 0]
+        },
+        {
+            "skill_key": "AFK 50ms",
+            "cast_duration": [50, 50],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "AFK 100ms",
+            "cast_duration": [100, 100],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "Weapon Swap",
+            "cast_duration": [100, 100],
+            "cooldown": [10000, 10000]
+        }, {
+            "skill_key": "Spear of Justice Pulse",
+            "is_child_skill": true,
+            "weapon_type": "empty_handed",
+            "cast_duration": [12000, 12000],
+            "pulse_on_tick_list": [
+                [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000],
+                [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000]
+            ],
+            "on_pulse_effect_applications": [
+                {
+                    "condition": {
+                        "unique_effect_on_target_by_source": "Spear of Justice Effect"
+                    },
+                    "effect": "BURNING",
+                    "base_duration_ms": 2000,
+                    "direction": "OUTGOING"
+                }
+            ]
+        }, {
+            "skill_key": "Wings of Resolve",
+            "weapon_type": "main_hand",
+            "damage_coefficient": 1.5,
+            "cast_duration": [960, 960],
+            "cooldown": [21250, 17000],
+            "strike_on_tick_list": [[960], [960]],
+            "pulse_on_tick_list": [[960], [960]],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Inspiring Virtue Effect"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF"
+                }
+            ]
+
+            
+        }, {
+            "skill_key": "Spear of Justice",
+            "weapon_type": "main_hand",
+            "damage_coefficient": 0.8,
+            "cast_duration": [825, 550],
+            "cooldown": [20000, 13600],
+            "strike_on_tick_list": [[825], [550]],
+            "pulse_on_tick_list": [[825], [560]],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Spear of Justice Effect"
+                    },
+                    "base_duration_ms": 12000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Inspiring Virtue Effect"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF"
+                }
+            ],
+            "child_skill_keys": [
+                "Spear of Justice Pulse"
+            ]
+        }, {
+            "skill_key": "Puncture Shot",
+            "weapon_type": "longbow",
+            "damage_coefficient": 1.0,
+            "cast_duration": [1020, 680],
+            "strike_on_tick_list": [[850], [680]]
+        }, {
+            "skill_key": "True Shot",
+            "weapon_type": "longbow",
+            "damage_coefficient": 3.2,
+            "cast_duration": [1020, 680],
+            "strike_on_tick_list": [[850], [680]],
+            "cooldown": [4000, 3200]
+        }, {
+            "skill_key": "Deflecting Shot",
+            "weapon_type": "longbow",
+            "damage_coefficient": 1.8,
+            "cast_duration": [850, 680],
+            "strike_on_tick_list": [[850], [680]],
+            "cooldown": [10000, 8000]
+        }, {
+            "skill_key": "Symbol of Energy Initial Attack",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.897,
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 12000,
+                    "direction": "OUTGOING"
+                }, {
+                    "unique_effect": {
+                        "unique_effect_key": "Symbolic Avenger Effect",
+                        "max_considered_stacks": 5,
+                        "attribute_modifiers": [
+                            {
+                                "attribute": "outgoing_strike_damage_multiplier_add_group",
+                                "addend": 0.02
+                            }
+                        ]
+                    },
+                    "base_duration_ms": 15000,
+                    "direction": "SELF"
+                }
+            ]
+        }, {
+            "skill_key": "Symbol of Energy Usual Attack",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.897,
+            "cast_duration": [4000, 4000],
+            "strike_on_tick_list": [
+                [1000, 2000, 3000, 4000],
+                [1000, 2000, 3000, 4000]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Symbolic Avenger Effect",
+                        "max_considered_stacks": 5,
+                        "attribute_modifiers": [
+                            {
+                                "attribute": "outgoing_strike_damage_multiplier_add_group",
+                                "addend": 0.02
+                            }
+                        ]
+                    },
+                    "base_duration_ms": 15000,
+                    "direction": "SELF"
+                }
+            ]
+        }, {
+            "skill_key": "Symbol of Energy",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.0,
+            "cast_duration": [600, 400],
+            "cooldown": [12000, 9600],
+            "child_skill_keys": [
+                "Symbol of Energy Initial Attack",
+                "Symbol of Energy Usual Attack"
+            ]
+        }, {
+            "skill_key": "Hunter's Ward Small Attacks",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.75,
+            "cast_duration": [1250, 1250],
+            "strike_on_tick_list": [
+                [650, 950, 1250],
+                [650, 950, 1250]
+            ]
+        }, {
+            "skill_key": "Hunter's Ward Big Attack",
+            "weapon_type": "longbow",
+            "damage_coefficient": 2.5,
+            "cast_duration": [300, 300],
+            "strike_on_tick_list": [[300], [300]]
+        }, {
+            "skill_key": "Hunter's Ward",
+            "weapon_type": "longbow",
+            "damage_coefficient": 0.0,
+            "cast_duration": [950, 760],
+            "cooldown": [20000, 16000],
+            "child_skill_keys": [
+                "Hunter's Ward Small Attacks",
+                "Hunter's Ward Big Attack"
+            ]
+        }, {
+            "skill_key": "Strike",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 1.0,
+            "cast_duration": [600, 400],
+            "strike_on_tick_list": [[600], [400]]
+        }, {
+            "skill_key": "Vengeful Strike",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 1.1,
+            "cast_duration": [840, 600],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[840], [600]]
+        }, {
+            "skill_key": "Wrathful Strike",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 1.5,
+            "cast_duration": [1000, 680],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[1000], [675]]
+        }, {
+            "skill_key": "Whirling Wrath",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 0.4125,
+            "cast_duration": [2200, 1480],
+            "cooldown": [6400, 5120],
+            "strike_on_tick_list": [
+                [157, 314, 471, 628, 785, 942, 1099, 1257, 1414, 1571, 1728, 1885, 2042, 2200],
+                [105, 210, 316, 422, 528, 633, 739, 845, 951, 1056, 1162, 1268, 1374, 1480]
+            ]
+        }, {
+            "skill_key": "Leap of Faith",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 2.0,
+            "cast_duration": [1000, 720],
+            "cooldown": [8000, 6400],
+            "strike_on_tick_list": [[1000], [720]]
+        }, {
+            "skill_key": "Symbol of Resolution Attack",
+            "is_child_skill": true,
+            "weapon_type": "greatsword",
+            "damage_coefficient": 0.845,
+            "cast_duration": [4000, 4000],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [0, 1000, 2000, 3000, 4000],
+                [0, 1000, 2000, 3000, 4000]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Symbolic Avenger Effect",
+                        "max_considered_stacks": 5,
+                        "attribute_modifiers": [
+                            {
+                                "attribute": "outgoing_strike_damage_multiplier_add_group",
+                                "addend": 0.02
+                            }
+                        ]
+                    },
+                    "base_duration_ms": 15000,
+                    "direction": "SELF"
+                }
+            ]
+        }, {
+            "skill_key": "Symbol of Resolution",
+            "weapon_type": "GREATSWORD",
+            "damage_coefficient": 0.0,
+            "cast_duration": [360, 280],
+            "cooldown": [9600, 7680],
+            "child_skill_keys": [
+                "Symbol of Resolution Attack"
+            ]
+        }, {
+            "skill_key": "Binding Blade",
+            "weapon_type": "greatsword",
+            "damage_coefficient": 1.5,
+            "cast_duration": [750, 480],
+            "cooldown": [20000, 16000],
+            "strike_on_tick_list": [[750], [500]],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BINDING_BLADE",
+                    "num_stacks": 1,
+                    "base_duration_ms": 10000,
+                    "direction": "OUTGOING"
+                }
+            ]
+        }, {
+            "skill_key": "Sword of Justice Attack",
+            "is_child_skill": true,
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.72,
+            "cast_duration": [1850, 1850],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [650, 1050, 1450, 1850],
+                [650, 1050, 1450, 1850]
+            ]
+        }, {
+            "skill_key": "Sword of Justice",
+            "cast_duration": [900, 600],
+            "cooldown": [20000, 12000],
+            "child_skill_keys": [
+                "Sword of Justice Attack"
+            ],
+            "ammo": 3,
+            "recharge_duration": 1000
+        }, {
+            "skill_key": "Procession of Blades Attack",
+            "is_child_skill": true,
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.44,
+            "cast_duration": [3800, 3800],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [1280, 1560, 1840, 2120, 2400, 2680, 2960, 3240, 3520, 3800],
+                [1280, 1560, 1840, 2120, 2400, 2680, 2960, 3240, 3520, 3800]
+            ]
+        }, {
+            "skill_key": "Procession of Blades",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.0,
+            "cast_duration": [660, 440],
+            "cooldown": [16000, 12800],
+            "child_skill_keys": [
+                "Procession of Blades Attack"
+            ]
+        }, {
+            "skill_key": "Bane Signet",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 1.0,
+            "cast_duration": [750, 500],
+            "cooldown": [30000, 24000],
+            "strike_on_tick_list": [[750], [500]],
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "depends_on_skill_off_cooldown": "Bane Signet"
+                    },
+                    "attribute": "power",
+                    "addend": 180
+                }
+            ]
+        }, {
+            "skill_key": "Dragon's Maw Attack",
+            "is_child_skill": true,
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 3.6,
+            "cast_duration": [500, 500],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[500], [500]]
+        }, {
+            "skill_key": "Dragon's Maw",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.0,
+            "cast_duration": [660, 440],
+            "cooldown": [40000, 32000],
+            "child_skill_keys": [
+                "Dragon's Maw Attack"
+            ]
+        }, {
+            "skill_key": "Sword of Wrath",
+            "weapon_type": "sword",
+            "damage_coefficient": 0.75,
+            "cast_duration": [360, 360],
+            "strike_on_tick_list": [[360], [360]]
+        }, {
+            "skill_key": "Sword Arc",
+            "weapon_type": "sword",
+            "damage_coefficient": 0.8,
+            "cast_duration": [520, 520],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[520], [520]]
+        }, {
+            "skill_key": "Sword Wave",
+            "weapon_type": "sword",
+            "damage_coefficient": 0.55,
+            "cast_duration": [680, 680],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [680, 680, 680],
+                [680, 680, 680]
+            ]
+        }, {
+            "skill_key": "Symbol of Blades Attack",
+            "is_child_skill": "true",
+            "weapon_type": "sword",
+            "damage_coefficient": 0.845,
+            "cast_duration": [4000, 4000],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [0, 1000, 2000, 3000, 4000],
+                [0, 1000, 2000, 3000, 4000]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Symbolic Avenger Effect",
+                        "max_considered_stacks": 5,
+                        "attribute_modifiers": [
+                            {
+                                "attribute": "outgoing_strike_damage_multiplier_add_group",
+                                "addend": 0.02
+                            }
+                        ]
+                    },
+                    "base_duration_ms": 15000,
+                    "direction": "SELF"
+                }
+            ]
+        }, {
+            "skill_key": "Symbol of Blades",
+            "weapon_type": "sword",
+            "damage_coefficient": 0.0,
+            "cast_duration": [560, 560],
+            "cooldown": [8000, 6400],
+            "child_skill_keys": [
+                "Symbol of Blades Attack"
+            ]
+        }, {
+            "skill_key": "Zealot's Defense",
+            "weapon_type": "sword",
+            "damage_coefficient": 0.6,
+            "cast_duration": [1240, 1240],
+            "cooldown": [12000, 9600],
+            "strike_on_tick_list": [
+                [155, 310, 465, 620, 775, 930, 1085, 1240],
+                [155, 310, 465, 620, 775, 930, 1085, 1240]
+            ]
+        }, {
+            "skill_key": "Ray of Judgement Attack",
+            "is_child_skill": "true",
+            "weapon_type": "focus",
+            "damage_coefficient": 0.45,
+            "cast_duration": [4000, 4000],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000],
+                [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
+            ]
+        }, {
+            "skill_key": "Ray of Judgement",
+            "weapon_type": "focus",
+            "damage_coefficient": 0.0,
+            "cast_duration": [520, 520],
+            "cooldown": [20000, 16000],
+            "child_skill_keys": [
+                "Ray of Judgement Attack"
+            ]
+        }, {
+            "skill_key": "Shield of Wrath Attack",
+            "is_child_skill": "true",
+            "weapon_type": "focus",
+            "damage_coefficient": 2.5,
+            "cast_duration": [4000, 4000],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [4000],
+                [4000]
+            ]
+        }, {
+            "skill_key": "Shield of Wrath",
+            "weapon_type": "focus",
+            "damage_coefficient": 0.0,
+            "cast_duration": [0, 0],
+            "cooldown": [35000, 28000],
+            "child_skill_keys": [
+                "Shield of Wrath Attack"
+            ]
+        }, {
+            "skill_key": "Shield of Courage",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.0,
+            "cast_duration": [280, 280],
+            "cooldown": [42500, 34000],
+            "pulse_on_tick_list": [
+                [280], 
+                [280]
+            ],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Inspiring Virtue Effect"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF"
+                }
+            ]
+        },
+        {
+            "NOTE": "This is a hardcoded skill name. Change only flat_damage and nothing else based on traits",
+            "skill_key": "Lifesteal Proc",
+            "weapon_type": "empty_handed",
+            "flat_damage": 325,
+            "cast_duration": [0, 0],
+            "strike_on_tick_list": [[0], [0]],
+            "cooldown": [2000, 2000],
+            "can_critical_strike": false
+        },
+        {
+            "skill_key": "Virtue of Justice Proc",
+            "num_targets": 3,
+            "ammo": 50000,
+            "cast_duration": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 2000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cooldown": [0, 0]
+        }
+    ]
+}
