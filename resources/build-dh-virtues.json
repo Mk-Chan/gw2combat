@@ -398,8 +398,6 @@
                     "direction": "SELF"
                 }
             ]
-
-            
         }, {
             "skill_key": "Spear of Justice",
             "weapon_type": "main_hand",
@@ -451,6 +449,7 @@
             "cooldown": [10000, 8000]
         }, {
             "skill_key": "Symbol of Energy Initial Attack",
+            "attribute_damage_to_skill": "Symbol of Energy",
             "weapon_type": "longbow",
             "damage_coefficient": 0.897,
             "cast_duration": [0, 0],
@@ -477,6 +476,7 @@
             ]
         }, {
             "skill_key": "Symbol of Energy Usual Attack",
+            "attribute_damage_to_skill": "Symbol of Energy",
             "weapon_type": "longbow",
             "damage_coefficient": 0.897,
             "cast_duration": [4000, 4000],
@@ -512,6 +512,7 @@
             ]
         }, {
             "skill_key": "Hunter's Ward Small Attacks",
+            "attribute_damage_to_skill": "Hunter's Ward",
             "weapon_type": "longbow",
             "damage_coefficient": 0.75,
             "cast_duration": [1250, 1250],
@@ -521,6 +522,7 @@
             ]
         }, {
             "skill_key": "Hunter's Ward Big Attack",
+            "attribute_damage_to_skill": "Hunter's Ward",
             "weapon_type": "longbow",
             "damage_coefficient": 2.5,
             "cast_duration": [300, 300],
@@ -574,6 +576,7 @@
             "strike_on_tick_list": [[1000], [720]]
         }, {
             "skill_key": "Symbol of Resolution Attack",
+            "attribute_damage_to_skill": "Symbol of Resolution",
             "is_child_skill": true,
             "weapon_type": "greatsword",
             "damage_coefficient": 0.845,
@@ -625,6 +628,7 @@
             ]
         }, {
             "skill_key": "Sword of Justice Attack",
+            "attribute_damage_to_skill": "Sword of Justice",
             "is_child_skill": true,
             "weapon_type": "empty_handed",
             "damage_coefficient": 0.72,
@@ -645,6 +649,7 @@
             "recharge_duration": 1000
         }, {
             "skill_key": "Procession of Blades Attack",
+            "attribute_damage_to_skill": "Procession of Blades",
             "is_child_skill": true,
             "weapon_type": "empty_handed",
             "damage_coefficient": 0.44,
@@ -681,6 +686,7 @@
             ]
         }, {
             "skill_key": "Dragon's Maw Attack",
+            "attribute_damage_to_skill": "Dragon's Maw",
             "is_child_skill": true,
             "weapon_type": "empty_handed",
             "damage_coefficient": 3.6,
@@ -721,6 +727,7 @@
             ]
         }, {
             "skill_key": "Symbol of Blades Attack",
+            "attribute_damage_to_skill": "Symbol of Blades",
             "is_child_skill": "true",
             "weapon_type": "sword",
             "damage_coefficient": 0.845,
@@ -767,6 +774,7 @@
             ]
         }, {
             "skill_key": "Ray of Judgement Attack",
+            "attribute_damage_to_skill": "Ray of Judgement",
             "is_child_skill": "true",
             "weapon_type": "focus",
             "damage_coefficient": 0.45,
@@ -787,6 +795,7 @@
             ]
         }, {
             "skill_key": "Shield of Wrath Attack",
+            "attribute_damage_to_skill": "Shield of Wrath",
             "is_child_skill": "true",
             "weapon_type": "focus",
             "damage_coefficient": 2.5,
@@ -812,7 +821,7 @@
             "cast_duration": [280, 280],
             "cooldown": [42500, 34000],
             "pulse_on_tick_list": [
-                [280], 
+                [280],
                 [280]
             ],
             "on_pulse_effect_applications": [
