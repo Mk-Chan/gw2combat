@@ -7,6 +7,7 @@
 #include "counter_utils.hpp"
 #include "entity_utils.hpp"
 
+#include "component/actor/is_cooldown_modifier.hpp"
 #include "component/counter/is_counter_modifier.hpp"
 #include "component/effect/is_effect.hpp"
 #include "component/effect/is_effect_removal.hpp"
@@ -32,6 +33,19 @@ inline void apply_side_effects(registry_t& registry,
                 auto& counter = utils::get_counter(counter_modifier.counter_key, registry);
                 if (side_effect_condition_fn(counter_modifier.condition)) {
                     utils::apply_counter_modifications(registry, counter, counter_modifier);
+                }
+            }
+        });
+    registry.view<component::is_cooldown_modifier_t>().each(
+        [&](entity_t cooldown_modifier_entity,
+            const component::is_cooldown_modifier_t& is_cooldown_modifier) {
+            auto owner_actor = utils::get_owner(cooldown_modifier_entity, registry);
+            if (owner_actor != source_entity_owner) {
+                return;
+            }
+            for (auto& cooldown_modifier : is_cooldown_modifier.cooldown_modifiers) {
+                if (side_effect_condition_fn(cooldown_modifier.condition)) {
+                    utils::apply_cooldown_modifications(registry, owner_actor, cooldown_modifier);
                 }
             }
         });

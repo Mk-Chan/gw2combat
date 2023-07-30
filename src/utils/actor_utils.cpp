@@ -16,6 +16,7 @@
 #include "component/actor/destroy_after_rotation.hpp"
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
+#include "component/actor/is_cooldown_modifier.hpp"
 #include "component/actor/rotation_component.hpp"
 #include "component/actor/static_attributes.hpp"
 #include "component/actor/team.hpp"
@@ -81,6 +82,9 @@ entity_t add_skill_to_actor(const configuration::skill_t& skill,
     utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
                                      component::is_counter_modifier_t>(
         skill.counter_modifiers, actor_entity, registry);
+    utils::add_owner_based_component<std::vector<configuration::cooldown_modifier_t>,
+                                     component::is_cooldown_modifier_t>(
+        skill.cooldown_modifiers, actor_entity, registry);
 
     for (auto& child_skill : skill.child_skill_keys) {
         auto& child_skill_configuration = utils::get_skill_configuration(
@@ -296,6 +300,9 @@ std::optional<entity_t> add_unique_effect_to_actor(
     utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
                                      component::is_counter_modifier_t>(
         unique_effect.counter_modifiers, unique_effect_entity, registry);
+    utils::add_owner_based_component<std::vector<configuration::cooldown_modifier_t>,
+                                     component::is_cooldown_modifier_t>(
+        unique_effect.cooldown_modifiers, unique_effect_entity, registry);
     for (auto& skill_trigger : unique_effect.skill_triggers) {
         utils::add_owner_based_component<configuration::skill_trigger_t,
                                          component::is_skill_trigger>(
@@ -361,10 +368,10 @@ void finish_casting_skill(entity_t actor_entity, entity_t skill_entity, registry
             }
         }
     }
-    //spdlog::info("[{}] {}: finished casting skill {}",
-    //             utils::get_current_tick(registry),
-    //             utils::get_entity_name(actor_entity, registry),
-    //             utils::to_string(skill_configuration.skill_key));
+    // spdlog::info("[{}] {}: finished casting skill {}",
+    //              utils::get_current_tick(registry),
+    //              utils::get_entity_name(actor_entity, registry),
+    //              utils::to_string(skill_configuration.skill_key));
 }
 
 }  // namespace gw2combat::utils

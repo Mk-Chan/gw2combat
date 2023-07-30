@@ -4,11 +4,14 @@
 #include "common.hpp"
 
 #include "io_utils.hpp"
+#include "skill_utils.hpp"
 
+#include "configuration/cooldown_modifier.hpp"
 #include "configuration/skill.hpp"
 #include "configuration/unique_effect.hpp"
 
 #include "component/hierarchy/owner_component.hpp"
+#include "component/temporal/cooldown_component.hpp"
 
 namespace gw2combat::utils {
 
@@ -75,6 +78,40 @@ std::vector<entity_t> add_unique_effect_to_actor(
     entity_t target_entity,
     registry_t& registry);
 void finish_casting_skill(entity_t actor_entity, entity_t skill_entity, registry_t& registry);
+
+static inline void apply_cooldown_modifications(
+    registry_t& registry,
+    entity_t actor_entity,
+    const configuration::cooldown_modifier_t& cooldown_modifier) {
+    auto skill_entity =
+        utils::get_skill_entity(cooldown_modifier.skill_key, actor_entity, registry);
+    auto cooldown_ptr = registry.try_get<component::cooldown_component>(skill_entity);
+    if (!cooldown_ptr) {
+        return;
+    }
+    auto operation_fn = [&](int modifier) {
+        switch (cooldown_modifier.operation) {
+            case configuration::cooldown_modifier_t::operation_t::ADD:
+                cooldown_ptr->progress[0] -= modifier;
+                break;
+            case configuration::cooldown_modifier_t::operation_t::SUBTRACT:
+                cooldown_ptr->progress[0] += modifier;
+                break;
+            case configuration::cooldown_modifier_t::operation_t::SET:
+                cooldown_ptr->progress[0] = modifier;
+                cooldown_ptr->progress[1] = 0;
+                break;
+            default:
+                break;
+        }
+    };
+    if (cooldown_modifier.operation == configuration::cooldown_modifier_t::operation_t::RESET) {
+        cooldown_ptr->progress[0] = 0;
+        cooldown_ptr->progress[1] = 0;
+    } else {
+        operation_fn(cooldown_modifier.value);
+    }
+}
 
 }  // namespace gw2combat::utils
 
