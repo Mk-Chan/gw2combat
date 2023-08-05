@@ -53,6 +53,19 @@ namespace gw2combat::utils {
             return {.satisfied = false, .reason = "wrong weapon set"};
         }
     }
+    if (condition.bundle) {
+        if (!registry.any_of<component::bundle_component>(source_entity)) {
+            return {.satisfied = false, .reason = "no bundle equipped"};
+        }
+        auto& bundle = registry.get<component::bundle_component>(source_entity);
+        bool is_satisfied = bundle.name == *condition.bundle;
+        if (!is_satisfied) {
+            return {.satisfied = false,
+                    .reason = fmt::format("wrong bundle equipped: {}, required bundle: {}",
+                                          bundle.name,
+                                          *condition.bundle)};
+        }
+    }
     if (condition.unique_effect_on_source) {
         bool is_satisfied = false;
 

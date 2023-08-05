@@ -7,6 +7,7 @@
 #include "actor/skill.hpp"
 #include "actor/unique_effect.hpp"
 #include "actor/weapon.hpp"
+#include "actor/bundle.hpp"
 
 #include "threshold.hpp"
 
@@ -18,6 +19,7 @@ struct condition_t {
     std::optional<actor::weapon_type> weapon_type = std::nullopt;
     std::optional<actor::weapon_position> weapon_position = std::nullopt;
     std::optional<actor::weapon_set> weapon_set = std::nullopt;
+    std::optional<actor::bundle_t> bundle = std::nullopt;
     std::optional<actor::unique_effect_t> unique_effect_on_source = std::nullopt;
     std::optional<actor::effect_t> effect_on_source = std::nullopt;
     std::optional<actor::unique_effect_t> unique_effect_on_target = std::nullopt;
@@ -62,6 +64,9 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     }
     if (nlohmann_json_t.weapon_set) {
         nlohmann_json_j["weapon_set"] = *nlohmann_json_t.weapon_set;
+    }
+    if (nlohmann_json_t.bundle) {
+        nlohmann_json_j["bundle"] = *nlohmann_json_t.bundle;
     }
     if (nlohmann_json_t.unique_effect_on_source) {
         nlohmann_json_j["unique_effect_on_source"] = *nlohmann_json_t.unique_effect_on_source;
@@ -152,6 +157,9 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
     if (nlohmann_json_j.contains("weapon_set")) {
         nlohmann_json_t.weapon_set =
             nlohmann_json_j.value("weapon_set", *nlohmann_json_default_obj.weapon_set);
+    }
+    if (nlohmann_json_j.contains("bundle")) {
+        nlohmann_json_t.bundle = nlohmann_json_j.value("bundle", *nlohmann_json_default_obj.bundle);
     }
     if (nlohmann_json_j.contains("unique_effect_on_source")) {
         nlohmann_json_t.unique_effect_on_source = nlohmann_json_j.value(
