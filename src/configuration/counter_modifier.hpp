@@ -30,9 +30,13 @@ NLOHMANN_JSON_SERIALIZE_ENUM(counter_modifier_t::operation_t,
                              {
                                  {counter_modifier_t::operation_t::INVALID, "invalid"},
                                  {counter_modifier_t::operation_t::ADD, "add"},
+                                 {counter_modifier_t::operation_t::ADD, "ADD"},
                                  {counter_modifier_t::operation_t::SUBTRACT, "subtract"},
+                                 {counter_modifier_t::operation_t::SUBTRACT, "SUBTRACT"},
                                  {counter_modifier_t::operation_t::SET, "set"},
+                                 {counter_modifier_t::operation_t::SET, "SET"},
                                  {counter_modifier_t::operation_t::RESET, "reset"},
+                                 {counter_modifier_t::operation_t::RESET, "RESET"},
                              })
 static inline void to_json(nlohmann::json& nlohmann_json_j,
                            const counter_modifier_t& nlohmann_json_t) {

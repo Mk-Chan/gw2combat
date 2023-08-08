@@ -29,9 +29,13 @@ NLOHMANN_JSON_SERIALIZE_ENUM(cooldown_modifier_t::operation_t,
                              {
                                  {cooldown_modifier_t::operation_t::INVALID, "invalid"},
                                  {cooldown_modifier_t::operation_t::ADD, "add"},
+                                 {cooldown_modifier_t::operation_t::ADD, "ADD"},
                                  {cooldown_modifier_t::operation_t::SUBTRACT, "subtract"},
+                                 {cooldown_modifier_t::operation_t::SUBTRACT, "SUBTRACT"},
                                  {cooldown_modifier_t::operation_t::SET, "set"},
+                                 {cooldown_modifier_t::operation_t::SET, "SET"},
                                  {cooldown_modifier_t::operation_t::RESET, "reset"},
+                                 {cooldown_modifier_t::operation_t::RESET, "RESET"},
                              })
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(cooldown_modifier_t,
                                                 condition,
