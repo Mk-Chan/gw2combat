@@ -106,7 +106,7 @@ static inline void apply_cooldown_modifications(
         }
     };
     if (cooldown_modifier.operation == configuration::cooldown_modifier_t::operation_t::RESET) {
-        cooldown_ptr->progress[0] = 0;
+        cooldown_ptr->progress[0] = cooldown_ptr->duration[0];
         cooldown_ptr->progress[1] = 0;
     } else {
         operation_fn(cooldown_modifier.value);
