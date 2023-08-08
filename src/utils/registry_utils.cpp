@@ -10,6 +10,7 @@
 #include "component/actor/destroy_after_rotation.hpp"
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
+#include "component/actor/is_cooldown_modifier.hpp"
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
 #include "component/actor/profession_component.hpp"
@@ -174,6 +175,11 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
             destination_registry.emplace<gw2combat::component::combat_stats>(
                 destination_entity,
                 source_registry.get<gw2combat::component::combat_stats>(entity));
+        }
+        if (source_registry.all_of<gw2combat::component::is_cooldown_modifier_t>(entity)) {
+            destination_registry.emplace<gw2combat::component::is_cooldown_modifier_t>(
+                destination_entity,
+                source_registry.get<gw2combat::component::is_cooldown_modifier_t>(entity));
         }
         if (source_registry.all_of<gw2combat::component::skills_actions_component>(entity)) {
             destination_registry.emplace<gw2combat::component::skills_actions_component>(
