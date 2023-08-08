@@ -86,6 +86,18 @@
             ]
         },
         {
+            "unique_effect_key": "Symbolic Avenger",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_strikes_by_skill_with_tag": "SYMBOL"
+                    },
+                    "skill_key": "Symbolic Avenger Proc"
+                }
+            ]
+        },
+        {
             "unique_effect_key": "Furious Sharpening Stone",
             "attribute_conversions": [
                 {
@@ -363,6 +375,27 @@
             "cast_duration": [100, 100],
             "cooldown": [10000, 10000]
         }, {
+            "skill_key": "Symbolic Avenger Proc",
+            "cast_duration": [0, 0],
+            "cooldown": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Symbolic Avenger Effect",
+                        "max_considered_stacks": 5,
+                        "attribute_modifiers": [
+                            {
+                                "attribute": "outgoing_strike_damage_multiplier_add_group",
+                                "addend": 0.02
+                            }
+                        ]
+                    },
+                    "base_duration_ms": 15000,
+                    "direction": "SELF"
+                }
+            ]
+        }, {
             "skill_key": "Spear of Justice Pulse",
             "is_child_skill": true,
             "weapon_type": "empty_handed",
@@ -459,21 +492,9 @@
                     "effect": "BURNING",
                     "base_duration_ms": 12000,
                     "direction": "OUTGOING"
-                }, {
-                    "unique_effect": {
-                        "unique_effect_key": "Symbolic Avenger Effect",
-                        "max_considered_stacks": 5,
-                        "attribute_modifiers": [
-                            {
-                                "attribute": "outgoing_strike_damage_multiplier_add_group",
-                                "addend": 0.02
-                            }
-                        ]
-                    },
-                    "base_duration_ms": 15000,
-                    "direction": "SELF"
                 }
-            ]
+            ],
+            "tags": ["SYMBOL"]
         }, {
             "skill_key": "Symbol of Energy Usual Attack",
             "attribute_damage_to_skill": "Symbol of Energy",
@@ -484,22 +505,7 @@
                 [1000, 2000, 3000, 4000],
                 [1000, 2000, 3000, 4000]
             ],
-            "on_strike_effect_applications": [
-                {
-                    "unique_effect": {
-                        "unique_effect_key": "Symbolic Avenger Effect",
-                        "max_considered_stacks": 5,
-                        "attribute_modifiers": [
-                            {
-                                "attribute": "outgoing_strike_damage_multiplier_add_group",
-                                "addend": 0.02
-                            }
-                        ]
-                    },
-                    "base_duration_ms": 15000,
-                    "direction": "SELF"
-                }
-            ]
+            "tags": ["SYMBOL"]
         }, {
             "skill_key": "Symbol of Energy",
             "weapon_type": "longbow",
@@ -586,22 +592,7 @@
                 [0, 1000, 2000, 3000, 4000],
                 [0, 1000, 2000, 3000, 4000]
             ],
-            "on_strike_effect_applications": [
-                {
-                    "unique_effect": {
-                        "unique_effect_key": "Symbolic Avenger Effect",
-                        "max_considered_stacks": 5,
-                        "attribute_modifiers": [
-                            {
-                                "attribute": "outgoing_strike_damage_multiplier_add_group",
-                                "addend": 0.02
-                            }
-                        ]
-                    },
-                    "base_duration_ms": 15000,
-                    "direction": "SELF"
-                }
-            ]
+            "tags": ["SYMBOL"]
         }, {
             "skill_key": "Symbol of Resolution",
             "weapon_type": "GREATSWORD",
@@ -737,22 +728,7 @@
                 [0, 1000, 2000, 3000, 4000],
                 [0, 1000, 2000, 3000, 4000]
             ],
-            "on_strike_effect_applications": [
-                {
-                    "unique_effect": {
-                        "unique_effect_key": "Symbolic Avenger Effect",
-                        "max_considered_stacks": 5,
-                        "attribute_modifiers": [
-                            {
-                                "attribute": "outgoing_strike_damage_multiplier_add_group",
-                                "addend": 0.02
-                            }
-                        ]
-                    },
-                    "base_duration_ms": 15000,
-                    "direction": "SELF"
-                }
-            ]
+            "tags": ["SYMBOL"]
         }, {
             "skill_key": "Symbol of Blades",
             "weapon_type": "sword",

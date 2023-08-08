@@ -316,11 +316,9 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
     }
 
     result = utils::to_string(system::get_audit_report(registry, encounter.audit_offset));
-    if (enable_caching) {
-        auto cache_key = convert_encounter_to_cache_key(encounter);
-        if (!registry_cache.contains(cache_key)) {
-            registry_cache.put(convert_encounter_to_cache_key(encounter), std::move(registry));
-        }
+    auto cache_key = convert_encounter_to_cache_key(encounter);
+    if (!registry_cache.contains(cache_key)) {
+        registry_cache.put(convert_encounter_to_cache_key(encounter), std::move(registry));
     }
     return result;
 }

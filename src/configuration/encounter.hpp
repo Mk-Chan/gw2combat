@@ -48,6 +48,7 @@ struct encounter_t {
     bool require_afk_skills = false;
     int audit_offset = 0;
     weapon_strength_mode_t weapon_strength_mode = weapon_strength_mode_t::MEAN;
+    bool enable_caching = true;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_t,
@@ -73,7 +74,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t,
                                                 audit_configuration,
                                                 require_afk_skills,
                                                 audit_offset,
-                                                weapon_strength_mode)
+                                                weapon_strength_mode,
+                                                enable_caching)
 
 }  // namespace gw2combat::configuration
 
