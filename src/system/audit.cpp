@@ -100,6 +100,50 @@ namespace gw2combat::system {
     return uncastable_skills;
 }
 
+[[maybe_unused]] std::vector<audit::actor_effect_t> get_effects_on_actor(entity_t actor_entity,
+                                                                         registry_t& registry) {
+    std::vector<audit::actor_effect_t> actor_effects;
+    registry.view<component::is_effect, component::owner_component>().each(
+        [&](entity_t effect_entity,
+            const component::is_effect& is_effect,
+            const component::owner_component& owner_component) {
+            if (owner_component.entity != actor_entity) {
+                return;
+            }
+            auto& duration_component = registry.get<component::duration_component>(effect_entity);
+            auto& source_actor = registry.get<component::source_actor>(effect_entity);
+            actor_effects.emplace_back(audit::actor_effect_t{
+                .effect = is_effect.effect,
+                .source_actor = utils::get_entity_name(source_actor.entity, registry),
+                .remaining_duration = duration_component.duration - duration_component.progress,
+            });
+        });
+    return actor_effects;
+}
+
+[[maybe_unused]] std::vector<audit::actor_unique_effect_t> get_unique_effects_on_actor(
+    entity_t actor_entity,
+    registry_t& registry) {
+    std::vector<audit::actor_unique_effect_t> actor_unique_effects;
+    registry.view<component::is_unique_effect, component::owner_component>().each(
+        [&](entity_t unique_effect_entity,
+            const component::is_unique_effect& is_unique_effect,
+            const component::owner_component& owner_component) {
+            if (owner_component.entity != actor_entity) {
+                return;
+            }
+            auto& duration_component =
+                registry.get<component::duration_component>(unique_effect_entity);
+            auto& source_actor = registry.get<component::source_actor>(unique_effect_entity);
+            actor_unique_effects.emplace_back(audit::actor_unique_effect_t{
+                .unique_effect = is_unique_effect.unique_effect.unique_effect_key,
+                .source_actor = utils::get_entity_name(source_actor.entity, registry),
+                .remaining_duration = duration_component.duration - duration_component.progress,
+            });
+        });
+    return actor_unique_effects;
+}
+
 [[maybe_unused]] std::map<std::basic_string<char>, std::map<actor::attribute_t, double>>
 get_actor_attributes(registry_t& registry) {
     std::map<std::basic_string<char>, std::map<actor::attribute_t, double>> actor_attributes;
@@ -116,6 +160,27 @@ audit::tick_event_t create_tick_event(const decltype(audit::tick_event_t::event)
                                       registry_t& registry) {
     auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
     auto weapon_set_ptr = registry.try_get<component::current_weapon_set>(actor_entity);
+    auto effects_on_actor = get_effects_on_actor(actor_entity, registry);
+    auto unique_effects_on_actor = get_unique_effects_on_actor(actor_entity, registry);
+
+    std::unordered_map<std::string, audit::actor_effect_summary_t> effect_summary;
+    for (auto& effect : effects_on_actor) {
+        auto& effect_summary_entry = effect_summary[nlohmann::json{effect.effect}[0]];
+        effect_summary_entry.stacks++;
+        if (effect.remaining_duration > effect_summary_entry.remaining_duration) {
+            effect_summary_entry.remaining_duration = effect.remaining_duration;
+        }
+    }
+    std::unordered_map<actor::unique_effect_t, audit::actor_unique_effect_summary_t>
+        unique_effect_summary;
+    for (auto& unique_effect : unique_effects_on_actor) {
+        auto& unique_effect_summary_entry = unique_effect_summary[unique_effect.unique_effect];
+        unique_effect_summary_entry.stacks++;
+        if (unique_effect.remaining_duration > unique_effect_summary_entry.remaining_duration) {
+            unique_effect_summary_entry.remaining_duration = unique_effect.remaining_duration;
+        }
+    }
+
     return audit::tick_event_t{
         .time_ms = utils::get_current_tick(registry),
         .actor = utils::get_entity_name(actor_entity, registry),
@@ -125,6 +190,8 @@ audit::tick_event_t create_tick_event(const decltype(audit::tick_event_t::event)
         .current_weapon_set = weapon_set_ptr ? weapon_set_ptr->set : actor::weapon_set::INVALID,
         .current_bundle = bundle_ptr ? bundle_ptr->name : "",
         .uncastable_skills = get_uncastable_skills(actor_entity, registry),
+        .effects = effect_summary,
+        .unique_effects = unique_effect_summary,
         //.actor_attributes = get_actor_attributes(registry),
     };
 }

@@ -6,7 +6,9 @@
 #include "actor/attributes.hpp"
 #include "actor/bundle.hpp"
 #include "actor/counter.hpp"
+#include "actor/effect.hpp"
 #include "actor/skill.hpp"
+#include "actor/unique_effect.hpp"
 #include "actor/weapon.hpp"
 
 #include "events.hpp"
@@ -30,6 +32,28 @@ struct uncastable_skill_t {
     int remaining_ammo = 0;
 };
 
+struct actor_effect_t {
+    actor::effect_t effect = actor::effect_t::INVALID;
+    std::string source_actor;
+    int remaining_duration = 0;
+};
+
+struct actor_effect_summary_t {
+    int stacks = 0;
+    int remaining_duration = 0;
+};
+
+struct actor_unique_effect_t {
+    actor::unique_effect_t unique_effect;
+    std::string source_actor;
+    int remaining_duration = 0;
+};
+
+struct actor_unique_effect_summary_t {
+    int stacks = 0;
+    int remaining_duration = 0;
+};
+
 struct tick_event_t {
     tick_t time_ms = 0;
     std::string actor;
@@ -49,6 +73,8 @@ struct tick_event_t {
     actor::weapon_set current_weapon_set = actor::weapon_set::INVALID;
     actor::bundle_t current_bundle;
     std::unordered_map<actor::skill_t, uncastable_skill_t> uncastable_skills;
+    std::unordered_map<std::string, actor_effect_summary_t> effects;
+    std::unordered_map<actor::unique_effect_t, actor_unique_effect_summary_t> unique_effects;
 
     // std::unordered_map<std::string, std::unordered_map<actor::attribute_t, double>>
     //     actor_attributes;
@@ -60,6 +86,18 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(uncastable_skill_t,
                                                 reason,
                                                 remaining_cooldown,
                                                 remaining_ammo)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_effect_t,
+                                                effect,
+                                                source_actor,
+                                                remaining_duration)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_effect_summary_t, stacks, remaining_duration)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_unique_effect_t,
+                                                unique_effect,
+                                                source_actor,
+                                                remaining_duration)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_unique_effect_summary_t,
+                                                stacks,
+                                                remaining_duration)
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const tick_event_t& nlohmann_json_t) {
     nlohmann_json_j["time_ms"] = nlohmann_json_t.time_ms;
@@ -70,6 +108,8 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const tick_event_t& 
     nlohmann_json_j["current_weapon"] = nlohmann_json_t.current_weapon_set;
     nlohmann_json_j["current_bundle"] = nlohmann_json_t.current_bundle;
     nlohmann_json_j["uncastable_skills"] = nlohmann_json_t.uncastable_skills;
+    nlohmann_json_j["effects"] = nlohmann_json_t.effects;
+    nlohmann_json_j["unique_effects"] = nlohmann_json_t.unique_effects;
     // nlohmann_json_j["actor_attributes"] = nlohmann_json_t.actor_attributes;
 }
 
@@ -93,6 +133,9 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, tick_event_t
         nlohmann_json_j.value("current_bundle", nlohmann_json_default_obj.current_bundle);
     nlohmann_json_t.uncastable_skills =
         nlohmann_json_j.value("uncastable_skills", nlohmann_json_default_obj.uncastable_skills);
+    nlohmann_json_t.effects = nlohmann_json_j.value("effects", nlohmann_json_default_obj.effects);
+    nlohmann_json_t.unique_effects =
+        nlohmann_json_j.value("unique_effects", nlohmann_json_default_obj.unique_effects);
     // nlohmann_json_t.actor_attributes =
     //     nlohmann_json_j.value("actor_attributes", nlohmann_json_default_obj.actor_attributes);
 }
