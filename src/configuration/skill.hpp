@@ -11,6 +11,7 @@
 #include "condition.hpp"
 #include "cooldown_modifier.hpp"
 #include "counter_modifier.hpp"
+#include "effect_removal.hpp"
 #include "effect_application.hpp"
 #include "weapon.hpp"
 
@@ -42,6 +43,7 @@ struct skill_t {
     std::vector<attribute_conversion_t> attribute_conversions{};
     std::vector<counter_modifier_t> counter_modifiers{};
     std::vector<cooldown_modifier_t> cooldown_modifiers{};
+    std::vector<effect_removal_t> effect_removals{};
 
     std::vector<actor::skill_t> skills_to_put_on_cooldown{};
 
@@ -78,6 +80,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 attribute_conversions,
                                                 counter_modifiers,
                                                 cooldown_modifiers,
+                                                effect_removals,
                                                 skills_to_put_on_cooldown,
                                                 child_skill_keys,
                                                 tags,

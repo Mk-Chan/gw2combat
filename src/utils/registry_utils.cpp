@@ -107,10 +107,10 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
                 destination_entity,
                 source_registry.get<gw2combat::component::is_unique_effect>(entity));
         }
-        if (source_registry.all_of<gw2combat::component::is_effect_removal>(entity)) {
-            destination_registry.emplace<gw2combat::component::is_effect_removal>(
+        if (source_registry.all_of<gw2combat::component::is_effect_removal_t>(entity)) {
+            destination_registry.emplace<gw2combat::component::is_effect_removal_t>(
                 destination_entity,
-                source_registry.get<gw2combat::component::is_effect_removal>(entity));
+                source_registry.get<gw2combat::component::is_effect_removal_t>(entity));
         }
         if (source_registry.all_of<gw2combat::component::is_skill_trigger>(entity)) {
             destination_registry.emplace<gw2combat::component::is_skill_trigger>(

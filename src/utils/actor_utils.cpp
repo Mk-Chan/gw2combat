@@ -85,6 +85,9 @@ entity_t add_skill_to_actor(const configuration::skill_t& skill,
     utils::add_owner_based_component<std::vector<configuration::cooldown_modifier_t>,
                                      component::is_cooldown_modifier_t>(
         skill.cooldown_modifiers, actor_entity, registry);
+    utils::add_owner_based_component<std::vector<configuration::effect_removal_t>,
+                                     component::is_effect_removal_t>(
+        skill.effect_removals, actor_entity, registry);
 
     for (auto& child_skill : skill.child_skill_keys) {
         auto& child_skill_configuration = utils::get_skill_configuration(
@@ -303,6 +306,9 @@ std::optional<entity_t> add_unique_effect_to_actor(
     utils::add_owner_based_component<std::vector<configuration::cooldown_modifier_t>,
                                      component::is_cooldown_modifier_t>(
         unique_effect.cooldown_modifiers, unique_effect_entity, registry);
+    utils::add_owner_based_component<std::vector<configuration::effect_removal_t>,
+                                     component::is_effect_removal_t>(
+        unique_effect.effect_removals, unique_effect_entity, registry);
     for (auto& skill_trigger : unique_effect.skill_triggers) {
         utils::add_owner_based_component<configuration::skill_trigger_t,
                                          component::is_skill_trigger>(
@@ -312,11 +318,6 @@ std::optional<entity_t> add_unique_effect_to_actor(
         utils::add_owner_based_component<configuration::skill_trigger_t,
                                          component::is_unchained_skill_trigger>(
             skill_trigger, unique_effect_entity, registry);
-    }
-    for (auto& effect_removal : unique_effect.effect_removals) {
-        utils::add_owner_based_component<configuration::effect_removal_t,
-                                         component::is_effect_removal>(
-            effect_removal, unique_effect_entity, registry);
     }
 
     return unique_effect_entity;

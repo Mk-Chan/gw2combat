@@ -49,51 +49,52 @@ inline void apply_side_effects(registry_t& registry,
                 }
             }
         });
-    registry.view<component::is_effect_removal>().each(
-        [&](entity_t effect_removal_entity, component::is_effect_removal& is_effect_removal) {
+    registry.view<component::is_effect_removal_t>().each(
+        [&](entity_t effect_removal_entity, component::is_effect_removal_t& is_effect_removal) {
             auto owner_entity = utils::get_owner(effect_removal_entity, registry);
             if (owner_entity != source_entity_owner) {
                 return;
             }
 
-            auto& effect_removal = is_effect_removal.effect_removal;
-            if (side_effect_condition_fn(effect_removal.condition)) {
-                if (effect_removal.effect != actor::effect_t::INVALID) {
-                    int stacks_to_remove =
-                        effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
-                    registry.view<component::is_effect, component::owner_component>().each(
-                        [&](entity_t effect_entity,
-                            const component::is_effect& is_effect,
-                            const component::owner_component& effect_owner) {
-                            if (effect_owner.entity == source_entity_owner &&
-                                is_effect.effect == effect_removal.effect) {
-                                if (stacks_to_remove <= 0) {
-                                    return;
+            for (auto& effect_removal : is_effect_removal.effect_removals) {
+                if (side_effect_condition_fn(effect_removal.condition)) {
+                    if (effect_removal.effect != actor::effect_t::INVALID) {
+                        int stacks_to_remove =
+                            effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
+                        registry.view<component::is_effect, component::owner_component>().each(
+                            [&](entity_t effect_entity,
+                                const component::is_effect& is_effect,
+                                const component::owner_component& effect_owner) {
+                                if (effect_owner.entity == source_entity_owner &&
+                                    is_effect.effect == effect_removal.effect) {
+                                    if (stacks_to_remove <= 0) {
+                                        return;
+                                    }
+                                    --stacks_to_remove;
+                                    registry.emplace_or_replace<component::destroy_entity>(
+                                        effect_entity);
                                 }
-                                --stacks_to_remove;
-                                registry.emplace_or_replace<component::destroy_entity>(
-                                    effect_entity);
-                            }
-                        });
-                }
-                if (!effect_removal.unique_effect.empty()) {
-                    int stacks_to_remove =
-                        effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
-                    registry.view<component::is_unique_effect, component::owner_component>().each(
-                        [&](entity_t unique_effect_entity,
-                            const component::is_unique_effect& is_unique_effect,
-                            const component::owner_component& effect_owner) {
-                            if (effect_owner.entity == source_entity_owner &&
-                                is_unique_effect.unique_effect.unique_effect_key ==
-                                    effect_removal.unique_effect) {
-                                if (stacks_to_remove <= 0) {
-                                    return;
+                            });
+                    }
+                    if (!effect_removal.unique_effect.empty()) {
+                        int stacks_to_remove =
+                            effect_removal.num_stacks ? *effect_removal.num_stacks : 5000;
+                        registry.view<component::is_unique_effect, component::owner_component>()
+                            .each([&](entity_t unique_effect_entity,
+                                      const component::is_unique_effect& is_unique_effect,
+                                      const component::owner_component& effect_owner) {
+                                if (effect_owner.entity == source_entity_owner &&
+                                    is_unique_effect.unique_effect.unique_effect_key ==
+                                        effect_removal.unique_effect) {
+                                    if (stacks_to_remove <= 0) {
+                                        return;
+                                    }
+                                    --stacks_to_remove;
+                                    registry.emplace_or_replace<component::destroy_entity>(
+                                        unique_effect_entity);
                                 }
-                                --stacks_to_remove;
-                                registry.emplace_or_replace<component::destroy_entity>(
-                                    unique_effect_entity);
-                            }
-                        });
+                            });
+                    }
                 }
             }
         });

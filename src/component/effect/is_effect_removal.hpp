@@ -5,8 +5,8 @@
 
 namespace gw2combat::component {
 
-struct is_effect_removal {
-    configuration::effect_removal_t effect_removal;
+struct is_effect_removal_t {
+    std::vector<configuration::effect_removal_t> effect_removals;
 };
 
 }  // namespace gw2combat::component
