@@ -249,18 +249,19 @@ namespace gw2combat::utils {
         }
     }
     if (!condition.not_conditions.empty()) {
-        std::string failure_reason;
-        bool not_conditions_satisfied =
-            std::any_of(condition.not_conditions.begin(),
-                        condition.not_conditions.end(),
-                        [&](auto&& condition) {
-                            auto result = stage_independent_conditions_satisfied(
-                                condition, entity, target_entity, registry);
-                            if (!result.satisfied) {
-                                failure_reason = result.reason;
-                            }
-                            return !result.satisfied;
-                        });
+        std::string failure_reason = "{ \"not\": [";
+        bool not_conditions_satisfied = std::any_of(
+            condition.not_conditions.begin(),
+            condition.not_conditions.end(),
+            [&](auto&& condition) {
+                auto result = stage_independent_conditions_satisfied(
+                    condition, entity, target_entity, registry);
+                if (result.satisfied) {
+                    failure_reason += utils::to_string(condition) + ",";
+                }
+                return !result.satisfied;
+            });
+        failure_reason = failure_reason.substr(0, failure_reason.length() - 1) + "] }";
         if (!not_conditions_satisfied) {
             return {.satisfied = false, .reason = failure_reason};
         }
