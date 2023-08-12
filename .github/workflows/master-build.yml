@@ -17,9 +17,9 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: gw2combat
+        name: gw2combat_linux
         path: |
-          gw2combat_linux
+          gw2combat
 
   build-windows:
     runs-on: windows-latest
@@ -31,9 +31,9 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: gw2combat
+        name: gw2combat_windows
         path: |
-          gw2combat_windows
+          gw2combat
 
   build-macos:
     runs-on: macos-latest
@@ -45,6 +45,6 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: gw2combat
+        name: gw2combat_macos
         path: |
-          gw2combat_windows
+          gw2combat
