@@ -1,3 +1,4 @@
+[![Master build](https://github.com/Mk-Chan/gw2combat/actions/workflows/master-build.yml/badge.svg)](https://github.com/Mk-Chan/gw2combat/actions/workflows/master-build.yml)
 # gw2combat
 This program aims to accurately simulate Guild Wars 2's in game combat. 
 
