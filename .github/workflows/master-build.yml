@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -19,4 +19,32 @@ jobs:
       with:
         name: gw2combat
         path: |
-          gw2combat    
+          gw2combat_linux
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Build
+      run: make -j2
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: gw2combat
+        path: |
+          gw2combat_windows
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Build
+      run: make -j2
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: gw2combat
+        path: |
+          gw2combat_windows
