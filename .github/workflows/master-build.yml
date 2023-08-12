@@ -33,7 +33,7 @@ jobs:
       with:
         name: gw2combat_windows
         path: |
-          gw2combat
+          gw2combat.exe
 
   build-macos:
     runs-on: macos-latest
