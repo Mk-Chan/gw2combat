@@ -11,8 +11,8 @@
 #include "condition.hpp"
 #include "cooldown_modifier.hpp"
 #include "counter_modifier.hpp"
-#include "effect_removal.hpp"
 #include "effect_application.hpp"
+#include "effect_removal.hpp"
 #include "weapon.hpp"
 
 namespace gw2combat::configuration {
@@ -60,6 +60,16 @@ struct skill_t {
     }
 };
 
+struct conditional_skill_t {
+    condition_t condition;
+    actor::skill_t skill_key;
+};
+
+struct conditional_skill_group_t {
+    actor::skill_t skill_key;
+    std::vector<conditional_skill_t> conditional_skill_keys;
+};
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 skill_key,
                                                 weapon_type,
@@ -87,6 +97,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 can_critical_strike,
                                                 equip_bundle,
                                                 cast_condition)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(conditional_skill_t, condition, skill_key)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(conditional_skill_group_t,
+                                                skill_key,
+                                                conditional_skill_keys)
 
 }  // namespace gw2combat::configuration
 

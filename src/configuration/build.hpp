@@ -21,6 +21,7 @@ struct recipe_t {
     std::vector<actor::effect_t> permanent_effects{};
     std::vector<unique_effect_t> permanent_unique_effects{};
     std::vector<skill_t> skills{};
+    std::vector<conditional_skill_group_t> conditional_skill_groups{};
 };
 
 struct build_t {
@@ -30,6 +31,7 @@ struct build_t {
     std::vector<weapon_t> weapons{};
     actor::weapon_set initial_weapon_set = actor::weapon_set::SET_1;
     std::vector<skill_t> skills{};
+    std::vector<conditional_skill_group_t> conditional_skill_groups{};
     std::vector<actor::effect_t> permanent_effects{};
     std::vector<unique_effect_t> permanent_unique_effects{};
     std::vector<counter_configuration_t> counters{};
@@ -96,7 +98,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(recipe_t,
                                                 counters,
                                                 permanent_effects,
                                                 permanent_unique_effects,
-                                                skills)
+                                                skills,
+                                                conditional_skill_groups)
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohmann_json_t) {
     nlohmann_json_j["base_class"] = nlohmann_json_t.base_class;
@@ -105,6 +108,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const build_t& nlohm
     nlohmann_json_j["weapons"] = nlohmann_json_t.weapons;
     nlohmann_json_j["initial_weapon_set"] = nlohmann_json_t.initial_weapon_set;
     nlohmann_json_j["skills"] = nlohmann_json_t.skills;
+    nlohmann_json_j["conditional_skill_groups"] = nlohmann_json_t.conditional_skill_groups;
     nlohmann_json_j["permanent_effects"] = nlohmann_json_t.permanent_effects;
     nlohmann_json_j["permanent_unique_effects"] = nlohmann_json_t.permanent_unique_effects;
     nlohmann_json_j["counters"] = nlohmann_json_t.counters;
@@ -125,6 +129,8 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, build_t& nlo
     nlohmann_json_t.initial_weapon_set =
         nlohmann_json_j.value("initial_weapon_set", nlohmann_json_default_obj.initial_weapon_set);
     nlohmann_json_t.skills = nlohmann_json_j.value("skills", nlohmann_json_default_obj.skills);
+    nlohmann_json_t.conditional_skill_groups = nlohmann_json_j.value(
+        "conditional_skill_groups", nlohmann_json_default_obj.conditional_skill_groups);
     nlohmann_json_t.permanent_effects =
         nlohmann_json_j.value("permanent_effects", nlohmann_json_default_obj.permanent_effects);
     nlohmann_json_t.permanent_unique_effects = nlohmann_json_j.value(

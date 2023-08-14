@@ -41,6 +41,7 @@
 #include "component/hierarchy/owner_component.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
+#include "component/skill/is_conditional_skill_group.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
@@ -87,6 +88,11 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
         if (source_registry.all_of<gw2combat::component::is_skill>(entity)) {
             destination_registry.emplace<gw2combat::component::is_skill>(
                 destination_entity, source_registry.get<gw2combat::component::is_skill>(entity));
+        }
+        if (source_registry.all_of<gw2combat::component::is_conditional_skill_group>(entity)) {
+            destination_registry.emplace<gw2combat::component::is_conditional_skill_group>(
+                destination_entity,
+                source_registry.get<gw2combat::component::is_conditional_skill_group>(entity));
         }
         if (source_registry.all_of<gw2combat::component::is_effect>(entity)) {
             destination_registry.emplace<gw2combat::component::is_effect>(

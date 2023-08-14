@@ -32,6 +32,7 @@
 #include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
+#include "component/skill/is_conditional_skill_group.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/duration_component.hpp"
 #include "component/temporal/has_alacrity.hpp"
@@ -96,6 +97,31 @@ entity_t add_skill_to_actor(const configuration::skill_t& skill,
     }
 
     return skill_entity;
+}
+
+entity_t add_conditional_skill_group_to_actor(
+    const configuration::conditional_skill_group_t& conditional_skill_group,
+    entity_t actor_entity,
+    registry_t& registry) {
+    for (auto&& [conditional_skill_group_entity, owner_component, is_conditional_skill_group] :
+         registry.view<component::owner_component, component::is_conditional_skill_group>()
+             .each()) {
+        if (owner_component.entity == actor_entity &&
+            is_conditional_skill_group.conditional_skill_group_configuration.skill_key ==
+                conditional_skill_group.skill_key) {
+            return conditional_skill_group_entity;
+        }
+    }
+
+    auto conditional_skill_group_entity = registry.create();
+    registry.ctx().emplace_as<std::string>(
+        conditional_skill_group_entity,
+        conditional_skill_group.skill_key + " conditional skill group holder entity");
+
+    registry.emplace<component::is_conditional_skill_group>(conditional_skill_group_entity,
+                                                            conditional_skill_group);
+    registry.emplace<component::owner_component>(conditional_skill_group_entity, actor_entity);
+    return conditional_skill_group_entity;
 }
 
 void enqueue_child_skills(entity_t parent_actor,

@@ -52,7 +52,7 @@ void perform_rotations(registry_t& registry) {
             auto skill_entity = utils::get_skill_entity(next_skill_cast.skill, entity, registry);
 
             auto& skill_configuration =
-                utils::get_skill_configuration(next_skill_cast.skill, entity, registry);
+                registry.get<component::is_skill>(skill_entity).skill_configuration;
             bool is_instant_cast_skill = skill_configuration.cast_duration[0] == 0;
             if (!is_instant_cast_skill && is_in_animation) {
                 return;
@@ -218,10 +218,10 @@ void perform_skills(registry_t& registry) {
                             entity);
                     finished_skills_actions_component.skill_entities.emplace_back(
                         casting_skill.skill_entity);
-                    //spdlog::info("[{}] {}: finished skill actions for {}",
-                    //             utils::get_current_tick(registry),
-                    //             utils::get_entity_name(entity, registry),
-                    //             utils::to_string(skill_configuration.skill_key));
+                    // spdlog::info("[{}] {}: finished skill actions for {}",
+                    //              utils::get_current_tick(registry),
+                    //              utils::get_entity_name(entity, registry),
+                    //              utils::to_string(skill_configuration.skill_key));
                 }
             }
         });

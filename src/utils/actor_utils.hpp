@@ -36,6 +36,10 @@ static inline entity_t add_owner_based_component(const ConfigurationType& config
 entity_t add_skill_to_actor(const configuration::skill_t& skill,
                             entity_t actor_entity,
                             registry_t& registry);
+entity_t add_conditional_skill_group_to_actor(
+    const configuration::conditional_skill_group_t& conditional_skill_group,
+    entity_t actor_entity,
+    registry_t& registry);
 void enqueue_child_skills(entity_t parent_actor,
                           const std::string& child_name,
                           const std::vector<actor::skill_t>& skills,

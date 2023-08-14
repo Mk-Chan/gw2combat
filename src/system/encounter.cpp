@@ -29,6 +29,7 @@ void add_recipe_items_to_actor(
     const std::vector<actor::effect_t>& permanent_effects,
     const std::vector<configuration::unique_effect_t>& permanent_unique_effects,
     const std::vector<configuration::skill_t>& skills,
+    const std::vector<configuration::conditional_skill_group_t>& conditional_skill_groups,
     entity_t actor_entity,
     registry_t& registry) {
     for (auto& counter_configuration : counters) {
@@ -47,15 +48,19 @@ void add_recipe_items_to_actor(
                                          component::is_counter_modifier_t>(
             counter_configuration.counter_modifiers, actor_entity, registry);
     }
-    for (auto& skill : skills) {
-        utils::add_skill_to_actor(skill, actor_entity, registry);
-    }
     for (auto& permanent_effect : permanent_effects) {
         utils::add_permanent_effect_to_actor(permanent_effect, actor_entity, registry);
     }
     for (auto& permanent_unique_effect : permanent_unique_effects) {
         utils::add_permanent_unique_effect_to_actor(
             permanent_unique_effect, actor_entity, registry);
+    }
+    for (auto& skill : skills) {
+        utils::add_skill_to_actor(skill, actor_entity, registry);
+    }
+    for (auto& conditional_skill_group : conditional_skill_groups) {
+        utils::add_conditional_skill_group_to_actor(
+            conditional_skill_group, actor_entity, registry);
     }
 }
 
@@ -103,6 +108,7 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
                                       recipe.permanent_effects,
                                       recipe.permanent_unique_effects,
                                       recipe.skills,
+                                      recipe.conditional_skill_groups,
                                       actor_entity,
                                       registry);
         }
@@ -112,6 +118,7 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
                                       recipe.permanent_effects,
                                       recipe.permanent_unique_effects,
                                       recipe.skills,
+                                      recipe.conditional_skill_groups,
                                       actor_entity,
                                       registry);
         }
@@ -119,6 +126,7 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
                                   build.permanent_effects,
                                   build.permanent_unique_effects,
                                   build.skills,
+                                  build.conditional_skill_groups,
                                   actor_entity,
                                   registry);
 

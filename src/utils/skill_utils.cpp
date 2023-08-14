@@ -8,6 +8,7 @@
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/skill/ammo.hpp"
+#include "component/skill/is_conditional_skill_group.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/cooldown_component.hpp"
 
@@ -100,22 +101,39 @@ entity_t get_skill_entity(const actor::skill_t& skill,
             return skill_entity;
         }
     }
-    throw std::runtime_error(fmt::format(
-        "skill {} not found for actor {}", skill, utils::get_entity_name(actor_entity, registry)));
+    std::string failure_reason = fmt::format(
+        "skill {} not found for actor {}", skill, utils::get_entity_name(actor_entity, registry));
+
+    for (auto&& [conditional_skill_group_entity, owner_component, is_conditional_skill_group] :
+         registry.view<component::owner_component, component::is_conditional_skill_group>()
+             .each()) {
+        if (owner_component.entity == actor_entity &&
+            is_conditional_skill_group.conditional_skill_group_configuration.skill_key == skill) {
+            failure_reason =
+                fmt::format("no condition satisfied in conditional skill group {} for actor {}",
+                            skill,
+                            utils::get_entity_name(actor_entity, registry));
+            for (auto& conditional_skill_key :
+                 is_conditional_skill_group.conditional_skill_group_configuration
+                     .conditional_skill_keys) {
+                auto skill_entity =
+                    get_skill_entity(conditional_skill_key.skill_key, actor_entity, registry);
+                if (utils::independent_conditions_satisfied(
+                        conditional_skill_key.condition, actor_entity, std::nullopt, registry)
+                        .satisfied) {
+                    return skill_entity;
+                }
+            }
+        }
+    }
+    throw std::runtime_error(failure_reason);
 }
 
 configuration::skill_t& get_skill_configuration(const actor::skill_t& skill,
                                                 entity_t actor_entity,
                                                 registry_t& registry) {
-    for (auto&& [skill_entity, owner_component, is_skill] :
-         registry.view<component::owner_component, component::is_skill>().each()) {
-        if (owner_component.entity == actor_entity &&
-            is_skill.skill_configuration.skill_key == skill) {
-            return is_skill.skill_configuration;
-        }
-    }
-    throw std::runtime_error(fmt::format(
-        "skill {} not found for actor {}", skill, utils::get_entity_name(actor_entity, registry)));
+    auto skill_entity = utils::get_skill_entity(skill, actor_entity, registry);
+    return registry.get<component::is_skill>(skill_entity).skill_configuration;
 }
 
 bool skill_has_tag(const configuration::skill_t& skill, const actor::skill_tag_t& skill_tag) {
