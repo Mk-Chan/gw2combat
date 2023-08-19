@@ -12,8 +12,7 @@ struct skill_castability_t {
     std::string reason;
 };
 
-[[nodiscard]] extern skill_castability_t can_cast_skill(const actor::skill_t& skill,
-                                                        entity_t actor_entity,
+[[nodiscard]] extern skill_castability_t can_cast_skill(entity_t skill_entity,
                                                         registry_t& registry);
 [[nodiscard]] extern entity_t get_skill_entity(const actor::skill_t& skill,
                                                entity_t actor_entity,
@@ -23,10 +22,7 @@ struct skill_castability_t {
                                                                      registry_t& registry);
 [[nodiscard]] extern bool skill_has_tag(const configuration::skill_t& skill,
                                         const actor::skill_tag_t& skill_tag);
-extern void put_skill_on_cooldown(const actor::skill_t& skill,
-                                  entity_t actor_entity,
-                                  registry_t& registry,
-                                  bool force = false);
+extern void put_skill_on_cooldown(entity_t skill_entity, registry_t& registry, bool force = false);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(skill_castability_t, can_cast, reason)
 

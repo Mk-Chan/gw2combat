@@ -24,7 +24,7 @@ void progress_animations(registry_t& registry) {
         [&](entity_t entity, component::animation_component& animation) {
             if (animation.duration[0] == 0) {
                 registry.emplace_or_replace<component::animation_expired>(entity);
-                utils::finish_casting_skill(entity, animation.skill_entity, registry);
+                utils::finish_casting_skill(animation.skill_entity, entity, registry);
                 return;
             }
 
@@ -38,7 +38,7 @@ void progress_animations(registry_t& registry) {
 
             if (no_quickness_progress_pct + quickness_progress_pct >= 100) {
                 registry.emplace_or_replace<component::animation_expired>(entity);
-                utils::finish_casting_skill(entity, animation.skill_entity, registry);
+                utils::finish_casting_skill(animation.skill_entity, entity, registry);
             }
         });
 
@@ -114,9 +114,11 @@ void progress_cooldowns(registry_t& registry) {
     registry.view<component::cooldown_component>().each(
         [&](entity_t entity, component::cooldown_component& cooldown) {
             if (cooldown.duration[0] == 0) {
-                auto& ammo = registry.get<component::ammo>(entity);
-                ammo.current_ammo = ammo.max_ammo;
-                registry.emplace<component::ammo_gained>(entity);
+                auto ammo = registry.try_get<component::ammo>(entity);
+                if (ammo) {
+                    ammo->current_ammo = ammo->max_ammo;
+                    registry.emplace<component::ammo_gained>(entity);
+                }
                 registry.emplace<component::cooldown_expired>(entity);
                 return;
             }

@@ -81,7 +81,7 @@ std::vector<entity_t> add_unique_effect_to_actor(
     entity_t source_entity,
     entity_t target_entity,
     registry_t& registry);
-void finish_casting_skill(entity_t actor_entity, entity_t skill_entity, registry_t& registry);
+void finish_casting_skill(entity_t skill_entity, entity_t actor_entity, registry_t& registry);
 
 static inline void apply_cooldown_modifications(
     registry_t& registry,

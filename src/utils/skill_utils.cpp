@@ -14,43 +14,28 @@
 
 namespace gw2combat::utils {
 
-skill_castability_t can_cast_skill(const actor::skill_t& skill,
-                                   entity_t actor_entity,
-                                   registry_t& registry) {
+skill_castability_t can_cast_skill(entity_t skill_entity, registry_t& registry) {
+    auto& actor_entity = registry.get<component::owner_component>(skill_entity).entity;
     if (registry.any_of<component::owner_component>(actor_entity)) {
         return {.can_cast = true, .reason = "child actor skills are always castable"};
     }
 
-    auto skill_entity = utils::get_skill_entity(skill, actor_entity, registry);
-    // if (registry.any_of<component::internal_cooldown_component>(skill_entity)) {
-    //     throw std::runtime_error(fmt::format("skill {} is on internal cooldown", skill));
-    // }
-
     auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
-    if (skill_ammo.current_ammo <= 0 && !(skill == "Weapon Swap" && bundle_ptr)) {
-        std::string cooldown_component;
-        for (auto&& [entity, cooldown, is_skill, owner] : registry
-                                                              .view<component::cooldown_component,
-                                                                    component::is_skill,
-                                                                    component::owner_component>()
-                                                              .each()) {
-            if (owner.entity == actor_entity && is_skill.skill_configuration.skill_key == skill) {
-                cooldown_component = fmt::format("{}", utils::to_string(cooldown));
-                break;
-            }
-        }
+    auto& skill_configuration = registry.get<component::is_skill>(skill_entity).skill_configuration;
+    if (skill_ammo.current_ammo <= 0 &&
+        !(skill_configuration.skill_key == "Weapon Swap" && bundle_ptr)) {
+        // auto& cooldown_component = registry.get<component::cooldown_component>(skill_entity);
         // spdlog::info("[{}] {}: can_cast_skill: skill {} doesn't have any more ammo, cooldown {}",
         //              utils::get_current_tick(registry),
         //              utils::get_entity_name(actor_entity, registry),
-        //              to_string(skill),
+        //              skill_configuration.skill_key,
         //              cooldown_component);
         return {.can_cast = false,
                 .reason = skill_ammo.max_ammo > 1 ? "skill doesn't have any more ammo"
                                                   : "skill is on cooldown"};
     }
 
-    auto& skill_configuration = utils::get_skill_configuration(skill, actor_entity, registry);
     if (skill_configuration.required_bundle.empty()) {
         if (skill_configuration.weapon_type != actor::weapon_type::INVALID &&
             skill_configuration.weapon_type != actor::weapon_type::EMPTY_HANDED &&
@@ -140,31 +125,29 @@ bool skill_has_tag(const configuration::skill_t& skill, const actor::skill_tag_t
     return std::find(skill.tags.cbegin(), skill.tags.cend(), skill_tag) != skill.tags.cend();
 }
 
-void put_skill_on_cooldown(const actor::skill_t& skill,
-                           entity_t actor_entity,
-                           registry_t& registry,
-                           bool force) {
-    auto skill_entity = utils::get_skill_entity(skill, actor_entity, registry);
-
+void put_skill_on_cooldown(entity_t skill_entity, registry_t& registry, bool force) {
+    auto& skill_configuration = registry.get<component::is_skill>(skill_entity).skill_configuration;
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
     if (skill_ammo.current_ammo <= 0 && !force) {
-        utils::log_component<component::cooldown_component>(registry);
-        throw std::runtime_error(
-            fmt::format("put_skill_on_cooldown: actor {} skill {} doesn't have any more ammo",
-                        get_entity_name(actor_entity, registry),
-                        to_string(skill)));
+        auto& cooldown_component = registry.get<component::cooldown_component>(skill_entity);
+        throw std::runtime_error(fmt::format(
+            "put_skill_on_cooldown: actor {} skill {} doesn't have any more ammo. cooldown: {}",
+            utils::get_entity_name(registry.get<component::owner_component>(skill_entity).entity,
+                                   registry),
+            skill_configuration.skill_key,
+            utils::to_string(cooldown_component)));
     }
     skill_ammo.current_ammo = std::max(skill_ammo.current_ammo - 1, 0);
 
-    auto& skill_configuration = utils::get_skill_configuration(skill, actor_entity, registry);
     if (!registry.any_of<component::cooldown_component>(skill_entity)) {
         registry.emplace_or_replace<component::cooldown_component>(
             skill_entity, component::cooldown_component{skill_configuration.cooldown});
     }
     spdlog::info("[{}] {}: put_skill_on_cooldown: skill {}",
                  utils::get_current_tick(registry),
-                 get_entity_name(actor_entity, registry),
-                 to_string(skill));
+                 utils::get_entity_name(
+                     registry.get<component::owner_component>(skill_entity).entity, registry),
+                 skill_configuration.skill_key);
 }
 
 }  // namespace gw2combat::utils

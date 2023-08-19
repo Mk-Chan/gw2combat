@@ -94,6 +94,13 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
                 destination_entity,
                 source_registry.get<gw2combat::component::is_conditional_skill_group>(entity));
         }
+        if (source_registry.all_of<gw2combat::component::is_part_of_conditional_skill_group>(
+                entity)) {
+            destination_registry.emplace<gw2combat::component::is_part_of_conditional_skill_group>(
+                destination_entity,
+                source_registry.get<gw2combat::component::is_part_of_conditional_skill_group>(
+                    entity));
+        }
         if (source_registry.all_of<gw2combat::component::is_effect>(entity)) {
             destination_registry.emplace<gw2combat::component::is_effect>(
                 destination_entity, source_registry.get<gw2combat::component::is_effect>(entity));

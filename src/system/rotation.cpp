@@ -11,6 +11,7 @@
 #include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
+#include "component/skill/is_conditional_skill_group.hpp"
 #include "component/skill/is_skill.hpp"
 #include "component/temporal/animation_component.hpp"
 
@@ -24,7 +25,6 @@ void perform_rotations(registry_t& registry) {
     registry.view<component::rotation_component>(entt::exclude<component::no_more_rotation>)
         .each([&](entity_t entity, component::rotation_component& rotation_component) {
             auto current_tick = utils::get_current_tick(registry);
-            bool is_in_animation = registry.any_of<component::animation_component>(entity);
 
             if (rotation_component.current_idx >=
                 static_cast<int>(rotation_component.rotation.skill_casts.size())) {
@@ -54,6 +54,7 @@ void perform_rotations(registry_t& registry) {
             auto& skill_configuration =
                 registry.get<component::is_skill>(skill_entity).skill_configuration;
             bool is_instant_cast_skill = skill_configuration.cast_duration[0] == 0;
+            bool is_in_animation = registry.any_of<component::animation_component>(entity);
             if (!is_instant_cast_skill && is_in_animation) {
                 return;
             }
@@ -62,18 +63,18 @@ void perform_rotations(registry_t& registry) {
                          utils::get_singleton_entity())
                      .encounter.require_afk_skills) {
                 if (registry.get<component::ammo>(skill_entity).current_ammo <= 0 &&
-                    !(next_skill_cast.skill == "Weapon Swap" &&
+                    !(skill_configuration.skill_key == "Weapon Swap" &&
                       registry.any_of<component::bundle_component>(entity))) {
                     return;
                 }
             }
 
-            auto skill_castability = utils::can_cast_skill(next_skill_cast.skill, entity, registry);
+            auto skill_castability = utils::can_cast_skill(skill_entity, registry);
             if (!skill_castability.can_cast) {
                 throw std::runtime_error(fmt::format("[{}] {}: cannot cast skill {}. Reason: {}",
                                                      utils::get_current_tick(registry),
                                                      utils::get_entity_name(entity, registry),
-                                                     next_skill_cast.skill,
+                                                     skill_configuration.skill_key,
                                                      skill_castability.reason));
             }
 
@@ -119,9 +120,9 @@ void perform_rotations(registry_t& registry) {
                 spdlog::info("[{}] {} casting instant skill {} rotation index {}",
                              utils::get_current_tick(registry),
                              utils::get_entity_name(entity, registry),
-                             utils::to_string(next_skill_cast.skill),
+                             utils::to_string(skill_configuration.skill_key),
                              rotation_component.current_idx);
-                utils::finish_casting_skill(entity, skill_entity, registry);
+                utils::finish_casting_skill(skill_entity, entity, registry);
             } else {
                 registry.emplace<component::animation_component>(
                     entity,
@@ -130,7 +131,7 @@ void perform_rotations(registry_t& registry) {
                 spdlog::info("[{}] {} casting skill {} rotation index {}",
                              utils::get_current_tick(registry),
                              utils::get_entity_name(entity, registry),
-                             utils::to_string(next_skill_cast.skill),
+                             utils::to_string(skill_configuration.skill_key),
                              rotation_component.current_idx);
             }
         });
