@@ -16,15 +16,12 @@ It works by implementing a configuration system which allows someone to define h
 Currently, the program is extremely accurate at simulating benchmarks as long as build definitions and rotations are provided correctly.
 It does so by playing out the skills provided in the rotation according to skill definitions and attributes/effects in the build configuration.
 
-Available builds at this time:
-- Power Radiance Dragonhunter (Big Game Hunter)
-- Power Radiance Dragonhunter (Heavy Light)
-- Power Soulbeast Longbow
-- Power Soulbeast Greatsword
-- Condition Firebrand
-
 Documentation for how to create and edit build configurations is under development.
 
 Build the program with a single command: `make`. (faster with `make -j<number of cores>`)
 
 Reference implementations for some classes are provided in resources/. The starting point for any simulation is an encounter json `resources/encounter.json`.
+
+Here's a live deployment of gw2combat to power the gw2wingman rotation optimizer tool.
+Click to view the video on YouTube.
+[![Watch the video](https://img.youtube.com/vi/O_kDiFJINt8/maxresdefault.jpg)](https://youtu.be/O_kDiFJINt8)
