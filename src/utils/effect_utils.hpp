@@ -132,7 +132,7 @@ namespace gw2combat::utils {
         case actor::effect_t::SLOW:
         case actor::effect_t::TAUNT:
         case actor::effect_t::WEAKNESS:
-            return 10;
+            return 10'000;
         case actor::effect_t::AEGIS:
         case actor::effect_t::ALACRITY:
         case actor::effect_t::FURY:
@@ -145,7 +145,7 @@ namespace gw2combat::utils {
         case actor::effect_t::VIGOR:
         case actor::effect_t::SWIFTNESS:
         case actor::effect_t::STABILITY:
-            return 30;
+            return 30'000;
         case actor::effect_t::BURNING:
         case actor::effect_t::BLEEDING:
         case actor::effect_t::TORMENT:
