@@ -41,10 +41,17 @@ namespace gw2combat::system {
                 return;
             }
             bool has_alacrity = registry.any_of<component::has_alacrity>(owner_entity);
+            double no_alacrity_progress_pct =
+                cooldown_component.progress[0] * 100.0 / cooldown_component.duration[0];
+            double alacrity_progress_pct =
+                cooldown_component.progress[1] * 100.0 / cooldown_component.duration[1];
+            int remaining_duration = static_cast<int>(
+                cooldown_component.duration[has_alacrity] *
+                (1.0 - (alacrity_progress_pct + no_alacrity_progress_pct) / 100.0));
+
             skill_cooldowns.emplace_back(audit::skill_cooldown_t{
                 .skill = is_skill.skill_configuration.skill_key,
-                .duration = cooldown_component.duration[has_alacrity] -
-                            cooldown_component.progress[has_alacrity],
+                .duration = remaining_duration,
                 .remaining_ammo = ammo.current_ammo,
             });
         });
