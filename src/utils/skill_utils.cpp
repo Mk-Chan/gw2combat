@@ -127,6 +127,10 @@ bool skill_has_tag(const configuration::skill_t& skill, const actor::skill_tag_t
 
 void put_skill_on_cooldown(entity_t skill_entity, registry_t& registry, bool force) {
     auto& skill_configuration = registry.get<component::is_skill>(skill_entity).skill_configuration;
+    if (skill_configuration.cooldown[0] == 0) {
+        return;
+    }
+
     auto& skill_ammo = registry.get<component::ammo>(skill_entity);
     if (skill_ammo.current_ammo <= 0 && !force) {
         auto& cooldown_component = registry.get<component::cooldown_component>(skill_entity);

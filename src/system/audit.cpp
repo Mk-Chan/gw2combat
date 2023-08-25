@@ -40,11 +40,11 @@ namespace gw2combat::system {
             if (owner_entity != actor_entity) {
                 return;
             }
-            bool has_alacrity = registry.any_of<component::has_alacrity>(owner_entity);
             double no_alacrity_progress_pct =
                 cooldown_component.progress[0] * 100.0 / cooldown_component.duration[0];
             double alacrity_progress_pct =
                 cooldown_component.progress[1] * 100.0 / cooldown_component.duration[1];
+            bool has_alacrity = registry.any_of<component::has_alacrity>(owner_entity);
             int remaining_duration = static_cast<int>(
                 cooldown_component.duration[has_alacrity] *
                 (1.0 - (alacrity_progress_pct + no_alacrity_progress_pct) / 100.0));
@@ -91,11 +91,18 @@ namespace gw2combat::system {
                 auto cooldown_component =
                     registry.try_get<component::cooldown_component>(skill_entity);
                 auto ammo = registry.try_get<component::ammo>(skill_entity);
-                bool has_alacrity = registry.any_of<component::has_alacrity>(actor_entity);
-                int remaining_cooldown = cooldown_component
-                                             ? cooldown_component->duration[has_alacrity] -
-                                                   cooldown_component->progress[has_alacrity]
-                                             : 0;
+                int remaining_cooldown = 0;
+                if (cooldown_component) {
+                    double no_alacrity_progress_pct =
+                        cooldown_component->progress[0] * 100.0 / cooldown_component->duration[0];
+                    double alacrity_progress_pct =
+                        cooldown_component->progress[1] * 100.0 / cooldown_component->duration[1];
+                    bool has_alacrity =
+                        registry.any_of<component::has_alacrity>(owner_component.entity);
+                    remaining_cooldown = static_cast<int>(
+                        cooldown_component->duration[has_alacrity] *
+                        (1.0 - (alacrity_progress_pct + no_alacrity_progress_pct) / 100.0));
+                }
                 int remaining_ammo = ammo ? ammo->current_ammo : 0;
                 uncastable_skills[is_skill.skill_configuration.skill_key] = {
                     .reason = skill_castability.reason,

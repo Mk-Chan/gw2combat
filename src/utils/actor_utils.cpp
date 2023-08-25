@@ -424,8 +424,7 @@ void finish_casting_skill(entity_t skill_entity, entity_t actor_entity, registry
     finished_casting_skills.skill_entities.emplace_back(skill_entity);
 
     auto& skill_configuration = registry.get<component::is_skill>(skill_entity).skill_configuration;
-    if (skill_configuration.cooldown[0] != 0 &&
-        !(skill_configuration.skill_key == "Weapon Swap" &&
+    if (!(skill_configuration.skill_key == "Weapon Swap" &&
           registry.any_of<component::bundle_component>(actor_entity))) {
         put_skill_on_cooldown_for_actor(skill_entity, skill_configuration, actor_entity, registry);
         auto owner_entity = utils::get_owner(actor_entity, registry);
