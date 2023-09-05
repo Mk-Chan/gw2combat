@@ -1,6 +1,6 @@
 [![Master build](https://github.com/Mk-Chan/gw2combat/actions/workflows/master-build.yml/badge.svg)](https://github.com/Mk-Chan/gw2combat/actions/workflows/master-build.yml)
 # gw2combat
-This program aims to accurately simulate Guild Wars 2's in game combat. 
+This program aims to accurately simulate Guild Wars 2's in game combat.
 
 It works by implementing a configuration system which allows someone to define how the combat actually plays out in the game based on 2 parts:
 1. Build
@@ -18,7 +18,7 @@ It does so by playing out the skills provided in the rotation according to skill
 
 Documentation for how to create and edit build configurations is under development.
 
-Build the program with a single command: `make`. (faster with `make -j<number of cores>`)
+Build the program with a single command: `make` (faster with `make -j<number of cores>`)
 
 Reference implementations for some classes are provided in resources/. The starting point for any simulation is an encounter json `resources/encounter.json`.
 
