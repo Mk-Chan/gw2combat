@@ -6,21 +6,22 @@ import clang.cindex
 clang.cindex.Config.set_library_path("/opt/homebrew/opt/llvm/lib")
 
 
-def find_classes_in_namespace(node, namespace, components, tags):
+def find_classes_in_namespace(cursor, namespace, components, tags):
     found_any = False
-    if node.kind == clang.cindex.CursorKind.NAMESPACE:
-        namespace = f"{namespace}::{node.spelling}" if namespace else node.spelling
-    elif node.kind in (clang.cindex.CursorKind.STRUCT_DECL, clang.cindex.CursorKind.CLASS_DECL) \
+    if cursor.kind == clang.cindex.CursorKind.NAMESPACE:
+        namespace = f"{namespace}::{cursor.spelling}" if namespace else cursor.spelling
+    elif cursor.kind in (clang.cindex.CursorKind.STRUCT_DECL, clang.cindex.CursorKind.CLASS_DECL) \
             and namespace == "gw2combat::component":
-        has_non_static_members = any(c.kind == clang.cindex.CursorKind.FIELD_DECL for c in node.get_children())
+        has_non_static_members = any(
+            c.kind == clang.cindex.CursorKind.FIELD_DECL for c in cursor.get_children())
         if has_non_static_members:
-            components.append(f"{namespace}::{node.spelling}")
+            components.append(f"{namespace}::{cursor.spelling}")
         else:
-            tags.append(f"{namespace}::{node.spelling}")
+            tags.append(f"{namespace}::{cursor.spelling}")
         found_any = True
-        namespace += "::" + node.spelling
+        namespace += "::" + cursor.spelling
 
-    for c in node.get_children():
+    for c in cursor.get_children():
         found_any |= find_classes_in_namespace(c, namespace, components, tags)
     return found_any
 
