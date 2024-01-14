@@ -349,8 +349,7 @@ void audit_skill_casts(registry_t& registry) {
         [&](entity_t actor_entity,
             const component::skills_actions_component& casting_skills_component) {
             for (auto& casting_skill : casting_skills_component.skills) {
-                if (casting_skill.strike_progress[0] + casting_skill.strike_progress[1] > 1 ||
-                    casting_skill.pulse_progress[0] + casting_skill.pulse_progress[1] > 1) {
+                if (casting_skill.action_progress[0] + casting_skill.action_progress[1] > 1) {
                     continue;
                 }
 

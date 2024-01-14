@@ -121,7 +121,6 @@ void perform_rotations(registry_t& registry) {
                     skill_entity,
                     {0, 0},
                     {pulse_no_quickness_duration, pulse_quickness_duration},
-                    {0, 0},
                     {strike_no_quickness_duration, strike_quickness_duration},
                     0,
                     0});
@@ -163,12 +162,12 @@ void perform_skills(registry_t& registry) {
                 double pulse_no_quickness_progress_pct =
                     casting_skill.pulse_duration[0] == 0
                         ? 100
-                        : (casting_skill.pulse_progress[0] * 100) /
+                        : (casting_skill.action_progress[0] * 100) /
                               (double)casting_skill.pulse_duration[0];
                 double pulse_quickness_progress_pct =
                     casting_skill.pulse_duration[1] == 0
                         ? 100
-                        : (casting_skill.pulse_progress[1] * 100) /
+                        : (casting_skill.action_progress[1] * 100) /
                               (double)casting_skill.pulse_duration[1];
                 double pulse_effective_progress_pct =
                     pulse_no_quickness_progress_pct + pulse_quickness_progress_pct;
@@ -178,12 +177,12 @@ void perform_skills(registry_t& registry) {
                 double strike_no_quickness_progress_pct =
                     casting_skill.strike_duration[0] == 0
                         ? 100
-                        : (casting_skill.strike_progress[0] * 100) /
+                        : (casting_skill.action_progress[0] * 100) /
                               (double)casting_skill.strike_duration[0];
                 double strike_quickness_progress_pct =
                     casting_skill.strike_duration[1] == 0
                         ? 100
-                        : (casting_skill.strike_progress[1] * 100) /
+                        : (casting_skill.action_progress[1] * 100) /
                               (double)casting_skill.strike_duration[1];
                 double strike_effective_progress_pct =
                     strike_no_quickness_progress_pct + strike_quickness_progress_pct;

@@ -162,15 +162,13 @@ void progress_casting_skills(registry_t& registry) {
     registry.view<component::skills_actions_component>(entt::exclude<component::has_quickness>)
         .each([&](component::skills_actions_component& casting_skills_component) {
             for (auto& skill_state : casting_skills_component.skills) {
-                ++skill_state.pulse_progress[0];
-                ++skill_state.strike_progress[0];
+                ++skill_state.action_progress[0];
             }
         });
     registry.view<component::skills_actions_component, component::has_quickness>().each(
         [&](component::skills_actions_component& casting_skills_component) {
             for (auto& skill_state : casting_skills_component.skills) {
-                ++skill_state.pulse_progress[1];
-                ++skill_state.strike_progress[1];
+                ++skill_state.action_progress[1];
             }
         });
 }
