@@ -31,6 +31,7 @@ struct unique_effect_t {
     int max_duration = 30'000;
 
     actor::stacking_t stacking_type = actor::stacking_t::STACKING_INTENSITY;
+    bool refreshes_other_stacks = false;
 
     [[nodiscard]] inline bool operator==(const unique_effect_t& rhs) const {
         return this->unique_effect_key == rhs.unique_effect_key;
@@ -52,7 +53,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(unique_effect_t,
                                                 max_considered_stacks,
                                                 max_stored_stacks,
                                                 max_duration,
-                                                stacking_type)
+                                                stacking_type,
+                                                refreshes_other_stacks)
 
 }  // namespace gw2combat::configuration
 

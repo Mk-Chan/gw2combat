@@ -3,11 +3,11 @@
 
 #include "common.hpp"
 
+#include "actor/bundle.hpp"
 #include "actor/effect.hpp"
 #include "actor/skill.hpp"
 #include "actor/unique_effect.hpp"
 #include "actor/weapon.hpp"
-#include "actor/bundle.hpp"
 
 #include "threshold.hpp"
 
@@ -25,6 +25,7 @@ struct condition_t {
     std::optional<actor::unique_effect_t> unique_effect_on_target = std::nullopt;
     std::optional<actor::unique_effect_t> unique_effect_on_target_by_source = std::nullopt;
     std::optional<actor::effect_t> effect_on_target = std::nullopt;
+    std::optional<int> stacks_of_effect_on_target = std::nullopt;
     std::optional<actor::skill_t> depends_on_skill_off_cooldown = std::nullopt;
     std::optional<threshold_t> threshold = std::nullopt;
 
@@ -39,6 +40,10 @@ struct condition_t {
     std::optional<bool> only_applies_on_critical_strikes = std::nullopt;
     std::optional<actor::skill_t> only_applies_on_strikes_by_skill = std::nullopt;
     std::optional<actor::skill_tag_t> only_applies_on_strikes_by_skill_with_tag = std::nullopt;
+
+    // on-effect-application
+    std::optional<bool> only_applies_on_effect_application = std::nullopt;
+    std::optional<actor::effect_t> only_applies_on_effect_application_of_type = std::nullopt;
 
     // on-begun-casting
     std::optional<bool> only_applies_on_begun_casting = std::nullopt;
@@ -84,6 +89,10 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     if (nlohmann_json_t.effect_on_target) {
         nlohmann_json_j["effect_on_target"] = *nlohmann_json_t.effect_on_target;
     }
+    if (nlohmann_json_t.stacks_of_effect_on_target) {
+        nlohmann_json_j["number_of_stacks_of_effect_on_target"] =
+            *nlohmann_json_t.stacks_of_effect_on_target;
+    }
     if (nlohmann_json_t.depends_on_skill_off_cooldown) {
         nlohmann_json_j["depends_on_skill_off_cooldown"] =
             *nlohmann_json_t.depends_on_skill_off_cooldown;
@@ -114,6 +123,14 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
     if (nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag) {
         nlohmann_json_j["only_applies_on_strikes_by_skill_with_tag"] =
             *nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag;
+    }
+    if (nlohmann_json_t.only_applies_on_effect_application) {
+        nlohmann_json_j["only_applies_on_effect_application"] =
+            *nlohmann_json_t.only_applies_on_effect_application;
+    }
+    if (nlohmann_json_t.only_applies_on_effect_application_of_type) {
+        nlohmann_json_j["only_applies_on_effect_application_of_type"] =
+            *nlohmann_json_t.only_applies_on_effect_application_of_type;
     }
     if (nlohmann_json_t.only_applies_on_begun_casting) {
         nlohmann_json_j["only_applies_on_begun_casting"] =
@@ -182,6 +199,11 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
         nlohmann_json_t.effect_on_target =
             nlohmann_json_j.value("effect_on_target", *nlohmann_json_default_obj.effect_on_target);
     }
+    if (nlohmann_json_j.contains("number_of_stacks_of_effect_on_target")) {
+        nlohmann_json_t.stacks_of_effect_on_target =
+            nlohmann_json_j.value("number_of_stacks_of_effect_on_target",
+                                  *nlohmann_json_default_obj.stacks_of_effect_on_target);
+    }
     if (nlohmann_json_j.contains("depends_on_skill_off_cooldown")) {
         nlohmann_json_t.depends_on_skill_off_cooldown =
             nlohmann_json_j.value("depends_on_skill_off_cooldown",
@@ -221,6 +243,16 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
         nlohmann_json_t.only_applies_on_strikes_by_skill_with_tag = nlohmann_json_j.value(
             "only_applies_on_strikes_by_skill_with_tag",
             *nlohmann_json_default_obj.only_applies_on_strikes_by_skill_with_tag);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_effect_application")) {
+        nlohmann_json_t.only_applies_on_effect_application =
+            nlohmann_json_j.value("only_applies_on_effect_application",
+                                  *nlohmann_json_default_obj.only_applies_on_effect_application);
+    }
+    if (nlohmann_json_j.contains("only_applies_on_effect_application_of_type")) {
+        nlohmann_json_t.only_applies_on_effect_application_of_type = nlohmann_json_j.value(
+            "only_applies_on_effect_application_of_type",
+            *nlohmann_json_default_obj.only_applies_on_effect_application_of_type);
     }
     if (nlohmann_json_j.contains("only_applies_on_begun_casting")) {
         nlohmann_json_t.only_applies_on_begun_casting =

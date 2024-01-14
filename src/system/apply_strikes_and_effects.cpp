@@ -238,6 +238,18 @@ void apply_effects(registry_t& registry) {
                         utils::to_string(application.effect),
                         utils::get_entity_name(target_entity, registry),
                         incoming_application.effect_application.source_skill);
+
+                    auto side_effect_condition_fn =
+                        [&](const configuration::condition_t& condition) {
+                            return utils::on_effect_application_conditions_satisfied(
+                                condition,
+                                application_source_entity,
+                                target_entity,
+                                application.effect,
+                                registry);
+                        };
+                    utils::apply_side_effects(
+                        registry, application_source_entity, side_effect_condition_fn);
                 }
             }
         });

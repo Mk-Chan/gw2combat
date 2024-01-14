@@ -358,6 +358,20 @@ std::optional<entity_t> add_unique_effect_to_actor(
             skill_trigger, unique_effect_entity, registry);
     }
 
+    if (unique_effect.refreshes_other_stacks && stacks_count > 0) {
+        for (auto&& [unique_effect_entity, is_unique_effect, owner_component] :
+             unique_effect_owners) {
+            if (owner_component.entity != actor_entity ||
+                is_unique_effect.unique_effect.unique_effect_key !=
+                    unique_effect.unique_effect_key) {
+                continue;
+            }
+            auto& duration_component =
+                registry.get<component::duration_component>(unique_effect_entity);
+            duration_component.progress = 0;
+        }
+    }
+
     return unique_effect_entity;
 }
 

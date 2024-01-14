@@ -37,6 +37,12 @@ struct condition_result_t {
     bool is_critical,
     const configuration::skill_t& source_skill_configuration,
     registry_t& registry);
+[[nodiscard]] bool on_effect_application_conditions_satisfied(
+    const configuration::condition_t& condition,
+    entity_t entity,
+    entity_t target_entity,
+    actor::effect_t effect,
+    registry_t& registry);
 [[nodiscard]] bool on_ammo_gain_conditions_satisfied(
     const configuration::condition_t& condition,
     entity_t entity,

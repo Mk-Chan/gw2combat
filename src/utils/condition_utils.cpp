@@ -167,18 +167,27 @@ namespace gw2combat::utils {
 
         auto effect_owners =
             registry.view<component::is_effect, component::owner_component>().each();
+        int stacks_of_effect_on_target = 0;
         for (auto&& [effect_entity, is_effect, owner_component] : effect_owners) {
             if (is_effect.effect == *condition.effect_on_target &&
                 owner_component.entity == *target_entity) {
-                is_satisfied = true;
-                break;
+                ++stacks_of_effect_on_target;
+                if (!condition.stacks_of_effect_on_target) {
+                    is_satisfied = true;
+                    break;
+                }
+                if (stacks_of_effect_on_target >= *condition.stacks_of_effect_on_target) {
+                    is_satisfied = true;
+                    break;
+                }
             }
         }
 
         if (!is_satisfied) {
             return {.satisfied = false,
-                    .reason = fmt::format("effect {} not found on target",
-                                          utils::to_string(*condition.effect_on_target))};
+                    .reason = fmt::format("stacks of effect {} on target: {}",
+                                          utils::to_string(*condition.effect_on_target),
+                                          stacks_of_effect_on_target)};
         }
     }
     if (condition.depends_on_skill_off_cooldown) {
@@ -250,17 +259,17 @@ namespace gw2combat::utils {
     }
     if (!condition.not_conditions.empty()) {
         std::string failure_reason = "{ \"not\": [";
-        bool not_conditions_satisfied = std::any_of(
-            condition.not_conditions.begin(),
-            condition.not_conditions.end(),
-            [&](auto&& condition) {
-                auto result = stage_independent_conditions_satisfied(
-                    condition, entity, target_entity, registry);
-                if (result.satisfied) {
-                    failure_reason += utils::to_string(condition) + ",";
-                }
-                return !result.satisfied;
-            });
+        bool not_conditions_satisfied =
+            std::any_of(condition.not_conditions.begin(),
+                        condition.not_conditions.end(),
+                        [&](auto&& condition) {
+                            auto result = stage_independent_conditions_satisfied(
+                                condition, entity, target_entity, registry);
+                            if (result.satisfied) {
+                                failure_reason += utils::to_string(condition) + ",";
+                            }
+                            return !result.satisfied;
+                        });
         failure_reason = failure_reason.substr(0, failure_reason.length() - 1) + "] }";
         if (!not_conditions_satisfied) {
             return {.satisfied = false, .reason = failure_reason};
@@ -309,6 +318,8 @@ namespace gw2combat::utils {
     std::optional<entity_t> target_entity,
     registry_t& registry) {
     if ((condition.only_applies_on_strikes && *condition.only_applies_on_strikes) ||
+        (condition.only_applies_on_effect_application &&
+         *condition.only_applies_on_effect_application) ||
         (condition.only_applies_on_finished_casting &&
          *condition.only_applies_on_finished_casting) ||
         (condition.only_applies_on_begun_casting && *condition.only_applies_on_begun_casting) ||
@@ -366,6 +377,20 @@ namespace gw2combat::utils {
            (!condition.only_applies_on_strikes_by_skill_with_tag ||
             utils::skill_has_tag(source_skill_configuration,
                                  *condition.only_applies_on_strikes_by_skill_with_tag)) &&
+           stage_independent_conditions_satisfied(condition, entity, target_entity, registry)
+               .satisfied;
+}
+
+[[nodiscard]] bool on_effect_application_conditions_satisfied(
+    const configuration::condition_t& condition,
+    entity_t entity,
+    entity_t target_entity,
+    actor::effect_t effect,
+    registry_t& registry) {
+    return condition.only_applies_on_effect_application &&
+           *condition.only_applies_on_effect_application &&
+           (!condition.only_applies_on_effect_application_of_type ||
+            *condition.only_applies_on_effect_application_of_type == effect) &&
            stage_independent_conditions_satisfied(condition, entity, target_entity, registry)
                .satisfied;
 }
