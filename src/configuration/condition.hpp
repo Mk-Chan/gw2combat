@@ -90,7 +90,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const condition_t& n
         nlohmann_json_j["effect_on_target"] = *nlohmann_json_t.effect_on_target;
     }
     if (nlohmann_json_t.stacks_of_effect_on_target) {
-        nlohmann_json_j["number_of_stacks_of_effect_on_target"] =
+        nlohmann_json_j["stacks_of_effect_on_target"] =
             *nlohmann_json_t.stacks_of_effect_on_target;
     }
     if (nlohmann_json_t.depends_on_skill_off_cooldown) {
@@ -199,9 +199,9 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, condition_t&
         nlohmann_json_t.effect_on_target =
             nlohmann_json_j.value("effect_on_target", *nlohmann_json_default_obj.effect_on_target);
     }
-    if (nlohmann_json_j.contains("number_of_stacks_of_effect_on_target")) {
+    if (nlohmann_json_j.contains("stacks_of_effect_on_target")) {
         nlohmann_json_t.stacks_of_effect_on_target =
-            nlohmann_json_j.value("number_of_stacks_of_effect_on_target",
+            nlohmann_json_j.value("stacks_of_effect_on_target",
                                   *nlohmann_json_default_obj.stacks_of_effect_on_target);
     }
     if (nlohmann_json_j.contains("depends_on_skill_off_cooldown")) {

@@ -9,10 +9,12 @@ struct skills_actions_component {
     struct skill_state_t {
         entity_t skill_entity = entt::tombstone;
         std::array<int, 2> action_progress{0, 0};
-        std::array<int, 2> pulse_duration{0, 0};
-        std::array<int, 2> strike_duration{0, 0};
         int next_strike_idx = 0;
         int next_pulse_idx = 0;
+        // int next_blast_idx = 0;
+        // int next_leap_idx = 0;
+        // int next_projectile_idx = 0;
+        int next_whirl_idx = 0;
     };
 
     std::vector<skill_state_t> skills;
@@ -25,10 +27,12 @@ struct finished_skills_actions_component {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skills_actions_component::skill_state_t,
                                                 skill_entity,
                                                 action_progress,
-                                                pulse_duration,
-                                                strike_duration,
                                                 next_strike_idx,
-                                                next_pulse_idx)
+                                                next_pulse_idx,
+                                                // next_blast_idx,
+                                                // next_leap_idx,
+                                                // next_projectile_idx,
+                                                next_whirl_idx)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skills_actions_component, skills)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(finished_skills_actions_component, skill_entities)
 

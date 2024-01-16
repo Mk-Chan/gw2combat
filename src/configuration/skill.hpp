@@ -52,13 +52,13 @@ struct skill_t {
     std::vector<actor::skill_tag_t> tags;
 
     actor::combo_field_t combo_field = actor::combo_field_t::INVALID;
-    std::array<int, 2> combo_field_on_tick = {0, 0};
-    std::array<std::vector<int>, 2> blast_finisher_on_tick_list = {std::vector<int>{},
-                                                                   std::vector<int>{}};
-    std::array<std::vector<int>, 2> leap_finisher_on_tick_list = {std::vector<int>{},
-                                                                  std::vector<int>{}};
-    std::array<std::vector<int>, 2> projectile_finisher_on_tick_list = {std::vector<int>{},
-                                                                        std::vector<int>{}};
+    // std::array<std::vector<int>, 2> blast_finisher_on_tick_list = {std::vector<int>{},
+    //                                                                std::vector<int>{}};
+    // std::array<std::vector<int>, 2> leap_finisher_on_tick_list = {std::vector<int>{},
+    //                                                               std::vector<int>{}};
+    // NOTE: Projectile finishers do DPS, so think about how to handle them.
+    // std::array<std::vector<int>, 2> projectile_finisher_on_tick_list = {std::vector<int>{},
+    //                                                                    std::vector<int>{}};
     std::array<std::vector<int>, 2> whirl_finisher_on_tick_list = {std::vector<int>{},
                                                                    std::vector<int>{}};
 
@@ -108,10 +108,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 child_skill_keys,
                                                 tags,
                                                 combo_field,
-                                                combo_field_on_tick,
-                                                blast_finisher_on_tick_list,
-                                                leap_finisher_on_tick_list,
-                                                projectile_finisher_on_tick_list,
+                                                // blast_finisher_on_tick_list,
+                                                // leap_finisher_on_tick_list,
+                                                // projectile_finisher_on_tick_list,
                                                 whirl_finisher_on_tick_list,
                                                 can_critical_strike,
                                                 equip_bundle,
