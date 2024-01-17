@@ -2,12 +2,12 @@
     "actors": [
         {
             "name": "dh-bgh",
-            "build_path": "resources/build-lb-sw-axe-slb.json",
-            "rotation_path": "resources/rotation-lb-sw-axe-slb.csv",
+            "build_path": "resources/build-cwb-sw-tor-sc-tor.json",
+            "rotation_path": "resources/rotation-cwb-sw-tor-sc-tor.csv",
             "team": 1
         }, {
             "name": "golem",
-            "build_path": "resources/build-golem.json",
+            "build_path": "resources/build-golem-fractal-relic.json",
             "team": 2
         }
     ],
