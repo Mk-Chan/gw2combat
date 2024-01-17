@@ -4,7 +4,7 @@
     "attributes": [
         ["power", 2079],
         ["precision", 1762],
-        ["condition_damage", 1241],
+        ["condition_damage", 1333],
         ["expertise", 381],
         ["vitality", 1297]
     ],
@@ -373,7 +373,7 @@
                 {
                     "from": "vitality",
                     "to": "condition_damage",
-                    "multiplier": 0.13
+                    "multiplier": 0.07
                 }
             ]
         }, {
@@ -758,7 +758,7 @@
             "weapon_type": "main_hand",
             "damage_coefficient": 1.0,
             "cast_duration": [680, 680],
-            "cooldown": [400, 400],
+            "cooldown": [25500, 20400],
             "strike_on_tick_list": [[680], [680]],
             "on_strike_effect_applications": [
                 {
