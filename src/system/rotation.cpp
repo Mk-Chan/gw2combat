@@ -80,18 +80,41 @@ void perform_rotations(registry_t& registry) {
 
             auto& skills_actions_component =
                 registry.get_or_emplace<component::skills_actions_component>(entity);
-            if (!skill_configuration.skills_to_cancel.empty()) {
-                for (auto& skill_to_cancel : skill_configuration.skills_to_cancel) {
-                    auto skill_to_cancel_entity =
-                        utils::get_skill_entity(skill_to_cancel, entity, registry);
-                    auto skill_to_cancel_pos = std::find_if(
-                        skills_actions_component.skills.cbegin(),
-                        skills_actions_component.skills.cend(),
-                        [&](const component::skills_actions_component::skill_state_t& skill_state) {
-                            return skill_state.skill_entity == skill_to_cancel_entity;
-                        });
-                    if (skill_to_cancel_pos != skills_actions_component.skills.cend()) {
-                        skills_actions_component.skills.erase(skill_to_cancel_pos);
+            for (auto& skill_to_cancel : skill_configuration.skills_to_cancel) {
+                for (auto&& [skill_casting_entity, iter_skills_actions_component] :
+                     registry.view<component::skills_actions_component>().each()) {
+                    if (utils::get_owner(skill_casting_entity, registry) !=
+                        utils::get_owner(entity, registry)) {
+                        continue;
+                    }
+                    for (auto& iter_skill_state : iter_skills_actions_component.skills) {
+                        auto& iter_skill_configuration =
+                            registry.get<component::is_skill>(iter_skill_state.skill_entity)
+                                .skill_configuration;
+                        if (iter_skill_configuration.skill_key != skill_to_cancel) {
+                            continue;
+                        }
+                        auto skill_to_cancel_entity = utils::get_skill_entity(
+                            skill_to_cancel, skill_casting_entity, registry);
+                        auto skill_to_cancel_pos = std::find_if(
+                            iter_skills_actions_component.skills.cbegin(),
+                            iter_skills_actions_component.skills.cend(),
+                            [&](const component::skills_actions_component::skill_state_t&
+                                    skill_state) {
+                                return skill_state.skill_entity == skill_to_cancel_entity;
+                            });
+                        if (skill_to_cancel_pos != iter_skills_actions_component.skills.cend()) {
+                            spdlog::info(
+                                "[{}] {}:{} Canceling skill {} for {}",
+                                utils::get_current_tick(registry),
+                                utils::get_entity_name(utils::get_owner(entity, registry),
+                                                       registry),
+                                utils::get_entity_name(entity, registry),
+                                skill_to_cancel,
+                                utils::get_entity_name(
+                                    utils::get_owner(skill_casting_entity, registry), registry));
+                            iter_skills_actions_component.skills.erase(skill_to_cancel_pos);
+                        }
                     }
                 }
             }
