@@ -126,27 +126,6 @@
                 "incoming_condition_damage_multiplier_add_group"
             ]
         },
-        "actor": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "build": {
-                    "$ref": "#/definitions/build"
-                },
-                "rotation": {
-                    "$ref": "#/definitions/rotation"
-                },
-                "team": {
-                    "type": "integer"
-                },
-                "audit_base_path": {
-                    "type": "string"
-                }
-            },
-            "required": ["name", "build", "team"]
-        },
         "recipe": {
             "type": "object",
             "properties": {
