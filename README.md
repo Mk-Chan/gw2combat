@@ -16,7 +16,9 @@ It works by implementing a configuration system which allows someone to define h
 Currently, the program is extremely accurate at simulating benchmarks as long as build definitions and rotations are provided correctly.
 It does so by playing out the skills provided in the rotation according to skill definitions and attributes/effects in the build configuration.
 
-Documentation for how to create and edit build configurations is under development.
+There are JSON schema documents to validate encounters and builds here:
+- [Build JSON Schema](https://github.com/Mk-Chan/gw2combat/blob/master/src/configuration/build.schema.json)
+- [Encounter JSON Schema](https://github.com/Mk-Chan/gw2combat/blob/master/src/configuration/encounter.schema.json)
 
 Build the program with a single command: `make`. (faster with `make -j<number of cores>`)
 
