@@ -64,6 +64,7 @@ struct skill_t {
 
     bool can_critical_strike = true;
     actor::bundle_t equip_bundle;
+    actor::bundle_t drop_bundle;
 
     condition_t cast_condition{};
 
@@ -114,6 +115,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 whirl_finisher_on_tick_list,
                                                 can_critical_strike,
                                                 equip_bundle,
+                                                drop_bundle,
                                                 cast_condition)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(conditional_skill_t, condition, skill_key)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(conditional_skill_group_t,
