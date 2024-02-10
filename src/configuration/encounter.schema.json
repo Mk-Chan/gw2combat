@@ -71,6 +71,57 @@
     },
     "required": ["actors", "termination_conditions"],
     "$def": {
+        "attribute": {
+            "type": "string",
+            "enum": [
+                "power",
+                "precision",
+                "toughness",
+                "vitality",
+                "concentration",
+                "condition_damage",
+                "expertise",
+                "ferocity",
+                "healing_power",
+                "armor",
+                "max_health",
+                "critical_chance_multiplier",
+                "critical_damage_multiplier",
+                "boon_duration_multiplier",
+                "aegis_duration_multiplier",
+                "alacrity_duration_multiplier",
+                "fury_duration_multiplier",
+                "might_duration_multiplier",
+                "protection_duration_multiplier",
+                "quickness_duration_multiplier",
+                "regeneration_duration_multiplier",
+                "resistance_duration_multiplier",
+                "resolution_duration_multiplier",
+                "stability_duration_multiplier",
+                "swiftness_duration_multiplier",
+                "vigor_duration_multiplier",
+                "condition_duration_multiplier",
+                "burning_duration_multiplier",
+                "bleeding_duration_multiplier",
+                "confusion_duration_multiplier",
+                "poison_duration_multiplier",
+                "torment_duration_multiplier",
+                "condition_damage_multiplier",
+                "burning_damage_multiplier",
+                "bleeding_damage_multiplier",
+                "confusion_damage_multiplier",
+                "poison_damage_multiplier",
+                "torment_damage_multiplier",
+                "outgoing_strike_damage_multiplier",
+                "outgoing_strike_damage_multiplier_add_group",
+                "incoming_strike_damage_multiplier",
+                "incoming_strike_damage_multiplier_add_group",
+                "outgoing_condition_damage_multiplier",
+                "outgoing_condition_damage_multiplier_add_group",
+                "incoming_condition_damage_multiplier",
+                "incoming_condition_damage_multiplier_add_group"
+            ]
+        },
         "actor": {
             "type": "object",
             "properties": {
@@ -78,10 +129,10 @@
                     "type": "string"
                 },
                 "build": {
-                    "type": "#/$def/build"
+                    "$ref": "#/$def/build"
                 },
                 "rotation": {
-                    "type": "#/$def/rotation"
+                    "$ref": "#/$def/rotation"
                 },
                 "team": {
                     "type": "integer"
@@ -96,145 +147,14 @@
             "type": "object",
             "properties": {
                 "attributes": {
-                    "type": "object",
-                    "properties": {
-                        "power": {
-                            "type": "number"
-                        },
-                        "precision": {
-                            "type": "number"
-                        },
-                        "toughness": {
-                            "type": "number"
-                        },
-                        "vitality": {
-                            "type": "number"
-                        },
-                        "concentration": {
-                            "type": "number"
-                        },
-                        "condition_damage": {
-                            "type": "number"
-                        },
-                        "expertise": {
-                            "type": "number"
-                        },
-                        "ferocity": {
-                            "type": "number"
-                        },
-                        "healing_power": {
-                            "type": "number"
-                        },
-                        "armor": {
-                            "type": "number"
-                        },
-                        "max_health": {
-                            "type": "number"
-                        },
-                        "critical_chance_multiplier": {
-                            "type": "number"
-                        },
-                        "critical_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "boon_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "aegis_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "alacrity_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "fury_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "might_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "protection_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "quickness_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "regeneration_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "resistance_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "resolution_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "stability_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "swiftness_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "vigor_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "condition_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "burning_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "bleeding_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "confusion_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "poison_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "torment_duration_multiplier": {
-                            "type": "number"
-                        },
-                        "condition_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "burning_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "bleeding_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "confusion_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "poison_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "torment_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "outgoing_strike_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "outgoing_strike_damage_multiplier_add_group": {
-                            "type": "number"
-                        },
-                        "incoming_strike_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "incoming_strike_damage_multiplier_add_group": {
-                            "type": "number"
-                        },
-                        "outgoing_condition_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "outgoing_condition_damage_multiplier_add_group": {
-                            "type": "number"
-                        },
-                        "incoming_condition_damage_multiplier": {
-                            "type": "number"
-                        },
-                        "incoming_condition_damage_multiplier_add_group": {
-                            "type": "number"
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "description": "First item is attribute name and second item is value.",
+                        "items": {
+                            "type": ["string", "integer"],
+                            "minItems": 2,
+                            "maxItems": 2
                         }
                     }
                 },
@@ -245,7 +165,7 @@
                     }
                 },
                 "initial_weapon_set": {
-                    "type": "#/$def/weapon_set"
+                    "$ref": "#/$def/weapon_set"
                 },
                 "skills": {
                     "type": "array",
@@ -280,7 +200,7 @@
                 "recipes": {
                     "type": "array",
                     "items": {
-                        "type": "#/$def/recipe"
+                        "$ref": "#/$def/recipe"
                     }
                 },
                 "recipe_paths": {
@@ -360,7 +280,7 @@
                     "type": "boolean"
                 }
             },
-            "required": ["skills"]
+            "required": ["skill_casts"]
         },
         "skill_cast": {
             "type": "object",
@@ -369,25 +289,26 @@
                     "type": "string"
                 },
                 "cast_time_ms": {
-                    "type": "integer"
+                    "type": "integer",
+                    "default": 0
                 }
             },
-            "required": ["skill", "cast_time_ms"]
+            "required": ["skill"]
         },
         "weapon": {
             "type": "object",
             "properties": {
                 "type": {
-                    "type": "#/$def/weapon_type"
+                    "$ref": "#/$def/weapon_type"
                 },
                 "position": {
-                    "type": "#/$def/weapon_position"
+                    "$ref": "#/$def/weapon_position"
                 },
                 "set": {
-                    "type": "#/$def/weapon_set"
+                    "$ref": "#/$def/weapon_set"
                 }
             },
-            "required": ["type", "strength"]
+            "required": ["type", "position", "set"]
         },
         "weapon_type": {
             "type": "string",
@@ -438,7 +359,7 @@
                     "type": "string"
                 },
                 "weapon_type": {
-                    "type": "#/$def/weapon_type"
+                    "$ref": "#/$def/weapon_type"
                 },
                 "required_bundle": {
                     "type": "string"
@@ -484,10 +405,10 @@
                         "items": {
                             "type": "integer",
                             "minItems": 1
-                        },
-                        "minItems": 2,
-                        "maxItems": 2
-                    }
+                        }
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
                 },
                 "pulse_on_tick_list": {
                     "type": "array",
@@ -497,10 +418,10 @@
                         "items": {
                             "type": "integer",
                             "minItems": 1
-                        },
-                        "minItems": 2,
-                        "maxItems": 2
-                    }
+                        }
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
                 },
                 "on_strike_effect_applications": {
                     "type": "array",
@@ -569,7 +490,7 @@
                     }
                 },
                 "combo_field": {
-                    "type": "#/$def/combo_field"
+                    "$ref": "#/$def/combo_field"
                 },
                 "whirl_finisher_on_tick_list": {
                     "type": "array",
@@ -593,7 +514,7 @@
                     "description": "Bundle to equip after casting this skill."
                 },
                 "cast_condition": {
-                    "type": "#/$def/condition"
+                    "$ref": "#/$def/condition"
                 }
             },
             "required": ["skill_key"]
@@ -607,7 +528,7 @@
                 "conditional_skill_keys": {
                     "type": "array",
                     "items": {
-                        "type": "#/$def/conditional_skill"
+                        "$ref": "#/$def/conditional_skill"
                     },
                     "minItems": 1
                 }
@@ -618,7 +539,7 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "type": "#/$def/condition"
+                    "$ref": "#/$def/condition"
                 },
                 "skill_key": {
                     "type": "string"
@@ -644,16 +565,16 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "type": "#/$def/condition"
+                    "$ref": "#/$def/condition"
                 },
                 "effect": {
-                    "type": "#/$def/effect"
+                    "$ref": "#/$def/effect"
                 },
                 "unique_effect": {
-                    "type": "#/$def/unique_effect"
+                    "$ref": "#/$def/unique_effect"
                 },
                 "direction": {
-                    "type": "#/$def/direction"
+                    "$ref": "#/$def/direction"
                 },
                 "base_duration_ms": {
                     "type": "integer",
@@ -677,17 +598,25 @@
                 }
             ]
         },
+        "direction": {
+            "type": "string",
+            "enum": [
+                "SELF",
+                "TEAM",
+                "OUTGOING"
+            ]
+        },
         "condition": {
             "type": "object",
             "properties": {
                 "weapon_type": {
-                    "type": "#/$def/weapon_type"
+                    "$ref": "#/$def/weapon_type"
                 },
                 "weapon_position": {
-                    "type": "#/$def/weapon_position"
+                    "$ref": "#/$def/weapon_position"
                 },
                 "weapon_set": {
-                    "type": "#/$def/weapon_set"
+                    "$ref": "#/$def/weapon_set"
                 },
                 "bundle": {
                     "type": "string"
@@ -696,7 +625,7 @@
                     "type": "string"
                 },
                 "effect_on_source": {
-                    "type": "#/$def/effect"
+                    "$ref": "#/$def/effect"
                 },
                 "unique_effect_on_target": {
                     "type": "string"
@@ -705,7 +634,7 @@
                     "type": "string"
                 },
                 "effect_on_target": {
-                    "type": "#/$def/effect"
+                    "$ref": "#/$def/effect"
                 },
                 "stacks_of_effect_on_target": {
                     "type": "integer"
@@ -714,7 +643,7 @@
                     "type": "string"
                 },
                 "threshold": {
-                    "type": "#/$def/threshold"
+                    "$ref": "#/$def/threshold"
                 },
                 "not_conditions": {
                     "type": "array",
@@ -753,7 +682,7 @@
                     "default": false
                 },
                 "only_applies_on_effect_application_of_type": {
-                    "type": "#/$def/effect"
+                    "$ref": "#/$def/effect"
                 },
                 "only_applies_on_begun_casting": {
                     "type": "boolean",
@@ -903,22 +832,23 @@
                     "default": 30000
                 },
                 "stacking_type": {
-                    "type": "#/$def/stacking_type"
+                    "$ref": "#/$def/stacking_type"
                 },
                 "refreshes_other_stacks": {
                     "type": "boolean",
                     "default": false
                 }
-            }
+            },
+            "required": ["unique_effect_key"]
         },
         "attribute_modifier": {
             "type": "object",
             "properties": {
                 "condition": {
-                    "type": "#/$def/condition"
+                    "$ref": "#/$def/condition"
                 },
                 "attribute": {
-                    "type": "#/$def/attribute"
+                    "$ref": "#/$def/attribute"
                 },
                 "multiplier": {
                     "type": "number",
@@ -932,13 +862,13 @@
         },
         "attribute_conversion": {
             "condition": {
-                "type": "#/$def/condition"
+                "$ref": "#/$def/condition"
             },
             "from": {
-                "type": "#/$def/attribute"
+                "$ref": "#/$def/attribute"
             },
             "to": {
-                "type": "#/$def/attribute"
+                "$ref": "#/$def/attribute"
             },
             "multiplier": {
                 "type": "number",
@@ -953,7 +883,7 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "type": "#/$def/condition"
+                    "$ref": "#/$def/condition"
                 },
                 "counter_key": {
                     "type": "string"
@@ -988,7 +918,7 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "type": "#/$def/condition"
+                    "$ref": "#/$def/condition"
                 },
                 "skill_key": {
                     "type": "string"
@@ -1000,13 +930,13 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "type": "#/$def/condition"
+                    "$ref": "#/$def/condition"
                 },
                 "effect": {
-                    "type": "#/$def/effect"
+                    "$ref": "#/$def/effect"
                 },
                 "unique_effect": {
-                    "type": "#/$def/unique_effect"
+                    "$ref": "#/$def/unique_effect"
                 },
                 "num_stacks": {
                     "type": "integer",
@@ -1026,7 +956,7 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "type": "#/$def/condition"
+                    "$ref": "#/$def/condition"
                 },
                 "skill_key": {
                     "type": "string"
