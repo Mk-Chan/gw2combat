@@ -1,0 +1,1093 @@
+{
+    "title": "Encounter",
+    "type": "object",
+    "properties": {
+        "actors": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/actor"
+            }
+        },
+        "termination_conditions": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/termination_condition"
+            }
+        },
+        "audit_configuration": {
+            "type": "object",
+            "properties": {
+                "audits_to_perform": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "ACTOR_CREATED",
+                            "SKILL_CASTS",
+                            "BUNDLES",
+                            "EFFECT_APPLICATIONS",
+                            "DAMAGE",
+                            "COMBAT_STATS",
+                            "EFFECT_EXPIRATION",
+                            "ACTOR_DOWNSTATE"
+                        ]
+                    },
+                    "default": [
+                        "ACTOR_CREATED",
+                        "SKILL_CASTS",
+                        "BUNDLES",
+                        "EFFECT_APPLICATIONS",
+                        "DAMAGE",
+                        "COMBAT_STATS",
+                        "EFFECT_EXPIRATION",
+                        "ACTOR_DOWNSTATE"
+                    ]
+                }
+            }
+        },
+        "require_afk_skills": {
+            "type": "boolean",
+            "default": false
+        },
+        "audit_offset": {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset in number of events to start the audit from. Useful for reducing the size of the audit JSON for network transfer."
+        },
+        "weapon_strength_mode": {
+            "type": "string",
+            "enum": [
+                "MEAN",
+                "RANDOM",
+                "LOWEST",
+                "HIGHEST"
+            ],
+            "default": "MEAN"
+        },
+        "enable_caching": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "required": ["actors", "termination_conditions"],
+    "definitions": {
+        "actor": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "build": {
+                    "type": "#/definitions/build"
+                },
+                "rotation": {
+                    "type": "#/definitions/rotation"
+                },
+                "team": {
+                    "type": "integer"
+                },
+                "audit_base_path": {
+                    "type": "string"
+                }
+            },
+            "required": ["name", "build", "rotation", "team"]
+        },
+        "build": {
+            "type": "object",
+            "properties": {
+                "attributes": {
+                    "type": "object",
+                    "properties": {
+                        "power": {
+                            "type": "number"
+                        },
+                        "precision": {
+                            "type": "number"
+                        },
+                        "toughness": {
+                            "type": "number"
+                        },
+                        "vitality": {
+                            "type": "number"
+                        },
+                        "concentration": {
+                            "type": "number"
+                        },
+                        "condition_damage": {
+                            "type": "number"
+                        },
+                        "expertise": {
+                            "type": "number"
+                        },
+                        "ferocity": {
+                            "type": "number"
+                        },
+                        "healing_power": {
+                            "type": "number"
+                        },
+                        "armor": {
+                            "type": "number"
+                        },
+                        "max_health": {
+                            "type": "number"
+                        },
+                        "critical_chance_multiplier": {
+                            "type": "number"
+                        },
+                        "critical_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "boon_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "aegis_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "alacrity_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "fury_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "might_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "protection_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "quickness_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "regeneration_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "resistance_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "resolution_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "stability_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "swiftness_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "vigor_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "condition_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "burning_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "bleeding_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "confusion_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "poison_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "torment_duration_multiplier": {
+                            "type": "number"
+                        },
+                        "condition_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "burning_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "bleeding_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "confusion_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "poison_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "torment_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "outgoing_strike_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "outgoing_strike_damage_multiplier_add_group": {
+                            "type": "number"
+                        },
+                        "incoming_strike_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "incoming_strike_damage_multiplier_add_group": {
+                            "type": "number"
+                        },
+                        "outgoing_condition_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "outgoing_condition_damage_multiplier_add_group": {
+                            "type": "number"
+                        },
+                        "incoming_condition_damage_multiplier": {
+                            "type": "number"
+                        },
+                        "incoming_condition_damage_multiplier_add_group": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "weapons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/weapon"
+                    }
+                },
+                "initial_weapon_set": {
+                    "type": "#/definitions/weapon_set"
+                },
+                "skills": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill"
+                    }
+                },
+                "conditional_skill_groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/conditional_skill_group"
+                    }
+                },
+                "permanent_effects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect"
+                    }
+                },
+                "permanent_unique_effects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/unique_effect"
+                    }
+                },
+                "counters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/counter_configuration"
+                    }
+                },
+                "recipes": {
+                    "type": "array",
+                    "items": {
+                        "type": "#/definitions/recipe"
+                    }
+                },
+                "recipe_paths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": ["attributes"]
+        },
+        "recipe": {
+            "type": "object",
+            "properties": {
+                "counters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/counter_configuration"
+                    }
+                },
+                "permanent_effects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect"
+                    }
+                },
+                "permanent_unique_effects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/unique_effect"
+                    }
+                },
+                "skills": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill"
+                    }
+                },
+                "conditional_skill_groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/conditional_skill_group"
+                    }
+                }
+            }
+        },
+        "counter_configuration": {
+            "type": "object",
+            "properties": {
+                "counter_key": {
+                    "type": "string"
+                },
+                "initial_value": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "counter_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/counter_modifier"
+                    },
+                    "minItems": 1
+                }
+            },
+            "required": ["counter_key", "initial_value", "counter_modifiers"]
+        },
+        "rotation": {
+            "type": "object",
+            "properties": {
+                "skill_casts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_cast"
+                    }
+                },
+                "repeat": {
+                    "type": "boolean"
+                }
+            },
+            "required": ["skills"]
+        },
+        "skill_cast": {
+            "type": "object",
+            "properties": {
+                "skill": {
+                    "type": "string"
+                },
+                "cast_time_ms": {
+                    "type": "integer"
+                }
+            },
+            "required": ["skill", "cast_time_ms"]
+        },
+        "weapon": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "#/definitions/weapon_type"
+                },
+                "position": {
+                    "type": "#/definitions/weapon_position"
+                },
+                "set": {
+                    "type": "#/definitions/weapon_set"
+                }
+            },
+            "required": ["type", "strength"]
+        },
+        "weapon_type": {
+            "type": "string",
+            "enum": [
+                "main_hand",
+                "empty_handed",
+                "greatsword",
+                "longbow",
+                "sword",
+                "axe",
+                "torch",
+                "scepter",
+                "focus",
+                "kit_conjure",
+                "tome",
+                "dagger",
+                "mace",
+                "pistol",
+                "shield",
+                "warhorn",
+                "hammer",
+                "rifle",
+                "shortbow",
+                "staff",
+                "aquatic"
+            ]
+        },
+        "weapon_position": {
+            "type": "string",
+            "enum": [
+                "universal",
+                "main_hand",
+                "off_hand",
+                "two_handed"
+            ]
+        },
+        "weapon_set": {
+            "type": "string",
+            "enum": [
+                "set_1",
+                "set_2"
+            ]
+        },
+        "skill": {
+            "type": "object",
+            "properties": {
+                "skill_key": {
+                    "type": "string"
+                },
+                "weapon_type": {
+                    "type": "#/definitions/weapon_type"
+                },
+                "required_bundle": {
+                    "type": "string"
+                },
+                "attribute_damage_to_skill": {
+                    "type": "string"
+                },
+                "cast_duration": {
+                    "type": "array",
+                    "description": "First item is base cast time and second item is with quickness.",
+                    "items": {
+                        "type": "integer",
+                        "minItems": 2,
+                        "maxItems": 2
+                    }
+                },
+                "cooldown": {
+                    "type": "array",
+                    "description": "First item is base cooldown and second item is with alacrity.",
+                    "items": {
+                        "type": "integer",
+                        "minItems": 2,
+                        "maxItems": 2
+                    }
+                },
+                "flat_damage": {
+                    "type": "number"
+                },
+                "damage_coefficient": {
+                    "type": "number"
+                },
+                "ammo": {
+                    "type": "integer"
+                },
+                "num_targets": {
+                    "type": "integer"
+                },
+                "strike_on_tick_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "description": "First item is base tick list and second item is with quickness.",
+                        "items": {
+                            "type": "integer",
+                            "minItems": 1
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                    }
+                },
+                "pulse_on_tick_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "description": "First item is base tick list and second item is with quickness.",
+                        "items": {
+                            "type": "integer",
+                            "minItems": 1
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                    }
+                },
+                "on_strike_effect_applications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect_application"
+                    }
+                },
+                "on_pulse_effect_applications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect_application"
+                    }
+                },
+                "attribute_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/attribute_modifier"
+                    }
+                },
+                "attribute_conversions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/attribute_conversion"
+                    }
+                },
+                "counter_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/counter_modifier"
+                    }
+                },
+                "cooldown_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cooldown_modifier"
+                    }
+                },
+                "effect_removals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect_removal"
+                    }
+                },
+                "skills_to_put_on_cooldown": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "skills_to_cancel": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "child_skill_keys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "combo_field": {
+                    "type": "#/definitions/combo_field"
+                },
+                "whirl_finisher_on_tick_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "description": "First item is base tick list and second item is with quickness.",
+                        "items": {
+                            "type": "integer",
+                            "minItems": 1
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                    }
+                },
+                "can_critical_strike": {
+                    "type": "boolean",
+                    "default": "true"
+                },
+                "equip_bundle": {
+                    "type": "string",
+                    "description": "Bundle to equip after casting this skill."
+                },
+                "cast_condition": {
+                    "type": "#/definitions/condition"
+                }
+            },
+            "required": ["skill_key"]
+        },
+        "conditional_skill_group": {
+            "type": "object",
+            "properties": {
+                "skill_key": {
+                    "type": "string"
+                },
+                "conditional_skill_keys": {
+                    "type": "array",
+                    "items": {
+                        "type": "#/definitions/conditional_skill"
+                    },
+                    "minItems": 1
+                }
+            },
+            "required": ["skill_key", "conditional_skill_keys"]
+        },
+        "conditional_skill": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "type": "#/definitions/condition"
+                },
+                "skill_key": {
+                    "type": "string"
+                }
+            },
+            "required": ["condition", "skill_key"]
+        },
+        "combo_field": {
+            "type": "string",
+            "enum": [
+                "dark",
+                "ethereal",
+                "fire",
+                "ice",
+                "light",
+                "lightning",
+                "poison",
+                "smoke",
+                "water"
+            ]
+        },
+        "effect_application": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "type": "#/definitions/condition"
+                },
+                "effect": {
+                    "type": "#/definitions/effect"
+                },
+                "unique_effect": {
+                    "type": "#/definitions/unique_effect"
+                },
+                "direction": {
+                    "type": "#/definitions/direction"
+                },
+                "base_duration_ms": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "num_stacks": {
+                    "type": "integer",
+                    "default": 1
+                },
+                "num_targets": {
+                    "type": "integer",
+                    "default": 1
+                }
+            },
+            "anyOf": [
+                {
+                    "required": ["direction", "effect"]
+                },
+                {
+                    "required": ["direction", "unique_effect"]
+                }
+            ]
+        },
+        "condition": {
+            "type": "object",
+            "properties": {
+                "weapon_type": {
+                    "type": "#/definitions/weapon_type"
+                },
+                "weapon_position": {
+                    "type": "#/definitions/weapon_position"
+                },
+                "weapon_set": {
+                    "type": "#/definitions/weapon_set"
+                },
+                "bundle": {
+                    "type": "string"
+                },
+                "unique_effect_on_source": {
+                    "type": "string"
+                },
+                "effect_on_source": {
+                    "type": "#/definitions/effect"
+                },
+                "unique_effect_on_target": {
+                    "type": "string"
+                },
+                "unique_effect_on_target_by_source": {
+                    "type": "string"
+                },
+                "effect_on_target": {
+                    "type": "#/definitions/effect"
+                },
+                "stacks_of_effect_on_target": {
+                    "type": "integer"
+                },
+                "depends_on_skill_off_cooldown": {
+                    "type": "string"
+                },
+                "threshold": {
+                    "type": "#/definitions/threshold"
+                },
+                "not_conditions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/condition"
+                    }
+                },
+                "or_conditions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/condition"
+                    }
+                },
+                "and_conditions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/condition"
+                    }
+                },
+                "only_applies_on_strikes": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "only_applies_on_critical_strikes": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "only_applies_on_strikes_by_skill": {
+                    "type": "string"
+                },
+                "only_applies_on_strikes_by_skill_with_tag": {
+                    "type": "string"
+                },
+                "only_applies_on_effect_application": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "only_applies_on_effect_application_of_type": {
+                    "type": "#/definitions/effect"
+                },
+                "only_applies_on_begun_casting": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "only_applies_on_begun_casting_skill": {
+                    "type": "string"
+                },
+                "only_applies_on_begun_casting_skill_with_tag": {
+                    "type": "string"
+                },
+                "only_applies_on_finished_casting": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "only_applies_on_finished_casting_skill": {
+                    "type": "string"
+                },
+                "only_applies_on_finished_casting_skill_with_tag": {
+                    "type": "string"
+                },
+                "only_applies_on_ammo_gain_of_skill": {
+                    "type": "string"
+                }
+            }
+        },
+        "threshold": {
+            "type": "object",
+            "properties": {
+                "threshold_type": {
+                    "type": "string",
+                    "enum": [
+                        "equal",
+                        "upper_bound_exclusive",
+                        "upper_bound_inclusive",
+                        "lower_bound_exclusive",
+                        "lower_bound_inclusive"
+                    ]
+                },
+                "threshold_value": {
+                    "type": "number"
+                },
+                "generate_random_number_subject_to_threshold": {
+                    "type": "boolean",
+                    "description": "If true, threshold_value is interpreted as a random number between 0.0 and 100.0 inclusive."
+                },
+                "health_pct_subject_to_threshold": {
+                    "type": "boolean",
+                    "description": "If true, threshold_value is interpreted as a percentage of max health."
+                },
+                "counter_value_subject_to_threshold": {
+                    "type": "string",
+                    "description": "Name of the counter to use as the value."
+                }
+            }
+        },
+        "effect": {
+            "type": "string",
+            "enum": [
+                "AEGIS",
+                "ALACRITY",
+                "FURY",
+                "MIGHT",
+                "QUICKNESS",
+                "RESOLUTION",
+                "RESISTANCE",
+                "PROTECTION",
+                "REGENERATION",
+                "VIGOR",
+                "SWIFTNESS",
+                "STABILITY",
+                "BLINDED",
+                "CHILLED",
+                "CRIPPLED",
+                "FEAR",
+                "IMMOBILIZED",
+                "SLOW",
+                "TAUNT",
+                "WEAKNESS",
+                "VULNERABILITY",
+                "BURNING",
+                "BLEEDING",
+                "TORMENT",
+                "POISON",
+                "CONFUSION",
+                "BINDING_BLADE"
+            ]
+        },
+        "unique_effect": {
+            "type": "object",
+            "properties": {
+                "unique_effect_key": {
+                    "type": "string"
+                },
+                "attribute_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/attribute_modifier"
+                    }
+                },
+                "attribute_conversions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/attribute_conversion"
+                    }
+                },
+                "counter_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/counter_modifier"
+                    }
+                },
+                "skill_triggers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_trigger"
+                    }
+                },
+                "unchained_skill_triggers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_trigger"
+                    }
+                },
+                "effect_removals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect_removal"
+                    }
+                },
+                "cooldown_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cooldown_modifier"
+                    }
+                },
+                "max_considered_stacks": {
+                    "type": "integer",
+                    "default": 1
+                },
+                "max_stored_stacks": {
+                    "type": "integer",
+                    "default": 1500
+                },
+                "max_duration": {
+                    "type": "integer",
+                    "default": 30000
+                },
+                "stacking_type": {
+                    "type": "#/definitions/stacking_type"
+                },
+                "refreshes_other_stacks": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "attribute_modifier": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "type": "#/definitions/condition"
+                },
+                "attribute": {
+                    "type": "#/definitions/attribute"
+                },
+                "multiplier": {
+                    "type": "number",
+                    "default": 1.0
+                },
+                "addend": {
+                    "type": "number",
+                    "default": 0.0
+                }
+            }
+        },
+        "attribute_conversion": {
+            "condition": {
+                "type": "#/definitions/condition"
+            },
+            "from": {
+                "type": "#/definitions/attribute"
+            },
+            "to": {
+                "type": "#/definitions/attribute"
+            },
+            "multiplier": {
+                "type": "number",
+                "default": 1.0
+            },
+            "addend": {
+                "type": "number",
+                "default": 0.0
+            }
+        },
+        "counter_modifier": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "type": "#/definitions/condition"
+                },
+                "counter_key": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "string",
+                    "enum": [
+                        "add",
+                        "subtract",
+                        "set",
+                        "reset"
+                    ]
+                },
+                "value": {
+                    "type": "integer"
+                },
+                "counter_value": {
+                    "type": "string",
+                    "description": "Name of the counter to use as the value."
+                }
+            },
+            "oneOf": [
+                {
+                    "required": ["counter_key", "operation", "value"]
+                },
+                {
+                    "required": ["counter_key", "operation", "counter_value"]
+                }
+            ]
+        },
+        "skill_trigger": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "type": "#/definitions/condition"
+                },
+                "skill_key": {
+                    "type": "string"
+                }
+            },
+            "required": ["skill_key"]
+        },
+        "effect_removal": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "type": "#/definitions/condition"
+                },
+                "effect": {
+                    "type": "#/definitions/effect"
+                },
+                "unique_effect": {
+                    "type": "#/definitions/unique_effect"
+                },
+                "num_stacks": {
+                    "type": "integer",
+                    "description": "Number of stacks to remove. If not specified, all stacks are removed."
+                }
+            },
+            "anyOf": [
+                {
+                    "required": ["effect"]
+                },
+                {
+                    "required": ["unique_effect"]
+                }
+            ]
+        },
+        "cooldown_modifier": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "type": "#/definitions/condition"
+                },
+                "skill_key": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "string",
+                    "enum": [
+                        "add",
+                        "subtract",
+                        "set",
+                        "reset"
+                    ]
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "stacking_type": {
+            "type": "string",
+            "enum": [
+                "intensity",
+                "duration",
+                "replace"
+            ]
+        },
+        "termination_condition": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "TIME",
+                        "ROTATION",
+                        "DAMAGE"
+                    ]
+                },
+                "time": {
+                    "type": "integer",
+                    "description": "Terminate the encounter after this many milliseconds."
+                },
+                "actor": {
+                    "type": "string",
+                    "description": "Terminate the encounter after this actor has completed its rotation."
+                },
+                "damage": {
+                    "type": "integer",
+                    "description": "Terminate the encounter after this much damage has been dealt to the actor specified in the 'actor' field."
+                }
+            },
+            "oneOf": [
+                {
+                    "required": ["type", "time"]
+                },
+                {
+                    "required": ["type", "actor"]
+                },
+                {
+                    "required": ["type", "actor", "damage"]
+                }
+            ]
+        }
+    }
+}
