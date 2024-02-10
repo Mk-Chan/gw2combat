@@ -5,13 +5,13 @@
         "actors": {
             "type": "array",
             "items": {
-                "$ref": "#/$def/actor"
+                "$ref": "#/definitions/actor"
             }
         },
         "termination_conditions": {
             "type": "array",
             "items": {
-                "$ref": "#/$def/termination_condition"
+                "$ref": "#/definitions/termination_condition"
             }
         },
         "audit_configuration": {
@@ -70,7 +70,7 @@
         }
     },
     "required": ["actors", "termination_conditions"],
-    "$def": {
+    "definitions": {
         "attribute": {
             "type": "string",
             "enum": [
@@ -129,10 +129,10 @@
                     "type": "string"
                 },
                 "build": {
-                    "$ref": "#/$def/build"
+                    "$ref": "#/definitions/build"
                 },
                 "rotation": {
-                    "$ref": "#/$def/rotation"
+                    "$ref": "#/definitions/rotation"
                 },
                 "team": {
                     "type": "integer"
@@ -152,55 +152,62 @@
                         "type": "array",
                         "description": "First item is attribute name and second item is value.",
                         "items": {
-                            "type": ["string", "integer"],
-                            "minItems": 2,
-                            "maxItems": 2
-                        }
+                            "oneOf": [
+                                {
+                                    "$ref": "#/definitions/attribute"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
                     }
                 },
                 "weapons": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/weapon"
+                        "$ref": "#/definitions/weapon"
                     }
                 },
                 "initial_weapon_set": {
-                    "$ref": "#/$def/weapon_set"
+                    "$ref": "#/definitions/weapon_set"
                 },
                 "skills": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/skill"
+                        "$ref": "#/definitions/skill"
                     }
                 },
                 "conditional_skill_groups": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/conditional_skill_group"
+                        "$ref": "#/definitions/conditional_skill_group"
                     }
                 },
                 "permanent_effects": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/effect"
+                        "$ref": "#/definitions/effect"
                     }
                 },
                 "permanent_unique_effects": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/unique_effect"
+                        "$ref": "#/definitions/unique_effect"
                     }
                 },
                 "counters": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/counter_configuration"
+                        "$ref": "#/definitions/counter_configuration"
                     }
                 },
                 "recipes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/recipe"
+                        "$ref": "#/definitions/recipe"
                     }
                 },
                 "recipe_paths": {
@@ -218,31 +225,31 @@
                 "counters": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/counter_configuration"
+                        "$ref": "#/definitions/counter_configuration"
                     }
                 },
                 "permanent_effects": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/effect"
+                        "$ref": "#/definitions/effect"
                     }
                 },
                 "permanent_unique_effects": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/unique_effect"
+                        "$ref": "#/definitions/unique_effect"
                     }
                 },
                 "skills": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/skill"
+                        "$ref": "#/definitions/skill"
                     }
                 },
                 "conditional_skill_groups": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/conditional_skill_group"
+                        "$ref": "#/definitions/conditional_skill_group"
                     }
                 }
             }
@@ -260,7 +267,7 @@
                 "counter_modifiers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/counter_modifier"
+                        "$ref": "#/definitions/counter_modifier"
                     },
                     "minItems": 1
                 }
@@ -273,7 +280,7 @@
                 "skill_casts": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/skill_cast"
+                        "$ref": "#/definitions/skill_cast"
                     }
                 },
                 "repeat": {
@@ -299,13 +306,13 @@
             "type": "object",
             "properties": {
                 "type": {
-                    "$ref": "#/$def/weapon_type"
+                    "$ref": "#/definitions/weapon_type"
                 },
                 "position": {
-                    "$ref": "#/$def/weapon_position"
+                    "$ref": "#/definitions/weapon_position"
                 },
                 "set": {
-                    "$ref": "#/$def/weapon_set"
+                    "$ref": "#/definitions/weapon_set"
                 }
             },
             "required": ["type", "position", "set"]
@@ -359,7 +366,7 @@
                     "type": "string"
                 },
                 "weapon_type": {
-                    "$ref": "#/$def/weapon_type"
+                    "$ref": "#/definitions/weapon_type"
                 },
                 "required_bundle": {
                     "type": "string"
@@ -371,19 +378,19 @@
                     "type": "array",
                     "description": "First item is base cast time and second item is with quickness.",
                     "items": {
-                        "type": "integer",
-                        "minItems": 2,
-                        "maxItems": 2
-                    }
+                        "type": "integer"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
                 },
                 "cooldown": {
                     "type": "array",
                     "description": "First item is base cooldown and second item is with alacrity.",
                     "items": {
-                        "type": "integer",
-                        "minItems": 2,
-                        "maxItems": 2
-                    }
+                        "type": "integer"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
                 },
                 "flat_damage": {
                     "type": "number"
@@ -403,9 +410,9 @@
                         "type": "array",
                         "description": "First item is base tick list and second item is with quickness.",
                         "items": {
-                            "type": "integer",
-                            "minItems": 1
-                        }
+                            "type": "integer"
+                        },
+                        "minItems": 1
                     },
                     "minItems": 2,
                     "maxItems": 2
@@ -416,9 +423,9 @@
                         "type": "array",
                         "description": "First item is base tick list and second item is with quickness.",
                         "items": {
-                            "type": "integer",
-                            "minItems": 1
-                        }
+                            "type": "integer"
+                        },
+                        "minItems": 1
                     },
                     "minItems": 2,
                     "maxItems": 2
@@ -426,43 +433,43 @@
                 "on_strike_effect_applications": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/effect_application"
+                        "$ref": "#/definitions/effect_application"
                     }
                 },
                 "on_pulse_effect_applications": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/effect_application"
+                        "$ref": "#/definitions/effect_application"
                     }
                 },
                 "attribute_modifiers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/attribute_modifier"
+                        "$ref": "#/definitions/attribute_modifier"
                     }
                 },
                 "attribute_conversions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/attribute_conversion"
+                        "$ref": "#/definitions/attribute_conversion"
                     }
                 },
                 "counter_modifiers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/counter_modifier"
+                        "$ref": "#/definitions/counter_modifier"
                     }
                 },
                 "cooldown_modifiers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/cooldown_modifier"
+                        "$ref": "#/definitions/cooldown_modifier"
                     }
                 },
                 "effect_removals": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/effect_removal"
+                        "$ref": "#/definitions/effect_removal"
                     }
                 },
                 "skills_to_put_on_cooldown": {
@@ -490,7 +497,7 @@
                     }
                 },
                 "combo_field": {
-                    "$ref": "#/$def/combo_field"
+                    "$ref": "#/definitions/combo_field"
                 },
                 "whirl_finisher_on_tick_list": {
                     "type": "array",
@@ -498,12 +505,12 @@
                         "type": "array",
                         "description": "First item is base tick list and second item is with quickness.",
                         "items": {
-                            "type": "integer",
-                            "minItems": 1
+                            "type": "integer"
                         },
-                        "minItems": 2,
-                        "maxItems": 2
-                    }
+                        "minItems": 1
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
                 },
                 "can_critical_strike": {
                     "type": "boolean",
@@ -514,7 +521,7 @@
                     "description": "Bundle to equip after casting this skill."
                 },
                 "cast_condition": {
-                    "$ref": "#/$def/condition"
+                    "$ref": "#/definitions/condition"
                 }
             },
             "required": ["skill_key"]
@@ -528,7 +535,7 @@
                 "conditional_skill_keys": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/conditional_skill"
+                        "$ref": "#/definitions/conditional_skill"
                     },
                     "minItems": 1
                 }
@@ -539,7 +546,7 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "$ref": "#/$def/condition"
+                    "$ref": "#/definitions/condition"
                 },
                 "skill_key": {
                     "type": "string"
@@ -565,16 +572,16 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "$ref": "#/$def/condition"
+                    "$ref": "#/definitions/condition"
                 },
                 "effect": {
-                    "$ref": "#/$def/effect"
+                    "$ref": "#/definitions/effect"
                 },
                 "unique_effect": {
-                    "$ref": "#/$def/unique_effect"
+                    "$ref": "#/definitions/unique_effect"
                 },
                 "direction": {
-                    "$ref": "#/$def/direction"
+                    "$ref": "#/definitions/direction"
                 },
                 "base_duration_ms": {
                     "type": "integer",
@@ -610,13 +617,13 @@
             "type": "object",
             "properties": {
                 "weapon_type": {
-                    "$ref": "#/$def/weapon_type"
+                    "$ref": "#/definitions/weapon_type"
                 },
                 "weapon_position": {
-                    "$ref": "#/$def/weapon_position"
+                    "$ref": "#/definitions/weapon_position"
                 },
                 "weapon_set": {
-                    "$ref": "#/$def/weapon_set"
+                    "$ref": "#/definitions/weapon_set"
                 },
                 "bundle": {
                     "type": "string"
@@ -625,7 +632,7 @@
                     "type": "string"
                 },
                 "effect_on_source": {
-                    "$ref": "#/$def/effect"
+                    "$ref": "#/definitions/effect"
                 },
                 "unique_effect_on_target": {
                     "type": "string"
@@ -634,7 +641,7 @@
                     "type": "string"
                 },
                 "effect_on_target": {
-                    "$ref": "#/$def/effect"
+                    "$ref": "#/definitions/effect"
                 },
                 "stacks_of_effect_on_target": {
                     "type": "integer"
@@ -643,24 +650,24 @@
                     "type": "string"
                 },
                 "threshold": {
-                    "$ref": "#/$def/threshold"
+                    "$ref": "#/definitions/threshold"
                 },
                 "not_conditions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/condition"
+                        "$ref": "#/definitions/condition"
                     }
                 },
                 "or_conditions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/condition"
+                        "$ref": "#/definitions/condition"
                     }
                 },
                 "and_conditions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/condition"
+                        "$ref": "#/definitions/condition"
                     }
                 },
                 "only_applies_on_strikes": {
@@ -682,7 +689,7 @@
                     "default": false
                 },
                 "only_applies_on_effect_application_of_type": {
-                    "$ref": "#/$def/effect"
+                    "$ref": "#/definitions/effect"
                 },
                 "only_applies_on_begun_casting": {
                     "type": "boolean",
@@ -780,43 +787,43 @@
                 "attribute_modifiers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/attribute_modifier"
+                        "$ref": "#/definitions/attribute_modifier"
                     }
                 },
                 "attribute_conversions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/attribute_conversion"
+                        "$ref": "#/definitions/attribute_conversion"
                     }
                 },
                 "counter_modifiers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/counter_modifier"
+                        "$ref": "#/definitions/counter_modifier"
                     }
                 },
                 "skill_triggers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/skill_trigger"
+                        "$ref": "#/definitions/skill_trigger"
                     }
                 },
                 "unchained_skill_triggers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/skill_trigger"
+                        "$ref": "#/definitions/skill_trigger"
                     }
                 },
                 "effect_removals": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/effect_removal"
+                        "$ref": "#/definitions/effect_removal"
                     }
                 },
                 "cooldown_modifiers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/$def/cooldown_modifier"
+                        "$ref": "#/definitions/cooldown_modifier"
                     }
                 },
                 "max_considered_stacks": {
@@ -832,7 +839,7 @@
                     "default": 30000
                 },
                 "stacking_type": {
-                    "$ref": "#/$def/stacking_type"
+                    "$ref": "#/definitions/stacking_type"
                 },
                 "refreshes_other_stacks": {
                     "type": "boolean",
@@ -845,10 +852,10 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "$ref": "#/$def/condition"
+                    "$ref": "#/definitions/condition"
                 },
                 "attribute": {
-                    "$ref": "#/$def/attribute"
+                    "$ref": "#/definitions/attribute"
                 },
                 "multiplier": {
                     "type": "number",
@@ -862,13 +869,13 @@
         },
         "attribute_conversion": {
             "condition": {
-                "$ref": "#/$def/condition"
+                "$ref": "#/definitions/condition"
             },
             "from": {
-                "$ref": "#/$def/attribute"
+                "$ref": "#/definitions/attribute"
             },
             "to": {
-                "$ref": "#/$def/attribute"
+                "$ref": "#/definitions/attribute"
             },
             "multiplier": {
                 "type": "number",
@@ -883,7 +890,7 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "$ref": "#/$def/condition"
+                    "$ref": "#/definitions/condition"
                 },
                 "counter_key": {
                     "type": "string"
@@ -918,7 +925,7 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "$ref": "#/$def/condition"
+                    "$ref": "#/definitions/condition"
                 },
                 "skill_key": {
                     "type": "string"
@@ -930,13 +937,13 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "$ref": "#/$def/condition"
+                    "$ref": "#/definitions/condition"
                 },
                 "effect": {
-                    "$ref": "#/$def/effect"
+                    "$ref": "#/definitions/effect"
                 },
                 "unique_effect": {
-                    "$ref": "#/$def/unique_effect"
+                    "$ref": "#/definitions/unique_effect"
                 },
                 "num_stacks": {
                     "type": "integer",
@@ -956,7 +963,7 @@
             "type": "object",
             "properties": {
                 "condition": {
-                    "$ref": "#/$def/condition"
+                    "$ref": "#/definitions/condition"
                 },
                 "skill_key": {
                     "type": "string"
