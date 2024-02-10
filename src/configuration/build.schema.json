@@ -427,6 +427,10 @@
                     "type": "string",
                     "description": "Bundle to equip after casting this skill."
                 },
+                "drop_bundle": {
+                    "type": "string",
+                    "description": "Bundle to remove after casting this skill."
+                },
                 "cast_condition": {
                     "$ref": "#/definitions/condition"
                 }

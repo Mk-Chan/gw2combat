@@ -67,22 +67,20 @@ void progress_animations(registry_t& registry) {
                 if (auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
                     bundle_ptr) {
                     auto bundle = bundle_ptr->name;
-                    if (bundle != "*" and bundle != skill_configuration.drop_bundle) {
+                    if (bundle != "*" && bundle != skill_configuration.drop_bundle) {
                         throw std::runtime_error(fmt::format("Tried to drop {} but {} equipped",
-                            skill_configuration.drop_bundle,
-                            bundle
-                            ));
+                                                             skill_configuration.drop_bundle,
+                                                             bundle));
                     }
-                    registry.emplace_or_replace<component::dropped_bundle>(actor_entity,
-                                                                           bundle);
+                    registry.emplace_or_replace<component::dropped_bundle>(actor_entity, bundle);
                     registry.remove<component::bundle_component>(actor_entity);
                     spdlog::info("[{}] {}: dropped bundle {}",
                                  utils::get_current_tick(registry),
                                  utils::get_entity_name(actor_entity, registry),
                                  bundle);
-                    } else {
-                        throw std::runtime_error("no bundle on entity");
-                    }
+                } else {
+                    throw std::runtime_error("no bundle on entity");
+                }
             } else if (skill_configuration.skill_key == "Weapon Swap") {
                 if (auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
                     bundle_ptr) {
