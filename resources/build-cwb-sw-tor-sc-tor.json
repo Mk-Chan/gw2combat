@@ -418,7 +418,7 @@
                         "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
                     },
                     "skill_key": "Symbol of Blades",
-                    "operation": "SUBTRACT",
+                    "operation": "subtract",
                     "value": 280
                 },
                 {
@@ -428,7 +428,7 @@
                         "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
                     },
                     "skill_key": "Zealot's Defense",
-                    "operation": "SUBTRACT",
+                    "operation": "subtract",
                     "value": 280
                 },
                 {
@@ -438,7 +438,7 @@
                         "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
                     },
                     "skill_key": "Symbol of Punishment",
-                    "operation": "SUBTRACT",
+                    "operation": "subtract",
                     "value": 280
                 },
                 {
@@ -448,7 +448,7 @@
                         "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
                     },
                     "skill_key": "Zealot's Flame",
-                    "operation": "SUBTRACT",
+                    "operation": "subtract",
                     "value": 280
                 },
                 {
@@ -458,7 +458,7 @@
                         "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
                     },
                     "skill_key": "Cleansing Flame",
-                    "operation": "SUBTRACT",
+                    "operation": "subtract",
                     "value": 280
                 }
             ]
@@ -811,7 +811,7 @@
                 [0, 1000, 2000, 3000, 4000],
                 [0, 1000, 2000, 3000, 4000]
             ],
-            "combo_field": "LIGHT"
+            "combo_field": "light"
         }, {
             "skill_key": "Symbol of Blades",
             "cast_duration": [520, 520],
@@ -867,7 +867,7 @@
                 [1000, 2000, 3000, 4000],
                 [1000, 2000, 3000, 4000]
             ],
-            "combo_field": "LIGHT"
+            "combo_field": "light"
         }, {
             "skill_key": "Symbol of Punishment",
             "weapon_type": "scepter",
@@ -979,7 +979,7 @@
                     "direction": "OUTGOING"
                 }
             ],
-            "combo_field": "FIRE"
+            "combo_field": "fire"
         }, {
             "skill_key": "Purging Flames",
             "cast_duration": [480, 320],
