@@ -943,7 +943,7 @@
                     "$ref": "#/definitions/effect"
                 },
                 "unique_effect": {
-                    "$ref": "#/definitions/unique_effect"
+                    "type": "string"
                 },
                 "num_stacks": {
                     "type": "integer",
