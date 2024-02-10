@@ -90,7 +90,7 @@
                     "type": "string"
                 }
             },
-            "required": ["name", "build", "rotation", "team"]
+            "required": ["name", "build", "team"]
         },
         "build": {
             "type": "object",
@@ -1077,7 +1077,7 @@
                     "description": "Terminate the encounter after this much damage has been dealt to the actor specified in the 'actor' field."
                 }
             },
-            "oneOf": [
+            "anyOf": [
                 {
                     "required": ["type", "time"]
                 },
