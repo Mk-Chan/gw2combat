@@ -725,6 +725,12 @@
                         "$ref": "#/definitions/skill_trigger"
                     }
                 },
+                "source_actor_skill_triggers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_trigger"
+                    }
+                },
                 "effect_removals": {
                     "type": "array",
                     "items": {
