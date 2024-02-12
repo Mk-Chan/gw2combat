@@ -135,6 +135,11 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
                 destination_entity,
                 source_registry.get<gw2combat::component::is_unchained_skill_trigger>(entity));
         }
+        if (source_registry.all_of<gw2combat::component::is_source_actor_skill_trigger>(entity)) {
+            destination_registry.emplace<gw2combat::component::is_source_actor_skill_trigger>(
+                destination_entity,
+                source_registry.get<gw2combat::component::is_source_actor_skill_trigger>(entity));
+        }
         if (source_registry.all_of<gw2combat::component::encounter_configuration_component>(
                 entity)) {
             destination_registry.emplace<gw2combat::component::encounter_configuration_component>(

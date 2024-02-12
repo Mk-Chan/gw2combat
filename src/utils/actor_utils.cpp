@@ -357,6 +357,11 @@ std::optional<entity_t> add_unique_effect_to_actor(
                                          component::is_unchained_skill_trigger>(
             skill_trigger, unique_effect_entity, registry);
     }
+    for (auto& skill_trigger : unique_effect.source_actor_skill_triggers) {
+        utils::add_owner_based_component<configuration::skill_trigger_t,
+                                         component::is_source_actor_skill_trigger>(
+            skill_trigger, unique_effect_entity, registry);
+    }
 
     if (unique_effect.refreshes_other_stacks && stacks_count > 0) {
         for (auto&& [unique_effect_entity, is_unique_effect, owner_component] :

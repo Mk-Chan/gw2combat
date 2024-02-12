@@ -23,6 +23,7 @@ struct unique_effect_t {
     std::vector<counter_modifier_t> counter_modifiers;
     std::vector<skill_trigger_t> skill_triggers;
     std::vector<skill_trigger_t> unchained_skill_triggers;
+    std::vector<skill_trigger_t> source_actor_skill_triggers;
     std::vector<effect_removal_t> effect_removals;
     std::vector<cooldown_modifier_t> cooldown_modifiers;
 
@@ -48,6 +49,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(unique_effect_t,
                                                 counter_modifiers,
                                                 skill_triggers,
                                                 unchained_skill_triggers,
+                                                source_actor_skill_triggers,
                                                 effect_removals,
                                                 cooldown_modifiers,
                                                 max_considered_stacks,

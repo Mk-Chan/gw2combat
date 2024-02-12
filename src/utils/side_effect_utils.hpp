@@ -8,6 +8,7 @@
 #include "entity_utils.hpp"
 
 #include "component/actor/is_cooldown_modifier.hpp"
+#include "component/actor/rotation_component.hpp"
 #include "component/counter/is_counter_modifier.hpp"
 #include "component/effect/is_effect.hpp"
 #include "component/effect/is_effect_removal.hpp"
@@ -122,6 +123,24 @@ inline void apply_side_effects(registry_t& registry,
             auto& skill_trigger = is_unchained_skill_trigger.skill_trigger;
             if (side_effect_condition_fn(skill_trigger.condition)) {
                 utils::enqueue_child_skill(skill_trigger.skill_key, source_entity_owner, registry);
+            }
+        });
+    registry.view<component::is_source_actor_skill_trigger>().each(
+        [&](entity_t skill_trigger_entity,
+            const component::is_source_actor_skill_trigger& is_source_actor_skill_trigger) {
+            auto owner_entity = utils::get_owner(skill_trigger_entity, registry);
+            if (owner_entity != source_entity_owner) {
+                return;
+            }
+            auto& skill_trigger = is_source_actor_skill_trigger.skill_trigger;
+            if (side_effect_condition_fn(skill_trigger.condition)) {
+                auto rotation_ptr = registry.try_get<component::rotation_component>(owner_entity);
+                if (!rotation_ptr) {
+                    return;
+                }
+                auto& skill_casts = rotation_ptr->rotation.skill_casts;
+                skill_casts.insert(skill_casts.begin() + rotation_ptr->current_idx,
+                                   actor::skill_cast_t{skill_trigger.skill_key, 0});
             }
         });
 }
