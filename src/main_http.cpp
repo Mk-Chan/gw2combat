@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include "combat_loop.hpp"
-#include "server_tcp.hpp"
+#include "server_http.hpp"
 
 #include "configuration/build.hpp"
 #include "configuration/encounter-local.hpp"
@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
             "simulation.");
     }
 
-    argparse::ArgumentParser parser{"gw2combat"};
+    argparse::ArgumentParser parser{"gw2combat_http"};
     parser.add_argument("--server")
         .default_value(std::string{"127.0.0.1:54321"})
         .help("Server mode with hostname:port configuration.");
@@ -44,25 +44,17 @@ int main(int argc, char** argv) {
         std::exit(1);
     }
 
-    bool server_mode = parser.is_used("--server");
-    if (!server_mode) {
-        const auto& encounter_path = parser.get<std::string>("--encounter");
-        const auto& audit_path = parser.get<std::string>("--audit-path");
-        auto encounter_local = utils::read<configuration::encounter_local_t>(encounter_path);
-        auto encounter = convert_encounter(encounter_local);
-        std::ofstream audit_path_stream{audit_path, std::ios::trunc};
-
-        auto simulation_result_json = combat_loop(encounter);
-
-        audit_path_stream << simulation_result_json;
-    } else {
-        const auto& server_configuration = parser.get<std::string>("--server");
-        auto delimiter_index = server_configuration.find(':');
-        const std::string& hostname = server_configuration.substr(0, delimiter_index);
-        int port = std::stoi(
-            server_configuration.substr(delimiter_index + 1, server_configuration.size()));
-        start_server_tcp(hostname, port);
-    }
+    const auto& server_configuration = parser.get<std::string>("--server");
+    auto delimiter_index = server_configuration.find(':');
+    const std::string& hostname = server_configuration.substr(0, delimiter_index);
+    int port = std::stoi(
+        server_configuration.substr(delimiter_index + 1, server_configuration.size()));
+    http_server_config_t config{
+            .server_host = hostname,
+            .server_port = static_cast<unsigned short>(port),
+            .threads = 1,
+    };
+    start_server_http(config);
     return 0;
 }
 
