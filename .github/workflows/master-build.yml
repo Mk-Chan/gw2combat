@@ -35,6 +35,21 @@ jobs:
         path: |
           gw2combat.exe
 
+  build-windows-http:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Build
+      run: mkdir build && cmake .. && make -j2
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: gw2combat_windows
+        path: |
+          gw2combat.exe
+          gw2combat_http.exe
+
   build-macos:
     runs-on: macos-latest
     steps:
