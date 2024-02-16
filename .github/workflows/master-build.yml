@@ -13,7 +13,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Build
-      run: make -j2
+      run: make -j
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -27,7 +27,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Build
-      run: make -j2
+      run: make -j
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -41,7 +41,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Build
-      run: mkdir build && cd build && cmake .. && make -j2
+      run: mkdir build && cd build && cmake .. && cmake --build . -j
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -55,7 +55,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Build
-      run: make -j2
+      run: make -j
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
