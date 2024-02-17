@@ -136,7 +136,7 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
             bool first = true;
             for (auto&& skill_cast : actor.rotation.skill_casts) {
                 if (first) {
-                    offset = std::min(skill_cast.cast_time_ms, 0);
+                    offset = std::min(skill_cast.cast_time_ms, tick_t{0});
                     first = false;
                 }
                 converted_rotation.skill_casts.emplace_back(actor::skill_cast_t{

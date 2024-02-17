@@ -121,7 +121,7 @@ auto handle_request(const http_request&& request) -> http::message_generator {
     const parsed_request_t parsed_request{request};
 
     const std::string& path = parsed_request.path();
-    spdlog::debug("Received request for {}", path);
+    spdlog::info("Received request for {}", path);
 
     // spdlog::debug("Path: {}", path);
     // spdlog::debug("Content-Type: {}", headers.find("Content-Type")->value());

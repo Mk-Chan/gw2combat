@@ -273,29 +273,20 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
             for (auto&& [actor_entity] :
                  registry.view<component::is_actor>(entt::exclude<component::owner_component>)
                      .each()) {
-                if (utils::get_entity_name(actor_entity, registry) == actor.name) {
-                    registry.remove<component::no_more_rotation>(actor_entity);
-                    actor::rotation_t converted_rotation{};
-                    int offset = 0;
-                    bool first = true;
-                    for (auto&& skill_cast : actor.rotation.skill_casts) {
-                        if (first) {
-                            offset = std::min(skill_cast.cast_time_ms, 0);
-                            first = false;
-                        }
-                        converted_rotation.skill_casts.emplace_back(actor::skill_cast_t{
-                            skill_cast.skill, (tick_t)(skill_cast.cast_time_ms - offset)});
-                    }
-                    auto& existing_rotation_component =
-                        registry.get<component::rotation_component>(actor_entity);
-                    registry.replace<component::rotation_component>(
-                        actor_entity,
-                        component::rotation_component{converted_rotation,
-                                                      existing_rotation_component.current_idx,
-                                                      existing_rotation_component.tick_offset,
-                                                      actor.rotation.repeat});
-                    break;
+                if (utils::get_entity_name(actor_entity, registry) != actor.name) {
+                    continue;
                 }
+                registry.remove<component::no_more_rotation>(actor_entity);
+                auto& existing_rotation_component =
+                    registry.get<component::rotation_component>(actor_entity);
+                std::transform(current_encounter.actors[0].rotation.skill_casts.begin() +
+                              existing_rotation_component.rotation.skill_casts.size(),
+                          current_encounter.actors[0].rotation.skill_casts.end(),
+                          std::back_inserter(existing_rotation_component.rotation.skill_casts),
+                          [](const configuration::skill_cast_t& skill_cast) {
+                              return actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms};
+                          });
+                break;
             }
         }
     } else {
