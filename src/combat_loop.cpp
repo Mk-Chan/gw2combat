@@ -276,16 +276,21 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
                 if (utils::get_entity_name(actor_entity, registry) != actor.name) {
                     continue;
                 }
-                registry.remove<component::no_more_rotation>(actor_entity);
                 auto& existing_rotation_component =
                     registry.get<component::rotation_component>(actor_entity);
-                std::transform(current_encounter.actors[0].rotation.skill_casts.begin() +
-                              existing_rotation_component.rotation.skill_casts.size(),
-                          current_encounter.actors[0].rotation.skill_casts.end(),
-                          std::back_inserter(existing_rotation_component.rotation.skill_casts),
-                          [](const configuration::skill_cast_t& skill_cast) {
-                              return actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms};
-                          });
+                auto existing_rotation_size =
+                    existing_rotation_component.rotation.skill_casts.size();
+                if (existing_rotation_size == actor.rotation.skill_casts.size()) {
+                    break;
+                }
+                registry.remove<component::no_more_rotation>(actor_entity);
+                std::transform(
+                    encounter.actors[0].rotation.skill_casts.begin() + existing_rotation_size,
+                    encounter.actors[0].rotation.skill_casts.end(),
+                    std::back_inserter(existing_rotation_component.rotation.skill_casts),
+                    [](const configuration::skill_cast_t& skill_cast) {
+                        return actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms};
+                    });
                 break;
             }
         }

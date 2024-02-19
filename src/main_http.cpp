@@ -102,7 +102,7 @@ configuration::encounter_t convert_encounter(
                         cast_time_offset_ms = -cast_time_ms;
                     }
                     converted_rotation.skill_casts.emplace_back(configuration::skill_cast_t{
-                        skill_name, cast_time_ms + cast_time_offset_ms});
+                        skill_name, static_cast<tick_t>(cast_time_ms + cast_time_offset_ms)});
                 }
             }
         }
