@@ -2,7 +2,6 @@
 #define GW2COMBAT_MRU_CACHE_HPP
 
 #include <list>
-#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -13,7 +12,7 @@ struct mru_cache_t {
     using key_type = unsigned long;
 
     [[nodiscard]] static mru_cache_t<T>& instance() {
-        static mru_cache_t<T> instance(7000);  // TODO: Make this configurable
+        static mru_cache_t<T> instance(4096);
         return instance;
     }
 
@@ -42,9 +41,11 @@ struct mru_cache_t {
         if (item != cache.end()) {
             mru_list.erase(item->second.second);
             cache.erase(item);
-        } else if (cache.size() == capacity) {
-            cache.erase(mru_list.back());
-            mru_list.pop_back();
+        } else {
+            while (cache.size() >= capacity) {
+                cache.erase(mru_list.back());
+                mru_list.pop_back();
+            }
         }
 
         mru_list.push_front(key);
@@ -52,11 +53,13 @@ struct mru_cache_t {
         return cache[key].first;
     }
 
-   protected:
-    explicit mru_cache_t(int capacity) : capacity(capacity) {
+    void resize(int desired_size_in_MiB, int average_registry_size_in_MiB = 64.0) {
+        capacity = desired_size_in_MiB / average_registry_size_in_MiB;
     }
-    mru_cache_t(double total_size, double average_registry_size) {
-        capacity = static_cast<int>(total_size / average_registry_size);
+
+   protected:
+    explicit mru_cache_t(int desired_size_in_MiB, int average_registry_size_in_MiB = 64.0)
+        : capacity(desired_size_in_MiB / average_registry_size_in_MiB) {
     }
 
    private:

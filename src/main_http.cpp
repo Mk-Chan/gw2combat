@@ -1,7 +1,7 @@
 #include <cfenv>
 #include <fstream>
 
-#include "combat_loop.hpp"
+#include "mru_cache.hpp"
 #include "server_http.hpp"
 
 #include "configuration/build.hpp"
@@ -29,12 +29,14 @@ int main(int argc, char** argv) {
     parser.add_argument("--server")
         .default_value(std::string{"127.0.0.1:54321"})
         .help("Server mode with hostname:port configuration.");
-    parser.add_argument("--encounter")
-        .default_value(std::string{"resources/encounter.json"})
-        .help("Path to encounter file. Only applicable in default mode.");
-    parser.add_argument("--audit-path")
-        .default_value(std::string{"audit.json"})
-        .help("Path to audit file. Only applicable in default mode.");
+    parser.add_argument("--cache-size")
+        .default_value(4096)
+        .scan<'i', int>()
+        .help("Cache size in MiB.");
+    parser.add_argument("--average-registry-size")
+        .default_value(64)
+        .scan<'i', int>()
+        .help("Average registry size in MiB.");
 
     try {
         parser.parse_args(argc, argv);
@@ -47,12 +49,16 @@ int main(int argc, char** argv) {
     const auto& server_configuration = parser.get<std::string>("--server");
     auto delimiter_index = server_configuration.find(':');
     const std::string& hostname = server_configuration.substr(0, delimiter_index);
-    int port = std::stoi(
-        server_configuration.substr(delimiter_index + 1, server_configuration.size()));
+    int port =
+        std::stoi(server_configuration.substr(delimiter_index + 1, server_configuration.size()));
+    const auto cache_size_MiB = parser.get<int>("--cache-size");
+    const auto average_registry_size_in_MiB = parser.get<int>("--average-registry-size");
+    auto& registry_cache = gw2combat::mru_cache_t<registry_t>::instance();
+    registry_cache.resize(cache_size_MiB, average_registry_size_in_MiB);
     http_server_config_t config{
-            .server_host = hostname,
-            .server_port = static_cast<unsigned short>(port),
-            .threads = 1,
+        .server_host = hostname,
+        .server_port = static_cast<unsigned short>(port),
+        .threads = 1,
     };
     start_server_http(config);
     return 0;
