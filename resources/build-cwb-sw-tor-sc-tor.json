@@ -173,6 +173,15 @@
                 },
                 {
                     "condition": {
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "RESETS_SWORD_AUTO_COUNTER"
+                    },
+                    "counter_key": "Sword Auto Counter",
+                    "operation": "set",
+                    "value": 0
+                },
+                {
+                    "condition": {
                         "depends_on_skill_off_cooldown": "Sword Auto Chain Timer Skill"
                     },
                     "counter_key": "Sword Auto Counter",
@@ -945,7 +954,8 @@
             "child_skill_keys": [
                 "Symbol of Blades Attack"
             ],
-            "executable": true
+            "executable": true,
+            "tags": ["RESETS_SWORD_AUTO_COUNTER"]
         }, {
             "skill_key": "Zealot's Defense",
             "weapon_type": "sword",
@@ -956,7 +966,8 @@
                 [155, 310, 465, 620, 775, 930, 1085, 1240],
                 [155, 310, 465, 620, 775, 930, 1085, 1240]
             ],
-            "executable": true
+            "executable": true,
+            "tags": ["RESETS_SWORD_AUTO_COUNTER"]
         }, {
             "skill_key": "Orb of Wrath",
             "weapon_type": "scepter",
@@ -1068,7 +1079,8 @@
             "cast_condition": {
                 "unique_effect_on_source": "Zealot's Flame"
             },
-            "executable": true
+            "executable": true,
+            "tags": ["RESETS_SWORD_AUTO_COUNTER"]
         }, {
             "skill_key": "Cleansing Flame",
             "weapon_type": "torch",
@@ -1088,7 +1100,8 @@
                     "direction": "OUTGOING"
                 }
             ],
-            "executable": true
+            "executable": true,
+            "tags": ["RESETS_SWORD_AUTO_COUNTER"]
         }, {
             "skill_key": "Signet of Wrath",
             "weapon_type": "empty_handed",
