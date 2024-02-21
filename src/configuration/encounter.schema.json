@@ -460,16 +460,34 @@
                         "$ref": "#/definitions/counter_modifier"
                     }
                 },
-                "cooldown_modifiers": {
+                "skill_triggers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/cooldown_modifier"
+                        "$ref": "#/definitions/skill_trigger"
+                    }
+                },
+                "unchained_skill_triggers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_trigger"
+                    }
+                },
+                "source_actor_skill_triggers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_trigger"
                     }
                 },
                 "effect_removals": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/effect_removal"
+                    }
+                },
+                "cooldown_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cooldown_modifier"
                     }
                 },
                 "skills_to_put_on_cooldown": {
@@ -523,6 +541,11 @@
                 "drop_bundle": {
                     "type": "string",
                     "description": "Bundle to remove after casting this skill."
+                },
+                "executable": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true, this skill will be scanned for castability in the audit report."
                 },
                 "cast_condition": {
                     "$ref": "#/definitions/condition"
