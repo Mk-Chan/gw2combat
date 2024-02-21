@@ -14,6 +14,7 @@ struct report_t {
     std::vector<tick_event_t> tick_events;
     std::optional<std::string> error;
     int offset = 0;
+    std::vector<std::vector<std::string>> castable_skills_by_actor_index;
 };
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nlohmann_json_t) {
@@ -24,6 +25,8 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nloh
         nlohmann_json_j["error"] = *nlohmann_json_t.error;
     }
     nlohmann_json_j["offset"] = nlohmann_json_t.offset;
+    nlohmann_json_j["castable_skills_by_actor_index"] =
+        nlohmann_json_t.castable_skills_by_actor_index;
 }
 
 static inline void from_json(const nlohmann::json& nlohmann_json_j, report_t& nlohmann_json_t) {
@@ -34,6 +37,8 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, report_t& nl
         nlohmann_json_t.error = nlohmann_json_j.value("error", *nlohmann_json_default_obj.error);
     }
     nlohmann_json_t.offset = nlohmann_json_j.value("offset", nlohmann_json_default_obj.offset);
+    nlohmann_json_t.castable_skills_by_actor_index = nlohmann_json_j.value(
+        "castable_skills_by_actor_index", nlohmann_json_default_obj.castable_skills_by_actor_index);
 }
 
 }  // namespace gw2combat::audit

@@ -202,7 +202,6 @@ class session_t : public std::enable_shared_from_this<session_t> {
         ec = stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
         if (ec) {
             spdlog::error("do_close: {}", ec.message());
-            std::exit(1);
         }
     }
 

@@ -42,8 +42,11 @@ struct skill_t {
     std::vector<attribute_modifier_t> attribute_modifiers{};
     std::vector<attribute_conversion_t> attribute_conversions{};
     std::vector<counter_modifier_t> counter_modifiers{};
-    std::vector<cooldown_modifier_t> cooldown_modifiers{};
+    std::vector<skill_trigger_t> skill_triggers{};
+    std::vector<skill_trigger_t> unchained_skill_triggers{};
+    std::vector<skill_trigger_t> source_actor_skill_triggers{};
     std::vector<effect_removal_t> effect_removals{};
+    std::vector<cooldown_modifier_t> cooldown_modifiers{};
 
     std::vector<actor::skill_t> skills_to_put_on_cooldown{};
     std::vector<actor::skill_t> skills_to_cancel{};
@@ -65,6 +68,8 @@ struct skill_t {
     bool can_critical_strike = true;
     actor::bundle_t equip_bundle;
     actor::bundle_t drop_bundle;
+
+    bool executable = false;
 
     condition_t cast_condition{};
 
@@ -99,11 +104,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 pulse_on_tick_list,
                                                 on_strike_effect_applications,
                                                 on_pulse_effect_applications,
-                                                attribute_modifiers,
                                                 attribute_conversions,
+                                                attribute_modifiers,
                                                 counter_modifiers,
-                                                cooldown_modifiers,
+                                                skill_triggers,
+                                                unchained_skill_triggers,
+                                                source_actor_skill_triggers,
                                                 effect_removals,
+                                                cooldown_modifiers,
                                                 skills_to_put_on_cooldown,
                                                 skills_to_cancel,
                                                 child_skill_keys,
@@ -116,6 +124,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 can_critical_strike,
                                                 equip_bundle,
                                                 drop_bundle,
+                                                executable,
                                                 cast_condition)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(conditional_skill_t, condition, skill_key)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(conditional_skill_group_t,

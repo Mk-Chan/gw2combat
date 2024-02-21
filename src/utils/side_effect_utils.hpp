@@ -138,9 +138,8 @@ inline void apply_side_effects(registry_t& registry,
                 if (!rotation_ptr) {
                     return;
                 }
-                auto& skill_casts = rotation_ptr->rotation.skill_casts;
-                skill_casts.insert(skill_casts.begin() + rotation_ptr->current_idx,
-                                   actor::skill_cast_t{skill_trigger.skill_key, 0});
+                auto& queued_rotation = rotation_ptr->queued_rotation;
+                queued_rotation.emplace_back(actor::skill_cast_t{skill_trigger.skill_key, 0});
             }
         });
 }

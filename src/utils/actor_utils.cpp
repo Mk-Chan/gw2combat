@@ -89,6 +89,21 @@ entity_t add_skill_to_actor(const configuration::skill_t& skill,
     utils::add_owner_based_component<std::vector<configuration::effect_removal_t>,
                                      component::is_effect_removal_t>(
         skill.effect_removals, actor_entity, registry);
+    for (auto& skill_trigger : skill.skill_triggers) {
+        utils::add_owner_based_component<configuration::skill_trigger_t,
+                                         component::is_skill_trigger>(
+            skill_trigger, actor_entity, registry);
+    }
+    for (auto& skill_trigger : skill.unchained_skill_triggers) {
+        utils::add_owner_based_component<configuration::skill_trigger_t,
+                                         component::is_unchained_skill_trigger>(
+            skill_trigger, actor_entity, registry);
+    }
+    for (auto& skill_trigger : skill.source_actor_skill_triggers) {
+        utils::add_owner_based_component<configuration::skill_trigger_t,
+                                         component::is_source_actor_skill_trigger>(
+            skill_trigger, actor_entity, registry);
+    }
 
     for (auto& child_skill : skill.child_skill_keys) {
         auto& child_skill_configuration = utils::get_skill_configuration(

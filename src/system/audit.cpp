@@ -17,6 +17,7 @@
 #include "component/effect/is_unique_effect.hpp"
 #include "component/effect/source_actor.hpp"
 #include "component/effect/source_skill.hpp"
+#include "component/encounter/encounter_configuration_component.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/skill/ammo.hpp"
@@ -471,6 +472,33 @@ void audit(registry_t& registry) {
     }
 }
 
+std::vector<std::vector<std::string>> get_castable_skills_by_actor_index(registry_t& registry) {
+    auto singleton_entity = utils::get_singleton_entity();
+    auto& encounter =
+        registry.get<component::encounter_configuration_component>(singleton_entity).encounter;
+    std::vector<std::vector<std::string>> castable_skills_by_actor_index;
+    for (auto& actor_configuration : encounter.actors) {
+        auto& current_actor_name = actor_configuration.name;
+        for (auto&& [actor_entity] : registry.view<component::is_actor>().each()) {
+            if (utils::get_entity_name(actor_entity, registry) != current_actor_name) {
+                continue;
+            }
+            std::vector<std::string> castable_skills;
+            for (auto&& [skill_entity, owner_component, is_skill] :
+                 registry.view<component::owner_component, component::is_skill>().each()) {
+                if (owner_component.entity == actor_entity) {
+                    auto skill_castability = utils::can_cast_skill(skill_entity, registry);
+                    if (skill_castability.can_cast && is_skill.skill_configuration.executable) {
+                        castable_skills.emplace_back(is_skill.skill_configuration.skill_key);
+                    }
+                }
+            }
+            castable_skills_by_actor_index.emplace_back(castable_skills);
+        }
+    }
+    return castable_skills_by_actor_index;
+}
+
 audit::report_t get_audit_report(registry_t& registry, int offset, const std::string& error) {
     audit::report_t audit_report;
     registry.view<component::audit_component>().each(
@@ -483,6 +511,7 @@ audit::report_t get_audit_report(registry_t& registry, int offset, const std::st
         audit_report.error = error;
     }
     audit_report.offset = offset;
+    audit_report.castable_skills_by_actor_index = get_castable_skills_by_actor_index(registry);
     return audit_report;
 }
 

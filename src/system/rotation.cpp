@@ -26,8 +26,10 @@ void perform_rotations(registry_t& registry) {
         .each([&](entity_t entity, component::rotation_component& rotation_component) {
             auto current_tick = utils::get_current_tick(registry);
 
+            bool has_queued_rotation = !rotation_component.queued_rotation.empty();
             if (rotation_component.current_idx >=
-                static_cast<int>(rotation_component.rotation.skill_casts.size())) {
+                    static_cast<int>(rotation_component.rotation.skill_casts.size()) &&
+                !has_queued_rotation) {
                 if (rotation_component.repeat) {
                     rotation_component.current_idx = 0;
                     rotation_component.tick_offset = current_tick;
@@ -40,8 +42,10 @@ void perform_rotations(registry_t& registry) {
                 }
             }
 
-            auto& next_skill_cast =
-                rotation_component.rotation.skill_casts[rotation_component.current_idx];
+            auto next_skill_cast =
+                has_queued_rotation
+                    ? rotation_component.queued_rotation.front()
+                    : rotation_component.rotation.skill_casts[rotation_component.current_idx];
 
             // Make sure this skill can only be cast at or after the time specified in the rotation
             // configuration
@@ -124,7 +128,11 @@ void perform_rotations(registry_t& registry) {
                 registry.get_or_emplace<component::begun_casting_skills>(entity);
             begun_casting_skills_component.skill_entities.emplace_back(skill_entity);
 
-            rotation_component.current_idx += 1;
+            if (has_queued_rotation) {
+                rotation_component.queued_rotation.pop_front();
+            } else {
+                rotation_component.current_idx += 1;
+            }
 
             if (is_instant_cast_skill) {
                 spdlog::info("[{}] {} casting instant skill {} rotation index {}",
@@ -138,11 +146,19 @@ void perform_rotations(registry_t& registry) {
                     entity,
                     component::animation_component{
                         skill_entity, skill_configuration.cast_duration, {0, 0}});
-                spdlog::info("[{}] {} casting skill {} rotation index {}",
-                             utils::get_current_tick(registry),
-                             utils::get_entity_name(entity, registry),
-                             utils::to_string(skill_configuration.skill_key),
-                             rotation_component.current_idx);
+                if (has_queued_rotation) {
+                    spdlog::info("[{}] {} casting skill {} queued rotation at index {}",
+                                 utils::get_current_tick(registry),
+                                 utils::get_entity_name(entity, registry),
+                                 utils::to_string(skill_configuration.skill_key),
+                                 rotation_component.current_idx);
+                } else {
+                    spdlog::info("[{}] {} casting skill {} rotation index {}",
+                                 utils::get_current_tick(registry),
+                                 utils::get_entity_name(entity, registry),
+                                 utils::to_string(skill_configuration.skill_key),
+                                 rotation_component.current_idx);
+                }
             }
         });
 }
