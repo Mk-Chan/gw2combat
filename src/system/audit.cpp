@@ -4,6 +4,8 @@
 #include "utils/entity_utils.hpp"
 #include "utils/skill_utils.hpp"
 
+#include "system/attributes.hpp"
+
 #include "component/actor/combat_stats.hpp"
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
@@ -29,205 +31,13 @@
 
 namespace gw2combat::system {
 
-[[nodiscard]] std::vector<audit::skill_cooldown_t> get_skill_cooldowns(entity_t actor_entity,
-                                                                       registry_t& registry) {
-    std::vector<audit::skill_cooldown_t> skill_cooldowns;
-    registry.view<component::cooldown_component, component::ammo, component::is_skill>().each(
-        [&](entity_t skill_entity,
-            const component::cooldown_component& cooldown_component,
-            const component::ammo& ammo,
-            const component::is_skill& is_skill) {
-            auto owner_entity = registry.get<component::owner_component>(skill_entity).entity;
-            if (owner_entity != actor_entity) {
-                return;
-            }
-            double no_alacrity_progress_pct =
-                cooldown_component.progress[0] * 100.0 / cooldown_component.duration[0];
-            double alacrity_progress_pct =
-                cooldown_component.progress[1] * 100.0 / cooldown_component.duration[1];
-            bool has_alacrity = registry.any_of<component::has_alacrity>(owner_entity);
-            int remaining_duration = static_cast<int>(
-                cooldown_component.duration[has_alacrity] *
-                (1.0 - (alacrity_progress_pct + no_alacrity_progress_pct) / 100.0));
-
-            skill_cooldowns.emplace_back(audit::skill_cooldown_t{
-                .skill = is_skill.skill_configuration.skill_key,
-                .duration = remaining_duration,
-                .remaining_ammo = ammo.current_ammo,
-            });
-        });
-    return skill_cooldowns;
-}
-
-[[nodiscard]] std::vector<audit::counter_value_t> get_counter_values(entity_t actor_entity,
-                                                                     registry_t& registry) {
-    std::vector<audit::counter_value_t> counter_values;
-    registry.view<component::is_counter>().each(
-        [&](entity_t counter_entity, const component::is_counter& counter) {
-            auto owner_entity = registry.get<component::owner_component>(counter_entity).entity;
-            if (owner_entity != actor_entity) {
-                return;
-            }
-            counter_values.emplace_back(audit::counter_value_t{
-                .counter = counter.counter_configuration.counter_key,
-                .value = counter.value,
-            });
-        });
-    return counter_values;
-}
-
-[[nodiscard]] std::unordered_map<actor::skill_t, audit::uncastable_skill_t> get_uncastable_skills(
-    entity_t actor_entity,
-    registry_t& registry) {
-    std::unordered_map<std::string, audit::uncastable_skill_t> uncastable_skills;
-    registry.view<component::is_skill, component::owner_component>().each(
-        [&](entity_t skill_entity,
-            const component::is_skill& is_skill,
-            component::owner_component& owner_component) {
-            if (owner_component.entity != actor_entity) {
-                return;
-            }
-            auto skill_castability = utils::can_cast_skill(skill_entity, registry);
-            if (!skill_castability.can_cast) {
-                auto cooldown_component =
-                    registry.try_get<component::cooldown_component>(skill_entity);
-                auto ammo = registry.try_get<component::ammo>(skill_entity);
-                int remaining_cooldown = 0;
-                if (cooldown_component) {
-                    double no_alacrity_progress_pct =
-                        cooldown_component->progress[0] * 100.0 / cooldown_component->duration[0];
-                    double alacrity_progress_pct =
-                        cooldown_component->progress[1] * 100.0 / cooldown_component->duration[1];
-                    bool has_alacrity =
-                        registry.any_of<component::has_alacrity>(owner_component.entity);
-                    remaining_cooldown = static_cast<int>(
-                        cooldown_component->duration[has_alacrity] *
-                        (1.0 - (alacrity_progress_pct + no_alacrity_progress_pct) / 100.0));
-                }
-                int remaining_ammo = ammo ? ammo->current_ammo : 0;
-                uncastable_skills[is_skill.skill_configuration.skill_key] = {
-                    .reason = skill_castability.reason,
-                    .remaining_cooldown = remaining_cooldown,
-                    .remaining_ammo = remaining_ammo,
-                };
-
-                auto is_part_of_conditional_skill_group_ptr =
-                    registry.try_get<component::is_part_of_conditional_skill_group>(skill_entity);
-                if (is_part_of_conditional_skill_group_ptr) {
-                    auto& conditional_skill_group_configuration =
-                        registry
-                            .get<component::is_conditional_skill_group>(
-                                is_part_of_conditional_skill_group_ptr
-                                    ->conditional_skill_group_entity)
-                            .conditional_skill_group_configuration;
-                    auto& conditional_skill_group_skill_key =
-                        conditional_skill_group_configuration.skill_key;
-                    if (!uncastable_skills.contains(conditional_skill_group_skill_key)) {
-                        uncastable_skills[conditional_skill_group_skill_key] = {
-                            .reason = skill_castability.reason,
-                            .remaining_cooldown = remaining_cooldown,
-                            .remaining_ammo = remaining_ammo,
-                        };
-                    }
-                }
-            }
-        });
-    return uncastable_skills;
-}
-
-[[maybe_unused]] std::vector<audit::actor_effect_t> get_effects_on_actor(entity_t actor_entity,
-                                                                         registry_t& registry) {
-    std::vector<audit::actor_effect_t> actor_effects;
-    registry.view<component::is_effect, component::owner_component>().each(
-        [&](entity_t effect_entity,
-            const component::is_effect& is_effect,
-            const component::owner_component& owner_component) {
-            if (owner_component.entity != actor_entity) {
-                return;
-            }
-            auto& duration_component = registry.get<component::duration_component>(effect_entity);
-            auto& source_actor = registry.get<component::source_actor>(effect_entity);
-            actor_effects.emplace_back(audit::actor_effect_t{
-                .effect = is_effect.effect,
-                .source_actor = utils::get_entity_name(source_actor.entity, registry),
-                .remaining_duration = duration_component.duration - duration_component.progress,
-            });
-        });
-    return actor_effects;
-}
-
-[[maybe_unused]] std::vector<audit::actor_unique_effect_t> get_unique_effects_on_actor(
-    entity_t actor_entity,
-    registry_t& registry) {
-    std::vector<audit::actor_unique_effect_t> actor_unique_effects;
-    registry.view<component::is_unique_effect, component::owner_component>().each(
-        [&](entity_t unique_effect_entity,
-            const component::is_unique_effect& is_unique_effect,
-            const component::owner_component& owner_component) {
-            if (owner_component.entity != actor_entity) {
-                return;
-            }
-            auto& duration_component =
-                registry.get<component::duration_component>(unique_effect_entity);
-            auto& source_actor = registry.get<component::source_actor>(unique_effect_entity);
-            actor_unique_effects.emplace_back(audit::actor_unique_effect_t{
-                .unique_effect = is_unique_effect.unique_effect.unique_effect_key,
-                .source_actor = utils::get_entity_name(source_actor.entity, registry),
-                .remaining_duration = duration_component.duration - duration_component.progress,
-            });
-        });
-    return actor_unique_effects;
-}
-
-[[maybe_unused]] std::map<std::basic_string<char>, std::map<actor::attribute_t, double>>
-get_actor_attributes(registry_t& registry) {
-    std::map<std::basic_string<char>, std::map<actor::attribute_t, double>> actor_attributes;
-    registry.view<component::is_actor, component::relative_attributes>().each(
-        [&](entity_t actor_entity, const component::relative_attributes& relative_attributes) {
-            actor_attributes[utils::get_entity_name(actor_entity, registry)] =
-                relative_attributes.entity_and_attribute_to_value_map.at(actor_entity);
-        });
-    return actor_attributes;
-}
-
 audit::tick_event_t create_tick_event(const decltype(audit::tick_event_t::event)& event,
                                       entity_t actor_entity,
                                       registry_t& registry) {
-    auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
-    auto weapon_set_ptr = registry.try_get<component::current_weapon_set>(actor_entity);
-    auto effects_on_actor = get_effects_on_actor(actor_entity, registry);
-    auto unique_effects_on_actor = get_unique_effects_on_actor(actor_entity, registry);
-
-    std::unordered_map<std::string, audit::actor_effect_summary_t> effect_summary;
-    for (auto& effect : effects_on_actor) {
-        auto& effect_summary_entry = effect_summary[nlohmann::json{effect.effect}[0]];
-        effect_summary_entry.stacks++;
-        if (effect.remaining_duration > effect_summary_entry.remaining_duration) {
-            effect_summary_entry.remaining_duration = effect.remaining_duration;
-        }
-    }
-    std::unordered_map<actor::unique_effect_t, audit::actor_unique_effect_summary_t>
-        unique_effect_summary;
-    for (auto& unique_effect : unique_effects_on_actor) {
-        auto& unique_effect_summary_entry = unique_effect_summary[unique_effect.unique_effect];
-        unique_effect_summary_entry.stacks++;
-        if (unique_effect.remaining_duration > unique_effect_summary_entry.remaining_duration) {
-            unique_effect_summary_entry.remaining_duration = unique_effect.remaining_duration;
-        }
-    }
-
     return audit::tick_event_t{
         .time_ms = utils::get_current_tick(registry),
         .actor = utils::get_entity_name(actor_entity, registry),
         .event = event,
-        .skill_cooldowns = get_skill_cooldowns(actor_entity, registry),
-        .counter_values = get_counter_values(actor_entity, registry),
-        .current_weapon_set = weapon_set_ptr ? weapon_set_ptr->set : actor::weapon_set::INVALID,
-        .current_bundle = bundle_ptr ? bundle_ptr->name : "",
-        .uncastable_skills = get_uncastable_skills(actor_entity, registry),
-        .effects = effect_summary,
-        .unique_effects = unique_effect_summary,
-        //.actor_attributes = get_actor_attributes(registry),
     };
 }
 
@@ -472,47 +282,247 @@ void audit(registry_t& registry) {
     }
 }
 
-std::vector<std::vector<std::string>> get_castable_skills_by_actor_index(registry_t& registry) {
-    auto singleton_entity = utils::get_singleton_entity();
-    auto& encounter =
-        registry.get<component::encounter_configuration_component>(singleton_entity).encounter;
-    std::vector<std::vector<std::string>> castable_skills_by_actor_index;
-    for (auto& actor_configuration : encounter.actors) {
-        auto& current_actor_name = actor_configuration.name;
-        for (auto&& [actor_entity] : registry.view<component::is_actor>().each()) {
-            if (utils::get_entity_name(actor_entity, registry) != current_actor_name) {
+[[nodiscard]] std::vector<audit::counter_value_t> get_counter_values(registry_t& registry) {
+    // NOTE: Counter names are globally distinct, so we don't need to group them by actor.
+    std::vector<audit::counter_value_t> counter_values;
+    for (auto&& [counter_entity, is_counter] : registry.view<component::is_counter>().each()) {
+        counter_values.emplace_back(audit::counter_value_t{
+            .counter = is_counter.counter_configuration.counter_key,
+            .value = is_counter.value,
+        });
+    }
+    return counter_values;
+}
+
+std::map<std::string, std::vector<std::string>> get_castable_skills_by_actor(registry_t& registry) {
+    std::map<std::string, std::vector<std::string>> castable_skills_by_actor;
+    for (auto&& [actor_entity] :
+         registry.view<component::is_actor>(entt::exclude<component::owner_component>).each()) {
+        std::vector<std::string> actor_castable_skills;
+        for (auto&& [skill_entity, is_skill, owner_component] :
+             registry.view<component::is_skill, component::owner_component>().each()) {
+            if (owner_component.entity != actor_entity) {
                 continue;
             }
-            std::vector<std::string> castable_skills;
-            for (auto&& [skill_entity, owner_component, is_skill] :
-                 registry.view<component::owner_component, component::is_skill>().each()) {
-                if (owner_component.entity == actor_entity) {
-                    auto skill_castability = utils::can_cast_skill(skill_entity, registry);
-                    if (skill_castability.can_cast && is_skill.skill_configuration.executable) {
-                        castable_skills.emplace_back(is_skill.skill_configuration.skill_key);
-                    }
+
+            auto skill_castability = utils::can_cast_skill(skill_entity, registry);
+            if (skill_castability.can_cast && is_skill.skill_configuration.executable) {
+                actor_castable_skills.emplace_back(is_skill.skill_configuration.skill_key);
+            }
+        }
+        castable_skills_by_actor[utils::get_entity_name(actor_entity, registry)] =
+            std::move(actor_castable_skills);
+    }
+    return castable_skills_by_actor;
+}
+
+[[nodiscard]] std::map<std::string, std::map<actor::skill_t, audit::uncastable_skill_t>>
+get_uncastable_skills_by_actor(registry_t& registry) {
+    std::map<std::string, std::map<actor::skill_t, audit::uncastable_skill_t>>
+        uncastable_skills_by_actor;
+    for (auto&& [actor_entity] :
+         registry.view<component::is_actor>(entt::exclude<component::owner_component>).each()) {
+        std::map<std::string, audit::uncastable_skill_t> actor_uncastable_skills;
+        for (auto&& [skill_entity, is_skill, owner_component] :
+             registry.view<component::is_skill, component::owner_component>().each()) {
+            if (owner_component.entity != actor_entity) {
+                continue;
+            }
+
+            auto skill_castability = utils::can_cast_skill(skill_entity, registry);
+            if (skill_castability.can_cast) {
+                continue;
+            }
+            auto cooldown_component = registry.try_get<component::cooldown_component>(skill_entity);
+            auto ammo = registry.try_get<component::ammo>(skill_entity);
+            int remaining_cooldown = 0;
+            if (cooldown_component) {
+                double no_alacrity_progress_pct =
+                    cooldown_component->progress[0] * 100.0 / cooldown_component->duration[0];
+                double alacrity_progress_pct =
+                    cooldown_component->progress[1] * 100.0 / cooldown_component->duration[1];
+                bool has_alacrity =
+                    registry.any_of<component::has_alacrity>(owner_component.entity);
+                remaining_cooldown = static_cast<int>(
+                    cooldown_component->duration[has_alacrity] *
+                    (1.0 - (alacrity_progress_pct + no_alacrity_progress_pct) / 100.0));
+            }
+            int remaining_ammo = ammo ? ammo->current_ammo : 0;
+            actor_uncastable_skills[is_skill.skill_configuration.skill_key] = {
+                .reason = skill_castability.reason,
+                .remaining_cooldown = remaining_cooldown,
+                .remaining_ammo = remaining_ammo,
+            };
+
+            // TODO: See if we can just get rid of this obsolete concept
+            auto is_part_of_conditional_skill_group_ptr =
+                registry.try_get<component::is_part_of_conditional_skill_group>(skill_entity);
+            if (is_part_of_conditional_skill_group_ptr) {
+                auto& conditional_skill_group_configuration =
+                    registry
+                        .get<component::is_conditional_skill_group>(
+                            is_part_of_conditional_skill_group_ptr->conditional_skill_group_entity)
+                        .conditional_skill_group_configuration;
+                auto& conditional_skill_group_skill_key =
+                    conditional_skill_group_configuration.skill_key;
+                if (!actor_uncastable_skills.contains(conditional_skill_group_skill_key)) {
+                    actor_uncastable_skills[conditional_skill_group_skill_key] = {
+                        .reason = skill_castability.reason,
+                        .remaining_cooldown = remaining_cooldown,
+                        .remaining_ammo = remaining_ammo,
+                    };
                 }
             }
-            castable_skills_by_actor_index.emplace_back(castable_skills);
         }
+        uncastable_skills_by_actor[utils::get_entity_name(actor_entity, registry)] =
+            std::move(actor_uncastable_skills);
     }
-    return castable_skills_by_actor_index;
+    return uncastable_skills_by_actor;
+}
+
+[[nodiscard]] std::map<std::string, actor::weapon_set> get_current_weapon_set_by_actor(
+    registry_t& registry) {
+    std::map<std::string, actor::weapon_set> current_weapon_set_by_actor;
+    for (auto&& [actor_entity, current_weapon_set] :
+         registry.view<component::current_weapon_set>(entt::exclude<component::owner_component>)
+             .each()) {
+        current_weapon_set_by_actor[utils::get_entity_name(actor_entity, registry)] =
+            current_weapon_set.set;
+    }
+    return current_weapon_set_by_actor;
+}
+
+[[nodiscard]] std::map<std::string, actor::bundle_t> get_current_bundle_by_actor(
+    registry_t& registry) {
+    std::map<std::string, actor::bundle_t> current_bundle_by_actor;
+    for (auto&& [actor_entity, bundle_component] :
+         registry.view<component::bundle_component>(entt::exclude<component::owner_component>)
+             .each()) {
+        current_bundle_by_actor[utils::get_entity_name(actor_entity, registry)] =
+            bundle_component.name;
+    }
+    return current_bundle_by_actor;
+}
+
+[[maybe_unused]] std::map<std::string, std::map<std::string, audit::actor_effect_summary_t>>
+get_effects_by_actor(registry_t& registry) {
+    std::map<std::string, std::map<std::string, audit::actor_effect_summary_t>> effects_by_actor;
+    for (auto&& [actor_entity] :
+         registry.view<component::is_actor>(entt::exclude<component::owner_component>).each()) {
+        std::vector<audit::actor_effect_t> actor_effects;
+        for (auto&& [effect_entity, is_effect, owner_component] :
+             registry.view<component::is_effect, component::owner_component>().each()) {
+            if (owner_component.entity != actor_entity) {
+                continue;
+            }
+
+            auto& duration_component = registry.get<component::duration_component>(effect_entity);
+            auto& source_actor = registry.get<component::source_actor>(effect_entity);
+            actor_effects.emplace_back(audit::actor_effect_t{
+                .effect = is_effect.effect,
+                .source_actor = utils::get_entity_name(source_actor.entity, registry),
+                .remaining_duration = duration_component.duration - duration_component.progress,
+            });
+        }
+
+        std::map<std::string, audit::actor_effect_summary_t> effect_summary;
+        for (auto& effect : actor_effects) {
+            auto& effect_summary_entry = effect_summary[nlohmann::json{effect.effect}[0]];
+            effect_summary_entry.stacks++;
+            if (effect.remaining_duration > effect_summary_entry.remaining_duration) {
+                effect_summary_entry.remaining_duration = effect.remaining_duration;
+            }
+        }
+
+        effects_by_actor[utils::get_entity_name(actor_entity, registry)] =
+            std::move(effect_summary);
+    }
+    return effects_by_actor;
+}
+
+[[maybe_unused]] std::map<std::string, std::map<std::string, audit::actor_unique_effect_summary_t>>
+get_unique_effects_by_actor(registry_t& registry) {
+    std::map<std::string, std::map<std::string, audit::actor_unique_effect_summary_t>>
+        unique_effects_by_actor;
+    for (auto&& [actor_entity] :
+         registry.view<component::is_actor>(entt::exclude<component::owner_component>).each()) {
+        std::vector<audit::actor_unique_effect_t> actor_unique_effects;
+        for (auto&& [unique_effect_entity, is_unique_effect, owner_component] :
+             registry.view<component::is_unique_effect, component::owner_component>().each()) {
+            if (owner_component.entity != actor_entity) {
+                continue;
+            }
+            auto& duration_component =
+                registry.get<component::duration_component>(unique_effect_entity);
+            auto& source_actor = registry.get<component::source_actor>(unique_effect_entity);
+            actor_unique_effects.emplace_back(audit::actor_unique_effect_t{
+                .unique_effect = is_unique_effect.unique_effect.unique_effect_key,
+                .source_actor = utils::get_entity_name(source_actor.entity, registry),
+                .remaining_duration = duration_component.duration - duration_component.progress,
+            });
+        }
+
+        std::map<actor::unique_effect_t, audit::actor_unique_effect_summary_t>
+            unique_effect_summary;
+        for (auto& unique_effect : actor_unique_effects) {
+            auto& unique_effect_summary_entry = unique_effect_summary[unique_effect.unique_effect];
+            unique_effect_summary_entry.stacks++;
+            if (unique_effect.remaining_duration > unique_effect_summary_entry.remaining_duration) {
+                unique_effect_summary_entry.remaining_duration = unique_effect.remaining_duration;
+            }
+        }
+
+        unique_effects_by_actor[utils::get_entity_name(actor_entity, registry)] =
+            std::move(unique_effect_summary);
+    }
+    return unique_effects_by_actor;
+}
+
+[[maybe_unused]] std::map<std::string, std::map<std::string, double>> get_actor_attributes(
+    registry_t& registry) {
+    system::calculate_relative_attributes(registry);
+    std::map<std::string, std::map<std::string, double>> actor_attributes;
+    for (auto&& [actor_entity, relative_attributes] :
+         registry.view<component::relative_attributes>(entt::exclude<component::owner_component>)
+             .each()) {
+        std::map<actor::attribute_t, double> entity_and_attribute_to_value_map =
+            relative_attributes.entity_and_attribute_to_value_map.at(actor_entity);
+        const std::string& actor_name = utils::get_entity_name(actor_entity, registry);
+        std::transform(
+            entity_and_attribute_to_value_map.cbegin(),
+            entity_and_attribute_to_value_map.cend(),
+            std::inserter(actor_attributes[actor_name], actor_attributes[actor_name].end()),
+            [](const auto& pair) {
+                return std::pair<std::string, double>{nlohmann::json{pair.first}[0], pair.second};
+            });
+    }
+    return actor_attributes;
 }
 
 audit::report_t get_audit_report(registry_t& registry, int offset, const std::string& error) {
-    audit::report_t audit_report;
+    std::vector<audit::tick_event_t> tick_events;
     registry.view<component::audit_component>().each(
         [&](const component::audit_component& audit_component) {
             std::copy(audit_component.events.cbegin() + offset,
                       audit_component.events.cend(),
-                      std::back_inserter(audit_report.tick_events));
+                      std::back_inserter(tick_events));
         });
-    if (!error.empty()) {
-        audit_report.error = error;
-    }
-    audit_report.offset = offset;
-    audit_report.castable_skills_by_actor_index = get_castable_skills_by_actor_index(registry);
-    return audit_report;
+    std::optional<std::string> error_optional =
+        error.empty() ? std::nullopt : std::make_optional(error);
+
+    return audit::report_t{
+        .offset = offset,
+        .tick_events = tick_events,
+        .error = error_optional,
+        .counter_values = get_counter_values(registry),
+        .castable_skills_by_actor = get_castable_skills_by_actor(registry),
+        .uncastable_skills_by_actor = get_uncastable_skills_by_actor(registry),
+        .current_weapon_set_by_actor = get_current_weapon_set_by_actor(registry),
+        .current_bundle_by_actor = get_current_bundle_by_actor(registry),
+        .effects_by_actor = get_effects_by_actor(registry),
+        .unique_effects_by_actor = get_unique_effects_by_actor(registry),
+        .attributes_by_actor = get_actor_attributes(registry),
+    };
 }
 
 }  // namespace gw2combat::system
