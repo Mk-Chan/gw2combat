@@ -88,7 +88,8 @@ auto simulate(const parsed_request_t& request) -> http::message_generator {
 
     std::string response_body;
     try {
-        const auto encounter = nlohmann::json::parse(request_body).get<configuration::encounter_t>();
+        const auto encounter =
+            nlohmann::json::parse(request_body).get<configuration::encounter_t>();
         response_body = combat_loop(encounter, encounter.enable_caching);
     } catch (const std::exception& err) {
         spdlog::error("error: {}", err.what());
@@ -155,7 +156,8 @@ class session_t : public std::enable_shared_from_this<session_t> {
     }
 
     void read_request() {
-        req_ = {};
+        req_.get().clear();
+        req_.body_limit(16 * 1024 * 1024);  // 16MiB
         stream_.expires_after(std::chrono::seconds(30));
         http::async_read(stream_,
                          buffer_,
@@ -172,7 +174,7 @@ class session_t : public std::enable_shared_from_this<session_t> {
             spdlog::error("on_read: {}", ec.message());
             return;
         }
-        send_response(handle_request(std::move(req_)));
+        send_response(handle_request(std::move(req_.get())));
     }
 
     void send_response(http::message_generator&& msg) {
@@ -208,7 +210,7 @@ class session_t : public std::enable_shared_from_this<session_t> {
    private:
     boost::beast::tcp_stream stream_;
     boost::beast::flat_buffer buffer_;
-    http::request<http::string_body> req_;
+    http::request_parser<http::string_body> req_;
 };
 
 class connection_listener_t : public std::enable_shared_from_this<connection_listener_t> {
