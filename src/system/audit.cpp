@@ -10,6 +10,7 @@
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
+#include "component/actor/quickness.hpp"
 #include "component/actor/skills_actions_component.hpp"
 #include "component/audit/audit_component.hpp"
 #include "component/counter/is_counter.hpp"
@@ -163,11 +164,16 @@ void audit_skill_casts(registry_t& registry) {
                 if (casting_skill.action_progress[0] + casting_skill.action_progress[1] > 1) {
                     continue;
                 }
-
+                auto& skill_configuration =
+                    registry.get<component::is_skill>(casting_skill.skill_entity)
+                        .skill_configuration;
+                int cast_duration = registry.any_of<component::quickness>(actor_entity)
+                                        ? skill_configuration.cast_duration[1]
+                                        : skill_configuration.cast_duration[0];
                 audit_component.events.emplace_back(create_tick_event(
                     audit::skill_cast_begin_event_t{
-                        .skill = registry.get<component::is_skill>(casting_skill.skill_entity)
-                                     .skill_configuration.skill_key,
+                        .skill = skill_configuration.skill_key,
+                        .cast_duration = cast_duration,
                     },
                     actor_entity,
                     registry));
@@ -478,13 +484,16 @@ get_unique_effects_by_actor(registry_t& registry) {
     return unique_effects_by_actor;
 }
 
-[[maybe_unused]] std::map<std::string, std::map<std::string, double>> get_actor_attributes(
+[[maybe_unused]] std::map<std::string, std::map<std::string, double>> get_attributes_by_actor(
     registry_t& registry) {
     system::calculate_relative_attributes(registry);
     std::map<std::string, std::map<std::string, double>> actor_attributes;
     for (auto&& [actor_entity, relative_attributes] :
          registry.view<component::relative_attributes>(entt::exclude<component::owner_component>)
              .each()) {
+        if (relative_attributes.entity_and_attribute_to_value_map.empty()) {
+            continue;
+        }
         std::map<actor::attribute_t, double> entity_and_attribute_to_value_map =
             relative_attributes.entity_and_attribute_to_value_map.at(actor_entity);
         const std::string& actor_name = utils::get_entity_name(actor_entity, registry);
@@ -496,6 +505,7 @@ get_unique_effects_by_actor(registry_t& registry) {
                 return std::pair<std::string, double>{nlohmann::json{pair.first}[0], pair.second};
             });
     }
+    registry.clear<component::relative_attributes>();
     return actor_attributes;
 }
 
@@ -521,7 +531,7 @@ audit::report_t get_audit_report(registry_t& registry, int offset, const std::st
         .current_bundle_by_actor = get_current_bundle_by_actor(registry),
         .effects_by_actor = get_effects_by_actor(registry),
         .unique_effects_by_actor = get_unique_effects_by_actor(registry),
-        .attributes_by_actor = get_actor_attributes(registry),
+        .attributes_by_actor = get_attributes_by_actor(registry),
     };
 }
 

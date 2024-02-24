@@ -30,6 +30,7 @@ struct actor_created_event_t {
 struct skill_cast_begin_event_t {
     event_type_t event_type = event_type_t::SKILL_CAST_BEGIN_EVENT;
     std::string skill;
+    int cast_duration = 0;
 };
 
 struct skill_cast_end_event_t {
@@ -134,7 +135,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(damage_event_t,
                                                 source_skill,
                                                 damage_type,
                                                 damage)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cast_begin_event_t, event_type, skill)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cast_begin_event_t,
+                                                event_type,
+                                                skill,
+                                                cast_duration)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_cast_end_event_t, event_type, skill)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(equipped_bundle_event_t, event_type, bundle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(dropped_bundle_event_t, event_type, bundle)

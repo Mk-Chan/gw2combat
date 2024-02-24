@@ -305,16 +305,16 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
             registry.ctx().get<tick_t>() += 1;
             tick(registry);
         }
+        result = utils::to_string(system::get_audit_report(registry, encounter.audit_offset));
     } catch (std::exception& e) {
         spdlog::error("Exception: {}", e.what());
-        return utils::to_string(
-            system::get_audit_report(registry, encounter.audit_offset, e.what()));
+        result =
+            utils::to_string(system::get_audit_report(registry, encounter.audit_offset, e.what()));
     }
 
-    result = utils::to_string(system::get_audit_report(registry, encounter.audit_offset));
     auto cache_key = convert_encounter_to_cache_key(encounter);
     if (!registry_cache.contains(cache_key)) {
-        registry_cache.put(convert_encounter_to_cache_key(encounter), std::move(registry));
+        registry_cache.put(cache_key, std::move(registry));
     }
     return result;
 }

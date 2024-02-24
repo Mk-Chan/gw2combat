@@ -45,13 +45,31 @@ def main():
     with open("./audit.json") as fp:
         audit_json = json.load(fp)
     df = pd.read_json(json.dumps(audit_json["tick_events"]), orient="records")
-    df = df.join(pd.json_normalize(df["event"].tolist()).add_prefix("event.")).drop(["event"], axis=1)
+    df = (df.join(pd.json_normalize(df["event"].tolist()).add_prefix("event."))
+          .drop(["event"], axis=1))
     df.columns = df.columns.str.replace("event.", "")
+
+    skill_casts_filter = (((df["event_type"] == "skill_cast_begin_event") | (
+            df["event_type"] == "skill_cast_end_event"))
+                          & (df["actor"] == "dh-bgh"))
+    skill_casts = df[skill_casts_filter].reset_index(drop=True)
+    skill_casts = skill_casts[
+        (skill_casts["event_type"] != "skill_cast_begin_event") | (
+                skill_casts["cast_duration"] > 1)]
+    skill_casts = skill_casts[
+        (skill_casts["event_type"] != "skill_cast_end_event") | (
+            skill_casts["skill"].isin(
+                skill_casts[skill_casts["event_type"] == "skill_cast_begin_event"]["skill"]))]
+    skill_casts["time_ms"] = skill_casts["time_ms"].astype(int)
+    skill_casts["time_ms"] = skill_casts["time_ms"].shift(-1) - skill_casts["time_ms"]
+    skill_casts = skill_casts[skill_casts["event_type"] == "skill_cast_end_event"]
+    skill_casts = skill_casts[skill_casts["time_ms"] > 0]
+    afk_time = skill_casts["time_ms"].sum()
 
     in_combat_filter = \
         ((df["event_type"] == "damage_event") | (
                 (df["event_type"] == "effect_application_event") & (
-                    "effect" in df and df["effect"].isin(CONDITION_EFFECTS)))) \
+                "effect" in df and df["effect"].isin(CONDITION_EFFECTS)))) \
         & (df["source_actor"] != "Console")
 
     combat_df = df[in_combat_filter].reset_index(drop=True)
@@ -63,14 +81,16 @@ def main():
         .reset_index() \
         .sort_values(by=["total_damage"], ascending=[False]) \
         .reset_index(drop=True)
-    golem_hp_updates = df[(df["event_type"] == "combat_stats_update_event") & (df["actor"] == "golem")][
-        "updated_health"]
+    golem_hp_updates = \
+        df[(df["event_type"] == "combat_stats_update_event") & (df["actor"] == "golem")][
+            "updated_health"]
     print(damage_summary.to_string(index=False))
     print()
     print(f"Time to First Strike: {time_to_first_strike_ms / 1000.0}s")
     print(
         f"Remaining Golem HP: {int(min(golem_hp_updates.values))}")
     print(f"Combat Time: {combat_time_ms / 1000.0}s")
+    print(f"AFK Time: {afk_time / 1000.0}s")
     print(f"DPS: {(sum(damage_summary['total_damage']) * 1000.0 / combat_time_ms):.2f}")
 
 
