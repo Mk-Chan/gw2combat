@@ -171,7 +171,7 @@ class session_t : public std::enable_shared_from_this<session_t> {
             return do_close();
         }
         if (ec) {
-            spdlog::error("on_read: {}", ec.message());
+            spdlog::error("on_read: {}, {}", ec.value(), ec.message());
             return;
         }
         send_response(handle_request(std::move(req_.get())));
@@ -190,11 +190,15 @@ class session_t : public std::enable_shared_from_this<session_t> {
                   std::size_t bytes_transferred) {
         boost::ignore_unused(bytes_transferred);
         if (ec) {
-            spdlog::error("on_write: {}", ec.message());
+            if (ec != boost::asio::error::connection_reset &&
+                ec != boost::asio::error::broken_pipe) {
+                spdlog::error("on_write: {}, {}", ec.value(), ec.message());
+            }
             return;
         }
         if (!keep_alive) {
-            return do_close();
+            do_close();
+            return;
         }
         read_request();
     }
@@ -203,7 +207,9 @@ class session_t : public std::enable_shared_from_this<session_t> {
         boost::beast::error_code ec;
         ec = stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
         if (ec) {
-            spdlog::error("do_close: {}", ec.message());
+            if (ec != boost::asio::error::broken_pipe) {
+                spdlog::error("do_close: {}, {}", ec.value(), ec.message());
+            }
         }
     }
 

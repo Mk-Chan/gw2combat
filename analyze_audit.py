@@ -61,10 +61,9 @@ def main():
             skill_casts["skill"].isin(
                 skill_casts[skill_casts["event_type"] == "skill_cast_begin_event"]["skill"]))]
     skill_casts["time_ms"] = skill_casts["time_ms"].astype(int)
-    skill_casts["time_ms"] = skill_casts["time_ms"].shift(-1) - skill_casts["time_ms"]
+    skill_casts["cast_time_ms"] = skill_casts["time_ms"].shift(-1) - skill_casts["time_ms"] - 1
     skill_casts = skill_casts[skill_casts["event_type"] == "skill_cast_end_event"]
-    skill_casts = skill_casts[skill_casts["time_ms"] > 0]
-    afk_time = skill_casts["time_ms"].sum()
+    skill_casts["cast_time_ms"] = skill_casts["cast_time_ms"].fillna(0)
 
     in_combat_filter = \
         ((df["event_type"] == "damage_event") | (
@@ -84,6 +83,10 @@ def main():
     golem_hp_updates = \
         df[(df["event_type"] == "combat_stats_update_event") & (df["actor"] == "golem")][
             "updated_health"]
+
+    afk_time = max(0, skill_casts[skill_casts["cast_time_ms"] > 0]["cast_time_ms"].sum() + (
+            combat_df["time_ms"].max() - skill_casts["time_ms"].max()))
+
     print(damage_summary.to_string(index=False))
     print()
     print(f"Time to First Strike: {time_to_first_strike_ms / 1000.0}s")

@@ -37,6 +37,10 @@ int main(int argc, char** argv) {
         .default_value(64)
         .scan<'i', int>()
         .help("Average registry size in MiB.");
+    parser.add_argument("--threads")
+        .scan<'i', int>()
+        .default_value(1)
+        .help("Number of threads to use.");
 
     try {
         parser.parse_args(argc, argv);
@@ -53,12 +57,13 @@ int main(int argc, char** argv) {
         std::stoi(server_configuration.substr(delimiter_index + 1, server_configuration.size()));
     const auto cache_size_MiB = parser.get<int>("--cache-size");
     const auto average_registry_size_in_MiB = parser.get<int>("--average-registry-size");
+    const auto threads = parser.get<int>("threads");
     auto& registry_cache = gw2combat::mru_cache_t<registry_t>::instance();
     registry_cache.resize(cache_size_MiB, average_registry_size_in_MiB);
     http_server_config_t config{
         .server_host = hostname,
         .server_port = static_cast<unsigned short>(port),
-        .threads = 1,
+        .threads = threads,
     };
     start_server_http(config);
     return 0;
