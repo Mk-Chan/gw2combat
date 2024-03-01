@@ -449,6 +449,11 @@
                     "type": "string",
                     "description": "Bundle to remove after casting this skill."
                 },
+                "instant_cast_only_when_not_in_animation": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true and the skill is actually an instant cast skill, it will execute after any existing animation as opposed to the default behavior of executing immediately off cooldown regardless of animation."
+                },
                 "executable": {
                     "type": "boolean",
                     "default": false,

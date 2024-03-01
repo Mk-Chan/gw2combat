@@ -45,6 +45,9 @@ void enqueue_child_skills(entity_t parent_actor,
                           const std::vector<actor::skill_t>& skills,
                           registry_t& registry);
 void enqueue_child_skill(const actor::skill_t& skill, entity_t parent_actor, registry_t& registry);
+void enqueue_source_actor_child_skill(const actor::skill_t& skill,
+                                      entity_t source_actor,
+                                      registry_t& registry);
 entity_t add_effect_to_actor(actor::effect_t effect,
                              entity_t actor_entity,
                              entity_t source_actor,

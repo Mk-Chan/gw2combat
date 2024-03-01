@@ -43,6 +43,9 @@ namespace gw2combat {
 
 void clear_temporary_components(registry_t& registry) {
     registry.clear<component::actor_created,
+                   component::already_performed_rotation,
+                   component::already_performed_animation,
+                   component::already_finished_casting_skill,
                    component::equipped_bundle,
                    component::dropped_bundle,
                    component::relative_attributes,
@@ -98,9 +101,15 @@ void destroy_marked_entities(registry_t& registry) {
 void tick(registry_t& registry) {
     system::setup_combat_stats(registry);
 
-    system::perform_rotations(registry);
+    while (true) {
+        bool repeat = false;
+        repeat |= system::perform_rotations(registry);
+        repeat |= system::progress_animations(registry);
+        if (!repeat) {
+            break;
+        }
+    }
 
-    system::progress_animations(registry);
     system::progress_casting_skills(registry);
     system::progress_cooldowns(registry);
     system::progress_durations(registry);

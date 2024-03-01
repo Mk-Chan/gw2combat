@@ -65,6 +65,7 @@ struct skill_t {
     std::array<std::vector<int>, 2> whirl_finisher_on_tick_list = {std::vector<int>{},
                                                                    std::vector<int>{}};
 
+    bool instant_cast_only_when_not_in_animation = false;
     bool can_critical_strike = true;
     actor::bundle_t equip_bundle;
     actor::bundle_t drop_bundle;
@@ -121,6 +122,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 // leap_finisher_on_tick_list,
                                                 // projectile_finisher_on_tick_list,
                                                 whirl_finisher_on_tick_list,
+                                                instant_cast_only_when_not_in_animation,
                                                 can_critical_strike,
                                                 equip_bundle,
                                                 drop_bundle,

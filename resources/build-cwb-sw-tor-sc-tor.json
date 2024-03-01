@@ -895,7 +895,7 @@
         }, {
             "skill_key": "Sword Auto",
             "weapon_type": "sword",
-            "cast_duration": [1, 1],
+            "cast_duration": [0, 0],
             "source_actor_skill_triggers": [
                 {
                     "condition": {
@@ -934,6 +934,7 @@
                     "skill_key": "Sword Wave"
                 }
             ],
+            "instant_cast_only_when_not_in_animation": true,
             "executable": true
         }, {
             "skill_key": "Symbol of Blades Attack",

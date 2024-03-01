@@ -19,9 +19,13 @@
 
 namespace gw2combat::system {
 
-void progress_animations(registry_t& registry) {
-    registry.view<component::animation_component>().each(
-        [&](entity_t entity, component::animation_component& animation) {
+bool progress_animations(registry_t& registry) {
+    bool at_least_one_animation_progressed = false;
+    registry
+        .view<component::animation_component>(entt::exclude<component::already_performed_animation>)
+        .each([&](entity_t entity, component::animation_component& animation) {
+            registry.emplace<component::already_performed_animation>(entity);
+            at_least_one_animation_progressed = true;
             if (animation.duration[0] == 0) {
                 registry.emplace_or_replace<component::animation_expired>(entity);
                 utils::finish_casting_skill(animation.skill_entity, entity, registry);
@@ -42,90 +46,105 @@ void progress_animations(registry_t& registry) {
             }
         });
 
-    registry.view<component::finished_casting_skills>().each([&](entity_t actor_entity,
-                                                                 component::finished_casting_skills&
-                                                                     finished_casting_skills) {
-        for (auto finished_casting_skill_entity : finished_casting_skills.skill_entities) {
-            auto& skill_configuration =
-                registry.get<component::is_skill>(finished_casting_skill_entity)
-                    .skill_configuration;
-            spdlog::info("[{}] {}: finishing skill {}",
-                         utils::get_current_tick(registry),
-                         utils::get_entity_name(actor_entity, registry),
-                         skill_configuration.skill_key);
-
-            if (!skill_configuration.equip_bundle.empty()) {
-                registry.emplace<component::bundle_component>(
-                    actor_entity, component::bundle_component{skill_configuration.equip_bundle});
-                registry.emplace_or_replace<component::equipped_bundle>(
-                    actor_entity, skill_configuration.equip_bundle);
-                spdlog::info("[{}] {}: equipped bundle {}",
+    registry.view<component::finished_casting_skills>().each(
+        [&](entity_t actor_entity,
+            const component::finished_casting_skills& finished_casting_skills) {
+            for (auto finished_casting_skill_entity : finished_casting_skills.skill_entities) {
+                if (registry.any_of<component::already_finished_casting_skill>(
+                        finished_casting_skill_entity)) {
+                    continue;
+                }
+                at_least_one_animation_progressed = true;
+                registry.emplace<component::already_finished_casting_skill>(
+                    finished_casting_skill_entity);
+                auto& skill_configuration =
+                    registry.get<component::is_skill>(finished_casting_skill_entity)
+                        .skill_configuration;
+                spdlog::info("[{}] {}: finishing skill {}",
                              utils::get_current_tick(registry),
                              utils::get_entity_name(actor_entity, registry),
-                             skill_configuration.equip_bundle);
-            } else if (!skill_configuration.drop_bundle.empty()) {
-                if (auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
-                    bundle_ptr) {
-                    auto bundle = bundle_ptr->name;
-                    if (bundle != "*" && bundle != skill_configuration.drop_bundle) {
-                        throw std::runtime_error(fmt::format("Tried to drop {} but {} equipped",
-                                                             skill_configuration.drop_bundle,
-                                                             bundle));
-                    }
-                    registry.emplace_or_replace<component::dropped_bundle>(actor_entity, bundle);
-                    registry.remove<component::bundle_component>(actor_entity);
-                    spdlog::info("[{}] {}: dropped bundle {}",
-                                 utils::get_current_tick(registry),
-                                 utils::get_entity_name(actor_entity, registry),
-                                 bundle);
-                } else {
-                    throw std::runtime_error("no bundle on entity");
-                }
-            } else if (skill_configuration.skill_key == "Weapon Swap") {
-                if (auto bundle_ptr = registry.try_get<component::bundle_component>(actor_entity);
-                    bundle_ptr) {
-                    registry.emplace_or_replace<component::dropped_bundle>(actor_entity,
-                                                                           bundle_ptr->name);
-                    registry.remove<component::bundle_component>(actor_entity);
-                    spdlog::info("[{}] {}: dropped bundle {}",
-                                 utils::get_current_tick(registry),
-                                 utils::get_entity_name(actor_entity, registry),
-                                 bundle_ptr->name);
-                } else {
-                    if (!registry.any_of<component::current_weapon_set>(actor_entity)) {
-                        throw std::runtime_error("no equipped_weapon_set on entity");
-                    }
-                    auto& equipped_weapons =
-                        registry.get<component::equipped_weapons>(actor_entity);
-                    if (equipped_weapons.weapons.size() == 1) {
-                        throw std::runtime_error(
-                            "cannot weapon swap when there is only 1 weapon set equipped");
-                    }
+                             skill_configuration.skill_key);
 
-                    auto current_set =
-                        registry.get<component::current_weapon_set>(actor_entity).set;
-                    if (current_set == actor::weapon_set::SET_1) {
-                        registry.replace<component::current_weapon_set>(
-                            actor_entity, component::current_weapon_set{actor::weapon_set::SET_2});
+                if (!skill_configuration.equip_bundle.empty()) {
+                    registry.emplace<component::bundle_component>(
+                        actor_entity,
+                        component::bundle_component{skill_configuration.equip_bundle});
+                    registry.emplace_or_replace<component::equipped_bundle>(
+                        actor_entity, skill_configuration.equip_bundle);
+                    spdlog::info("[{}] {}: equipped bundle {}",
+                                 utils::get_current_tick(registry),
+                                 utils::get_entity_name(actor_entity, registry),
+                                 skill_configuration.equip_bundle);
+                } else if (!skill_configuration.drop_bundle.empty()) {
+                    if (auto bundle_ptr =
+                            registry.try_get<component::bundle_component>(actor_entity);
+                        bundle_ptr) {
+                        auto bundle = bundle_ptr->name;
+                        if (bundle != "*" && bundle != skill_configuration.drop_bundle) {
+                            throw std::runtime_error(fmt::format("Tried to drop {} but {} equipped",
+                                                                 skill_configuration.drop_bundle,
+                                                                 bundle));
+                        }
+                        registry.emplace_or_replace<component::dropped_bundle>(actor_entity,
+                                                                               bundle);
+                        registry.remove<component::bundle_component>(actor_entity);
+                        spdlog::info("[{}] {}: dropped bundle {}",
+                                     utils::get_current_tick(registry),
+                                     utils::get_entity_name(actor_entity, registry),
+                                     bundle);
                     } else {
-                        registry.replace<component::current_weapon_set>(
-                            actor_entity, component::current_weapon_set{actor::weapon_set::SET_1});
+                        throw std::runtime_error("no bundle on entity");
+                    }
+                } else if (skill_configuration.skill_key == "Weapon Swap") {
+                    if (auto bundle_ptr =
+                            registry.try_get<component::bundle_component>(actor_entity);
+                        bundle_ptr) {
+                        registry.emplace_or_replace<component::dropped_bundle>(actor_entity,
+                                                                               bundle_ptr->name);
+                        registry.remove<component::bundle_component>(actor_entity);
+                        spdlog::info("[{}] {}: dropped bundle {}",
+                                     utils::get_current_tick(registry),
+                                     utils::get_entity_name(actor_entity, registry),
+                                     bundle_ptr->name);
+                    } else {
+                        if (!registry.any_of<component::current_weapon_set>(actor_entity)) {
+                            throw std::runtime_error("no equipped_weapon_set on entity");
+                        }
+                        auto& equipped_weapons =
+                            registry.get<component::equipped_weapons>(actor_entity);
+                        if (equipped_weapons.weapons.size() == 1) {
+                            throw std::runtime_error(
+                                "cannot weapon swap when there is only 1 weapon set equipped");
+                        }
+
+                        auto current_set =
+                            registry.get<component::current_weapon_set>(actor_entity).set;
+                        if (current_set == actor::weapon_set::SET_1) {
+                            registry.replace<component::current_weapon_set>(
+                                actor_entity,
+                                component::current_weapon_set{actor::weapon_set::SET_2});
+                        } else {
+                            registry.replace<component::current_weapon_set>(
+                                actor_entity,
+                                component::current_weapon_set{actor::weapon_set::SET_1});
+                        }
                     }
                 }
+
+                auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
+                    return utils::on_finished_casting_conditions_satisfied(
+                        condition, actor_entity, skill_configuration, registry);
+                };
+                utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
+
+                utils::enqueue_child_skills(
+                    actor_entity,
+                    "Temporary " + skill_configuration.skill_key + " Entity",
+                    skill_configuration.child_skill_keys,
+                    registry);
             }
-
-            auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
-                return utils::on_finished_casting_conditions_satisfied(
-                    condition, actor_entity, skill_configuration, registry);
-            };
-            utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
-
-            utils::enqueue_child_skills(actor_entity,
-                                        "Temporary " + skill_configuration.skill_key + " Entity",
-                                        skill_configuration.child_skill_keys,
-                                        registry);
-        }
-    });
+        });
+    return at_least_one_animation_progressed;
 }
 
 void progress_cooldowns(registry_t& registry) {

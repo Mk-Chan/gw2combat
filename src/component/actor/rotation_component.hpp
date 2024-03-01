@@ -14,6 +14,8 @@ struct rotation_component {
     std::list<actor::skill_cast_t> queued_rotation{};
 };
 
+struct already_performed_rotation {};
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(rotation_component,
                                                 rotation,
                                                 current_idx,

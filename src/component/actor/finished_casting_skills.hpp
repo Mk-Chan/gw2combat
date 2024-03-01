@@ -9,6 +9,8 @@ struct finished_casting_skills {
     std::vector<entity_t> skill_entities;
 };
 
+struct already_finished_casting_skill {};
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(finished_casting_skills, skill_entities)
 
 }  // namespace gw2combat::component

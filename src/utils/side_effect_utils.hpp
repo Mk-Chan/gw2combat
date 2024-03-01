@@ -134,12 +134,12 @@ inline void apply_side_effects(registry_t& registry,
             }
             auto& skill_trigger = is_source_actor_skill_trigger.skill_trigger;
             if (side_effect_condition_fn(skill_trigger.condition)) {
-                auto rotation_ptr = registry.try_get<component::rotation_component>(owner_entity);
-                if (!rotation_ptr) {
-                    return;
-                }
-                auto& queued_rotation = rotation_ptr->queued_rotation;
-                queued_rotation.emplace_back(actor::skill_cast_t{skill_trigger.skill_key, 0});
+                // spdlog::info("[{}] {}: Triggering source actor skill {}",
+                //              utils::get_current_tick(registry),
+                //              utils::get_entity_name(owner_entity, registry),
+                //              skill_trigger.skill_key);
+                utils::enqueue_source_actor_child_skill(
+                    skill_trigger.skill_key, owner_entity, registry);
             }
         });
 }

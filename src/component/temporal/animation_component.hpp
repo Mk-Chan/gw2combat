@@ -11,6 +11,7 @@ struct animation_component {
     std::array<int, 2> progress{0, 0};
 };
 
+struct already_performed_animation {};
 struct animation_expired {};
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(animation_component,

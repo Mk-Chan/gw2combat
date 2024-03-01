@@ -156,14 +156,14 @@ void enqueue_child_skills(entity_t parent_actor,
     auto child_actor = utils::create_temporary_rotation_child_actor(
         parent_actor, child_name, registry.get<component::team>(parent_actor).id, registry);
 
-    actor::rotation_t rotation;
+    auto& rotation = registry.emplace<component::rotation_component>(
+        child_actor, component::rotation_component{{}, 0, 0, false, {}});
     for (auto& skill : skills) {
         auto& skill_configuration = utils::get_skill_configuration(skill, parent_actor, registry);
         utils::add_skill_to_actor(skill_configuration, child_actor, registry);
-        rotation.skill_casts.emplace_back(actor::skill_cast_t{skill_configuration.skill_key, 0});
+        rotation.queued_rotation.emplace_back(
+            actor::skill_cast_t{skill_configuration.skill_key, 0});
     }
-    registry.emplace<component::rotation_component>(
-        child_actor, component::rotation_component{rotation, 0, false});
 
     spdlog::info("[{}] {}: spawned {}",
                  utils::get_current_tick(registry),
@@ -175,6 +175,13 @@ void enqueue_child_skill(const actor::skill_t& skill, entity_t parent_actor, reg
     std::vector<actor::skill_t> skills;
     skills.emplace_back(skill);
     enqueue_child_skills(parent_actor, "Temporary " + skill + " Entity", skills, registry);
+}
+
+void enqueue_source_actor_child_skill(const actor::skill_t& skill,
+                                      entity_t source_actor,
+                                      registry_t& registry) {
+    auto& rotation = registry.get<component::rotation_component>(source_actor);
+    rotation.queued_rotation.emplace_back(actor::skill_cast_t{skill, 0});
 }
 
 entity_t add_effect_to_actor(actor::effect_t effect,

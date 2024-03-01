@@ -21,12 +21,22 @@
 
 namespace gw2combat::system {
 
-void perform_rotations(registry_t& registry) {
+bool perform_rotations(registry_t& registry) {
+    bool at_least_one_rotation_performed = false;
     registry.view<component::rotation_component>(entt::exclude<component::no_more_rotation>)
         .each([&](entity_t entity, component::rotation_component& rotation_component) {
-            auto current_tick = utils::get_current_tick(registry);
+            bool already_performed_rotation =
+                registry.any_of<component::already_performed_rotation>(entity);
+            if (!already_performed_rotation) {
+                registry.emplace<component::already_performed_rotation>(entity);
+            }
 
             bool has_queued_rotation = !rotation_component.queued_rotation.empty();
+            if (!has_queued_rotation && already_performed_rotation) {
+                return;
+            }
+
+            auto current_tick = utils::get_current_tick(registry);
             if (rotation_component.current_idx >=
                     static_cast<int>(rotation_component.rotation.skill_casts.size()) &&
                 !has_queued_rotation) {
@@ -59,7 +69,9 @@ void perform_rotations(registry_t& registry) {
                 registry.get<component::is_skill>(skill_entity).skill_configuration;
             bool is_instant_cast_skill = skill_configuration.cast_duration[0] == 0;
             bool is_in_animation = registry.any_of<component::animation_component>(entity);
-            if (!is_instant_cast_skill && is_in_animation) {
+            if ((!is_instant_cast_skill ||
+                 skill_configuration.instant_cast_only_when_not_in_animation) &&
+                is_in_animation) {
                 return;
             }
             if (!registry
@@ -72,6 +84,8 @@ void perform_rotations(registry_t& registry) {
                     return;
                 }
             }
+
+            at_least_one_rotation_performed = true;
 
             auto skill_castability = utils::can_cast_skill(skill_entity, registry);
             if (!skill_castability.can_cast) {
@@ -161,6 +175,7 @@ void perform_rotations(registry_t& registry) {
                 }
             }
         });
+    return at_least_one_rotation_performed;
 }
 
 void perform_skills(registry_t& registry) {
