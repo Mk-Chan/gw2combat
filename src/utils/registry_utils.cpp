@@ -332,6 +332,10 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
             destination_registry.emplace<gw2combat::component::duration_expired>(
                 destination_entity);
         }
+        if (source_registry.all_of<gw2combat::component::already_performed_animation>(entity)) {
+            destination_registry.emplace<gw2combat::component::already_performed_animation>(
+                destination_entity);
+        }
         if (source_registry.all_of<gw2combat::component::animation_expired>(entity)) {
             destination_registry.emplace<gw2combat::component::animation_expired>(
                 destination_entity);
@@ -378,6 +382,14 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
         }
         if (source_registry.all_of<gw2combat::component::no_more_rotation>(entity)) {
             destination_registry.emplace<gw2combat::component::no_more_rotation>(
+                destination_entity);
+        }
+        if (source_registry.all_of<gw2combat::component::already_finished_casting_skill>(entity)) {
+            destination_registry.emplace<gw2combat::component::already_finished_casting_skill>(
+                destination_entity);
+        }
+        if (source_registry.all_of<gw2combat::component::already_performed_rotation>(entity)) {
+            destination_registry.emplace<gw2combat::component::already_performed_rotation>(
                 destination_entity);
         }
     });
