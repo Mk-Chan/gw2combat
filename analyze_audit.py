@@ -61,7 +61,10 @@ def main():
             skill_casts["skill"].isin(
                 skill_casts[skill_casts["event_type"] == "skill_cast_begin_event"]["skill"]))]
     skill_casts["time_ms"] = skill_casts["time_ms"].astype(int)
-    skill_casts["cast_time_ms"] = skill_casts["time_ms"].shift(-1) - skill_casts["time_ms"] - 1
+    skill_casts["cast_time_ms"] = skill_casts["time_ms"].shift(-1) - skill_casts["time_ms"]
+    last_skill_time_ms = +np.inf
+    if not skill_casts.empty and skill_casts.iloc[-1]["event_type"] == "skill_cast_begin_event":
+        last_skill_time_ms = skill_casts.iloc[-1]["time_ms"] - 1
     skill_casts = skill_casts[skill_casts["event_type"] == "skill_cast_end_event"]
     skill_casts["cast_time_ms"] = skill_casts["cast_time_ms"].fillna(0)
 
@@ -73,28 +76,39 @@ def main():
 
     combat_df = df[in_combat_filter].reset_index(drop=True)
     damage_df = combat_df[combat_df["event_type"] == "damage_event"].reset_index(drop=True)
-    time_to_first_strike_ms = min(combat_df["time_ms"])
-    combat_time_ms = max(combat_df["time_ms"]) - time_to_first_strike_ms
-    damage_summary = damage_df.groupby(by=["damage_type", "source_skill"], dropna=False)["damage"] \
-        .aggregate([total_damage, mean_damage, count, dps_for_time_ms(combat_time_ms)]) \
-        .reset_index() \
-        .sort_values(by=["total_damage"], ascending=[False]) \
-        .reset_index(drop=True)
+    time_to_first_strike_ms = 0 if combat_df.empty else min(combat_df["time_ms"])
+    combat_time_ms = 0 if combat_df.empty else max(combat_df["time_ms"]) - time_to_first_strike_ms
     golem_hp_updates = \
         df[(df["event_type"] == "combat_stats_update_event") & (df["actor"] == "golem")][
             "updated_health"]
 
-    afk_time = max(0, skill_casts[skill_casts["cast_time_ms"] > 0]["cast_time_ms"].sum() + (
-            combat_df["time_ms"].max() - skill_casts["time_ms"].max()))
+    wasted_time_between_skills = skill_casts[skill_casts["cast_time_ms"] > 0]["cast_time_ms"].sum()
+    wasted_time_until_end_of_combat = 0 if combat_df.empty else (
+            min(combat_df["time_ms"].max(), last_skill_time_ms) - skill_casts["time_ms"].max())
+    afk_time_ms = max(0, wasted_time_between_skills + wasted_time_until_end_of_combat)
 
-    print(damage_summary.to_string(index=False))
+    damage_summary = None
+    if damage_df.empty:
+        damage_summary = damage_df.groupby(by=["damage_type", "source_skill"], dropna=False)[
+            "damage"] \
+            .aggregate([total_damage, mean_damage, count, dps_for_time_ms(combat_time_ms)]) \
+            .reset_index() \
+            .sort_values(by=["total_damage"], ascending=[False]) \
+            .reset_index(drop=True)
+    total_damage_inflicted = 0 \
+        if (damage_summary is None or damage_summary.empty) \
+        else damage_summary["total_damage"].sum()
+
+    if damage_summary and not damage_summary.empty:
+        print(damage_summary.to_string(index=False))
     print()
     print(f"Time to First Strike: {time_to_first_strike_ms / 1000.0}s")
     print(
         f"Remaining Golem HP: {int(min(golem_hp_updates.values))}")
     print(f"Combat Time: {combat_time_ms / 1000.0}s")
-    print(f"AFK Time: {afk_time / 1000.0}s")
-    print(f"DPS: {(sum(damage_summary['total_damage']) * 1000.0 / combat_time_ms):.2f}")
+    print(f"AFK Time: {afk_time_ms / 1000.0}s")
+    if combat_time_ms != 0:
+        print(f"DPS: {(total_damage_inflicted * 1000.0 / combat_time_ms):.2f}")
 
 
 if __name__ == "__main__":

@@ -168,8 +168,8 @@
                         "only_applies_on_finished_casting_skill": "Sword Wave"
                     },
                     "counter_key": "Sword Auto Counter",
-                    "operation": "add",
-                    "value": 1
+                    "operation": "set",
+                    "value": 0
                 },
                 {
                     "condition": {
@@ -891,11 +891,13 @@
             "strike_on_tick_list": [[680, 680, 680], [680, 680, 680]],
             "skills_to_put_on_cooldown": [
                 "Sword Auto Chain Timer Skill"
-            ]
+            ],
+            "tags": ["RESETS_SWORD_AUTO_COUNTER"]
         }, {
             "skill_key": "Sword Auto",
             "weapon_type": "sword",
             "cast_duration": [0, 0],
+            "cooldown": [0, 0],
             "source_actor_skill_triggers": [
                 {
                     "condition": {
@@ -1031,7 +1033,7 @@
             "on_pulse_effect_applications": [
                 {
                     "effect": "BURNING",
-                    "base_duration_ms": 3000,
+                    "base_duration_ms": 4520,
                     "direction": "OUTGOING"
                 }
             ]
