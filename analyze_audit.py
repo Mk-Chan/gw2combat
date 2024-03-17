@@ -88,7 +88,7 @@ def main():
     afk_time_ms = max(0, wasted_time_between_skills + wasted_time_until_end_of_combat)
 
     damage_summary = None
-    if damage_df.empty:
+    if not damage_df.empty:
         damage_summary = damage_df.groupby(by=["damage_type", "source_skill"], dropna=False)[
             "damage"] \
             .aggregate([total_damage, mean_damage, count, dps_for_time_ms(combat_time_ms)]) \
@@ -99,7 +99,7 @@ def main():
         if (damage_summary is None or damage_summary.empty) \
         else damage_summary["total_damage"].sum()
 
-    if damage_summary and not damage_summary.empty:
+    if damage_summary is not None and not damage_summary.empty:
         print(damage_summary.to_string(index=False))
     print()
     print(f"Time to First Strike: {time_to_first_strike_ms / 1000.0}s")
