@@ -1,5 +1,7 @@
 #include "audit.hpp"
 
+#include <component/temporal/has_quickness.hpp>
+
 #include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/skill_utils.hpp"
@@ -10,7 +12,6 @@
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/actor/is_downstate.hpp"
-#include "component/actor/quickness.hpp"
 #include "component/actor/skills_actions_component.hpp"
 #include "component/audit/audit_component.hpp"
 #include "component/counter/is_counter.hpp"
@@ -26,6 +27,7 @@
 #include "component/skill/ammo.hpp"
 #include "component/skill/is_conditional_skill_group.hpp"
 #include "component/skill/is_skill.hpp"
+#include "component/temporal/animation_component.hpp"
 #include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"
 #include "component/temporal/has_alacrity.hpp"
@@ -167,7 +169,7 @@ void audit_skill_casts(registry_t& registry) {
                 auto& skill_configuration =
                     registry.get<component::is_skill>(casting_skill.skill_entity)
                         .skill_configuration;
-                int cast_duration = registry.any_of<component::quickness>(actor_entity)
+                int cast_duration = registry.any_of<component::has_quickness>(actor_entity)
                                         ? skill_configuration.cast_duration[1]
                                         : skill_configuration.cast_duration[0];
                 audit_component.events.emplace_back(create_tick_event(
@@ -251,6 +253,13 @@ void audit_damage(registry_t& registry) {
         });
 }
 
+void audit_afk(registry_t& registry) {
+    auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
+    registry.view<component::is_afk>().each([&](entity_t actor_entity) {
+        ++audit_component.afk_ticks_by_actor[utils::get_entity_name(actor_entity, registry)];
+    });
+}
+
 void audit(registry_t& registry) {
     auto& audit_configuration =
         registry.get<component::audit_component>(utils::get_singleton_entity()).audit_configuration;
@@ -286,6 +295,7 @@ void audit(registry_t& registry) {
             configuration::audit_t::audit_type_t::ACTOR_DOWNSTATE)) {
         audit_actor_downstate(registry);
     }
+    audit_afk(registry);
 }
 
 [[nodiscard]] std::vector<audit::counter_value_t> get_counter_values(registry_t& registry) {
@@ -510,13 +520,11 @@ get_unique_effects_by_actor(registry_t& registry) {
 }
 
 audit::report_t get_audit_report(registry_t& registry, int offset, const std::string& error) {
+    auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
     std::vector<audit::tick_event_t> tick_events;
-    registry.view<component::audit_component>().each(
-        [&](const component::audit_component& audit_component) {
-            std::copy(audit_component.events.cbegin() + offset,
-                      audit_component.events.cend(),
-                      std::back_inserter(tick_events));
-        });
+    std::copy(audit_component.events.cbegin() + offset,
+              audit_component.events.cend(),
+              std::back_inserter(tick_events));
     std::optional<std::string> error_optional =
         error.empty() ? std::nullopt : std::make_optional(error);
 
@@ -532,6 +540,7 @@ audit::report_t get_audit_report(registry_t& registry, int offset, const std::st
         .effects_by_actor = get_effects_by_actor(registry),
         .unique_effects_by_actor = get_unique_effects_by_actor(registry),
         .attributes_by_actor = get_attributes_by_actor(registry),
+        .afk_ticks_by_actor = audit_component.afk_ticks_by_actor,
     };
 }
 

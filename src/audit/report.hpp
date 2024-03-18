@@ -60,6 +60,7 @@ struct report_t {
     std::map<std::string, std::map<actor::unique_effect_t, actor_unique_effect_summary_t>>
         unique_effects_by_actor;
     std::map<std::string, std::map<std::string, double>> attributes_by_actor;
+    std::map<std::string, int> afk_ticks_by_actor;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(counter_value_t, counter, value)
@@ -96,6 +97,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nloh
     nlohmann_json_j["effects_by_actor"] = nlohmann_json_t.effects_by_actor;
     nlohmann_json_j["unique_effects_by_actor"] = nlohmann_json_t.unique_effects_by_actor;
     nlohmann_json_j["attributes_by_actor"] = nlohmann_json_t.attributes_by_actor;
+    nlohmann_json_j["afk_ticks_by_actor"] = nlohmann_json_t.afk_ticks_by_actor;
 }
 
 static inline void from_json(const nlohmann::json& nlohmann_json_j, report_t& nlohmann_json_t) {
@@ -122,6 +124,8 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, report_t& nl
         "unique_effects_by_actor", nlohmann_json_default_obj.unique_effects_by_actor);
     nlohmann_json_t.attributes_by_actor =
         nlohmann_json_j.value("attributes_by_actor", nlohmann_json_default_obj.attributes_by_actor);
+    nlohmann_json_t.afk_ticks_by_actor =
+        nlohmann_json_j.value("afk_ticks_by_actor", nlohmann_json_default_obj.afk_ticks_by_actor);
 }
 
 }  // namespace gw2combat::audit

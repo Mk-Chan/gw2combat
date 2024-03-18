@@ -1,13 +1,13 @@
 {
     "actors": [
         {
-            "name": "dh-bgh",
-            "build_path": "resources/build-cwb-sw-tor-sc-tor.json",
-            "rotation_path": "resources/rotation-cwb-sw-tor-sc-tor.csv",
+            "name": "player",
+            "build_path": "resources/build-cwb-pt-sp.json",
+            "rotation_path": "resources/rotation-cwb-pt-sp.csv",
             "team": 1
         }, {
             "name": "golem",
-            "build_path": "resources/build-golem-fractal-relic.json",
+            "build_path": "resources/build-golem.json",
             "team": 2
         }
     ],
@@ -21,7 +21,7 @@
             "time": 110000
         }, {
             "type": "ROTATION",
-            "actor": "dh-bgh"
+            "actor": "player"
         }
     ],
     "audit_configuration": {

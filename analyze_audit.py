@@ -49,25 +49,6 @@ def main():
           .drop(["event"], axis=1))
     df.columns = df.columns.str.replace("event.", "")
 
-    skill_casts_filter = (((df["event_type"] == "skill_cast_begin_event") | (
-            df["event_type"] == "skill_cast_end_event"))
-                          & (df["actor"] == "dh-bgh"))
-    skill_casts = df[skill_casts_filter].reset_index(drop=True)
-    skill_casts = skill_casts[
-        (skill_casts["event_type"] != "skill_cast_begin_event") | (
-                skill_casts["cast_duration"] > 1)]
-    skill_casts = skill_casts[
-        (skill_casts["event_type"] != "skill_cast_end_event") | (
-            skill_casts["skill"].isin(
-                skill_casts[skill_casts["event_type"] == "skill_cast_begin_event"]["skill"]))]
-    skill_casts["time_ms"] = skill_casts["time_ms"].astype(int)
-    skill_casts["cast_time_ms"] = skill_casts["time_ms"].shift(-1) - skill_casts["time_ms"]
-    last_skill_time_ms = +np.inf
-    if not skill_casts.empty and skill_casts.iloc[-1]["event_type"] == "skill_cast_begin_event":
-        last_skill_time_ms = skill_casts.iloc[-1]["time_ms"] - 1
-    skill_casts = skill_casts[skill_casts["event_type"] == "skill_cast_end_event"]
-    skill_casts["cast_time_ms"] = skill_casts["cast_time_ms"].fillna(0)
-
     in_combat_filter = \
         ((df["event_type"] == "damage_event") | (
                 (df["event_type"] == "effect_application_event") & (
@@ -82,10 +63,9 @@ def main():
         df[(df["event_type"] == "combat_stats_update_event") & (df["actor"] == "golem")][
             "updated_health"]
 
-    wasted_time_between_skills = skill_casts[skill_casts["cast_time_ms"] > 0]["cast_time_ms"].sum()
-    wasted_time_until_end_of_combat = 0 if combat_df.empty else (
-            min(combat_df["time_ms"].max(), last_skill_time_ms) - skill_casts["time_ms"].max())
-    afk_time_ms = max(0, wasted_time_between_skills + wasted_time_until_end_of_combat)
+    afk_time_ms = audit_json["afk_ticks_by_actor"]["player"] \
+        if "player" in audit_json["afk_ticks_by_actor"] \
+        else 0
 
     damage_summary = None
     if not damage_df.empty:

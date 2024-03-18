@@ -32,8 +32,11 @@ skill_castability_t can_cast_skill(entity_t skill_entity, registry_t& registry) 
         //              skill_configuration.skill_key,
         //              cooldown_component);
         return {.can_cast = false,
-                .reason = skill_ammo.max_ammo > 1 ? "skill doesn't have any more ammo"
-                                                  : "skill is on cooldown"};
+                .reason = skill_ammo.max_ammo > 1
+                              ? "skill doesn't have any more ammo"
+                              : "skill is on cooldown: " +
+                                    utils::to_string(
+                                        registry.get<component::cooldown_component>(skill_entity))};
     }
 
     if (skill_configuration.required_bundle.empty()) {

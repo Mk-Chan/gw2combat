@@ -46,6 +46,7 @@ void clear_temporary_components(registry_t& registry) {
                    component::already_performed_rotation,
                    component::already_performed_animation,
                    component::already_finished_casting_skill,
+                   component::is_afk,
                    component::equipped_bundle,
                    component::dropped_bundle,
                    component::relative_attributes,
@@ -109,6 +110,11 @@ void tick(registry_t& registry) {
             break;
         }
     }
+
+    registry
+        .view<component::is_actor>(
+            entt::exclude<component::owner_component, component::animation_component>)
+        .each([&](entity_t actor_entity) { registry.emplace<component::is_afk>(actor_entity); });
 
     system::progress_casting_skills(registry);
     system::progress_cooldowns(registry);

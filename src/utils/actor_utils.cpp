@@ -467,13 +467,15 @@ void finish_casting_skill(entity_t skill_entity, entity_t actor_entity, registry
     auto& skill_configuration = registry.get<component::is_skill>(skill_entity).skill_configuration;
     if (!(skill_configuration.skill_key == "Weapon Swap" &&
           registry.any_of<component::bundle_component>(actor_entity))) {
-        put_skill_on_cooldown_for_actor(skill_entity, skill_configuration, actor_entity, registry);
         auto owner_entity = utils::get_owner(actor_entity, registry);
         if (actor_entity != owner_entity) {
             auto owner_actor_skill_entity =
                 utils::get_skill_entity(skill_configuration.skill_key, owner_entity, registry);
             put_skill_on_cooldown_for_actor(
                 owner_actor_skill_entity, skill_configuration, owner_entity, registry);
+        } else {
+            put_skill_on_cooldown_for_actor(
+                skill_entity, skill_configuration, actor_entity, registry);
         }
     }
     // spdlog::info("[{}] {}: finished casting skill {}",

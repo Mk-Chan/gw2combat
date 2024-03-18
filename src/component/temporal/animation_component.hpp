@@ -13,6 +13,7 @@ struct animation_component {
 
 struct already_performed_animation {};
 struct animation_expired {};
+struct is_afk {};
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(animation_component,
                                                 skill_entity,

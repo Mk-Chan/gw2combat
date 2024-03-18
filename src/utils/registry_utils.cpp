@@ -2,7 +2,6 @@
 
 #include "entity_utils.hpp"
 
-#include "component/actor/alacrity.hpp"
 #include "component/actor/animation.hpp"
 #include "component/actor/base_class_component.hpp"
 #include "component/actor/begun_casting_skills.hpp"
@@ -14,7 +13,6 @@
 #include "component/actor/is_downstate.hpp"
 #include "component/actor/no_more_rotation.hpp"
 #include "component/actor/profession_component.hpp"
-#include "component/actor/quickness.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/rotation_component.hpp"
 #include "component/actor/skills_actions_component.hpp"
@@ -349,19 +347,16 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
         if (source_registry.all_of<gw2combat::component::destroy_entity>(entity)) {
             destination_registry.emplace<gw2combat::component::destroy_entity>(destination_entity);
         }
+        if (source_registry.all_of<gw2combat::component::is_afk>(entity)) {
+            destination_registry.emplace<gw2combat::component::is_afk>(destination_entity);
+        }
         if (source_registry.all_of<gw2combat::component::is_damaging_effect>(entity)) {
             destination_registry.emplace<gw2combat::component::is_damaging_effect>(
                 destination_entity);
         }
-        if (source_registry.all_of<gw2combat::component::quickness>(entity)) {
-            destination_registry.emplace<gw2combat::component::quickness>(destination_entity);
-        }
         if (source_registry.all_of<gw2combat::component::destroy_after_rotation>(entity)) {
             destination_registry.emplace<gw2combat::component::destroy_after_rotation>(
                 destination_entity);
-        }
-        if (source_registry.all_of<gw2combat::component::alacrity>(entity)) {
-            destination_registry.emplace<gw2combat::component::alacrity>(destination_entity);
         }
         if (source_registry.all_of<gw2combat::component::is_downstate>(entity)) {
             destination_registry.emplace<gw2combat::component::is_downstate>(destination_entity);
