@@ -41,6 +41,12 @@ enum class weapon_strength_mode_t
     HIGHEST,
 };
 
+enum class critical_strike_mode_t
+{
+    MEAN,
+    RANDOM_UNIFORM,
+};
+
 struct encounter_t {
     std::vector<configuration::actor_t> actors;
     std::vector<termination_condition_t> termination_conditions;
@@ -48,6 +54,7 @@ struct encounter_t {
     bool require_afk_skills = false;
     int audit_offset = 0;
     weapon_strength_mode_t weapon_strength_mode = weapon_strength_mode_t::MEAN;
+    critical_strike_mode_t critical_strike_mode = critical_strike_mode_t::MEAN;
     bool enable_caching = true;
 };
 
@@ -68,6 +75,9 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_strength_mode_t,
                               {weapon_strength_mode_t::RANDOM_UNIFORM, "RANDOM"},
                               {weapon_strength_mode_t::LOWEST, "LOWEST"},
                               {weapon_strength_mode_t::HIGHEST, "HIGHEST"}})
+NLOHMANN_JSON_SERIALIZE_ENUM(critical_strike_mode_t,
+                             {{critical_strike_mode_t::MEAN, "MEAN"},
+                              {critical_strike_mode_t::RANDOM_UNIFORM, "RANDOM"}})
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t,
                                                 actors,
                                                 termination_conditions,
@@ -75,6 +85,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t,
                                                 require_afk_skills,
                                                 audit_offset,
                                                 weapon_strength_mode,
+                                                critical_strike_mode,
                                                 enable_caching)
 
 }  // namespace gw2combat::configuration

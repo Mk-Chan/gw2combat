@@ -15,6 +15,7 @@ struct skills_actions_component {
         // int next_leap_idx = 0;
         // int next_projectile_idx = 0;
         int next_whirl_idx = 0;
+        double weapon_strength_roll = 0.0;
     };
 
     std::vector<skill_state_t> skills;
@@ -32,7 +33,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skills_actions_component::skill_
                                                 // next_blast_idx,
                                                 // next_leap_idx,
                                                 // next_projectile_idx,
-                                                next_whirl_idx)
+                                                next_whirl_idx,
+                                                weapon_strength_roll)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skills_actions_component, skills)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(finished_skills_actions_component, skill_entities)
 

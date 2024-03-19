@@ -23,6 +23,7 @@ struct encounter_local_t {
     bool require_afk_skills = false;
     int audit_offset = 0;
     weapon_strength_mode_t weapon_strength_mode = weapon_strength_mode_t::MEAN;
+    critical_strike_mode_t critical_strike_mode = critical_strike_mode_t::MEAN;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_local_t,
@@ -37,7 +38,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_local_t,
                                                 audit_configuration,
                                                 require_afk_skills,
                                                 audit_offset,
-                                                weapon_strength_mode)
+                                                weapon_strength_mode,
+                                                critical_strike_mode)
 
 }  // namespace gw2combat::configuration
 

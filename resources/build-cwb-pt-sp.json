@@ -344,8 +344,22 @@
             "unique_effect_key": "Inspired Virtue",
             "attribute_modifiers": [
                 {
+                    "condition": {
+                        "not": [
+                            {
+                                "effect_on_source": "STABILITY"
+                            }
+                        ]
+                    },
                     "attribute": "outgoing_strike_damage_multiplier",
                     "multiplier": 1.10
+                },
+                {
+                    "condition": {
+                        "effect_on_source": "STABILITY"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.11
                 }
             ]
         }, {
@@ -676,6 +690,14 @@
             "ammo": 50000,
             "cast_duration": [0, 0],
             "cooldown": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "STABILITY",
+                    "base_duration_ms": 4000,
+                    "direction": "SELF"
+                }
+            ],
             "tags": ["VIRTUE_PROC"]
         }, {
             "skill_key": "Willbender Flames - Justice",
@@ -781,7 +803,7 @@
         }, {
             "skill_key": "Flowing Resolve Precast",
             "weapon_type": "main_hand",
-            "cast_duration": [500, 500],
+            "cast_duration": [440, 440],
             "cooldown": [1000000, 1000000],
             "ammo": 2,
             "recharge_duration": 0,
@@ -812,7 +834,7 @@
         }, {
             "skill_key": "Flowing Resolve",
             "weapon_type": "main_hand",
-            "cast_duration": [500, 500],
+            "cast_duration": [440, 440],
             "cooldown": [13600, 13600],
             "ammo": 2,
             "recharge_duration": 0,
@@ -861,6 +883,11 @@
                         "unique_effect_key": "Crashing Courage"
                     },
                     "base_duration_ms": 6000,
+                    "direction": "SELF"
+                },
+                {
+                    "effect": "STABILITY",
+                    "base_duration_ms": 4000,
                     "direction": "SELF"
                 }
             ],

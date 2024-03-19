@@ -17,7 +17,6 @@
 #include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/side_effect_utils.hpp"
-#include "utils/skill_utils.hpp"
 #include "utils/weapon_utils.hpp"
 
 namespace gw2combat::system {
@@ -29,6 +28,7 @@ struct damage_result_t {
 
 damage_result_t calculate_damage(
     const configuration::skill_t& skill_configuration,
+    double weapon_strength,
     entity_t strike_source_entity,
     const component::relative_attributes& strike_source_relative_attributes,
     entity_t target_entity,
@@ -37,10 +37,6 @@ damage_result_t calculate_damage(
     auto& encounter =
         registry.get<component::encounter_configuration_component>(utils::get_singleton_entity())
             .encounter;
-    double weapon_strength = utils::get_weapon_strength(strike_source_entity,
-                                                        skill_configuration.weapon_type,
-                                                        encounter.weapon_strength_mode,
-                                                        registry);
     double skill_intrinsic_damage = weapon_strength * skill_configuration.damage_coefficient;
 
     double critical_chance_multiplier =
@@ -48,19 +44,27 @@ damage_result_t calculate_damage(
                      target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
                  1.0);
 
-    // Will be used instead of average critical_damage_multiplier under some configuration
-    bool is_critical = critical_chance_multiplier == 1.0 ||
-                       utils::check_random_success(100.0 * critical_chance_multiplier);
+    bool is_critical = skill_configuration.can_critical_strike &&
+                       (critical_chance_multiplier == 1.0 ||
+                        utils::check_random_success(100.0 * critical_chance_multiplier));
     double actual_critical_damage_multiplier =
         std::max(strike_source_relative_attributes.get(
                      target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
                  1.5);
 
-    double average_critical_damage_multiplier =
-        (1.0 + (critical_chance_multiplier * (actual_critical_damage_multiplier - 1.0)));
-    if (!skill_configuration.can_critical_strike) {
-        average_critical_damage_multiplier = 1.0;
-    }
+    double critical_strike_multiplier = [&] {
+        if (encounter.critical_strike_mode == configuration::critical_strike_mode_t::MEAN) {
+            if (!skill_configuration.can_critical_strike) {
+                return 1.0;
+            }
+            return 1.0 + critical_chance_multiplier * (actual_critical_damage_multiplier - 1.0);
+        }
+        if (encounter.critical_strike_mode ==
+            configuration::critical_strike_mode_t::RANDOM_UNIFORM) {
+            return is_critical ? actual_critical_damage_multiplier : 1.0;
+        }
+        throw std::runtime_error("Invalid critical_strike_mode");
+    }();
 
     double effective_strike_damage_multiplier =
         strike_source_relative_attributes.get(
@@ -79,10 +83,9 @@ damage_result_t calculate_damage(
     double target_armor =
         target_relative_attributes.get(strike_source_entity, actor::attribute_t::ARMOR);
 
-    double damage_value = skill_configuration.flat_damage + skill_intrinsic_damage * source_power *
-                                                                average_critical_damage_multiplier *
-                                                                effective_strike_damage_multiplier /
-                                                                target_armor;
+    double damage_value = skill_configuration.flat_damage +
+                          skill_intrinsic_damage * source_power * critical_strike_multiplier *
+                              effective_strike_damage_multiplier / target_armor;
     return damage_result_t{
         .is_critical = is_critical,
         .value = (double)utils::round_down(damage_value),
@@ -100,11 +103,11 @@ void apply_strikes(registry_t& registry) {
                 entity_t strike_source_entity = utils::get_owner(strike.source_entity, registry);
                 auto& strike_source_relative_attributes =
                     registry.get<component::relative_attributes>(strike_source_entity);
-                auto& skill_configuration =
-                    registry.get<component::is_skill>(strike.strike.skill_entity)
-                        .skill_configuration;
+                auto& is_skill = registry.get<component::is_skill>(strike.strike.skill_entity);
+                auto& skill_configuration = is_skill.skill_configuration;
 
                 auto damage = calculate_damage(skill_configuration,
+                                               strike.strike.weapon_strength_roll,
                                                strike_source_entity,
                                                strike_source_relative_attributes,
                                                target_entity,
@@ -129,8 +132,8 @@ void apply_strikes(registry_t& registry) {
                         return accumulated + incoming_damage_event.value;
                     });
                 spdlog::info(
-                    "[{}] skill {} pow {} fero {} prec {} crit% {} crit_mult {} this_dmg {} "
-                    "total_incoming_dmg {}",
+                    "[{}] skill {} pow {} fero {} prec {} crit% {} crit_mult {} is_crit {} "
+                    "ws_roll {} this_dmg {} total_incoming_dmg {}",
                     utils::get_current_tick(registry),
                     skill_configuration.skill_key,
                     strike_source_relative_attributes.get(target_entity, actor::attribute_t::POWER),
@@ -142,6 +145,8 @@ void apply_strikes(registry_t& registry) {
                         target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
                     strike_source_relative_attributes.get(
                         target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
+                    damage.is_critical,
+                    strike.strike.weapon_strength_roll,
                     damage.value,
                     total_incoming_damage);
 

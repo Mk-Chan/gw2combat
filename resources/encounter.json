@@ -38,5 +38,6 @@
     },
     "require_afk_skills": false,
     "audit_offset": 0,
-    "weapon_strength_mode": "MEAN"
+    "weapon_strength_mode": "MEAN",
+    "critical_strike_mode": "MEAN"
 }

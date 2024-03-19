@@ -18,11 +18,15 @@
 #include "utils/actor_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/skill_utils.hpp"
+#include "utils/weapon_utils.hpp"
 
 namespace gw2combat::system {
 
 bool perform_rotations(registry_t& registry) {
     bool at_least_one_rotation_performed = false;
+    auto& encounter =
+        registry.get<component::encounter_configuration_component>(utils::get_singleton_entity())
+            .encounter;
     registry.view<component::rotation_component>(entt::exclude<component::no_more_rotation>)
         .each([&](entity_t entity, component::rotation_component& rotation_component) {
             bool already_performed_rotation =
@@ -74,10 +78,7 @@ bool perform_rotations(registry_t& registry) {
                 is_in_animation) {
                 return;
             }
-            if (!registry
-                     .get<component::encounter_configuration_component>(
-                         utils::get_singleton_entity())
-                     .encounter.require_afk_skills) {
+            if (!encounter.require_afk_skills) {
                 if (registry.get<component::ammo>(skill_entity).current_ammo <= 0 &&
                     !(skill_configuration.skill_key == "Weapon Swap" &&
                       registry.any_of<component::bundle_component>(entity))) {
@@ -96,8 +97,6 @@ bool perform_rotations(registry_t& registry) {
                                                      skill_castability.reason));
             }
 
-            auto& skills_actions_component =
-                registry.get_or_emplace<component::skills_actions_component>(entity);
             for (auto& skill_to_cancel : skill_configuration.skills_to_cancel) {
                 for (auto&& [skill_casting_entity, iter_skills_actions_component] :
                      registry.view<component::skills_actions_component>().each()) {
@@ -136,8 +135,26 @@ bool perform_rotations(registry_t& registry) {
                     }
                 }
             }
+            auto& skills_actions_component =
+                registry.get_or_emplace<component::skills_actions_component>(entity);
+            double weapon_strength_roll = [&] {
+                if (skill_configuration.strike_on_tick_list[0].empty()) {
+                    return 0.0;
+                }
+                return utils::get_weapon_strength(entity,
+                                                  skill_configuration.weapon_type,
+                                                  encounter.weapon_strength_mode,
+                                                  registry);
+            }();
             skills_actions_component.skills.emplace_back(
-                component::skills_actions_component::skill_state_t{skill_entity});
+                component::skills_actions_component::skill_state_t{
+                    skill_entity,
+                    {0, 0},
+                    0,
+                    0,
+                    0,
+                    weapon_strength_roll,
+                });
             auto& begun_casting_skills_component =
                 registry.get_or_emplace<component::begun_casting_skills>(entity);
             begun_casting_skills_component.skill_entities.emplace_back(skill_entity);
@@ -262,7 +279,8 @@ void perform_skills(registry_t& registry) {
                     auto& outgoing_strikes_component =
                         registry.get_or_emplace<component::outgoing_strikes_component>(entity);
                     auto this_strike = component::strike_t{casting_skill.skill_entity,
-                                                           skill_configuration.num_targets};
+                                                           skill_configuration.num_targets,
+                                                           casting_skill.weapon_strength_roll};
                     outgoing_strikes_component.strikes.emplace_back(this_strike);
                     ++casting_skill.next_strike_idx;
                 }
