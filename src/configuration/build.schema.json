@@ -591,19 +591,19 @@
                 "threshold": {
                     "$ref": "#/definitions/threshold"
                 },
-                "not_conditions": {
+                "not": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/condition"
                     }
                 },
-                "or_conditions": {
+                "or": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/condition"
                     }
                 },
-                "and_conditions": {
+                "and": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/condition"
