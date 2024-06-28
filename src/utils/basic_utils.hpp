@@ -24,6 +24,14 @@ template <typename T>
     return nlohmann::json{t}[0].dump();
 }
 
+[[nodiscard]] static inline int get_random(int min_inclusive, int max_inclusive) {
+    static std::random_device random_device;
+    static unsigned int rng_seed = random_device();
+    static std::mt19937 generator(rng_seed);
+    std::uniform_int_distribution distribution(min_inclusive, max_inclusive);
+    return distribution(generator);
+}
+
 [[nodiscard]] static inline double get_random(double min_inclusive, double max_inclusive) {
     static std::random_device random_device;
     static unsigned int rng_seed = random_device();
@@ -32,8 +40,16 @@ template <typename T>
     return distribution(generator);
 }
 
+[[nodiscard]] static inline double get_random_0_100_int() {
+    return get_random(0, 100);
+}
+
 [[nodiscard]] static inline double get_random_0_100() {
     return get_random(0.0, 100.0);
+}
+
+[[nodiscard]] static inline bool check_random_success(int upper_bound) {
+    return get_random_0_100_int() < upper_bound;
 }
 
 [[nodiscard]] static inline bool check_random_success(double upper_bound) {

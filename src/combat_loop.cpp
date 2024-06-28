@@ -16,6 +16,7 @@
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
 #include "component/effect/is_skill_trigger.hpp"
+#include "component/encounter/encounter_configuration_component.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
@@ -100,6 +101,9 @@ void destroy_marked_entities(registry_t& registry) {
 }
 
 void tick(registry_t& registry) {
+    auto& encounter =
+        registry.get<component::encounter_configuration_component>(utils::get_singleton_entity())
+            .encounter;
     system::setup_combat_stats(registry);
 
     while (true) {
@@ -169,7 +173,8 @@ void tick(registry_t& registry) {
     system::apply_effects(registry);
 
     system::buffer_damage_for_effects_with_no_duration(registry);
-    if (tick_t current_tick = utils::get_current_tick(registry); current_tick % 1000 == 0) {
+    if (tick_t current_tick = utils::get_current_tick(registry);
+        (current_tick + encounter.condition_tick_offset) % 1000 == 0) {
         system::buffer_condition_damage(registry);
         system::apply_condition_damage(registry);
     }
@@ -316,6 +321,7 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
 
     std::string result;
     try {
+        system::setup_combat_stats(registry);
         while (continue_combat_loop(registry, encounter)) {
             registry.ctx().get<tick_t>() += 1;
             tick(registry);

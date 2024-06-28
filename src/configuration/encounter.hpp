@@ -52,6 +52,7 @@ struct encounter_t {
     std::vector<termination_condition_t> termination_conditions;
     audit_t audit_configuration;
     bool require_afk_skills = false;
+    int condition_tick_offset = 0;
     int audit_offset = 0;
     weapon_strength_mode_t weapon_strength_mode = weapon_strength_mode_t::MEAN;
     critical_strike_mode_t critical_strike_mode = critical_strike_mode_t::MEAN;
@@ -83,6 +84,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t,
                                                 termination_conditions,
                                                 audit_configuration,
                                                 require_afk_skills,
+                                                condition_tick_offset,
                                                 audit_offset,
                                                 weapon_strength_mode,
                                                 critical_strike_mode,

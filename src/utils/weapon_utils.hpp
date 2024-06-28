@@ -22,6 +22,12 @@ namespace gw2combat::utils {
     }
     auto effective_weapon_type = [&]() {
         if (type == actor::weapon_type::MAIN_HAND) {
+            if (!registry.any_of<component::equipped_weapons>(actor_entity)) {
+                throw std::runtime_error(fmt::format("actor {} does not have equipped_weapons", actor_entity));
+            }
+            if (!registry.any_of<component::current_weapon_set>(actor_entity)) {
+                throw std::runtime_error(fmt::format("actor {} does not have current_weapon_set", actor_entity));
+            }
             auto& equipped_weapons = registry.get<component::equipped_weapons>(actor_entity);
             auto& current_weapon_set = registry.get<component::current_weapon_set>(actor_entity);
             auto currently_equipped_main_hand_weapon =

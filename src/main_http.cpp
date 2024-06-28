@@ -130,6 +130,7 @@ configuration::encounter_t convert_encounter(
               std::back_inserter(converted_encounter.termination_conditions));
     converted_encounter.audit_configuration = encounter_local.audit_configuration;
     converted_encounter.require_afk_skills = encounter_local.require_afk_skills;
+    converted_encounter.condition_tick_offset = encounter_local.condition_tick_offset;
     converted_encounter.audit_offset = encounter_local.audit_offset;
     converted_encounter.weapon_strength_mode = encounter_local.weapon_strength_mode;
     converted_encounter.critical_strike_mode = encounter_local.critical_strike_mode;

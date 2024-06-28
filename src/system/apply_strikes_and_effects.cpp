@@ -44,9 +44,10 @@ damage_result_t calculate_damage(
                      target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
                  1.0);
 
-    bool is_critical = skill_configuration.can_critical_strike &&
-                       (critical_chance_multiplier == 1.0 ||
-                        utils::check_random_success(100.0 * critical_chance_multiplier));
+    bool is_critical =
+        skill_configuration.can_critical_strike &&
+        (critical_chance_multiplier == 1.0 ||
+         utils::check_random_success(utils::round_down(100.0 * critical_chance_multiplier)));
     double actual_critical_damage_multiplier =
         std::max(strike_source_relative_attributes.get(
                      target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),

@@ -53,30 +53,30 @@ enum class weapon_type : std::uint32_t
     AQUATIC
 };
 
-static inline std::unordered_map<weapon_type, std::array<double, 2>>
+static inline std::unordered_map<weapon_type, std::array<int, 2>>
     weapon_type_to_strength_range_map{
-        {weapon_type::INVALID, {0.0, 0.0}},
+        {weapon_type::INVALID, {0, 0}},
 
-        {weapon_type::EMPTY_HANDED, {656.0, 725.0}},
-        {weapon_type::GREATSWORD, {1045.0, 1155.0}},
-        {weapon_type::LONGBOW, {966.0, 1134.0}},
-        {weapon_type::SWORD, {950.0, 1050.0}},
-        {weapon_type::AXE, {900.0, 1100.0}},
-        {weapon_type::TORCH, {828.0, 972.0}},
-        {weapon_type::SCEPTER, {940.0, 1060.0}},
-        {weapon_type::FOCUS, {873.0, 927.0}},
-        {weapon_type::KIT_CONJURE, {920.0, 1017.0}},
-        {weapon_type::TOME, {876.0, 969.0}},
-        {weapon_type::DAGGER, {970.0, 1030.0}},
-        {weapon_type::MACE, {940.0, 1060.0}},
-        {weapon_type::PISTOL, {920.0, 1080.0}},
-        {weapon_type::SHIELD, {846.0, 954.0}},
-        {weapon_type::WARHORN, {855.0, 945.0}},
-        {weapon_type::HAMMER, {1034.0, 1166.0}},
-        {weapon_type::RIFLE, {1035.0, 1265.0}},
-        {weapon_type::SHORTBOW, {950.0, 1050.0}},
-        {weapon_type::STAFF, {1034.0, 1166.0}},
-        {weapon_type::AQUATIC, {950.0, 1050.0}},
+        {weapon_type::EMPTY_HANDED, {656, 725}},
+        {weapon_type::GREATSWORD, {1045, 1155}},
+        {weapon_type::LONGBOW, {966, 1134}},
+        {weapon_type::SWORD, {950, 1050}},
+        {weapon_type::AXE, {900, 1100}},
+        {weapon_type::TORCH, {828, 972}},
+        {weapon_type::SCEPTER, {940, 1060}},
+        {weapon_type::FOCUS, {873, 927}},
+        {weapon_type::KIT_CONJURE, {920, 1017}},
+        {weapon_type::TOME, {876, 969}},
+        {weapon_type::DAGGER, {970, 1030}},
+        {weapon_type::MACE, {940, 1060}},
+        {weapon_type::PISTOL, {920, 1080}},
+        {weapon_type::SHIELD, {846, 954}},
+        {weapon_type::WARHORN, {855, 945}},
+        {weapon_type::HAMMER, {1034, 1166}},
+        {weapon_type::RIFLE, {1035, 1265}},
+        {weapon_type::SHORTBOW, {950, 1050}},
+        {weapon_type::STAFF, {1034, 1166}},
+        {weapon_type::AQUATIC, {950, 1050}},
     };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_set,
