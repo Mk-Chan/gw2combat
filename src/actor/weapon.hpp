@@ -123,6 +123,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
                                  {weapon_type::SHORTBOW, "shortbow"},
                                  {weapon_type::STAFF, "staff"},
                                  {weapon_type::AQUATIC, "aquatic"},
+                                 {weapon_type::SPEAR, "spear"},
                              })
 
 }  // namespace gw2combat::actor
