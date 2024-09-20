@@ -4,11 +4,11 @@
 #include "skill_utils.hpp"
 
 #include "component/actor/combat_stats.hpp"
-#include "component/actor/relative_attributes.hpp"
 #include "component/counter/is_counter.hpp"
 #include "component/effect/is_effect.hpp"
 #include "component/effect/is_unique_effect.hpp"
 #include "component/effect/source_actor.hpp"
+#include "component/actor/static_attributes.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/temporal/cooldown_component.hpp"
@@ -228,8 +228,11 @@ namespace gw2combat::utils {
         }
         if (condition.threshold->health_pct_subject_to_threshold &&
             *condition.threshold->health_pct_subject_to_threshold) {
-            double max_health = registry.get<component::relative_attributes>(source_entity)
-                                    .get(entity, actor::attribute_t::MAX_HEALTH);
+            // TODO: This is a bit of a hack to avoid calculating relative attributes ALL the time
+            //       because this doesn't account for any attribute modifiers/converters raising max
+            //       health.
+            double max_health = registry.get<component::static_attributes>(source_entity)
+                                    .attribute_value_map.at(actor::attribute_t::MAX_HEALTH);
             double current_health = registry.get<component::combat_stats>(source_entity).health;
             double current_health_pct = current_health / max_health;
             if (!threshold_satisfied(current_health_pct)) {
