@@ -2,12 +2,12 @@
     "actors": [
         {
             "name": "player",
-            "build_path": "resources/build-cwb-pt-sp.json",
-            "rotation_path": "resources/rotation-cwb-pt-sp.csv",
+            "build_path": "resources/build-cwb-pt-pp.json",
+            "rotation_path": "resources/rotation-cwb-pt-pp.csv",
             "team": 1
         }, {
             "name": "golem",
-            "build_path": "resources/build-golem.json",
+            "build_path": "resources/build-golem-fractal-relic.json",
             "team": 2
         }
     ],
@@ -38,6 +38,7 @@
     },
     "require_afk_skills": false,
     "audit_offset": 0,
-    "weapon_strength_mode": "MEAN",
-    "critical_strike_mode": "MEAN"
+    "condition_tick_offset": 200,
+    "weapon_strength_mode": "RANDOM",
+    "critical_strike_mode": "RANDOM"
 }

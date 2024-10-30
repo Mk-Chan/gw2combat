@@ -27,6 +27,7 @@
             "set": "set_2"
         }
     ],
+    "initial_weapon_set": "set_2",
     "recipe_paths": [],
     "permanent_effects": [
         "QUICKNESS",
@@ -204,7 +205,7 @@
                         "depends_on_skill_off_cooldown": "Lightning Strike",
                         "only_applies_on_strikes": true,
                         "only_applies_on_critical_strikes": true,
-                        "weapon_set": "set_2"
+                        "weapon_set": "set_1"
                     },
                     "skill_key": "Lightning Strike"
                 }
@@ -218,16 +219,16 @@
                 }
             ]
         }, {
-            "unique_effect_key": "Earth Sigil",
+            "unique_effect_key": "Torment Sigil",
             "skill_triggers": [
                 {
                     "condition": {
-                        "depends_on_skill_off_cooldown": "Earth Sigil Proc",
+                        "depends_on_skill_off_cooldown": "Torment Sigil Proc",
                         "only_applies_on_strikes": true,
                         "only_applies_on_critical_strikes": true,
-                        "weapon_set": "set_1"
+                        "weapon_set": "set_2"
                     },
-                    "skill_key": "Earth Sigil Proc"
+                    "skill_key": "Torment Sigil Proc"
                 }
             ]
         }, {
@@ -302,7 +303,8 @@
                         "weapon_position": "main_hand",
                         "not": [
                             {
-                                "weapon_type": "pistol"
+                                "weapon_type": "pistol",
+                                "weapon_position": "main_hand"
                             }
                         ]
                     },
@@ -595,6 +597,19 @@
                 }
             ]
         }, {
+            "skill_key": "Torment Sigil Proc",
+            "cast_duration": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "TORMENT",
+                    "base_duration_ms": 5000,
+                    "num_stacks": 2,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cooldown": [5000, 5000]
+        }, {
             "skill_key": "Lightning Strike",
             "weapon_type": "empty_handed",
             "damage_coefficient": 1.1,
@@ -877,7 +892,7 @@
                 {
                     "effect": "BLEEDING",
                     "num_stacks": 1,
-                    "base_duration_ms": 6000,
+                    "base_duration_ms": 8000,
                     "direction": "OUTGOING"
                 }
             ],
@@ -911,7 +926,7 @@
             "on_pulse_effect_applications": [
                 {
                     "effect": "BURNING",
-                    "base_duration_ms": 2000,
+                    "base_duration_ms": 1000,
                     "direction": "OUTGOING"
                 }
             ],
@@ -927,7 +942,7 @@
             "on_pulse_effect_applications": [
                 {
                     "effect": "BURNING",
-                    "base_duration_ms": 2000,
+                    "base_duration_ms": 1000,
                     "direction": "OUTGOING"
                 }
             ],
@@ -1102,6 +1117,7 @@
                     }
                 ]
             },
+            "instant_cast_only_when_not_in_animation": true,
             "executable": true
         }, {
             "skill_key": "Zealot's Fire",

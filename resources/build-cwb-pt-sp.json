@@ -6,7 +6,7 @@
         ["precision", 1762],
         ["condition_damage", 1333],
         ["expertise", 381],
-        ["vitality", 1000]
+        ["vitality", 1297]
     ],
     "weapons": [
         {
@@ -1194,6 +1194,7 @@
                     }
                 ]
             },
+            "instant_cast_only_when_not_in_animation": true,
             "executable": true
         }, {
             "skill_key": "Zealot's Fire",
