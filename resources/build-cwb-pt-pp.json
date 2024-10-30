@@ -1019,7 +1019,12 @@
                 }
             ],
             "executable": true,
-            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"]
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"],
+            "skills_to_put_on_cooldown": [
+                "Jurisdiction Lvl 1",
+                "Jurisdiction Lvl 2",
+                "Jurisdiction Lvl 3"
+            ]
         }, {
             "skill_key": "Jurisdiction Lvl 2",
             "weapon_type": "pistol",
@@ -1039,7 +1044,12 @@
                 }
             ],
             "executable": true,
-            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"]
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"],
+            "skills_to_put_on_cooldown": [
+                "Jurisdiction Lvl 1",
+                "Jurisdiction Lvl 2",
+                "Jurisdiction Lvl 3"
+            ]
         }, {
             "skill_key": "Jurisdiction Lvl 3",
             "weapon_type": "pistol",
@@ -1059,7 +1069,12 @@
                 }
             ],
             "executable": true,
-            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"]
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"],
+            "skills_to_put_on_cooldown": [
+                "Jurisdiction Lvl 1",
+                "Jurisdiction Lvl 2",
+                "Jurisdiction Lvl 3"
+            ]
         }, {
             "skill_key": "Zealot's Flame Pulse",
             "cast_duration": [3000, 3000],
