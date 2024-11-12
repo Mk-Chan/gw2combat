@@ -534,25 +534,24 @@ get_skill_statuses(registry_t& registry) {
             }
 
             auto skill_castability = utils::can_cast_skill(skill_entity, registry);
-            auto cooldown_component = registry.try_get<component::cooldown_component>(skill_entity);
-            auto ammo = registry.try_get<component::ammo>(skill_entity);
-            double remaining_cooldown_without_alacrity = 0.0;
-            double remaining_cooldown_with_alacrity = 0.0;
-            if (cooldown_component) {
-                double no_alacrity_progress_pct =
-                    cooldown_component->progress[0] * 100.0 / cooldown_component->duration[0];
-                double alacrity_progress_pct =
-                    cooldown_component->progress[1] * 100.0 / cooldown_component->duration[1];
-                double overall_progress_pct =
-                    (alacrity_progress_pct + no_alacrity_progress_pct) / 100.0;
+            auto cooldown_ptr = registry.try_get<component::cooldown_component>(skill_entity);
+            int remaining_cooldown_without_alacrity = 0.0;
+            int remaining_cooldown_with_alacrity = 0.0;
+            if (cooldown_ptr) {
+                double cooldown_pct =
+                    (cooldown_ptr->progress[0] / static_cast<double>(cooldown_ptr->duration[0])) +
+                    (cooldown_ptr->progress[1] / static_cast<double>(cooldown_ptr->duration[1]));
                 remaining_cooldown_without_alacrity =
-                    cooldown_component->duration[0] * overall_progress_pct;
+                    static_cast<int>(cooldown_pct * cooldown_ptr->duration[0]);
                 remaining_cooldown_with_alacrity =
-                    cooldown_component->duration[1] * overall_progress_pct;
+                    static_cast<int>(cooldown_pct * cooldown_ptr->duration[1]);
             }
+
+            auto ammo = registry.try_get<component::ammo>(skill_entity);
             int remaining_ammo = ammo ? ammo->current_ammo : 0;
             actor_skill_statuses[is_skill.skill_configuration.skill_key] = {
                 .is_available_to_cast = skill_castability.can_cast,
+                .unavailable_to_cast_reason = skill_castability.reason,
                 .remaining_cooldown_without_alacrity = remaining_cooldown_without_alacrity,
                 .remaining_cooldown_with_alacrity = remaining_cooldown_with_alacrity,
                 .ammo = remaining_ammo,

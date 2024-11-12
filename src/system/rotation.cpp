@@ -90,11 +90,33 @@ bool perform_rotations(registry_t& registry) {
 
             auto skill_castability = utils::can_cast_skill(skill_entity, registry);
             if (!skill_castability.can_cast) {
-                throw std::runtime_error(fmt::format("[{}] {}: cannot cast skill {}. Reason: {}",
-                                                     utils::get_current_tick(registry),
-                                                     utils::get_entity_name(entity, registry),
-                                                     skill_configuration.skill_key,
-                                                     skill_castability.reason));
+                auto cooldown_ptr = registry.try_get<component::cooldown_component>(skill_entity);
+                int remaining_cooldown_without_alacrity = 0.0;
+                int remaining_cooldown_with_alacrity = 0.0;
+                if (cooldown_ptr) {
+                    double cooldown_pct = (cooldown_ptr->progress[0] /
+                                           static_cast<double>(cooldown_ptr->duration[0])) +
+                                          (cooldown_ptr->progress[1] /
+                                           static_cast<double>(cooldown_ptr->duration[1]));
+                    remaining_cooldown_without_alacrity =
+                        static_cast<int>(cooldown_pct * cooldown_ptr->duration[0]);
+                    remaining_cooldown_with_alacrity =
+                        static_cast<int>(cooldown_pct * cooldown_ptr->duration[1]);
+                }
+                throw std::runtime_error(
+                    fmt::format("[{}] {}: cannot cast skill {}. Reason: {}",
+                                utils::get_current_tick(registry),
+                                utils::get_entity_name(entity, registry),
+                                skill_configuration.skill_key,
+                                skill_castability.reason + " (" +
+                                    (std::ostringstream() << std::fixed << std::setprecision(1)
+                                                          << remaining_cooldown_without_alacrity)
+                                        .str() +
+                                    ", " +
+                                    (std::ostringstream() << std::fixed << std::setprecision(1)
+                                                          << remaining_cooldown_with_alacrity)
+                                        .str() +
+                                    ")"));
             }
 
             for (auto& skill_to_cancel : skill_configuration.skills_to_cancel) {

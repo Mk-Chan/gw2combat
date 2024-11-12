@@ -31,21 +31,9 @@ skill_castability_t can_cast_skill(entity_t skill_entity, registry_t& registry) 
         //              utils::get_entity_name(actor_entity, registry),
         //              skill_configuration.skill_key,
         //              cooldown_component);
-        auto& cooldown_component = registry.get<component::cooldown_component>(skill_entity);
-        double cooldown_pct =
-            (cooldown_component.progress[0] / static_cast<double>(cooldown_component.duration[0])) +
-            (cooldown_component.progress[1] / static_cast<double>(cooldown_component.duration[1]));
-        int cooldown_remaining_without_alacrity =
-            static_cast<int>(cooldown_pct * static_cast<double>(cooldown_component.duration[0]));
-        int cooldown_remaining_with_alacrity =
-            static_cast<int>(cooldown_pct * static_cast<double>(cooldown_component.duration[1]));
         return {.can_cast = false,
-                .reason = skill_ammo.max_ammo > 1
-                              ? "skill doesn't have any more ammo"
-                              : "skill is on cooldown: " + utils::to_string(cooldown_component) +
-                                    " (" + utils::to_string(cooldown_remaining_without_alacrity) +
-                                    ", " + utils::to_string(cooldown_remaining_with_alacrity) +
-                                    ")"};
+                .reason = skill_ammo.max_ammo > 1 ? "skill doesn't have any more ammo"
+                                                  : "skill is on cooldown"};
     }
 
     if (skill_configuration.required_bundle.empty()) {

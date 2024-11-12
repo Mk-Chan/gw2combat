@@ -49,8 +49,9 @@ struct actor_unique_effect_summary_t {
 
 struct skill_status_t {
     bool is_available_to_cast = false;
-    double remaining_cooldown_without_alacrity = 0.0;
-    double remaining_cooldown_with_alacrity = 0.0;
+    std::string unavailable_to_cast_reason;
+    int remaining_cooldown_without_alacrity = 0;
+    int remaining_cooldown_with_alacrity = 0;
     int ammo = 0;
 };
 
@@ -90,6 +91,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_unique_effect_summary_t,
                                                 remaining_duration)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_status_t,
                                                 is_available_to_cast,
+                                                unavailable_to_cast_reason,
                                                 remaining_cooldown_without_alacrity,
                                                 remaining_cooldown_with_alacrity,
                                                 ammo)
