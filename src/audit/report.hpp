@@ -47,11 +47,19 @@ struct actor_unique_effect_summary_t {
     int remaining_duration = 0;
 };
 
+struct skill_status_t {
+    bool is_available_to_cast = false;
+    double remaining_cooldown_without_alacrity = 0.0;
+    double remaining_cooldown_with_alacrity = 0.0;
+    int ammo = 0;
+};
+
 struct report_t {
     int offset = 0;
     std::vector<tick_event_t> tick_events;
     std::optional<std::string> error;
     std::vector<counter_value_t> counter_values;
+    std::map<std::string, std::map<std::string, skill_status_t>> skill_statuses;
     std::map<std::string, std::vector<std::string>> castable_skills_by_actor;
     std::map<std::string, std::map<actor::skill_t, uncastable_skill_t>> uncastable_skills_by_actor;
     std::map<std::string, actor::weapon_set> current_weapon_set_by_actor;
@@ -80,6 +88,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_unique_effect_t,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_unique_effect_summary_t,
                                                 stacks,
                                                 remaining_duration)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_status_t,
+                                                is_available_to_cast,
+                                                remaining_cooldown_without_alacrity,
+                                                remaining_cooldown_with_alacrity,
+                                                ammo)
 
 static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nlohmann_json_t) {
     nlohmann_json_j["offset"] = nlohmann_json_t.offset;
@@ -90,6 +103,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nloh
         nlohmann_json_j["error"] = *nlohmann_json_t.error;
     }
     nlohmann_json_j["counter_values"] = nlohmann_json_t.counter_values;
+    nlohmann_json_j["skill_statuses"] = nlohmann_json_t.skill_statuses;
     nlohmann_json_j["castable_skills_by_actor"] = nlohmann_json_t.castable_skills_by_actor;
     nlohmann_json_j["uncastable_skills_by_actor"] = nlohmann_json_t.uncastable_skills_by_actor;
     nlohmann_json_j["current_weapon_set_by_actor"] = nlohmann_json_t.current_weapon_set_by_actor;
@@ -110,6 +124,8 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, report_t& nl
     }
     nlohmann_json_t.counter_values =
         nlohmann_json_j.value("counter_values", nlohmann_json_default_obj.counter_values);
+    nlohmann_json_t.skill_statuses =
+        nlohmann_json_j.value("skill_statuses", nlohmann_json_default_obj.skill_statuses);
     nlohmann_json_t.castable_skills_by_actor = nlohmann_json_j.value(
         "castable_skills_by_actor", nlohmann_json_default_obj.castable_skills_by_actor);
     nlohmann_json_t.uncastable_skills_by_actor = nlohmann_json_j.value(

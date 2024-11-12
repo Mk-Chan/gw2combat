@@ -999,7 +999,11 @@
                 }
             ],
             "executable": true,
-            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"]
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"],
+            "cast_condition": {
+                "weapon_type": "pistol",
+                "weapon_position": "off_hand"
+            }
         }, {
             "skill_key": "Jurisdiction Lvl 1",
             "weapon_type": "pistol",
@@ -1024,7 +1028,11 @@
                 "Jurisdiction Lvl 1",
                 "Jurisdiction Lvl 2",
                 "Jurisdiction Lvl 3"
-            ]
+            ],
+            "cast_condition": {
+                "weapon_type": "pistol",
+                "weapon_position": "off_hand"
+            }
         }, {
             "skill_key": "Jurisdiction Lvl 2",
             "weapon_type": "pistol",
@@ -1049,7 +1057,11 @@
                 "Jurisdiction Lvl 1",
                 "Jurisdiction Lvl 2",
                 "Jurisdiction Lvl 3"
-            ]
+            ],
+            "cast_condition": {
+                "weapon_type": "pistol",
+                "weapon_position": "off_hand"
+            }
         }, {
             "skill_key": "Jurisdiction Lvl 3",
             "weapon_type": "pistol",
@@ -1074,7 +1086,11 @@
                 "Jurisdiction Lvl 1",
                 "Jurisdiction Lvl 2",
                 "Jurisdiction Lvl 3"
-            ]
+            ],
+            "cast_condition": {
+                "weapon_type": "pistol",
+                "weapon_position": "off_hand"
+            }
         }, {
             "skill_key": "Zealot's Flame Pulse",
             "cast_duration": [3000, 3000],

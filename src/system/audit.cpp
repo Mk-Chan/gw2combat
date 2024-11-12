@@ -1,7 +1,5 @@
 #include "audit.hpp"
 
-#include <component/temporal/has_quickness.hpp>
-
 #include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/skill_utils.hpp"
@@ -31,6 +29,7 @@
 #include "component/temporal/cooldown_component.hpp"
 #include "component/temporal/duration_component.hpp"
 #include "component/temporal/has_alacrity.hpp"
+#include "component/temporal/has_quickness.hpp"
 
 namespace gw2combat::system {
 
@@ -519,6 +518,52 @@ get_unique_effects_by_actor(registry_t& registry) {
     return actor_attributes;
 }
 
+[[nodiscard]] std::map<std::string, std::map<std::string, audit::skill_status_t>>
+get_skill_statuses(registry_t& registry) {
+    std::map<std::string, std::map<std::string, audit::skill_status_t>> skill_statuses;
+    for (auto&& [actor_entity] :
+         registry.view<component::is_actor>(entt::exclude<component::owner_component>).each()) {
+        std::map<std::string, audit::skill_status_t> actor_skill_statuses;
+        for (auto&& [skill_entity, is_skill, owner_component] :
+             registry.view<component::is_skill, component::owner_component>().each()) {
+            if (owner_component.entity != actor_entity) {
+                continue;
+            }
+            if (!is_skill.skill_configuration.executable) {
+                continue;
+            }
+
+            auto skill_castability = utils::can_cast_skill(skill_entity, registry);
+            auto cooldown_component = registry.try_get<component::cooldown_component>(skill_entity);
+            auto ammo = registry.try_get<component::ammo>(skill_entity);
+            double remaining_cooldown_without_alacrity = 0.0;
+            double remaining_cooldown_with_alacrity = 0.0;
+            if (cooldown_component) {
+                double no_alacrity_progress_pct =
+                    cooldown_component->progress[0] * 100.0 / cooldown_component->duration[0];
+                double alacrity_progress_pct =
+                    cooldown_component->progress[1] * 100.0 / cooldown_component->duration[1];
+                double overall_progress_pct =
+                    (alacrity_progress_pct + no_alacrity_progress_pct) / 100.0;
+                remaining_cooldown_without_alacrity =
+                    cooldown_component->duration[0] * overall_progress_pct;
+                remaining_cooldown_with_alacrity =
+                    cooldown_component->duration[1] * overall_progress_pct;
+            }
+            int remaining_ammo = ammo ? ammo->current_ammo : 0;
+            actor_skill_statuses[is_skill.skill_configuration.skill_key] = {
+                .is_available_to_cast = skill_castability.can_cast,
+                .remaining_cooldown_without_alacrity = remaining_cooldown_without_alacrity,
+                .remaining_cooldown_with_alacrity = remaining_cooldown_with_alacrity,
+                .ammo = remaining_ammo,
+            };
+        }
+        skill_statuses[utils::get_entity_name(actor_entity, registry)] =
+            std::move(actor_skill_statuses);
+    }
+    return skill_statuses;
+}
+
 audit::report_t get_audit_report(registry_t& registry, int offset, const std::string& error) {
     auto& audit_component = registry.get<component::audit_component>(utils::get_singleton_entity());
     std::vector<audit::tick_event_t> tick_events;
@@ -533,6 +578,7 @@ audit::report_t get_audit_report(registry_t& registry, int offset, const std::st
         .tick_events = tick_events,
         .error = error_optional,
         .counter_values = get_counter_values(registry),
+        .skill_statuses = get_skill_statuses(registry),
         .castable_skills_by_actor = get_castable_skills_by_actor(registry),
         .uncastable_skills_by_actor = get_uncastable_skills_by_actor(registry),
         .current_weapon_set_by_actor = get_current_weapon_set_by_actor(registry),
