@@ -60,7 +60,7 @@ struct report_t {
     std::vector<tick_event_t> tick_events;
     std::optional<std::string> error;
     std::vector<counter_value_t> counter_values;
-    std::map<std::string, std::map<std::string, skill_status_t>> skill_statuses;
+    std::map<std::string, std::map<std::string, skill_status_t>> skill_status;
     std::map<std::string, std::vector<std::string>> castable_skills_by_actor;
     std::map<std::string, std::map<actor::skill_t, uncastable_skill_t>> uncastable_skills_by_actor;
     std::map<std::string, actor::weapon_set> current_weapon_set_by_actor;
@@ -105,7 +105,7 @@ static inline void to_json(nlohmann::json& nlohmann_json_j, const report_t& nloh
         nlohmann_json_j["error"] = *nlohmann_json_t.error;
     }
     nlohmann_json_j["counter_values"] = nlohmann_json_t.counter_values;
-    nlohmann_json_j["skill_statuses"] = nlohmann_json_t.skill_statuses;
+    nlohmann_json_j["skill_status"] = nlohmann_json_t.skill_status;
     nlohmann_json_j["castable_skills_by_actor"] = nlohmann_json_t.castable_skills_by_actor;
     nlohmann_json_j["uncastable_skills_by_actor"] = nlohmann_json_t.uncastable_skills_by_actor;
     nlohmann_json_j["current_weapon_set_by_actor"] = nlohmann_json_t.current_weapon_set_by_actor;
@@ -126,8 +126,8 @@ static inline void from_json(const nlohmann::json& nlohmann_json_j, report_t& nl
     }
     nlohmann_json_t.counter_values =
         nlohmann_json_j.value("counter_values", nlohmann_json_default_obj.counter_values);
-    nlohmann_json_t.skill_statuses =
-        nlohmann_json_j.value("skill_statuses", nlohmann_json_default_obj.skill_statuses);
+    nlohmann_json_t.skill_status =
+        nlohmann_json_j.value("skill_status", nlohmann_json_default_obj.skill_status);
     nlohmann_json_t.castable_skills_by_actor = nlohmann_json_j.value(
         "castable_skills_by_actor", nlohmann_json_default_obj.castable_skills_by_actor);
     nlohmann_json_t.uncastable_skills_by_actor = nlohmann_json_j.value(

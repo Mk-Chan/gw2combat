@@ -542,8 +542,10 @@ get_skill_statuses(registry_t& registry) {
                     (cooldown_ptr->progress[0] / static_cast<double>(cooldown_ptr->duration[0])) +
                     (cooldown_ptr->progress[1] / static_cast<double>(cooldown_ptr->duration[1]));
                 remaining_cooldown_without_alacrity =
+                    cooldown_ptr->duration[0] -
                     static_cast<int>(cooldown_pct * cooldown_ptr->duration[0]);
                 remaining_cooldown_with_alacrity =
+                    cooldown_ptr->duration[1] -
                     static_cast<int>(cooldown_pct * cooldown_ptr->duration[1]);
             }
 
@@ -577,7 +579,7 @@ audit::report_t get_audit_report(registry_t& registry, int offset, const std::st
         .tick_events = tick_events,
         .error = error_optional,
         .counter_values = get_counter_values(registry),
-        .skill_statuses = get_skill_statuses(registry),
+        .skill_status = get_skill_statuses(registry),
         .castable_skills_by_actor = get_castable_skills_by_actor(registry),
         .uncastable_skills_by_actor = get_uncastable_skills_by_actor(registry),
         .current_weapon_set_by_actor = get_current_weapon_set_by_actor(registry),
