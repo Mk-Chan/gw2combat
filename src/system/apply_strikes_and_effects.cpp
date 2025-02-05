@@ -3,11 +3,9 @@
 #include "configuration/skill.hpp"
 
 #include "component/actor/relative_attributes.hpp"
-#include "component/counter/is_counter.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
 #include "component/damage/strikes_pipeline.hpp"
-#include "component/effect/is_effect.hpp"
 #include "component/encounter/encounter_configuration_component.hpp"
 #include "component/hierarchy/owner_component.hpp"
 #include "component/skill/is_skill.hpp"
@@ -89,7 +87,7 @@ damage_result_t calculate_damage(
                               effective_strike_damage_multiplier / target_armor;
     return damage_result_t{
         .is_critical = is_critical,
-        .value = (double)utils::round_down(damage_value),
+        .value = static_cast<double>(utils::round_down(damage_value)),
     };
 }
 

@@ -4,11 +4,11 @@
 #include "skill_utils.hpp"
 
 #include "component/actor/combat_stats.hpp"
+#include "component/actor/static_attributes.hpp"
 #include "component/counter/is_counter.hpp"
 #include "component/effect/is_effect.hpp"
 #include "component/effect/is_unique_effect.hpp"
 #include "component/effect/source_actor.hpp"
-#include "component/actor/static_attributes.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/temporal/cooldown_component.hpp"
@@ -237,6 +237,17 @@ namespace gw2combat::utils {
             double current_health_pct = current_health / max_health;
             if (!threshold_satisfied(current_health_pct)) {
                 return {.satisfied = false, .reason = "health pct not in threshold"};
+            }
+        }
+        if (target_entity && condition.threshold->target_health_pct_subject_to_threshold &&
+            *condition.threshold->target_health_pct_subject_to_threshold) {
+            double target_max_health = registry.get<component::static_attributes>(*target_entity)
+                                           .attribute_value_map.at(actor::attribute_t::MAX_HEALTH);
+            double target_current_health =
+                registry.get<component::combat_stats>(*target_entity).health;
+            double target_current_health_pct = target_current_health / target_max_health;
+            if (!threshold_satisfied(target_current_health_pct)) {
+                return {.satisfied = false, .reason = "target health pct not in threshold"};
             }
         }
         if (condition.threshold->counter_value_subject_to_threshold) {
