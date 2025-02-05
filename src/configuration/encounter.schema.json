@@ -773,6 +773,10 @@
                     "type": "boolean",
                     "description": "If true, threshold_value is interpreted as a percentage of max health."
                 },
+                "target_health_pct_subject_to_threshold": {
+                  "type": "boolean",
+                  "description": "If true, threshold_value is interpreted as a percentage of target max health."
+                },
                 "counter_value_subject_to_threshold": {
                     "type": "string",
                     "description": "Name of the counter to use as the value."
