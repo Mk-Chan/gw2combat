@@ -19,8 +19,8 @@ jobs:
       with:
         name: gw2combat_linux
         path: |
-          gw2combat
-          gw2combat_http
+          build/gw2combat
+          build/gw2combat_http
 
   build-windows:
     runs-on: windows-latest
@@ -28,11 +28,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Build
-      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --config Release --target gw2combat --target gw2combat_http --parallel && cd ..
+      run: make -j
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: gw2combat_windows
         path: |
           gw2combat.exe
-          gw2combat_http.exe
