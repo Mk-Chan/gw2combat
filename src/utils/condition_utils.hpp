@@ -6,6 +6,8 @@
 #include "configuration/condition.hpp"
 #include "configuration/skill.hpp"
 
+#include "component/damage/strikes_pipeline.hpp"
+
 #include "basic_utils.hpp"
 
 namespace gw2combat::utils {
@@ -35,6 +37,7 @@ struct condition_result_t {
     entity_t entity,
     entity_t target_entity,
     bool is_critical,
+    const component::strike_t& strike,
     const configuration::skill_t& source_skill_configuration,
     registry_t& registry);
 [[nodiscard]] bool on_effect_application_conditions_satisfied(

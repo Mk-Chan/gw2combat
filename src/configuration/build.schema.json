@@ -73,7 +73,9 @@
             }
         }
     },
-    "required": ["attributes"],
+    "required": [
+        "attributes"
+    ],
     "definitions": {
         "attribute": {
             "type": "string",
@@ -179,7 +181,11 @@
                     "minItems": 1
                 }
             },
-            "required": ["counter_key", "initial_value", "counter_modifiers"]
+            "required": [
+                "counter_key",
+                "initial_value",
+                "counter_modifiers"
+            ]
         },
         "rotation": {
             "type": "object",
@@ -194,7 +200,9 @@
                     "type": "boolean"
                 }
             },
-            "required": ["skill_casts"]
+            "required": [
+                "skill_casts"
+            ]
         },
         "skill_cast": {
             "type": "object",
@@ -207,7 +215,9 @@
                     "default": 0
                 }
             },
-            "required": ["skill"]
+            "required": [
+                "skill"
+            ]
         },
         "weapon": {
             "type": "object",
@@ -222,7 +232,11 @@
                     "$ref": "#/definitions/weapon_set"
                 }
             },
-            "required": ["type", "position", "set"]
+            "required": [
+                "type",
+                "position",
+                "set"
+            ]
         },
         "weapon_type": {
             "type": "string",
@@ -267,11 +281,154 @@
                 "set_2"
             ]
         },
+        "skill_tick": {
+            "type": "object",
+            "properties": {
+                "on_tick": {
+                    "type": "integer",
+                    "description": "This tick is relative to when the skill begins casting."
+                },
+                "num_targets": {
+                    "type": "integer"
+                },
+                "attribute_damage_to_skill": {
+                    "type": "string"
+                },
+                "flat_damage": {
+                    "type": "number"
+                },
+                "weapon_type": {
+                    "$ref": "#/definitions/weapon_type",
+                    "description": "Weapon type of the skill cast will be used if not specifically defined here."
+                },
+                "weapon_strength_roll_group": {
+                    "type": "integer",
+                    "description": "0 means the same roll group as the skill cast.",
+                    "default": 0
+                },
+                "damage_coefficient": {
+                    "type": "number"
+                },
+                "pulse": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "strike": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "can_critical_strike": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "whirl_finisher": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "on_strike_effect_applications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect_application"
+                    }
+                },
+                "on_pulse_effect_applications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect_application"
+                    }
+                },
+                "attribute_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/attribute_modifier"
+                    }
+                },
+                "attribute_conversions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/attribute_conversion"
+                    }
+                },
+                "counter_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/counter_modifier"
+                    }
+                },
+                "skill_triggers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_trigger"
+                    }
+                },
+                "unchained_skill_triggers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_trigger"
+                    }
+                },
+                "source_actor_skill_triggers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_trigger"
+                    }
+                },
+                "effect_removals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/effect_removal"
+                    }
+                },
+                "cooldown_modifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cooldown_modifier"
+                    }
+                },
+                "skills_to_put_on_cooldown": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "skills_to_cancel": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "child_skill_keys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "inherit_tags": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "tick_condition": {
+                    "$ref": "#/definitions/condition"
+                }
+            }
+        },
         "skill": {
             "type": "object",
             "properties": {
                 "skill_key": {
                     "type": "string"
+                },
+                "skill_ticks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_tick"
+                    }
                 },
                 "weapon_type": {
                     "$ref": "#/definitions/weapon_type"
@@ -464,7 +621,9 @@
                     "$ref": "#/definitions/condition"
                 }
             },
-            "required": ["skill_key"]
+            "required": [
+                "skill_key"
+            ]
         },
         "conditional_skill_group": {
             "type": "object",
@@ -480,7 +639,10 @@
                     "minItems": 1
                 }
             },
-            "required": ["skill_key", "conditional_skill_keys"]
+            "required": [
+                "skill_key",
+                "conditional_skill_keys"
+            ]
         },
         "conditional_skill": {
             "type": "object",
@@ -492,7 +654,10 @@
                     "type": "string"
                 }
             },
-            "required": ["condition", "skill_key"]
+            "required": [
+                "condition",
+                "skill_key"
+            ]
         },
         "combo_field": {
             "type": "string",
@@ -538,10 +703,16 @@
             },
             "anyOf": [
                 {
-                    "required": ["direction", "effect"]
+                    "required": [
+                        "direction",
+                        "effect"
+                    ]
                 },
                 {
-                    "required": ["direction", "unique_effect"]
+                    "required": [
+                        "direction",
+                        "unique_effect"
+                    ]
                 }
             ]
         },
@@ -796,7 +967,9 @@
                     "default": false
                 }
             },
-            "required": ["unique_effect_key"]
+            "required": [
+                "unique_effect_key"
+            ]
         },
         "attribute_modifier": {
             "type": "object",
@@ -864,10 +1037,18 @@
             },
             "oneOf": [
                 {
-                    "required": ["counter_key", "operation", "value"]
+                    "required": [
+                        "counter_key",
+                        "operation",
+                        "value"
+                    ]
                 },
                 {
-                    "required": ["counter_key", "operation", "counter_value"]
+                    "required": [
+                        "counter_key",
+                        "operation",
+                        "counter_value"
+                    ]
                 }
             ]
         },
@@ -881,7 +1062,9 @@
                     "type": "string"
                 }
             },
-            "required": ["skill_key"]
+            "required": [
+                "skill_key"
+            ]
         },
         "effect_removal": {
             "type": "object",
@@ -902,10 +1085,14 @@
             },
             "anyOf": [
                 {
-                    "required": ["effect"]
+                    "required": [
+                        "effect"
+                    ]
                 },
                 {
-                    "required": ["unique_effect"]
+                    "required": [
+                        "unique_effect"
+                    ]
                 }
             ]
         },
@@ -966,13 +1153,23 @@
             },
             "anyOf": [
                 {
-                    "required": ["type", "time"]
+                    "required": [
+                        "type",
+                        "time"
+                    ]
                 },
                 {
-                    "required": ["type", "actor"]
+                    "required": [
+                        "type",
+                        "actor"
+                    ]
                 },
                 {
-                    "required": ["type", "actor", "damage"]
+                    "required": [
+                        "type",
+                        "actor",
+                        "damage"
+                    ]
                 }
             ]
         }

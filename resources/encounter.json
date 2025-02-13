@@ -2,7 +2,7 @@
     "actors": [
         {
             "name": "player",
-            "build_path": "resources/build-cwb-pt-pp.json",
+            "build_path": "resources/build-cwb-pt-pp-skill-ticks.json",
             "rotation_path": "resources/rotation-cwb-pt-pp.csv",
             "team": 1
         }, {
@@ -39,6 +39,6 @@
     "require_afk_skills": false,
     "audit_offset": 0,
     "condition_tick_offset": 200,
-    "weapon_strength_mode": "RANDOM",
-    "critical_strike_mode": "RANDOM"
+    "weapon_strength_mode": "MEAN",
+    "critical_strike_mode": "MEAN"
 }

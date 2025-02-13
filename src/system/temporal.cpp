@@ -2,6 +2,7 @@
 
 #include "component/actor/finished_casting_skills.hpp"
 #include "component/actor/skills_actions_component.hpp"
+#include "component/actor/skills_ticks_tracker_component.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
@@ -195,16 +196,25 @@ void progress_durations(registry_t& registry) {
         });
 }
 
+void progress_casting_skill_ticks(registry_t& registry) {
+    registry.view<component::skills_ticks_tracker_component>().each(
+        [&](component::skills_ticks_tracker_component& skills_ticks_tracker_component) {
+            for (auto& skill_state : skills_ticks_tracker_component.skills) {
+                ++skill_state.skill_tick_progress;
+            }
+        });
+}
+
 void progress_casting_skills(registry_t& registry) {
     registry.view<component::skills_actions_component>(entt::exclude<component::has_quickness>)
-        .each([&](component::skills_actions_component& casting_skills_component) {
-            for (auto& skill_state : casting_skills_component.skills) {
+        .each([&](component::skills_actions_component& skills_actions_component) {
+            for (auto& skill_state : skills_actions_component.skills) {
                 ++skill_state.action_progress[0];
             }
         });
     registry.view<component::skills_actions_component, component::has_quickness>().each(
-        [&](component::skills_actions_component& casting_skills_component) {
-            for (auto& skill_state : casting_skills_component.skills) {
+        [&](component::skills_actions_component& skills_actions_component) {
+            for (auto& skill_state : skills_actions_component.skills) {
                 ++skill_state.action_progress[1];
             }
         });

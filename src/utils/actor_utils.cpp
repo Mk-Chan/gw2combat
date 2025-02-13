@@ -56,19 +56,29 @@ entity_t create_temporary_rotation_child_actor(entity_t parent_actor,
     return child_actor_entity;
 }
 
-entity_t add_skill_to_actor(const configuration::skill_t& skill,
+entity_t add_skill_to_actor(const configuration::skill_t& skill_configuration,
                             entity_t actor_entity,
                             registry_t& registry) {
     for (auto&& [skill_entity, owner_component, is_skill] :
          registry.view<component::owner_component, component::is_skill>().each()) {
-        if (owner_component.entity == actor_entity && is_skill.skill_configuration == skill) {
+        if (owner_component.entity == actor_entity &&
+            is_skill.skill_configuration == skill_configuration) {
             return skill_entity;
         }
     }
 
     auto skill_entity = registry.create();
-    registry.ctx().emplace_as<std::string>(skill_entity, skill.skill_key + " skill holder entity");
+    registry.ctx().emplace_as<std::string>(skill_entity,
+                                           skill_configuration.skill_key + " skill holder entity");
 
+    // Sort all the skill_ticks by on_tick so that the JSON order doesn't matter for a user, and we
+    // execute the skill_ticks in the correct order due to index-based access. Preserve the order of
+    // skill_ticks with the same on_tick.
+    configuration::skill_t skill = skill_configuration;
+    std::stable_sort(skill.skill_ticks.begin(),
+                     skill.skill_ticks.end(),
+                     [](const configuration::skill_tick_t& a,
+                        const configuration::skill_tick_t& b) { return a.on_tick < b.on_tick; });
     registry.emplace<component::is_skill>(skill_entity, skill);
     registry.emplace<component::owner_component>(skill_entity, actor_entity);
 

@@ -25,8 +25,10 @@ struct damage_result_t {
 };
 
 damage_result_t calculate_damage(
-    const configuration::skill_t& skill_configuration,
+    double flat_damage,
     double weapon_strength,
+    double damage_coefficient,
+    bool can_critical_strike,
     entity_t strike_source_entity,
     const component::relative_attributes& strike_source_relative_attributes,
     entity_t target_entity,
@@ -35,15 +37,13 @@ damage_result_t calculate_damage(
     auto& encounter =
         registry.get<component::encounter_configuration_component>(utils::get_singleton_entity())
             .encounter;
-    double skill_intrinsic_damage = weapon_strength * skill_configuration.damage_coefficient;
-
     double critical_chance_multiplier =
         std::min(strike_source_relative_attributes.get(
                      target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
                  1.0);
 
     bool is_critical =
-        skill_configuration.can_critical_strike &&
+        can_critical_strike &&
         (critical_chance_multiplier == 1.0 ||
          utils::check_random_success(utils::round_down(100.0 * critical_chance_multiplier)));
     double actual_critical_damage_multiplier =
@@ -53,7 +53,7 @@ damage_result_t calculate_damage(
 
     double critical_strike_multiplier = [&] {
         if (encounter.critical_strike_mode == configuration::critical_strike_mode_t::MEAN) {
-            if (!skill_configuration.can_critical_strike) {
+            if (!can_critical_strike) {
                 return 1.0;
             }
             return 1.0 + critical_chance_multiplier * (actual_critical_damage_multiplier - 1.0);
@@ -82,9 +82,9 @@ damage_result_t calculate_damage(
     double target_armor =
         target_relative_attributes.get(strike_source_entity, actor::attribute_t::ARMOR);
 
-    double damage_value = skill_configuration.flat_damage +
-                          skill_intrinsic_damage * source_power * critical_strike_multiplier *
-                              effective_strike_damage_multiplier / target_armor;
+    double damage_value = flat_damage + weapon_strength * damage_coefficient * source_power *
+                                            critical_strike_multiplier *
+                                            effective_strike_damage_multiplier / target_armor;
     return damage_result_t{
         .is_critical = is_critical,
         .value = static_cast<double>(utils::round_down(damage_value)),
@@ -102,17 +102,20 @@ void apply_strikes(registry_t& registry) {
                 entity_t strike_source_entity = utils::get_owner(strike.source_entity, registry);
                 auto& strike_source_relative_attributes =
                     registry.get<component::relative_attributes>(strike_source_entity);
-                auto& is_skill = registry.get<component::is_skill>(strike.strike.skill_entity);
-                auto& skill_configuration = is_skill.skill_configuration;
 
-                auto damage = calculate_damage(skill_configuration,
-                                               strike.strike.weapon_strength_roll,
+                auto damage = calculate_damage(strike.strike.flat_damage,
+                                               strike.strike.weapon_strength,
+                                               strike.strike.damage_coefficient,
+                                               strike.strike.can_critical_strike,
                                                strike_source_entity,
                                                strike_source_relative_attributes,
                                                target_entity,
                                                target_relative_attributes,
                                                registry);
 
+                auto& skill_configuration =
+                    registry.get<component::is_skill>(strike.strike.skill_entity)
+                        .skill_configuration;
                 auto& incoming_damage =
                     registry.get_or_emplace<component::incoming_damage>(target_entity);
                 incoming_damage.incoming_damage_events.emplace_back(
@@ -145,7 +148,7 @@ void apply_strikes(registry_t& registry) {
                     strike_source_relative_attributes.get(
                         target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
                     damage.is_critical,
-                    strike.strike.weapon_strength_roll,
+                    strike.strike.weapon_strength,
                     damage.value,
                     total_incoming_damage);
 
@@ -160,6 +163,7 @@ void apply_strikes(registry_t& registry) {
                                                                  strike_source_entity,
                                                                  target_entity,
                                                                  damage.is_critical,
+                                                                 strike.strike,
                                                                  skill_configuration,
                                                                  registry);
                 };
@@ -169,8 +173,8 @@ void apply_strikes(registry_t& registry) {
                     registry.get_or_emplace<component::outgoing_effects_component>(
                         strike_source_entity);
                 std::transform(
-                    skill_configuration.on_strike_effect_applications.begin(),
-                    skill_configuration.on_strike_effect_applications.end(),
+                    strike.strike.on_strike_effect_applications.begin(),
+                    strike.strike.on_strike_effect_applications.end(),
                     std::back_inserter(outgoing_effects_component.effect_applications),
                     [&](const configuration::effect_application_t& effect_application) {
                         return component::effect_application_t{

@@ -24,7 +24,6 @@ struct skills_actions_component {
 struct finished_skills_actions_component {
     std::vector<entity_t> skill_entities;
 };
-
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skills_actions_component::skill_state_t,
                                                 skill_entity,
                                                 action_progress,

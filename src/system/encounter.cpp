@@ -78,6 +78,7 @@ void setup_encounter(registry_t& registry, const configuration::encounter_t& enc
         component::audit_component{
             .audit_configuration = encounter.audit_configuration,
             .events = {},
+            .afk_ticks_by_actor = {}
         });
     // NOTE: This system is responsible for its own audit because it doesn't run in the combat loop
     audit_component.events.emplace_back(

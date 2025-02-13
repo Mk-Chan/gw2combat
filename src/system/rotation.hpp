@@ -5,11 +5,9 @@
 
 namespace gw2combat::system {
 
-// Returns whether rotation was performed for at least one actor.
+// Returns whether rotation was performed by at least one actor.
 extern bool perform_rotations(registry_t& registry);
-extern void perform_skills(registry_t& registry);
 
-extern void cleanup_skill_actions(registry_t& registry);
 extern void destroy_actors_with_no_rotation(registry_t& registry);
 
 }  // namespace gw2combat::system

@@ -3,6 +3,8 @@
 
 #include "actor/skill.hpp"
 
+#include "component/damage/strikes_pipeline.hpp"
+
 #include "configuration/skill.hpp"
 
 namespace gw2combat::utils {
@@ -20,6 +22,8 @@ struct skill_castability_t {
 [[nodiscard]] extern configuration::skill_t& get_skill_configuration(const actor::skill_t& skill,
                                                                      entity_t actor_entity,
                                                                      registry_t& registry);
+[[nodiscard]] extern bool strike_has_tag(const component::strike_t& strike,
+                                         const actor::skill_tag_t& skill_tag);
 [[nodiscard]] extern bool skill_has_tag(const configuration::skill_t& skill,
                                         const actor::skill_tag_t& skill_tag);
 extern void put_skill_on_cooldown(entity_t skill_entity, registry_t& registry, bool force = false);
