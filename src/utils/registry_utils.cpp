@@ -16,6 +16,7 @@
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/rotation_component.hpp"
 #include "component/actor/skills_actions_component.hpp"
+#include "component/actor/skills_ticks_tracker_component.hpp"
 #include "component/actor/static_attributes.hpp"
 #include "component/actor/team.hpp"
 #include "component/attributes/is_attribute_conversion.hpp"
@@ -178,6 +179,19 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
                 destination_entity,
                 source_registry.get<gw2combat::component::begun_casting_skills>(entity));
         }
+        if (source_registry.all_of<gw2combat::component::skills_ticks_tracker_component>(entity)) {
+            destination_registry.emplace<gw2combat::component::skills_ticks_tracker_component>(
+                destination_entity,
+                source_registry.get<gw2combat::component::skills_ticks_tracker_component>(entity));
+        }
+        if (source_registry.all_of<gw2combat::component::destroy_skills_ticks_tracker_component>(
+                entity)) {
+            destination_registry
+                .emplace<gw2combat::component::destroy_skills_ticks_tracker_component>(
+                    destination_entity,
+                    source_registry
+                        .get<gw2combat::component::destroy_skills_ticks_tracker_component>(entity));
+        }
         if (source_registry.all_of<gw2combat::component::static_attributes>(entity)) {
             destination_registry.emplace<gw2combat::component::static_attributes>(
                 destination_entity,
@@ -338,6 +352,9 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
             destination_registry.emplace<gw2combat::component::animation_expired>(
                 destination_entity);
         }
+        if (source_registry.all_of<gw2combat::component::is_afk>(entity)) {
+            destination_registry.emplace<gw2combat::component::is_afk>(destination_entity);
+        }
         if (source_registry.all_of<gw2combat::component::has_alacrity>(entity)) {
             destination_registry.emplace<gw2combat::component::has_alacrity>(destination_entity);
         }
@@ -346,9 +363,6 @@ void copy_registry(registry_t& source_registry, registry_t& destination_registry
         }
         if (source_registry.all_of<gw2combat::component::destroy_entity>(entity)) {
             destination_registry.emplace<gw2combat::component::destroy_entity>(destination_entity);
-        }
-        if (source_registry.all_of<gw2combat::component::is_afk>(entity)) {
-            destination_registry.emplace<gw2combat::component::is_afk>(destination_entity);
         }
         if (source_registry.all_of<gw2combat::component::is_damaging_effect>(entity)) {
             destination_registry.emplace<gw2combat::component::is_damaging_effect>(
