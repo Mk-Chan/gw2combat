@@ -2,7 +2,6 @@
 
 #include "common.hpp"
 
-#include "component/actor/is_actor.hpp"
 #include "component/actor/relative_attributes.hpp"
 #include "component/damage/buffered_condition_damage.hpp"
 #include "component/damage/incoming_damage.hpp"
@@ -15,7 +14,6 @@
 #include "system/attributes.hpp"
 
 #include "utils/effect_utils.hpp"
-#include "utils/entity_utils.hpp"
 #include "utils/skill_utils.hpp"
 
 namespace gw2combat::system {

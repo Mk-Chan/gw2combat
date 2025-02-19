@@ -23,16 +23,15 @@ struct strike_t {
         return this->skill_entity == rhs.skill_entity;
     }
 };
-
-struct incoming_strike {
-    entity_t source_entity = entt::tombstone;
-    strike_t strike;
-};
-
 struct outgoing_strikes_component {
     std::vector<strike_t> strikes;
 };
 
+struct incoming_strike {
+    entity_t source_entity = entt::tombstone;
+    strike_t strike;
+    bool is_critical = false;
+};
 struct incoming_strikes_component {
     std::vector<incoming_strike> strikes;
 };
@@ -46,8 +45,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(strike_t,
                                                 can_critical_strike,
                                                 on_strike_effect_applications,
                                                 tags)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(incoming_strike, source_entity, strike)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(outgoing_strikes_component, strikes)
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(incoming_strike,
+                                                source_entity,
+                                                strike,
+                                                is_critical)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(incoming_strikes_component, strikes)
 
 }  // namespace gw2combat::component

@@ -15,12 +15,10 @@
 #include "utils/effect_utils.hpp"
 #include "utils/entity_utils.hpp"
 #include "utils/side_effect_utils.hpp"
-#include "utils/weapon_utils.hpp"
 
 namespace gw2combat::system {
 
 struct damage_result_t {
-    bool is_critical = false;
     double value = 0.0;
 };
 
@@ -29,6 +27,7 @@ damage_result_t calculate_damage(
     double weapon_strength,
     double damage_coefficient,
     bool can_critical_strike,
+    bool is_critical,
     entity_t strike_source_entity,
     const component::relative_attributes& strike_source_relative_attributes,
     entity_t target_entity,
@@ -42,10 +41,6 @@ damage_result_t calculate_damage(
                      target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
                  1.0);
 
-    bool is_critical =
-        can_critical_strike &&
-        (critical_chance_multiplier == 1.0 ||
-         utils::check_random_success(utils::round_down(100.0 * critical_chance_multiplier)));
     double actual_critical_damage_multiplier =
         std::max(strike_source_relative_attributes.get(
                      target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
@@ -86,7 +81,6 @@ damage_result_t calculate_damage(
                                             critical_strike_multiplier *
                                             effective_strike_damage_multiplier / target_armor;
     return damage_result_t{
-        .is_critical = is_critical,
         .value = static_cast<double>(utils::round_down(damage_value)),
     };
 }
@@ -107,6 +101,7 @@ void apply_strikes(registry_t& registry) {
                                                strike.strike.weapon_strength,
                                                strike.strike.damage_coefficient,
                                                strike.strike.can_critical_strike,
+                                               strike.is_critical,
                                                strike_source_entity,
                                                strike_source_relative_attributes,
                                                target_entity,
@@ -147,47 +142,10 @@ void apply_strikes(registry_t& registry) {
                         target_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
                     strike_source_relative_attributes.get(
                         target_entity, actor::attribute_t::CRITICAL_DAMAGE_MULTIPLIER),
-                    damage.is_critical,
+                    strike.is_critical,
                     strike.strike.weapon_strength,
                     damage.value,
                     total_incoming_damage);
-
-                // NOTE: Extreme hack to avoid coding a whole new type of damage just for food.
-                //       Implement properly if there are more such instances!
-                if (skill_configuration.skill_key == "Lifesteal Proc") {
-                    continue;
-                }
-
-                auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
-                    return utils::on_strike_conditions_satisfied(condition,
-                                                                 strike_source_entity,
-                                                                 target_entity,
-                                                                 damage.is_critical,
-                                                                 strike.strike,
-                                                                 skill_configuration,
-                                                                 registry);
-                };
-                utils::apply_side_effects(registry, strike_source_entity, side_effect_condition_fn);
-
-                auto& outgoing_effects_component =
-                    registry.get_or_emplace<component::outgoing_effects_component>(
-                        strike_source_entity);
-                std::transform(
-                    strike.strike.on_strike_effect_applications.begin(),
-                    strike.strike.on_strike_effect_applications.end(),
-                    std::back_inserter(outgoing_effects_component.effect_applications),
-                    [&](const configuration::effect_application_t& effect_application) {
-                        return component::effect_application_t{
-                            .condition = effect_application.condition,
-                            .source_skill = skill_configuration.skill_key,
-                            .effect = effect_application.effect,
-                            .unique_effect = effect_application.unique_effect,
-                            .direction = component::effect_application_t::convert_direction(
-                                effect_application.direction),
-                            .base_duration_ms = effect_application.base_duration_ms,
-                            .num_stacks = effect_application.num_stacks,
-                            .num_targets = effect_application.num_targets};
-                    });
             }
         });
 }
