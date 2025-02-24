@@ -73,11 +73,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(effect_application_t,
                                                 base_duration_ms,
                                                 num_stacks,
                                                 num_targets)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(outgoing_effects_component, effect_applications)
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(incoming_effect_application,
                                                 source_entity,
                                                 effect_application)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(outgoing_effects_component, effect_applications)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(incoming_effects_component, effect_applications)
 
 }  // namespace gw2combat::component

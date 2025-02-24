@@ -1,5 +1,6 @@
 #include "dispatch_strikes_and_effects.hpp"
 
+#include "component/actor/relative_attributes.hpp"
 #include "component/actor/team.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/strikes_pipeline.hpp"
@@ -27,8 +28,21 @@ void dispatch_strikes(registry_t& registry) {
                         auto& incoming_strikes_component =
                             registry.get_or_emplace<component::incoming_strikes_component>(
                                 other_entity);
+
+                        entity_t strike_source_entity = utils::get_owner(source_entity, registry);
+                        auto& strike_source_relative_attributes =
+                            registry.get<component::relative_attributes>(strike_source_entity);
+
+                        double critical_chance_multiplier = std::min(
+                            strike_source_relative_attributes.get(
+                                other_entity, actor::attribute_t::CRITICAL_CHANCE_MULTIPLIER),
+                            1.0);
+                        bool is_critical = this_strike.can_critical_strike &&
+                                           (critical_chance_multiplier == 1.0 ||
+                                            utils::check_random_success(utils::round_down(
+                                                100.0 * critical_chance_multiplier)));
                         incoming_strikes_component.strikes.emplace_back(component::incoming_strike{
-                            utils::get_owner(source_entity, registry), this_strike});
+                            strike_source_entity, this_strike, is_critical});
                         --this_strike.num_targets;
                     });
             }

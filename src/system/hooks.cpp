@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 
+#include "component/damage/effects_pipeline.hpp"
 #include "component/actor/begun_casting_skills.hpp"
 #include "component/actor/is_actor.hpp"
 #include "component/skill/ammo.hpp"
@@ -12,6 +13,58 @@
 #include "utils/side_effect_utils.hpp"
 
 namespace gw2combat::system {
+
+void on_strike_hooks(registry_t& registry) {
+    // NOTE: Also make the on pulse effect applications a hook in a separate system, then also
+    //       add effect application as a side_effect.
+    registry.view<component::incoming_strikes_component>(entt::exclude<component::owner_component>)
+        .each([&](entity_t target_entity,
+                  const component::incoming_strikes_component& incoming_strikes_component) {
+            for (const auto& strike : incoming_strikes_component.strikes) {
+                auto& skill_configuration =
+                    registry.get<component::is_skill>(strike.strike.skill_entity)
+                        .skill_configuration;
+
+                // NOTE: Extreme hack to avoid coding a whole new type of damage just for food.
+                //       Implement properly if there are more such instances!
+                if (skill_configuration.skill_key == "Lifesteal Proc") {
+                    continue;
+                }
+
+                entity_t strike_source_entity = utils::get_owner(strike.source_entity, registry);
+                auto side_effect_condition_fn = [&](const configuration::condition_t& condition) {
+                    return utils::on_strike_conditions_satisfied(condition,
+                                                                 strike_source_entity,
+                                                                 target_entity,
+                                                                 strike.is_critical,
+                                                                 strike.strike,
+                                                                 skill_configuration,
+                                                                 registry);
+                };
+                utils::apply_side_effects(registry, strike_source_entity, side_effect_condition_fn);
+
+                auto& outgoing_effects_component =
+                    registry.get_or_emplace<component::outgoing_effects_component>(
+                        strike_source_entity);
+                std::transform(
+                    strike.strike.on_strike_effect_applications.begin(),
+                    strike.strike.on_strike_effect_applications.end(),
+                    std::back_inserter(outgoing_effects_component.effect_applications),
+                    [&](const configuration::effect_application_t& effect_application) {
+                        return component::effect_application_t{
+                            .condition = effect_application.condition,
+                            .source_skill = skill_configuration.skill_key,
+                            .effect = effect_application.effect,
+                            .unique_effect = effect_application.unique_effect,
+                            .direction = component::effect_application_t::convert_direction(
+                                effect_application.direction),
+                            .base_duration_ms = effect_application.base_duration_ms,
+                            .num_stacks = effect_application.num_stacks,
+                            .num_targets = effect_application.num_targets};
+                    });
+            }
+        });
+}
 
 void on_ammo_gained_hooks(registry_t& registry) {
     registry.view<component::is_skill, component::ammo_gained>().each(

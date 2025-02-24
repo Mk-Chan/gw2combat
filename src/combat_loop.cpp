@@ -138,19 +138,19 @@ void tick(registry_t& registry) {
     system::on_begun_casting_skills_hooks(registry);
     system::on_every_tick_hooks(registry);
 
+    if (!registry.view<component::outgoing_strikes_component>().empty()) {
+        system::calculate_relative_attributes(registry);
+    }
+
     system::dispatch_strikes(registry);
-
-    if (!registry.view<component::incoming_strikes_component>().empty()) {
-        system::calculate_relative_attributes(registry);
-    }
-
     system::apply_strikes(registry);
-    system::dispatch_effects(registry);
+    system::on_strike_hooks(registry);
 
-    if (!registry.view<component::incoming_effects_component>().empty()) {
+    if (!registry.view<component::outgoing_effects_component>().empty()) {
         system::calculate_relative_attributes(registry);
     }
 
+    system::dispatch_effects(registry);
     system::apply_effects(registry);
 
     system::buffer_damage_for_effects_with_no_duration(registry);
