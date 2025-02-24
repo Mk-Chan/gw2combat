@@ -9,6 +9,7 @@ namespace gw2combat::system {
 extern bool progress_animations(registry_t& registry);
 extern void progress_cooldowns(registry_t& registry);
 extern void progress_durations(registry_t& registry);
+extern void progress_casting_skill_ticks(registry_t& registry);
 extern void progress_casting_skills(registry_t& registry);
 extern void cleanup_expired_components(registry_t& registry);
 

@@ -11,6 +11,7 @@
 #include "component/actor/relative_attributes.hpp"
 #include "component/actor/rotation_component.hpp"
 #include "component/actor/skills_actions_component.hpp"
+#include "component/actor/skills_ticks_tracker_component.hpp"
 #include "component/actor/static_attributes.hpp"
 #include "component/damage/effects_pipeline.hpp"
 #include "component/damage/incoming_damage.hpp"
@@ -33,6 +34,7 @@
 #include "system/encounter.hpp"
 #include "system/hooks.hpp"
 #include "system/rotation.hpp"
+#include "system/skill.hpp"
 #include "system/temporal.hpp"
 
 #include "utils/condition_utils.hpp"
@@ -124,10 +126,12 @@ void tick(registry_t& registry) {
 
     mark_afk_actors(registry);
 
+    system::progress_casting_skill_ticks(registry);
     system::progress_casting_skills(registry);
     system::progress_cooldowns(registry);
     system::progress_durations(registry);
 
+    system::perform_skill_ticks(registry);
     system::perform_skills(registry);
 
     system::on_ammo_gained_hooks(registry);
@@ -163,6 +167,7 @@ void tick(registry_t& registry) {
 
     system::audit(registry);
 
+    system::cleanup_skill_ticks_tracker(registry);
     system::cleanup_skill_actions(registry);
     destroy_marked_entities(registry);
     clear_temporary_components(registry);
@@ -194,8 +199,10 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
                     !registry.any_of<component::rotation_component>(entity)) {
                     continue;
                 }
-                if (registry.any_of<component::skills_actions_component,
-                                    component::finished_skills_actions_component>(entity)) {
+                if (registry.any_of<component::skills_ticks_tracker_component,
+                                    component::skills_actions_component,
+                                    component::finished_skills_actions_component,
+                                    component::destroy_skills_ticks_tracker_component>(entity)) {
                     everyone_out_of_rotation = false;
                     break;
                 }

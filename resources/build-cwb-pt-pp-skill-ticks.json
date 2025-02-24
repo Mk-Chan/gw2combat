@@ -1,0 +1,1389 @@
+{
+    "base_class": "guardian",
+    "profession": "dragonhunter",
+    "attributes": [
+        ["power", 2079],
+        ["precision", 1762],
+        ["condition_damage", 1333],
+        ["expertise", 381],
+        ["vitality", 1297]
+    ],
+    "weapons": [
+        {
+            "type": "pistol",
+            "position": "main_hand",
+            "set": "set_1"
+        }, {
+            "type": "torch",
+            "position": "off_hand",
+            "set": "set_1"
+        }, {
+            "type": "pistol",
+            "position": "main_hand",
+            "set": "set_2"
+        }, {
+            "type": "pistol",
+            "position": "off_hand",
+            "set": "set_2"
+        }
+    ],
+    "initial_weapon_set": "set_2",
+    "recipe_paths": [],
+    "permanent_effects": [
+        "QUICKNESS",
+        "ALACRITY",
+        "FURY",
+        "RESOLUTION",
+        "PROTECTION",
+        "REGENERATION",
+        "SWIFTNESS",
+        "VIGOR",
+        "AEGIS",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT",
+        "MIGHT"
+    ],
+    "counters": [
+        {
+            "counter_key": "Justice Counter",
+            "initial_value": 0,
+            "counter_modifiers": [
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "unique_effect_on_source": "Justice"
+                    },
+                    "counter_key": "Justice Counter",
+                    "operation": "add",
+                    "value": 1
+                }, {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 3,
+                            "counter_value_subject_to_threshold": "Justice Counter"
+                        }
+                    },
+                    "counter_key": "Justice Counter",
+                    "operation": "subtract",
+                    "value": 3
+                }
+            ]
+        }, {
+            "counter_key": "Flowing Resolve Counter",
+            "initial_value": 0,
+            "counter_modifiers": [
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "unique_effect_on_source": "Flowing Resolve"
+                    },
+                    "counter_key": "Flowing Resolve Counter",
+                    "operation": "add",
+                    "value": 1
+                }, {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 5,
+                            "counter_value_subject_to_threshold": "Flowing Resolve Counter"
+                        }
+                    },
+                    "counter_key": "Flowing Resolve Counter",
+                    "operation": "subtract",
+                    "value": 5
+                }
+            ]
+        }, {
+            "counter_key": "Crashing Courage Counter",
+            "initial_value": 0,
+            "counter_modifiers": [
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "unique_effect_on_source": "Crashing Courage"
+                    },
+                    "counter_key": "Crashing Courage Counter",
+                    "operation": "add",
+                    "value": 1
+                }, {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 5,
+                            "counter_value_subject_to_threshold": "Crashing Courage Counter"
+                        }
+                    },
+                    "counter_key": "Crashing Courage Counter",
+                    "operation": "subtract",
+                    "value": 5
+                }
+            ]
+        }
+    ],
+    "permanent_unique_effects": [
+        {
+            "unique_effect_key": "Justice Tracker",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 3,
+                            "counter_value_subject_to_threshold": "Justice Counter"
+                        },
+                        "only_applies_on_strikes": true
+                    },
+                    "skill_key": "Justice Proc"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Flowing Resolve Tracker",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 5,
+                            "counter_value_subject_to_threshold": "Flowing Resolve Counter"
+                        },
+                        "only_applies_on_strikes": true
+                    },
+                    "skill_key": "Flowing Resolve Proc"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Crashing Courage Tracker",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "lower_bound_inclusive",
+                            "threshold_value": 5,
+                            "counter_value_subject_to_threshold": "Crashing Courage Counter"
+                        },
+                        "only_applies_on_strikes": true
+                    },
+                    "skill_key": "Crashing Courage Proc"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Jade Bot Core: Tier 10",
+            "attribute_modifiers": [
+                {
+                    "attribute": "vitality",
+                    "addend": 235
+                }
+            ]
+        }, {
+            "unique_effect_key": "Air Sigil",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "depends_on_skill_off_cooldown": "Lightning Strike",
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_critical_strikes": true,
+                        "weapon_set": "set_1"
+                    },
+                    "skill_key": "Lightning Strike"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Bursting Sigil",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_condition_damage_multiplier_add_group",
+                    "addend": 0.05
+                }
+            ]
+        }, {
+            "unique_effect_key": "Torment Sigil",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "depends_on_skill_off_cooldown": "Torment Sigil Proc",
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_critical_strikes": true,
+                        "weapon_set": "set_2"
+                    },
+                    "skill_key": "Torment Sigil Proc"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Balthazar Rune",
+            "attribute_modifiers": [
+                {
+                    "attribute": "condition_damage",
+                    "addend": 175
+                }, {
+                    "attribute": "burning_duration_multiplier",
+                    "addend": 0.50
+                }
+            ]
+        }, {
+            "unique_effect_key": "Relic of the Fractal",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "depends_on_skill_off_cooldown": "Relic of the Fractal Proc",
+                        "only_applies_on_effect_application": true,
+                        "only_applies_on_effect_application_of_type": "BLEEDING",
+                        "effect_on_target": "BLEEDING",
+                        "stacks_of_effect_on_target": 6,
+                        "weapon_set": "set_1"
+                    },
+                    "skill_key": "Relic of the Fractal Proc"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Cilantro and Cured Meat Flatbread",
+            "attribute_modifiers": [
+                {
+                    "attribute": "condition_damage",
+                    "addend": 100
+                }, {
+                    "attribute": "expertise",
+                    "addend": 70
+                }
+            ],
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "threshold": {
+                            "threshold_type": "upper_bound_exclusive",
+                            "threshold_value": 66,
+                            "generate_random_number_subject_to_threshold": true
+                        },
+                        "only_applies_on_strikes": true,
+                        "depends_on_skill_off_cooldown": "Lifesteal Proc"
+                    },
+                    "skill_key": "Lifesteal Proc"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Toxic Focusing Crystal",
+            "attribute_conversions": [
+                {
+                    "from": "power",
+                    "to": "condition_damage",
+                    "multiplier": 0.03
+                }, {
+                    "from": "precision",
+                    "to": "condition_damage",
+                    "multiplier": 0.03
+                }
+            ]
+        }, {
+            "unique_effect_key": "Right-Hand Strength",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "weapon_position": "main_hand",
+                        "not": [
+                            {
+                                "weapon_type": "pistol",
+                                "weapon_position": "main_hand"
+                            }
+                        ]
+                    },
+                    "attribute": "power",
+                    "addend": 80
+                }
+            ],
+            "attribute_conversions": [
+                {
+                    "from": "precision",
+                    "to": "precision",
+                    "multiplier": 0,
+                    "addend": 80
+                }
+            ]
+        }, {
+            "unique_effect_key": "Radiant Fire",
+            "attribute_modifiers": [
+                {
+                    "attribute": "burning_duration_multiplier",
+                    "addend": 0.2
+                }
+            ]
+        }, {
+            "unique_effect_key": "Radiant Power",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "effect_on_target": "BURNING"
+                    },
+                    "attribute": "critical_chance_multiplier",
+                    "addend": 0.1
+                }
+            ],
+            "attribute_conversions": [
+                {
+                    "from": "ferocity",
+                    "to": "ferocity",
+                    "multiplier": 0,
+                    "addend": 150
+                }
+            ]
+        }, {
+            "unique_effect_key": "Amplified Wrath",
+            "attribute_modifiers": [
+                {
+                    "attribute": "burning_damage_multiplier",
+                    "addend": 0.1
+                }
+            ]
+        }, {
+            "unique_effect_key": "Inspired Virtue",
+            "attribute_modifiers": [
+                {
+                    "attribute": "outgoing_strike_damage_multiplier",
+                    "multiplier": 1.10
+                }
+            ]
+        }, {
+            "unique_effect_key": "Inspiring Virtue",
+            "attribute_modifiers": [
+                {
+                    "condition": {
+                        "unique_effect_on_source": "Inspiring Virtue Effect"
+                    },
+                    "attribute": "outgoing_strike_damage_multiplier_add_group",
+                    "addend": 0.10
+                }
+            ]
+        }, {
+            "unique_effect_key": "Power of the Virtuous",
+            "attribute_conversions": [
+                {
+                    "from": "vitality",
+                    "to": "condition_damage",
+                    "multiplier": 0.07
+                }
+            ]
+        }, {
+            "unique_effect_key": "Searing Pact",
+            "attribute_modifiers": [
+                {
+                    "attribute": "condition_damage",
+                    "addend": 120
+                }
+            ],
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_strikes_by_skill": "Willbender Flames - Justice"
+                    },
+                    "skill_key": "Searing Pact Proc"
+                },
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_strikes_by_skill": "Willbender Flames - Resolve"
+                    },
+                    "skill_key": "Searing Pact Proc"
+                },
+                {
+                    "condition": {
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_strikes_by_skill": "Willbender Flames - Courage"
+                    },
+                    "skill_key": "Searing Pact Proc"
+                }
+            ]
+        }, {
+            "NOTE": "Edit this if you change weapons to have all the relevant weapon skills to cdr",
+            "unique_effect_key": "Restorative Virtue",
+            "cooldown_modifiers": [
+                {
+                    "condition": {
+                        "weapon_type": "pistol",
+                        "weapon_position": "main_hand",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Peacekeeper",
+                    "operation": "subtract",
+                    "value": 280
+                },
+                {
+                    "condition": {
+                        "weapon_type": "pistol",
+                        "weapon_position": "main_hand",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Symbol of Ignition",
+                    "operation": "subtract",
+                    "value": 280
+                },
+                {
+                    "condition": {
+                        "weapon_type": "pistol",
+                        "weapon_position": "off_hand",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Hail of Justice",
+                    "operation": "subtract",
+                    "value": 280
+                },
+                {
+                    "condition": {
+                        "weapon_type": "pistol",
+                        "weapon_position": "off_hand",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Jurisdiction Lvl 1",
+                    "operation": "subtract",
+                    "value": 280
+                },
+                {
+                    "condition": {
+                        "weapon_type": "pistol",
+                        "weapon_position": "off_hand",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Jurisdiction Lvl 2",
+                    "operation": "subtract",
+                    "value": 280
+                },
+                {
+                    "condition": {
+                        "weapon_type": "pistol",
+                        "weapon_position": "off_hand",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Jurisdiction Lvl 3",
+                    "operation": "subtract",
+                    "value": 280
+                },
+                {
+                    "condition": {
+                        "weapon_type": "torch",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Zealot's Flame",
+                    "operation": "subtract",
+                    "value": 280
+                },
+                {
+                    "condition": {
+                        "weapon_type": "torch",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Cleansing Flame",
+                    "operation": "subtract",
+                    "value": 280
+                }
+            ]
+        }, {
+            "unique_effect_key": "Lethal Tempo Triggerer",
+            "skill_triggers": [
+                {
+                    "condition": {
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_PROC"
+                    },
+                    "skill_key": "Apply Lethal Tempo"
+                },
+                {
+                    "condition": {
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill_with_tag": "VIRTUE_SKILL"
+                    },
+                    "skill_key": "Apply Lethal Tempo"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Zealot's Flame Remover",
+            "effect_removals": [
+                {
+                    "condition": {
+                        "unique_effect_on_source": "Zealot's Flame",
+                        "only_applies_on_finished_casting": true,
+                        "only_applies_on_finished_casting_skill": "Zealot's Fire"
+                    },
+                    "unique_effect": "Zealot's Flame"
+                }
+            ]
+        }, {
+            "unique_effect_key": "Symbol of Ignition Active Tracker",
+            "skill_triggers": [
+                {
+                    "skill_key": "Symbol of Ignition - Symbol Ignite Proc",
+                    "condition": {
+                        "unique_effect_on_source": "Symbol of Ignition Active",
+                        "depends_on_skill_off_cooldown": "Symbol of Ignition - Symbol Ignite Proc",
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_strikes_by_skill_with_tag": "PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"
+                    }
+                },
+                {
+                    "skill_key": "Symbol of Ignition - Projectile Ignite Proc",
+                    "condition": {
+                        "unique_effect_on_source": "Symbol of Ignition Active",
+                        "depends_on_skill_off_cooldown": "Symbol of Ignition - Projectile Ignite Proc",
+                        "only_applies_on_strikes": true,
+                        "only_applies_on_strikes_by_skill_with_tag": "PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"
+                    }
+                }
+            ]
+        }
+    ],
+    "skills": [
+        {
+            "skill_key": "AFK 50ms",
+            "cast_duration": [50, 50],
+            "cooldown": [0, 0],
+            "executable": true
+        }, {
+            "skill_key": "AFK 100ms",
+            "cast_duration": [100, 100],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "Weapon Swap",
+            "cast_duration": [100, 100],
+            "cooldown": [10000, 10000],
+            "executable": true
+        }, {
+            "NOTE": "This is a hardcoded skill name. Change only flat_damage and nothing else based on traits",
+            "skill_key": "Lifesteal Proc",
+            "weapon_type": "empty_handed",
+            "flat_damage": 325,
+            "cast_duration": [0, 0],
+            "cooldown": [2000, 2000],
+            "strike_on_tick_list": [[0], [0]],
+            "can_critical_strike": false
+        }, {
+            "skill_key": "Earth Sigil Proc",
+            "cast_duration": [0, 0],
+            "cooldown": [2000, 2000],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BLEEDING",
+                    "base_duration_ms": 6000,
+                    "num_stacks": 1,
+                    "direction": "OUTGOING"
+                }
+            ]
+        }, {
+            "skill_key": "Torment Sigil Proc",
+            "cast_duration": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "TORMENT",
+                    "base_duration_ms": 5000,
+                    "num_stacks": 2,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cooldown": [5000, 5000]
+        }, {
+            "skill_key": "Lightning Strike",
+            "skill_ticks": [
+                {
+                    "on_tick": 0,
+                    "strike": true,
+                    "damage_coefficient": 1.1,
+                    "can_critical_strike": false
+                }
+            ],
+            "weapon_type": "empty_handed",
+            "cast_duration": [0, 0],
+            "cooldown": [3000, 3000],
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Relic of the Fractal Proc",
+            "cast_duration": [0, 0],
+            "cooldown": [20000, 20000],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 8000,
+                    "num_stacks": 2,
+                    "direction": "OUTGOING"
+                },
+                {
+                    "effect": "TORMENT",
+                    "base_duration_ms": 8000,
+                    "num_stacks": 3,
+                    "direction": "OUTGOING"
+                }
+            ]
+        }, {
+            "skill_key": "Apply Lethal Tempo",
+            "skill_ticks": [
+                {
+                    "on_tick": 0,
+                    "pulse": true,
+                    "on_pulse_effect_applications": [
+                        {
+                            "unique_effect": {
+                                "unique_effect_key": "Lethal Tempo",
+                                "max_considered_stacks": 5,
+                                "attribute_modifiers": [
+                                    {
+                                        "attribute": "outgoing_strike_damage_multiplier_add_group",
+                                        "addend": 0.05
+                                    },
+                                    {
+                                        "attribute": "outgoing_condition_damage_multiplier_add_group",
+                                        "addend": 0.05
+                                    }
+                                ]
+                            },
+                            "base_duration_ms": 4000,
+                            "direction": "SELF"
+                        }
+                    ]
+                }
+            ],
+            "cast_duration": [0, 0],
+            "cooldown": [0, 0]
+        }, {
+            "skill_key": "Justice Proc",
+            "skill_ticks": [
+                {
+                    "on_tick": 0,
+                    "pulse": true,
+                    "on_pulse_effect_applications": [
+                        {
+                            "effect": "BURNING",
+                            "base_duration_ms": 2400,
+                            "direction": "OUTGOING",
+                            "num_targets": 5
+                        }
+                    ]
+                }
+            ],
+            "ammo": 50000,
+            "cast_duration": [0, 0],
+            "cooldown": [0, 0],
+            "tags": ["VIRTUE_PROC"]
+        }, {
+            "skill_key": "Flowing Resolve Proc",
+            "ammo": 50000,
+            "cast_duration": [0, 0],
+            "cooldown": [0, 0],
+            "tags": ["VIRTUE_PROC"]
+        }, {
+            "skill_key": "Crashing Courage Proc",
+            "ammo": 50000,
+            "cast_duration": [0, 0],
+            "cooldown": [0, 0],
+            "tags": ["VIRTUE_PROC"]
+        }, {
+            "skill_key": "Willbender Flames - Justice",
+            "skill_ticks": [
+                {
+                    "on_tick": 200,
+                    "strike": true,
+                    "damage_coefficient": 0.22
+                },
+                {
+                    "on_tick": 1200,
+                    "strike": true,
+                    "damage_coefficient": 0.22
+                },
+                {
+                    "on_tick": 2200,
+                    "strike": true,
+                    "damage_coefficient": 0.22
+                },
+                {
+                    "on_tick": 3200,
+                    "strike": true,
+                    "damage_coefficient": 0.22
+                },
+                {
+                    "on_tick": 4200,
+                    "strike": true,
+                    "damage_coefficient": 0.22
+                }
+            ],
+            "weapon_type": "empty_handed",
+            "ammo": 50000,
+            "cast_duration": [4200, 4200],
+            "cooldown": [0, 0],
+            "skills_to_cancel": [
+                "Willbender Flames - Justice",
+                "Willbender Flames - Resolve",
+                "Willbender Flames - Courage"
+            ],
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Willbender Flames - Resolve",
+            "weapon_type": "empty_handed",
+            "ammo": 50000,
+            "damage_coefficient": 0.22,
+            "cast_duration": [4200, 4200],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [200, 1200, 2200, 3200, 4200],
+                [200, 1200, 2200, 3200, 4200]
+            ],
+            "skills_to_cancel": [
+                "Willbender Flames - Justice",
+                "Willbender Flames - Resolve",
+                "Willbender Flames - Courage"
+            ],
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Willbender Flames - Courage",
+            "weapon_type": "empty_handed",
+            "ammo": 50000,
+            "damage_coefficient": 0.22,
+            "cast_duration": [4200, 4200],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [200, 1200, 2200, 3200, 4200],
+                [200, 1200, 2200, 3200, 4200]
+            ],
+            "skills_to_cancel": [
+                "Willbender Flames - Justice",
+                "Willbender Flames - Resolve",
+                "Willbender Flames - Courage"
+            ],
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Searing Pact Proc",
+            "ammo": 50000,
+            "cast_duration": [0, 0],
+            "cooldown": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 1000,
+                    "direction": "OUTGOING"
+                }
+            ]
+        }, {
+            "skill_key": "Rushing Justice",
+            "weapon_type": "main_hand",
+            "damage_coefficient": 1.5,
+            "cast_duration": [480, 480],
+            "cooldown": [8120, 8120],
+            "strike_on_tick_list": [[480], [480]],
+            "pulse_on_tick_list": [[440], [440]],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 4000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Inspiring Virtue Effect"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF",
+                    "stacking_type": "replace"
+                },
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Justice"
+                    },
+                    "base_duration_ms": 8000,
+                    "direction": "SELF"
+                }
+            ],
+            "child_skill_keys": [
+                "Willbender Flames - Justice"
+            ],
+            "tags": ["VIRTUE_SKILL", "PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"],
+            "executable": true
+        }, {
+            "skill_key": "Flowing Resolve Precast",
+            "weapon_type": "main_hand",
+            "cast_duration": [500, 500],
+            "cooldown": [1000000, 1000000],
+            "ammo": 2,
+            "recharge_duration": 0,
+            "pulse_on_tick_list": [[500], [500]],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Inspiring Virtue Effect"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF",
+                    "stacking_type": "replace"
+                },
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Flowing Resolve"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF",
+                    "stacking_type": "duration"
+                }
+            ],
+            "skills_to_put_on_cooldown": [
+                "Flowing Resolve"
+            ],
+            "tags": ["VIRTUE_SKILL"],
+            "executable": false
+        }, {
+            "skill_key": "Flowing Resolve",
+            "weapon_type": "main_hand",
+            "cast_duration": [500, 500],
+            "cooldown": [13600, 13600],
+            "ammo": 2,
+            "recharge_duration": 0,
+            "pulse_on_tick_list": [[500], [500]],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Inspiring Virtue Effect"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF",
+                    "stacking_type": "replace"
+                },
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Flowing Resolve"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF",
+                    "stacking_type": "duration"
+                }
+            ],
+            "child_skill_keys": [
+                "Willbender Flames - Resolve"
+            ],
+            "tags": ["VIRTUE_SKILL"],
+            "executable": true
+        }, {
+            "skill_key": "Crashing Courage",
+            "weapon_type": "main_hand",
+            "damage_coefficient": 1.0,
+            "cast_duration": [680, 680],
+            "cooldown": [25500, 20400],
+            "strike_on_tick_list": [[680], [680]],
+            "on_strike_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Inspiring Virtue Effect"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF",
+                    "stacking_type": "replace"
+                },
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Crashing Courage"
+                    },
+                    "base_duration_ms": 6000,
+                    "direction": "SELF"
+                }
+            ],
+            "child_skill_keys": [
+                "Willbender Flames - Courage"
+            ],
+            "tags": ["VIRTUE_SKILL", "PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"],
+            "executable": true
+        }, {
+            "skill_key": "Through the Heart",
+            "weapon_type": "pistol",
+            "cast_duration": [600, 600],
+            "cooldown": [0, 0],
+            "skill_ticks": [
+                {
+                    "on_tick": 600,
+                    "strike": true,
+                    "damage_coefficient": 0.6,
+                    "on_strike_effect_applications": [
+                        {
+                            "effect": "BLEEDING",
+                            "num_stacks": 1,
+                            "base_duration_ms": 8000,
+                            "direction": "OUTGOING"
+                        }
+                    ]
+                }
+            ],
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"]
+        }, {
+            "skill_key": "Peacekeeper",
+            "weapon_type": "pistol",
+            "damage_coefficient": 0.25,
+            "cast_duration": [1040, 1040],
+            "cooldown": [6000, 4800],
+            "strike_on_tick_list": [
+                [240, 440, 640, 840, 1040],
+                [240, 440, 640, 840, 1040]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "num_stacks": 1,
+                    "base_duration_ms": 2000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Symbol of Ignition - Symbol Ignite Proc",
+            "cast_duration": [0, 0],
+            "cooldown": [240, 240],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 1000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cast_condition": {
+                "unique_effect_on_source": "Symbol of Ignition Active",
+                "depends_on_skill_off_cooldown": "Symbol of Ignition - Symbol Ignite Proc"
+            }
+        }, {
+            "skill_key": "Symbol of Ignition - Projectile Ignite Proc",
+            "cast_duration": [0, 0],
+            "cooldown": [240, 240],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 1000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cast_condition": {
+                "unique_effect_on_source": "Symbol of Ignition Active",
+                "depends_on_skill_off_cooldown": "Symbol of Ignition - Projectile Ignite Proc"
+            }
+        }, {
+            "skill_key": "Symbol of Ignition Field Attack",
+            "weapon_type": "pistol",
+            "damage_coefficient": 0.4,
+            "cast_duration": [4000, 4000],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [
+                [0, 1000, 2000, 3000, 4000],
+                [0, 1000, 2000, 3000, 4000]
+            ]
+        }, {
+            "skill_key": "Symbol of Ignition",
+            "weapon_type": "pistol",
+            "cast_duration": [360, 360],
+            "cooldown": [12000, 9600],
+            "pulse_on_tick_list": [[360], [360]],
+            "on_pulse_effect_applications": [
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Symbol of Ignition Active"
+                    },
+                    "base_duration_ms": 4000,
+                    "direction": "SELF"
+                }
+            ],
+            "child_skill_keys": [
+                "Symbol of Ignition Field Attack"
+            ],
+            "executable": true
+        }, {
+            "skill_key": "Hail of Justice",
+            "weapon_type": "pistol",
+            "damage_coefficient": 0.3,
+            "cast_duration": [1120, 1120],
+            "cooldown": [10000, 8000],
+            "ammo": 2,
+            "strike_on_tick_list": [
+                [200, 420, 640, 860, 1120],
+                [200, 420, 640, 860, 1120]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BLEEDING",
+                    "num_stacks": 1,
+                    "base_duration_ms": 8000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"],
+            "cast_condition": {
+                "weapon_type": "pistol",
+                "weapon_position": "off_hand"
+            }
+        }, {
+            "skill_key": "Jurisdiction Lvl 1",
+            "weapon_type": "pistol",
+            "damage_coefficient": 1.0,
+            "cast_duration": [200, 200],
+            "cooldown": [20000, 16000],
+            "strike_on_tick_list": [
+                [400],
+                [400]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "num_stacks": 2,
+                    "base_duration_ms": 6000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"],
+            "skills_to_put_on_cooldown": [
+                "Jurisdiction Lvl 1",
+                "Jurisdiction Lvl 2",
+                "Jurisdiction Lvl 3"
+            ],
+            "cast_condition": {
+                "weapon_type": "pistol",
+                "weapon_position": "off_hand"
+            }
+        }, {
+            "skill_key": "Jurisdiction Lvl 2",
+            "weapon_type": "pistol",
+            "damage_coefficient": 2.0,
+            "cast_duration": [1000, 1000],
+            "cooldown": [20000, 16000],
+            "strike_on_tick_list": [
+                [1200],
+                [1200]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "num_stacks": 3,
+                    "base_duration_ms": 6000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"],
+            "skills_to_put_on_cooldown": [
+                "Jurisdiction Lvl 1",
+                "Jurisdiction Lvl 2",
+                "Jurisdiction Lvl 3"
+            ],
+            "cast_condition": {
+                "weapon_type": "pistol",
+                "weapon_position": "off_hand"
+            }
+        }, {
+            "skill_key": "Jurisdiction Lvl 3",
+            "weapon_type": "pistol",
+            "damage_coefficient": 3.0,
+            "cast_duration": [1480, 1480],
+            "cooldown": [20000, 16000],
+            "strike_on_tick_list": [
+                [1800],
+                [1800]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "num_stacks": 5,
+                    "base_duration_ms": 6000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"],
+            "skills_to_put_on_cooldown": [
+                "Jurisdiction Lvl 1",
+                "Jurisdiction Lvl 2",
+                "Jurisdiction Lvl 3"
+            ],
+            "cast_condition": {
+                "weapon_type": "pistol",
+                "weapon_position": "off_hand"
+            }
+        }, {
+            "skill_key": "Zealot's Flame Pulse",
+            "cast_duration": [3000, 3000],
+            "cooldown": [0, 0],
+            "pulse_on_tick_list": [
+                [0, 1000, 2000, 3000],
+                [0, 1000, 2000, 3000]
+            ],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 4520,
+                    "direction": "OUTGOING"
+                },
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Symbol of Ignition - Zealot's Flame Pulse Trigger Effect",
+                        "skill_triggers": [
+                            {
+                                "condition": {
+                                    "unique_effect_on_source": "Symbol of Ignition Active",
+                                    "depends_on_skill_off_cooldown": "Symbol of Ignition - Symbol Ignite Proc"
+                                },
+                                "skill_key": "Symbol of Ignition - Symbol Ignite Proc"
+                            }
+                        ]
+                    },
+                    "base_duration_ms": 1,
+                    "direction": "SELF"
+                }
+            ]
+        }, {
+            "skill_key": "Zealot's Flame",
+            "weapon_type": "torch",
+            "cast_duration": [0, 0],
+            "cooldown": [12000, 9600],
+            "ammo": 2,
+            "skill_ticks": [
+                {
+                    "on_tick": 0,
+                    "pulse": true,
+                    "on_pulse_effect_applications": [
+                        {
+                            "unique_effect": {
+                                "unique_effect_key": "Zealot's Flame"
+                            },
+                            "base_duration_ms": 3000,
+                            "direction": "SELF"
+                        }
+                    ],
+                    "child_skill_keys": [
+                        "Zealot's Flame Pulse"
+                    ]
+                }
+            ],
+            "cast_condition": {
+                "not": [
+                    {
+                        "unique_effect_on_source": "Zealot's Flame"
+                    }
+                ]
+            },
+            "instant_cast_only_when_not_in_animation": true,
+            "executable": true
+        }, {
+            "skill_key": "Zealot's Fire",
+            "weapon_type": "torch",
+            "damage_coefficient": 2.25,
+            "cast_duration": [1020, 680],
+            "cooldown": [0, 0],
+            "strike_on_tick_list": [[1020], [680]],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "num_stacks": 3,
+                    "base_duration_ms": 3000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "cast_condition": {
+                "unique_effect_on_source": "Zealot's Flame"
+            },
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_PROJECTILE_IGNITE"]
+        }, {
+            "skill_key": "Cleansing Flame",
+            "weapon_type": "torch",
+            "cast_duration": [2520, 2520],
+            "cooldown": [12000, 9600],
+            "skill_ticks": [
+                {
+                    "on_tick": 280,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 520,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 760,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 1000,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 1240,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 1480,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 1720,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 1960,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 2200,
+                    "strike": true,
+                    "damage_coefficient": 0.4
+                },
+                {
+                    "on_tick": 2520,
+                    "strike": true,
+                    "damage_coefficient": 0.4,
+                    "on_strike_effect_applications": [
+                        {
+                            "effect": "BURNING",
+                            "num_stacks": 2,
+                            "base_duration_ms": 4000,
+                            "direction": "OUTGOING"
+                        }
+                    ]
+                }
+            ],
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Signet of Wrath",
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.25,
+            "cast_duration": [750, 500],
+            "strike_on_tick_list": [[750], [500]],
+            "cooldown": [25000, 20000],
+            "attribute_conversions": [
+                {
+                    "condition": {
+                        "depends_on_skill_off_cooldown": "Signet of Wrath"
+                    },
+                    "from": "condition_damage",
+                    "to": "condition_damage",
+                    "multiplier": 0,
+                    "addend": 180
+                }
+            ],
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Purging Flames Attack",
+            "cast_duration": [7000, 7000],
+            "cooldown": [0, 0],
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 0.2,
+            "num_targets": 5,
+            "strike_on_tick_list": [
+                [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000],
+                [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 4000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "combo_field": "fire",
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Purging Flames",
+            "cast_duration": [480, 320],
+            "cooldown": [20000, 16000],
+            "child_skill_keys": [
+                "Purging Flames Attack"
+            ],
+            "executable": true
+        }, {
+            "skill_key": "Whirling Light",
+            "cast_duration": [960, 960],
+            "cooldown": [15000, 12000],
+            "weapon_type": "empty_handed",
+            "damage_coefficient": 1.0,
+            "num_targets": 5,
+            "strike_on_tick_list": [
+                [240, 480, 720, 960],
+                [240, 480, 720, 960]
+            ],
+            "on_strike_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 3000,
+                    "direction": "OUTGOING"
+                }
+            ],
+            "whirl_finisher_on_tick_list": [
+                [260, 460, 660, 860],
+                [260, 460, 660, 860]
+            ],
+            "executable": true,
+            "tags": ["PROCS_IGNITION_SYMBOL_SYMBOL_IGNITE"]
+        }, {
+            "skill_key": "Burning Bolts",
+            "ammo": 50000,
+            "cast_duration": [0, 0],
+            "cooldown": [0, 0],
+            "pulse_on_tick_list": [[0], [0]],
+            "on_pulse_effect_applications": [
+                {
+                    "effect": "BURNING",
+                    "base_duration_ms": 1000,
+                    "direction": "OUTGOING"
+                },
+                {
+                    "unique_effect": {
+                        "unique_effect_key": "Symbol of Ignition - Burning Bolts Pulse Trigger Effect",
+                        "skill_triggers": [
+                            {
+                                "condition": {
+                                    "unique_effect_on_source": "Symbol of Ignition Active",
+                                    "depends_on_skill_off_cooldown": "Symbol of Ignition - Projectile Ignite Proc"
+                                },
+                                "skill_key": "Symbol of Ignition - Projectile Ignite Proc"
+                            }
+                        ]
+                    },
+                    "base_duration_ms": 1,
+                    "direction": "SELF"
+                }
+            ]
+        }
+    ]
+}

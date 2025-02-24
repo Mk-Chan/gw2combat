@@ -45,6 +45,9 @@ namespace gw2combat::utils {
             return actor::stacking_t::REPLACE;
         case actor::effect_t::INVALID:
             throw std::runtime_error("cannot deal with invalid effects!");
+        default:
+            throw std::runtime_error(utils::to_string(effect_type) +
+                                     " is not a known effect type!");
     }
 }
 
@@ -81,6 +84,9 @@ namespace gw2combat::utils {
             return 1500;
         case actor::effect_t::INVALID:
             throw std::runtime_error("cannot deal with invalid effects!");
+        default:
+            throw std::runtime_error(utils::to_string(effect_type) +
+                                     " is not a known effect type!");
     }
 }
 
@@ -156,6 +162,9 @@ namespace gw2combat::utils {
             return 1'000'000'000;
         case actor::effect_t::INVALID:
             throw std::runtime_error("cannot deal with invalid effects!");
+        default:
+            throw std::runtime_error(utils::to_string(effect_type) +
+                                     " is not a known effect type!");
     }
 }
 

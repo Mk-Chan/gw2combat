@@ -5,6 +5,7 @@
 #include "entity_utils.hpp"
 #include "io_utils.hpp"
 
+#include "component/damage/strikes_pipeline.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/equipment/weapons.hpp"
 #include "component/skill/ammo.hpp"
@@ -119,6 +120,10 @@ configuration::skill_t& get_skill_configuration(const actor::skill_t& skill,
                                                 registry_t& registry) {
     auto skill_entity = utils::get_skill_entity(skill, actor_entity, registry);
     return registry.get<component::is_skill>(skill_entity).skill_configuration;
+}
+
+bool strike_has_tag(const component::strike_t& strike, const actor::skill_tag_t& skill_tag) {
+    return std::find(strike.tags.cbegin(), strike.tags.cend(), skill_tag) != strike.tags.cend();
 }
 
 bool skill_has_tag(const configuration::skill_t& skill, const actor::skill_tag_t& skill_tag) {
