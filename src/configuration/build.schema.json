@@ -991,22 +991,25 @@
             }
         },
         "attribute_conversion": {
-            "condition": {
-                "$ref": "#/definitions/condition"
-            },
-            "from": {
-                "$ref": "#/definitions/attribute"
-            },
-            "to": {
-                "$ref": "#/definitions/attribute"
-            },
-            "multiplier": {
-                "type": "number",
-                "default": 1.0
-            },
-            "addend": {
-                "type": "number",
-                "default": 0.0
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "$ref": "#/definitions/condition"
+                },
+                "from": {
+                    "$ref": "#/definitions/attribute"
+                },
+                "to": {
+                    "$ref": "#/definitions/attribute"
+                },
+                "multiplier": {
+                    "type": "number",
+                    "default": 1.0
+                },
+                "addend": {
+                    "type": "number",
+                    "default": 0.0
+                }
             }
         },
         "counter_modifier": {
