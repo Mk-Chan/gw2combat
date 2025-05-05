@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 import os
+import io
 import argparse
 
 CONDITION_EFFECTS = (
@@ -58,7 +59,7 @@ def main(args):
     if os.path.exists(build_path):
         with open(build_path) as fp:
             build_json = json.load(fp)
-    df = pd.read_json(json.dumps(audit_json["tick_events"]), orient="records")
+    df = pd.read_json(io.StringIO(json.dumps(audit_json["tick_events"])), orient="records")
     df = (df.join(pd.json_normalize(df["event"].tolist()).add_prefix("event."))
           .drop(["event"], axis=1))
     df.columns = df.columns.str.replace("event.", "")
@@ -107,11 +108,26 @@ def main(args):
     if args.extra:
         print()
 
-        build_df = pd.DataFrame(build_json["skills"])
+        build_skills = []
+        if "skills" in build_json:
+            build_skills = build_json["skills"]
+        if "recipe_paths" in build_json:
+            for recipe_path in build_json["recipe_paths"]:
+                if os.path.exists(recipe_path):
+                    with open(recipe_path) as fp:
+                        recipe_build_json = json.load(fp)
+                if "skills" in recipe_build_json:
+                    build_skills += recipe_build_json["skills"]
+
+        if not build_skills:
+            return
+
+        build_df = pd.DataFrame(build_skills)
         build_df = build_df[build_df["executable"] == True]
         skills_order_df = build_df[["skill_key"]].rename(columns={"skill_key": "skill"}).reset_index(drop=True)
         for key in ["cooldown", "cast_duration"]:
             build_df[key] = build_df[key].str[-1]
+            build_df[[key]] = build_df[[key]].fillna(0)
         skills_cast_duration_df = build_df[["skill_key", "cast_duration"]].rename(columns={"skill_key": "skill"})
         build_df = build_df[["skill_key", "cooldown", "cast_duration"]]
         build_df = build_df[build_df["cooldown"] > 0]
@@ -132,7 +148,7 @@ def main(args):
         current_time_ms = 0 if combat_df.empty else max(combat_df["time_ms"])
         skills_filter = ((df["actor"] == "player") & (df["event_type"] == "skill_cast_begin_event"))
         skills_df = df[skills_filter].reset_index(drop=True)
-        skills_summary = skills_df.groupby(by=["skill"])["time_ms"].aggregate([max, max2]).reset_index().sort_values(by=["max"], ascending=[True])
+        skills_summary = skills_df.groupby(by=["skill"])["time_ms"].aggregate(["max", max2]).reset_index().sort_values(by=["max"], ascending=[True])
         skills_summary["max2"] = skills_summary.apply(lambda row: "" if (row["max2"] == 0) else row["max"] - row["max2"], axis=1) 
         skills_summary["max"] = current_time_ms - skills_summary["max"]
         skills_summary.rename(columns={'max': 'since_last_cast', "max2": "last_cycle_duration"}, inplace=True)
