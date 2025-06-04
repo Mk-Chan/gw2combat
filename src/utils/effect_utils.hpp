@@ -228,7 +228,6 @@ namespace gw2combat::utils {
         case actor::effect_t::STABILITY:
             return calculate_boon_duration(source_relative_attributes.get(
                 target_entity, actor::attribute_t::STABILITY_DURATION_MULTIPLIER));
-            return calculate_boon_duration();
 
         case actor::effect_t::BLINDED:
         case actor::effect_t::CHILLED:
