@@ -295,6 +295,9 @@
                 "skill": {
                     "type": "string"
                 },
+                "skill_select": {
+                    "$ref": "#/definitions/skill_select"
+                },
                 "cast_time_ms": {
                     "type": "integer",
                     "default": 0
@@ -708,6 +711,9 @@
                 "skill_key": {
                     "type": "string"
                 },
+                "skill_select": {
+                    "$ref": "#/definitions/skill_select"
+                },
                 "conditional_skill_keys": {
                     "type": "array",
                     "items": {
@@ -726,6 +732,9 @@
                 },
                 "skill_key": {
                     "type": "string"
+                },
+                "skill_select": {
+                    "$ref": "#/definitions/skill_select"
                 }
             },
             "required": ["condition", "skill_key"]
@@ -743,6 +752,18 @@
                 "smoke",
                 "water"
             ]
+        },
+        "skill_select": {
+            "type": "object",
+            "properties": {
+                "skill_key": {"type": "string"},
+                "tag": {"type": "string"},
+                "weapon_type": {"$ref": "#/definitions/weapon_type"},
+                "combo_field": {"$ref": "#/definitions/combo_field"},
+                "can_critical_strike": {"type": "boolean"},
+                "instant_cast_only_when_not_in_animation": {"type": "boolean"},
+                "required_bundle": {"type": "string"}
+            }
         },
         "effect_application": {
             "type": "object",

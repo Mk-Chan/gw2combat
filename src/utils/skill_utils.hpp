@@ -6,6 +6,7 @@
 #include "component/damage/strikes_pipeline.hpp"
 
 #include "configuration/skill.hpp"
+#include "configuration/skill_select.hpp"
 
 namespace gw2combat::utils {
 
@@ -17,6 +18,9 @@ struct skill_castability_t {
 [[nodiscard]] extern skill_castability_t can_cast_skill(entity_t skill_entity,
                                                         registry_t& registry);
 [[nodiscard]] extern entity_t get_skill_entity(const actor::skill_t& skill,
+                                               entity_t actor_entity,
+                                               registry_t& registry);
+[[nodiscard]] extern entity_t get_skill_entity(const configuration::skill_select_t& skill_select,
                                                entity_t actor_entity,
                                                registry_t& registry);
 [[nodiscard]] extern configuration::skill_t& get_skill_configuration(const actor::skill_t& skill,

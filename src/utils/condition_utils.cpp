@@ -200,6 +200,13 @@ namespace gw2combat::utils {
                     .reason = fmt::format("skill is on cooldown",
                                           *condition.depends_on_skill_off_cooldown)};
         }
+    } else if (condition.depends_on_skill_off_cooldown_select) {
+        auto skill_entity = utils::get_skill_entity(
+            *condition.depends_on_skill_off_cooldown_select, source_entity, registry);
+        bool is_satisfied = !registry.any_of<component::cooldown_component>(skill_entity);
+        if (!is_satisfied) {
+            return {.satisfied = false, .reason = "skill is on cooldown"};
+        }
     }
     if (condition.threshold) {
         auto threshold_satisfied = [&](double number_subject_to_threshold) {
@@ -356,6 +363,12 @@ namespace gw2combat::utils {
            (!condition.only_applies_on_begun_casting_skill_with_tag ||
             utils::skill_has_tag(source_skill_configuration,
                                  *condition.only_applies_on_begun_casting_skill_with_tag)) &&
+           (!condition.only_applies_on_begun_casting_skill_select ||
+            utils::get_skill_entity(*condition.only_applies_on_begun_casting_skill_select,
+                                   entity,
+                                   registry) == utils::get_skill_entity(source_skill_configuration.skill_key,
+                                                                       entity,
+                                                                       registry)) &&
            stage_independent_conditions_satisfied(condition, entity, std::nullopt, registry)
                .satisfied;
 }
@@ -373,6 +386,12 @@ namespace gw2combat::utils {
            (!condition.only_applies_on_finished_casting_skill_with_tag ||
             utils::skill_has_tag(source_skill_configuration,
                                  *condition.only_applies_on_finished_casting_skill_with_tag)) &&
+           (!condition.only_applies_on_finished_casting_skill_select ||
+            utils::get_skill_entity(*condition.only_applies_on_finished_casting_skill_select,
+                                   entity,
+                                   registry) == utils::get_skill_entity(source_skill_configuration.skill_key,
+                                                                       entity,
+                                                                       registry)) &&
            stage_independent_conditions_satisfied(condition, entity, std::nullopt, registry)
                .satisfied;
 }
@@ -393,6 +412,12 @@ namespace gw2combat::utils {
            (!condition.only_applies_on_strikes_by_skill_with_tag ||
             utils::strike_has_tag(strike,
                                   *condition.only_applies_on_strikes_by_skill_with_tag)) &&
+           (!condition.only_applies_on_strikes_by_skill_select ||
+            utils::get_skill_entity(*condition.only_applies_on_strikes_by_skill_select,
+                                   entity,
+                                   registry) == utils::get_skill_entity(source_skill_configuration.skill_key,
+                                                                       entity,
+                                                                       registry)) &&
            stage_independent_conditions_satisfied(condition, entity, target_entity, registry)
                .satisfied;
 }
@@ -416,8 +441,18 @@ namespace gw2combat::utils {
     entity_t entity,
     const configuration::skill_t& source_skill_configuration,
     registry_t& registry) {
-    return condition.only_applies_on_ammo_gain_of_skill &&
-           *condition.only_applies_on_ammo_gain_of_skill == source_skill_configuration.skill_key &&
+    bool skill_match = false;
+    if (condition.only_applies_on_ammo_gain_of_skill) {
+        skill_match =
+            *condition.only_applies_on_ammo_gain_of_skill == source_skill_configuration.skill_key;
+    } else if (condition.only_applies_on_ammo_gain_of_skill_select) {
+        auto selected = utils::get_skill_entity(*condition.only_applies_on_ammo_gain_of_skill_select,
+                                               entity,
+                                               registry);
+        auto src = utils::get_skill_entity(source_skill_configuration.skill_key, entity, registry);
+        skill_match = selected == src;
+    }
+    return skill_match &&
            stage_independent_conditions_satisfied(condition, entity, std::nullopt, registry)
                .satisfied;
 }

@@ -5,6 +5,7 @@
 
 #include "actor/bundle.hpp"
 #include "actor/skill.hpp"
+#include "skill_select.hpp"
 
 #include "attribute_conversion.hpp"
 #include "attribute_modifier.hpp"
@@ -127,11 +128,13 @@ struct skill_t {
 struct conditional_skill_t {
     condition_t condition;
     actor::skill_t skill_key;
+    std::optional<skill_select_t> skill_select = std::nullopt;
 };
 
 struct conditional_skill_group_t {
     actor::skill_t skill_key;
     std::vector<conditional_skill_t> conditional_skill_keys;
+    std::optional<skill_select_t> skill_select = std::nullopt;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_tick_t,
@@ -205,10 +208,38 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(skill_t,
                                                 drop_bundle,
                                                 executable,
                                                 cast_condition)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(conditional_skill_t, condition, skill_key)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(conditional_skill_group_t,
-                                                skill_key,
-                                                conditional_skill_keys)
+static inline void to_json(nlohmann::json& nlohmann_json_j, const conditional_skill_t& nlohmann_json_t) {
+    nlohmann_json_j["condition"] = nlohmann_json_t.condition;
+    nlohmann_json_j["skill_key"] = nlohmann_json_t.skill_key;
+    if (nlohmann_json_t.skill_select) {
+        nlohmann_json_j["skill_select"] = *nlohmann_json_t.skill_select;
+    }
+}
+static inline void from_json(const nlohmann::json& nlohmann_json_j, conditional_skill_t& nlohmann_json_t) {
+    conditional_skill_t nlohmann_json_default_obj;
+    nlohmann_json_t.condition = nlohmann_json_j.value("condition", nlohmann_json_default_obj.condition);
+    nlohmann_json_t.skill_key = nlohmann_json_j.value("skill_key", nlohmann_json_default_obj.skill_key);
+    if (nlohmann_json_j.contains("skill_select")) {
+        nlohmann_json_t.skill_select = nlohmann_json_j.value("skill_select", *nlohmann_json_default_obj.skill_select);
+    }
+}
+
+static inline void to_json(nlohmann::json& nlohmann_json_j, const conditional_skill_group_t& nlohmann_json_t) {
+    nlohmann_json_j["skill_key"] = nlohmann_json_t.skill_key;
+    nlohmann_json_j["conditional_skill_keys"] = nlohmann_json_t.conditional_skill_keys;
+    if (nlohmann_json_t.skill_select) {
+        nlohmann_json_j["skill_select"] = *nlohmann_json_t.skill_select;
+    }
+}
+static inline void from_json(const nlohmann::json& nlohmann_json_j, conditional_skill_group_t& nlohmann_json_t) {
+    conditional_skill_group_t nlohmann_json_default_obj;
+    nlohmann_json_t.skill_key = nlohmann_json_j.value("skill_key", nlohmann_json_default_obj.skill_key);
+    nlohmann_json_t.conditional_skill_keys =
+        nlohmann_json_j.value("conditional_skill_keys", nlohmann_json_default_obj.conditional_skill_keys);
+    if (nlohmann_json_j.contains("skill_select")) {
+        nlohmann_json_t.skill_select = nlohmann_json_j.value("skill_select", *nlohmann_json_default_obj.skill_select);
+    }
+}
 
 }  // namespace gw2combat::configuration
 

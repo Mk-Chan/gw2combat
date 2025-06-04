@@ -89,8 +89,9 @@ configuration::encounter_t convert_encounter(
             if (actor.rotation_path.ends_with(".json")) {
                 auto rotation = utils::read<configuration::rotation_t>(actor.rotation_path);
                 for (auto&& skill_cast : rotation.skill_casts) {
-                    converted_rotation.skill_casts.emplace_back(
-                        configuration::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms});
+                    converted_rotation.skill_casts.emplace_back(configuration::skill_cast_t{
+                        .skill = skill_cast.skill,
+                        .cast_time_ms = skill_cast.cast_time_ms});
                 }
             } else if (actor.rotation_path.ends_with(".csv")) {
                 std::basic_ifstream<char> ifstream{actor.rotation_path, std::ios::in};
@@ -123,7 +124,8 @@ configuration::encounter_t convert_encounter(
                         cast_time_offset_ms = -cast_time_ms;
                     }
                     converted_rotation.skill_casts.emplace_back(configuration::skill_cast_t{
-                        skill_name, static_cast<tick_t>(cast_time_ms + cast_time_offset_ms)});
+                        .skill = skill_name,
+                        .cast_time_ms = static_cast<tick_t>(cast_time_ms + cast_time_offset_ms)});
                 }
             }
         }

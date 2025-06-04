@@ -122,6 +122,44 @@ configuration::skill_t& get_skill_configuration(const actor::skill_t& skill,
     return registry.get<component::is_skill>(skill_entity).skill_configuration;
 }
 
+entity_t get_skill_entity(const configuration::skill_select_t& skill_select,
+                          entity_t actor_entity,
+                          registry_t& registry) {
+    for (auto&& [skill_entity, owner_component, is_skill] :
+         registry.view<component::owner_component, component::is_skill>().each()) {
+        if (owner_component.entity != actor_entity) {
+            continue;
+        }
+        const auto& cfg = is_skill.skill_configuration;
+        if (skill_select.skill_key && cfg.skill_key != *skill_select.skill_key) {
+            continue;
+        }
+        if (skill_select.tag && !skill_has_tag(cfg, *skill_select.tag)) {
+            continue;
+        }
+        if (skill_select.weapon_type && cfg.weapon_type != *skill_select.weapon_type) {
+            continue;
+        }
+        if (skill_select.combo_field && cfg.combo_field != *skill_select.combo_field) {
+            continue;
+        }
+        if (skill_select.can_critical_strike &&
+            cfg.can_critical_strike != *skill_select.can_critical_strike) {
+            continue;
+        }
+        if (skill_select.instant_cast_only_when_not_in_animation &&
+            cfg.instant_cast_only_when_not_in_animation !=
+                *skill_select.instant_cast_only_when_not_in_animation) {
+            continue;
+        }
+        if (skill_select.required_bundle && cfg.required_bundle != *skill_select.required_bundle) {
+            continue;
+        }
+        return skill_entity;
+    }
+    throw std::runtime_error("skill_select did not match any skill");
+}
+
 bool strike_has_tag(const component::strike_t& strike, const actor::skill_tag_t& skill_tag) {
     return std::find(strike.tags.cbegin(), strike.tags.cend(), skill_tag) != strike.tags.cend();
 }
