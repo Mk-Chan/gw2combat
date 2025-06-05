@@ -214,8 +214,6 @@ entity_t add_effect_to_actor(actor::effect_t effect,
 
             auto& duration_component = registry.get<component::duration_component>(effect_entity);
             if (stacking_type == actor::stacking_t::STACKING_DURATION) {
-                duration_component.duration = std::min(duration_component.duration + duration,
-                                                       utils::get_max_effect_duration(effect));
                 int remaining_duration = duration_component.duration - duration_component.progress;
                 duration_component.progress = 0;
                 duration_component.duration =
