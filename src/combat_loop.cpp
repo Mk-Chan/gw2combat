@@ -193,49 +193,7 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
     for (auto& termination_condition : encounter.termination_conditions) {
         if (termination_condition.type ==
             configuration::termination_condition_t::type_t::ROTATION) {
-            bool everyone_out_of_rotation = true;
-            for (auto entity : registry.view<component::is_actor>()) {
-                if (utils::get_entity_name(entity, registry) != termination_condition.actor ||
-                    !registry.any_of<component::rotation_component>(entity)) {
-                    continue;
-                }
-                if (registry.any_of<component::skills_ticks_tracker_component,
-                                    component::skills_actions_component,
-                                    component::finished_skills_actions_component,
-                                    component::destroy_skills_ticks_tracker_component>(entity)) {
-                    everyone_out_of_rotation = false;
-                    break;
-                }
-                if (!registry.any_of<component::no_more_rotation>(entity)) {
-                    everyone_out_of_rotation = false;
-                    break;
-                }
-            }
-            if (everyone_out_of_rotation) {
-                return false;
-            }
-        } else if (termination_condition.type ==
-                   configuration::termination_condition_t::type_t::NO_ACTIVE_SKILLS) {
-            bool no_active_skills = true;
-            for (auto entity : registry.view<component::is_actor>()) {
-                if (!termination_condition.actor.empty() &&
-                    utils::get_entity_name(entity, registry) != termination_condition.actor) {
-                    continue;
-                }
-                if (registry.any_of<component::skills_ticks_tracker_component,
-                                    component::skills_actions_component,
-                                    component::finished_skills_actions_component,
-                                    component::destroy_skills_ticks_tracker_component>(entity)) {
-                    no_active_skills = false;
-                    break;
-                }
-            }
-            if (no_active_skills) {
-                return false;
-            }
-        } else if (termination_condition.type ==
-                   configuration::termination_condition_t::type_t::NO_MORE_ROTATION) {
-            bool no_more_rotation = true;
+            bool actors_out_of_rotation = true;
             for (auto entity : registry.view<component::is_actor>()) {
                 if (!termination_condition.actor.empty() &&
                     utils::get_entity_name(entity, registry) != termination_condition.actor) {
@@ -245,11 +203,38 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
                     continue;
                 }
                 if (!registry.any_of<component::no_more_rotation>(entity)) {
-                    no_more_rotation = false;
+                    actors_out_of_rotation = false;
                     break;
                 }
             }
-            if (no_more_rotation) {
+            if (actors_out_of_rotation) {
+                return false;
+            }
+        } else if (termination_condition.type ==
+                   configuration::termination_condition_t::type_t::ACTIVE_SKILLS) {
+            bool actors_out_of_rotation = true;
+            bool no_active_skills_for_actors = true;
+            for (auto entity : registry.view<component::is_actor>()) {
+                if (!termination_condition.actor.empty() &&
+                    utils::get_entity_name(entity, registry) != termination_condition.actor) {
+                    continue;
+                }
+                if (!registry.any_of<component::rotation_component>(entity)) {
+                    continue;
+                }
+                if (!registry.any_of<component::no_more_rotation>(entity)) {
+                    actors_out_of_rotation = false;
+                    break;
+                }
+                if (registry.any_of<component::skills_ticks_tracker_component,
+                                    component::skills_actions_component,
+                                    component::finished_skills_actions_component,
+                                    component::destroy_skills_ticks_tracker_component>(entity)) {
+                    no_active_skills_for_actors = false;
+                    break;
+                }
+            }
+            if (actors_out_of_rotation && no_active_skills_for_actors) {
                 return false;
             }
         } else if (termination_condition.type ==
@@ -354,6 +339,8 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
         result =
             utils::to_string(system::get_audit_report(registry, encounter.audit_offset, e.what()));
     }
+
+    spdlog::info("[{}] combat loop completed for encounter.", utils::get_current_tick(registry));
 
     auto cache_key = convert_encounter_to_cache_key(encounter);
     if (!registry_cache.contains(cache_key)) {

@@ -1188,8 +1188,7 @@
                         "TIME",
                         "ROTATION",
                         "DAMAGE",
-                        "NO_ACTIVE_SKILLS",
-                        "NO_MORE_ROTATION"
+                        "ACTIVE_SKILLS"
                     ]
                 },
                 "time": {

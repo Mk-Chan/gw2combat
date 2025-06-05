@@ -26,8 +26,7 @@ struct termination_condition_t {
         TIME,
         ROTATION,
         DAMAGE,
-        NO_ACTIVE_SKILLS,
-        NO_MORE_ROTATION,
+        ACTIVE_SKILLS,
     };
     type_t type = type_t::INVALID;
     tick_t time = 0;
@@ -70,10 +69,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_t,
 NLOHMANN_JSON_SERIALIZE_ENUM(termination_condition_t::type_t,
                              {{termination_condition_t::type_t::INVALID, "invalid"},
                               {termination_condition_t::type_t::TIME, "TIME"},
-                             {termination_condition_t::type_t::ROTATION, "ROTATION"},
-                             {termination_condition_t::type_t::DAMAGE, "DAMAGE"},
-                             {termination_condition_t::type_t::NO_ACTIVE_SKILLS, "NO_ACTIVE_SKILLS"},
-                             {termination_condition_t::type_t::NO_MORE_ROTATION, "NO_MORE_ROTATION"}})
+                              {termination_condition_t::type_t::ROTATION, "ROTATION"},
+                              {termination_condition_t::type_t::DAMAGE, "DAMAGE"},
+                              {termination_condition_t::type_t::ACTIVE_SKILLS, "ACTIVE_SKILLS"}})
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(termination_condition_t, type, time, actor, damage)
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_strength_mode_t,
                              {{weapon_strength_mode_t::MEAN, "MEAN"},
