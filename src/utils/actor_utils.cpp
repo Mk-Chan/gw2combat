@@ -190,7 +190,8 @@ void enqueue_child_skill(const actor::skill_t& skill, entity_t parent_actor, reg
 void enqueue_source_actor_child_skill(const actor::skill_t& skill,
                                       entity_t source_actor,
                                       registry_t& registry) {
-    auto& rotation = registry.get<component::rotation_component>(source_actor);
+    auto& rotation = registry.get_or_emplace<component::rotation_component>(
+        source_actor, component::rotation_component{{}, 0, 0, false, {}});
     rotation.queued_rotation.emplace_back(actor::skill_cast_t{skill, 0});
 }
 
