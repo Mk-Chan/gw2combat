@@ -202,7 +202,8 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
                 if (!registry.any_of<component::rotation_component>(entity)) {
                     continue;
                 }
-                if (!registry.any_of<component::no_more_rotation>(entity)) {
+                if (!registry.any_of<component::no_more_rotation>(entity) ||
+                    registry.any_of<component::animation_component>(entity)) {
                     actors_out_of_rotation = false;
                     break;
                 }
