@@ -2,7 +2,7 @@
     "counters": [
         {
             "counter_key": "Mantra of Flame State Counter",
-            "initial_value": 3,
+            "initial_value": 2,
             "counter_modifiers": [
                 {
                     "condition": {
@@ -25,12 +25,10 @@
                         "only_applies_on_finished_casting_skill": "Flame Surge"
                     },
                     "counter_key": "Mantra of Flame State Counter",
-                    "operation": "set",
-                    "value": -2
+                    "operation": "reset"
                 }, {
                     "condition": {
-                        "only_applies_on_finished_casting": true,
-                        "only_applies_on_finished_casting_skill": "Mantra of Flame"
+                        "only_applies_on_ammo_gain_of_skill": "Mantra of Flame"
                     },
                     "counter_key": "Mantra of Flame State Counter",
                     "operation": "reset"
@@ -41,16 +39,7 @@
     "skills": [
         {
             "skill_key": "Mantra of Flame",
-            "cast_duration": [2000, 1600],
-            "cooldown": [20000, 16000],
-            "ammo": 1,
-            "cast_condition": {
-                "threshold": {
-                    "threshold_type": "upper_bound_inclusive",
-                    "threshold_value": 0,
-                    "counter_value_subject_to_threshold": "Mantra of Flame State Counter"
-                }
-            }
+            "cooldown": [20000, 16000]
         }, {
             "skill_key": "Flame Rush",
             "weapon_type": "empty_handed",
@@ -68,11 +57,7 @@
                 }
             ],
             "cast_condition": {
-                "threshold": {
-                    "threshold_type": "lower_bound_inclusive",
-                    "threshold_value": 2,
-                    "counter_value_subject_to_threshold": "Mantra of Flame State Counter"
-                }
+                "depends_on_skill_off_cooldown": "Mantra of Flame"
             }
         }, {
             "skill_key": "Flame Surge",
@@ -81,7 +66,6 @@
             "num_targets": 5,
             "ammo": 1,
             "cast_duration": [0, 0],
-            "cooldown": [20000, 16000],
             "strike_on_tick_list": [[0], [0]],
             "on_strike_effect_applications": [
                 {
@@ -92,11 +76,7 @@
                 }
             ],
             "cast_condition": {
-                "threshold": {
-                    "threshold_type": "equal",
-                    "threshold_value": 1,
-                    "counter_value_subject_to_threshold": "Mantra of Flame State Counter"
-                }
+                "depends_on_skill_off_cooldown": "Mantra of Flame"
             },
             "skills_to_put_on_cooldown": [
                 "Mantra of Flame"
