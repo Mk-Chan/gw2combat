@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <mutex>
+#include <optional>
 #include <thread>
 
 #include "boost/asio.hpp"
@@ -24,9 +25,10 @@ class parsed_request_t {
     explicit parsed_request_t(const http_request& request)
         : full_path("http://0.0.0.0" + std::string{request.target()}), raw_request_(request) {
         parsed_url = boost::urls::parse_uri(full_path);
-        if (!parsed_url) {
-            throw std::runtime_error("Failed to parse URL");
-        }
+    }
+
+    [[nodiscard]] auto is_valid() const -> bool {
+        return parsed_url.has_value();
     }
 
     [[nodiscard]] auto version() const -> unsigned {
@@ -124,6 +126,9 @@ auto handle_request(const http_request&& request) -> http::message_generator {
     // }
 
     const parsed_request_t parsed_request{request};
+    if (!parsed_request.is_valid()) {
+        return bad_request(request, "Failed to parse URL");
+    }
 
     const std::string& path = parsed_request.path();
     spdlog::debug("Received request for {}", path);
@@ -160,12 +165,12 @@ class session_t : public std::enable_shared_from_this<session_t> {
     }
 
     void read_request() {
-        req_.get().clear();
-        req_.body_limit(16 * 1024 * 1024);  // 16MiB
+        req_.emplace();
+        req_->body_limit(16 * 1024 * 1024);  // 16MiB
         stream_.expires_after(std::chrono::seconds(30));
         http::async_read(stream_,
                          buffer_,
-                         req_,
+                         *req_,
                          boost::beast::bind_front_handler(&session_t::on_read, shared_from_this()));
     }
 
@@ -178,7 +183,7 @@ class session_t : public std::enable_shared_from_this<session_t> {
             spdlog::error("on_read: {}, {}", ec.value(), ec.message());
             return;
         }
-        send_response(handle_request(std::move(req_.get())));
+        send_response(handle_request(std::move(req_->get())));
     }
 
     void send_response(http::message_generator&& msg) {
@@ -220,7 +225,7 @@ class session_t : public std::enable_shared_from_this<session_t> {
    private:
     boost::beast::tcp_stream stream_;
     boost::beast::flat_buffer buffer_;
-    http::request_parser<http::string_body> req_;
+    std::optional<http::request_parser<http::string_body>> req_;
 };
 
 class connection_listener_t : public std::enable_shared_from_this<connection_listener_t> {
