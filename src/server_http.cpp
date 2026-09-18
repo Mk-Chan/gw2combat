@@ -1,5 +1,9 @@
 #include "server_http.hpp"
 
+#include <exception>
+#include <mutex>
+#include <thread>
+
 #include "boost/asio.hpp"
 #include "boost/url.hpp"
 
@@ -267,12 +271,40 @@ auto start_server_http(const http_server_config_t& config) -> void {
         boost::asio::ip::make_address(config.server_host), config.server_port};
     std::make_shared<connection_listener_t>(io_context, endpoint)->begin();
 
-    std::vector<std::thread> threads;
+    std::exception_ptr run_exception;
+    std::mutex run_exception_mutex;
+    auto run = [&] {
+        try {
+            io_context.run();
+        } catch (...) {
+            {
+                const std::lock_guard lock(run_exception_mutex);
+                if (!run_exception) {
+                    run_exception = std::current_exception();
+                }
+            }
+            io_context.stop();
+        }
+    };
+
+    std::vector<std::jthread> threads;
     threads.reserve(config.threads - 1);
-    for (auto i = config.threads - 1; i > 0; --i) {
-        threads.emplace_back([&io_context] { io_context.run(); });
+    try {
+        for (auto i = config.threads - 1; i > 0; --i) {
+            threads.emplace_back(run);
+        }
+        run();
+    } catch (...) {
+        // Joining workers during unwinding requires their event loop to stop.
+        io_context.stop();
+        throw;
     }
-    io_context.run();
+    for (auto& thread : threads) {
+        thread.join();
+    }
+    if (run_exception) {
+        std::rethrow_exception(run_exception);
+    }
 }
 
 }  // namespace gw2combat
