@@ -223,7 +223,7 @@ namespace gw2combat::utils {
         }
         if (condition.threshold->generate_random_number_subject_to_threshold &&
             *condition.threshold->generate_random_number_subject_to_threshold) {
-            if (!threshold_satisfied(utils::get_random_0_100())) {
+            if (!threshold_satisfied(utils::get_random_0_100(registry))) {
                 return {.satisfied = false, .reason = "random number not in threshold"};
             }
         }

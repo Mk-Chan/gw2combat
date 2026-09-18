@@ -51,7 +51,8 @@ enum class weapon_type : std::uint32_t
     SHORTBOW,
     STAFF,
     AQUATIC,
-    SPEAR
+    SPEAR,
+    RADIANT_FORGE,
 };
 
 static inline std::unordered_map<weapon_type, std::array<int, 2>>
@@ -79,6 +80,7 @@ static inline std::unordered_map<weapon_type, std::array<int, 2>>
         {weapon_type::STAFF, {1034, 1166}},
         {weapon_type::AQUATIC, {950, 1050}},
         {weapon_type::SPEAR, {950, 1050}},
+        {weapon_type::RADIANT_FORGE, {1015, 1015}},
     };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(weapon_set,
@@ -124,6 +126,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(weapon_type,
                                  {weapon_type::STAFF, "staff"},
                                  {weapon_type::AQUATIC, "aquatic"},
                                  {weapon_type::SPEAR, "spear"},
+                                 {weapon_type::RADIANT_FORGE, "radiant_forge"},
                              })
 
 }  // namespace gw2combat::actor

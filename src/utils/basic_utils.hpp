@@ -5,6 +5,8 @@
 
 #include "common.hpp"
 
+#include "component/encounter/random_state.hpp"
+
 namespace gw2combat::utils {
 
 [[nodiscard]] static inline int round_down(double value) {
@@ -24,36 +26,32 @@ template <typename T>
     return nlohmann::json{t}[0].dump();
 }
 
-[[nodiscard]] static inline int get_random(int min_inclusive, int max_inclusive) {
-    static std::random_device random_device;
-    static unsigned int rng_seed = random_device();
-    static std::mt19937 generator(rng_seed);
+[[nodiscard]] static inline int get_random(int min_inclusive, int max_inclusive,
+                                         registry_t& registry) {
     std::uniform_int_distribution distribution(min_inclusive, max_inclusive);
-    return distribution(generator);
+    return distribution(registry.ctx().get<component::random_state_t>().generator);
 }
 
-[[nodiscard]] static inline double get_random(double min_inclusive, double max_inclusive) {
-    static std::random_device random_device;
-    static unsigned int rng_seed = random_device();
-    static std::mt19937 generator(rng_seed);
+[[nodiscard]] static inline double get_random(double min_inclusive, double max_inclusive,
+                                            registry_t& registry) {
     std::uniform_real_distribution distribution(min_inclusive, max_inclusive);
-    return distribution(generator);
+    return distribution(registry.ctx().get<component::random_state_t>().generator);
 }
 
-[[nodiscard]] static inline double get_random_0_100_int() {
-    return get_random(0, 100);
+[[nodiscard]] static inline double get_random_0_100_int(registry_t& registry) {
+    return get_random(0, 99, registry);
 }
 
-[[nodiscard]] static inline double get_random_0_100() {
-    return get_random(0.0, 100.0);
+[[nodiscard]] static inline double get_random_0_100(registry_t& registry) {
+    return get_random(0.0, 100.0, registry);
 }
 
-[[nodiscard]] static inline bool check_random_success(int upper_bound) {
-    return get_random_0_100_int() < upper_bound;
+[[nodiscard]] static inline bool check_random_success(int upper_bound, registry_t& registry) {
+    return get_random_0_100_int(registry) < upper_bound;
 }
 
-[[nodiscard]] static inline bool check_random_success(double upper_bound) {
-    return get_random_0_100() < upper_bound;
+[[nodiscard]] static inline bool check_random_success(double upper_bound, registry_t& registry) {
+    return get_random_0_100(registry) < upper_bound;
 }
 
 [[nodiscard]] static inline tick_t get_current_tick(registry_t& registry) {

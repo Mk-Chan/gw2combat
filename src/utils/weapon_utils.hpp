@@ -48,7 +48,7 @@ namespace gw2combat::utils {
         case configuration::weapon_strength_mode_t::MEAN:
             return (range[0] + range[1]) / 2.0;
         case configuration::weapon_strength_mode_t::RANDOM_UNIFORM:
-            return utils::get_random(range[0], range[1]);
+            return utils::get_random(range[0], range[1], registry);
         case configuration::weapon_strength_mode_t::LOWEST:
             return range[0];
         case configuration::weapon_strength_mode_t::HIGHEST:

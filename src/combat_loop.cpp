@@ -18,6 +18,7 @@
 #include "component/damage/strikes_pipeline.hpp"
 #include "component/effect/is_skill_trigger.hpp"
 #include "component/encounter/encounter_configuration_component.hpp"
+#include "component/encounter/random_state.hpp"
 #include "component/equipment/bundle.hpp"
 #include "component/lifecycle/destroy_entity.hpp"
 #include "component/skill/ammo.hpp"
@@ -177,7 +178,8 @@ mru_cache_t<registry_t>::key_type convert_encounter_to_cache_key(
     const configuration::encounter_t& encounter) {
     configuration::encounter_t normalized_encounter{encounter};
     normalized_encounter.audit_offset = 0;
-    return mru_cache_t<registry_t>::djb2_hash(utils::to_string(normalized_encounter));
+    normalized_encounter.enable_caching = true;
+    return utils::to_string(normalized_encounter);
 }
 
 bool continue_combat_loop(registry_t& registry, const configuration::encounter_t& encounter) {
@@ -273,68 +275,99 @@ bool continue_combat_loop(registry_t& registry, const configuration::encounter_t
 
 std::string combat_loop(const configuration::encounter_t& encounter, bool enable_caching) {
     auto& registry_cache = mru_cache_t<registry_t>::instance();
+    enable_caching = enable_caching && encounter.random_seed >= 0 && registry_cache.enabled() &&
+                     !encounter.actors.empty();
 
     registry_t registry;
+    bool is_cache_miss = true;
+    std::string cache_key;
     if (enable_caching) {
-        auto actor = encounter.actors[0];
-        size_t max_depth = actor.rotation.skill_casts.size();
-
-        bool is_cache_miss = true;
         configuration::encounter_t current_encounter{encounter};
-        for (size_t depth = 0; depth < max_depth && is_cache_miss; ++depth) {
-            if (depth > 0) {
-                current_encounter.actors[0].rotation.skill_casts.pop_back();
-            }
-
-            auto cache_key = convert_encounter_to_cache_key(current_encounter);
-            if (registry_cache.contains(cache_key)) {
-                registry.clear();
-                utils::copy_registry(registry_cache.get(cache_key), registry);
+        cache_key = convert_encounter_to_cache_key(encounter);
+        auto prefix_key = cache_key;
+        while (true) {
+            if (auto snapshot = registry_cache.get(prefix_key)) {
+                utils::copy_registry(*snapshot, registry);
                 is_cache_miss = false;
                 break;
             }
-        }
-        if (is_cache_miss) {
-            registry.ctx().emplace<tick_t>(0);
-            system::setup_encounter(registry, encounter);
-        } else {
-            for (auto&& [actor_entity] :
-                 registry.view<component::is_actor>(entt::exclude<component::owner_component>)
-                     .each()) {
-                if (utils::get_entity_name(actor_entity, registry) != actor.name) {
-                    continue;
-                }
-                auto& existing_rotation_component =
-                    registry.get<component::rotation_component>(actor_entity);
-                auto existing_rotation_size =
-                    existing_rotation_component.rotation.skill_casts.size();
-                if (existing_rotation_size == actor.rotation.skill_casts.size()) {
-                    break;
-                }
-                registry.remove<component::no_more_rotation>(actor_entity);
-                std::transform(
-                    encounter.actors[0].rotation.skill_casts.begin() + existing_rotation_size,
-                    encounter.actors[0].rotation.skill_casts.end(),
-                    std::back_inserter(existing_rotation_component.rotation.skill_casts),
-                    [](const configuration::skill_cast_t& skill_cast) {
-                        return actor::skill_cast_t{skill_cast.skill, skill_cast.cast_time_ms};
-                    });
+            if (current_encounter.actors[0].rotation.skill_casts.empty()) {
                 break;
             }
+            current_encounter.actors[0].rotation.skill_casts.pop_back();
+            // An empty setup has no rotation component for this actor. Adding
+            // one after other actors' rotations would change their tick order.
+            // Empty requests can hit themselves; nonempty requests start fresh.
+            if (current_encounter.actors[0].rotation.skill_casts.empty()) {
+                break;
+            }
+            prefix_key = convert_encounter_to_cache_key(current_encounter);
         }
-    } else {
+    }
+    if (is_cache_miss) {
         registry.ctx().emplace<tick_t>(0);
+        registry.ctx().emplace<component::random_state_t>(encounter.random_seed);
         system::setup_encounter(registry, encounter);
     }
 
+    entity_t rotation_actor = entt::null;
+    if (enable_caching) {
+        for (auto actor_entity : registry.view<component::is_actor>(
+                 entt::exclude<component::owner_component>)) {
+            if (utils::get_entity_name(actor_entity, registry) == encounter.actors[0].name) {
+                rotation_actor = actor_entity;
+                break;
+            }
+        }
+        if (rotation_actor == entt::null) {
+            throw std::runtime_error("cached rotation actor is missing");
+        }
+        if (!is_cache_miss) {
+            const auto& casts = encounter.actors[0].rotation.skill_casts;
+            if (!casts.empty()) {
+                auto& rotation = registry.get_or_emplace<component::rotation_component>(rotation_actor);
+                rotation.rotation.skill_casts.clear();
+                for (const auto& cast : casts) {
+                    rotation.rotation.skill_casts.push_back({cast.skill, cast.cast_time_ms});
+                }
+                rotation.repeat = encounter.actors[0].rotation.repeat;
+                registry.remove<component::no_more_rotation>(rotation_actor);
+            }
+            registry.get<component::encounter_configuration_component>(utils::get_singleton_entity())
+                .encounter = encounter;
+        }
+    }
+
+    registry_t checkpoint;
+    bool have_checkpoint = false;
+    const bool need_checkpoint = enable_caching && !registry_cache.contains(cache_key);
+    auto save_checkpoint = [&]() {
+        if (!need_checkpoint || have_checkpoint) {
+            return;
+        }
+        const auto* rotation = registry.try_get<component::rotation_component>(rotation_actor);
+        if (!rotation || rotation->current_idx >= static_cast<int>(rotation->rotation.skill_casts.size())) {
+            // Stop the snapshot at the first end-of-tick after the final queued
+            // player cast STARTS. An appended instant can execute next tick,
+            // during its animation. Waiting for ROTATION/ACTIVE_SKILLS/TIME
+            // termination loses that opportunity and can include repeats too.
+            utils::copy_registry(registry, checkpoint);
+            have_checkpoint = true;
+        }
+    };
+
     std::string result;
+    bool succeeded = false;
     try {
         system::setup_combat_stats(registry);
+        save_checkpoint();
         while (continue_combat_loop(registry, encounter)) {
             registry.ctx().get<tick_t>() += 1;
             tick(registry);
+            save_checkpoint();
         }
         result = utils::to_string(system::get_audit_report(registry, encounter.audit_offset));
+        succeeded = true;
     } catch (std::exception& e) {
         spdlog::error("Exception: {}", e.what());
         result =
@@ -343,9 +376,10 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
 
     spdlog::info("[{}] combat loop completed for encounter.", utils::get_current_tick(registry));
 
-    auto cache_key = convert_encounter_to_cache_key(encounter);
-    if (!registry_cache.contains(cache_key)) {
-        registry_cache.put(cache_key, std::move(registry));
+    // Failed ticks contain partially applied side effects and temporary flags.
+    // Never reuse them, and never let an uncached request populate the cache.
+    if (succeeded && need_checkpoint) {
+        registry_cache.put(cache_key, have_checkpoint ? std::move(checkpoint) : std::move(registry));
     }
     return result;
 }

@@ -42,7 +42,8 @@ skill_castability_t can_cast_skill(entity_t skill_entity, registry_t& registry) 
             skill_configuration.weapon_type != actor::weapon_type::EMPTY_HANDED &&
             skill_configuration.weapon_type != actor::weapon_type::MAIN_HAND &&
             skill_configuration.weapon_type != actor::weapon_type::KIT_CONJURE &&
-            skill_configuration.weapon_type != actor::weapon_type::TOME) {
+            skill_configuration.weapon_type != actor::weapon_type::TOME &&
+            skill_configuration.weapon_type != actor::weapon_type::RADIANT_FORGE) {
             auto& weapons = registry.get<component::equipped_weapons>(actor_entity).weapons;
             auto current_weapon_set = registry.get<component::current_weapon_set>(actor_entity).set;
             bool skill_available_on_weapon =

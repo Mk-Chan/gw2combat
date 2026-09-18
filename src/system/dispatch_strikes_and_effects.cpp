@@ -39,8 +39,8 @@ void dispatch_strikes(registry_t& registry) {
                             1.0);
                         bool is_critical = this_strike.can_critical_strike &&
                                            (critical_chance_multiplier == 1.0 ||
-                                            utils::check_random_success(utils::round_down(
-                                                100.0 * critical_chance_multiplier)));
+                                            utils::check_random_success(
+                                                100.0 * critical_chance_multiplier, registry));
                         incoming_strikes_component.strikes.emplace_back(component::incoming_strike{
                             strike_source_entity, this_strike, is_critical});
                         --this_strike.num_targets;

@@ -58,6 +58,9 @@ struct encounter_t {
     weapon_strength_mode_t weapon_strength_mode = weapon_strength_mode_t::MEAN;
     critical_strike_mode_t critical_strike_mode = critical_strike_mode_t::MEAN;
     bool enable_caching = true;
+    // Negative selects fresh entropy. Nonnegative seeds are reproducible,
+    // including continuations restored from the prefix cache.
+    std::int64_t random_seed = -1;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(actor_t,
@@ -90,7 +93,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(encounter_t,
                                                 audit_offset,
                                                 weapon_strength_mode,
                                                 critical_strike_mode,
-                                                enable_caching)
+                                                enable_caching,
+                                                random_seed)
 
 }  // namespace gw2combat::configuration
 

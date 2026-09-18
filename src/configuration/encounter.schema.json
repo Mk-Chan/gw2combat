@@ -67,6 +67,11 @@
         "enable_caching": {
             "type": "boolean",
             "default": true
+        },
+        "random_seed": {
+            "type": "integer",
+            "default": -1,
+            "description": "Nonnegative seeds reproduce random draws, including cached continuations. Negative values select fresh entropy."
         }
     },
     "required": ["actors", "termination_conditions"],
@@ -341,7 +346,8 @@
                 "shortbow",
                 "staff",
                 "aquatic",
-                "spear"
+                "spear",
+                "radiant_forge"
             ]
         },
         "weapon_position": {
