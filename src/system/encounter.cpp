@@ -44,9 +44,11 @@ void add_recipe_items_to_actor(
         registry.emplace<component::is_counter>(
             counter_entity,
             component::is_counter{counter_configuration.initial_value, counter_configuration});
-        utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
-                                         component::is_counter_modifier_t>(
-            counter_configuration.counter_modifiers, actor_entity, registry);
+        if (!counter_configuration.counter_modifiers.empty()) {
+            utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
+                                             component::is_counter_modifier_t>(
+                counter_configuration.counter_modifiers, actor_entity, registry);
+        }
     }
     for (auto& permanent_effect : permanent_effects) {
         utils::add_permanent_effect_to_actor(permanent_effect, actor_entity, registry);

@@ -90,15 +90,21 @@ entity_t add_skill_to_actor(const configuration::skill_t& skill_configuration,
     utils::add_owner_based_component<std::vector<configuration::attribute_modifier_t>,
                                      component::is_attribute_modifier>(
         skill.attribute_modifiers, actor_entity, registry);
-    utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
-                                     component::is_counter_modifier_t>(
-        skill.counter_modifiers, actor_entity, registry);
-    utils::add_owner_based_component<std::vector<configuration::cooldown_modifier_t>,
-                                     component::is_cooldown_modifier_t>(
-        skill.cooldown_modifiers, actor_entity, registry);
-    utils::add_owner_based_component<std::vector<configuration::effect_removal_t>,
-                                     component::is_effect_removal_t>(
-        skill.effect_removals, actor_entity, registry);
+    if (!skill.counter_modifiers.empty()) {
+        utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
+                                         component::is_counter_modifier_t>(
+            skill.counter_modifiers, actor_entity, registry);
+    }
+    if (!skill.cooldown_modifiers.empty()) {
+        utils::add_owner_based_component<std::vector<configuration::cooldown_modifier_t>,
+                                         component::is_cooldown_modifier_t>(
+            skill.cooldown_modifiers, actor_entity, registry);
+    }
+    if (!skill.effect_removals.empty()) {
+        utils::add_owner_based_component<std::vector<configuration::effect_removal_t>,
+                                         component::is_effect_removal_t>(
+            skill.effect_removals, actor_entity, registry);
+    }
     for (auto& skill_trigger : skill.skill_triggers) {
         utils::add_owner_based_component<configuration::skill_trigger_t,
                                          component::is_skill_trigger>(
@@ -369,15 +375,21 @@ std::optional<entity_t> add_unique_effect_to_actor(
     utils::add_owner_based_component<std::vector<configuration::attribute_modifier_t>,
                                      component::is_attribute_modifier>(
         unique_effect.attribute_modifiers, unique_effect_entity, registry);
-    utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
-                                     component::is_counter_modifier_t>(
-        unique_effect.counter_modifiers, unique_effect_entity, registry);
-    utils::add_owner_based_component<std::vector<configuration::cooldown_modifier_t>,
-                                     component::is_cooldown_modifier_t>(
-        unique_effect.cooldown_modifiers, unique_effect_entity, registry);
-    utils::add_owner_based_component<std::vector<configuration::effect_removal_t>,
-                                     component::is_effect_removal_t>(
-        unique_effect.effect_removals, unique_effect_entity, registry);
+    if (!unique_effect.counter_modifiers.empty()) {
+        utils::add_owner_based_component<std::vector<configuration::counter_modifier_t>,
+                                         component::is_counter_modifier_t>(
+            unique_effect.counter_modifiers, unique_effect_entity, registry);
+    }
+    if (!unique_effect.cooldown_modifiers.empty()) {
+        utils::add_owner_based_component<std::vector<configuration::cooldown_modifier_t>,
+                                         component::is_cooldown_modifier_t>(
+            unique_effect.cooldown_modifiers, unique_effect_entity, registry);
+    }
+    if (!unique_effect.effect_removals.empty()) {
+        utils::add_owner_based_component<std::vector<configuration::effect_removal_t>,
+                                         component::is_effect_removal_t>(
+            unique_effect.effect_removals, unique_effect_entity, registry);
+    }
     for (auto& skill_trigger : unique_effect.skill_triggers) {
         utils::add_owner_based_component<configuration::skill_trigger_t,
                                          component::is_skill_trigger>(
