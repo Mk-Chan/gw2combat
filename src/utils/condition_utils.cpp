@@ -327,18 +327,20 @@ namespace gw2combat::utils {
     return {.satisfied = true, .reason = ""};
 }
 
+[[nodiscard]] bool can_apply_on_every_tick(const configuration::condition_t& condition) {
+    return !(condition.only_applies_on_strikes.value_or(false) ||
+             condition.only_applies_on_effect_application.value_or(false) ||
+             condition.only_applies_on_finished_casting.value_or(false) ||
+             condition.only_applies_on_begun_casting.value_or(false) ||
+             condition.only_applies_on_ammo_gain_of_skill.has_value());
+}
+
 [[nodiscard]] condition_result_t independent_conditions_satisfied(
     const configuration::condition_t& condition,
     entity_t entity,
     std::optional<entity_t> target_entity,
     registry_t& registry) {
-    if ((condition.only_applies_on_strikes && *condition.only_applies_on_strikes) ||
-        (condition.only_applies_on_effect_application &&
-         *condition.only_applies_on_effect_application) ||
-        (condition.only_applies_on_finished_casting &&
-         *condition.only_applies_on_finished_casting) ||
-        (condition.only_applies_on_begun_casting && *condition.only_applies_on_begun_casting) ||
-        condition.only_applies_on_ammo_gain_of_skill) {
+    if (!can_apply_on_every_tick(condition)) {
         return {.satisfied = false, .reason = "stage dependent condition"};
     }
     return stage_independent_conditions_satisfied(condition, entity, target_entity, registry);

@@ -4,6 +4,7 @@
 #include "common.hpp"
 
 #include "actor_utils.hpp"
+#include "condition_utils.hpp"
 #include "counter_utils.hpp"
 #include "entity_utils.hpp"
 
@@ -18,7 +19,7 @@
 
 namespace gw2combat::utils {
 
-template <typename T>
+template <bool every_tick_only = false, typename T>
 inline void apply_side_effects(registry_t& registry,
                                entity_t source_entity,
                                T side_effect_condition_fn) {
@@ -26,11 +27,25 @@ inline void apply_side_effects(registry_t& registry,
     registry.view<component::is_counter_modifier_t>().each(
         [&](entity_t counter_modifier_entity,
             const component::is_counter_modifier_t& is_counter_modifier) {
+            if constexpr (every_tick_only) {
+                if (std::none_of(is_counter_modifier.counter_modifiers.begin(),
+                                 is_counter_modifier.counter_modifiers.end(),
+                                 [](const auto& operation) {
+                                     return can_apply_on_every_tick(operation.condition);
+                                 })) {
+                    return;
+                }
+            }
             auto owner_actor = utils::get_owner(counter_modifier_entity, registry);
             if (owner_actor != source_entity_owner) {
                 return;
             }
             for (auto& counter_modifier : is_counter_modifier.counter_modifiers) {
+                if constexpr (every_tick_only) {
+                    if (!can_apply_on_every_tick(counter_modifier.condition)) {
+                        continue;
+                    }
+                }
                 auto& counter = utils::get_counter(counter_modifier.counter_key, registry);
                 if (side_effect_condition_fn(counter_modifier.condition)) {
                     utils::apply_counter_modifications(registry, counter, counter_modifier);
@@ -40,11 +55,25 @@ inline void apply_side_effects(registry_t& registry,
     registry.view<component::is_cooldown_modifier_t>().each(
         [&](entity_t cooldown_modifier_entity,
             const component::is_cooldown_modifier_t& is_cooldown_modifier) {
+            if constexpr (every_tick_only) {
+                if (std::none_of(is_cooldown_modifier.cooldown_modifiers.begin(),
+                                 is_cooldown_modifier.cooldown_modifiers.end(),
+                                 [](const auto& operation) {
+                                     return can_apply_on_every_tick(operation.condition);
+                                 })) {
+                    return;
+                }
+            }
             auto owner_actor = utils::get_owner(cooldown_modifier_entity, registry);
             if (owner_actor != source_entity_owner) {
                 return;
             }
             for (auto& cooldown_modifier : is_cooldown_modifier.cooldown_modifiers) {
+                if constexpr (every_tick_only) {
+                    if (!can_apply_on_every_tick(cooldown_modifier.condition)) {
+                        continue;
+                    }
+                }
                 if (side_effect_condition_fn(cooldown_modifier.condition)) {
                     utils::apply_cooldown_modifications(registry, owner_actor, cooldown_modifier);
                 }
@@ -52,12 +81,26 @@ inline void apply_side_effects(registry_t& registry,
         });
     registry.view<component::is_effect_removal_t>().each(
         [&](entity_t effect_removal_entity, component::is_effect_removal_t& is_effect_removal) {
+            if constexpr (every_tick_only) {
+                if (std::none_of(is_effect_removal.effect_removals.begin(),
+                                 is_effect_removal.effect_removals.end(),
+                                 [](const auto& operation) {
+                                     return can_apply_on_every_tick(operation.condition);
+                                 })) {
+                    return;
+                }
+            }
             auto owner_entity = utils::get_owner(effect_removal_entity, registry);
             if (owner_entity != source_entity_owner) {
                 return;
             }
 
             for (auto& effect_removal : is_effect_removal.effect_removals) {
+                if constexpr (every_tick_only) {
+                    if (!can_apply_on_every_tick(effect_removal.condition)) {
+                        continue;
+                    }
+                }
                 if (side_effect_condition_fn(effect_removal.condition)) {
                     if (effect_removal.effect != actor::effect_t::INVALID) {
                         int stacks_to_remove =
@@ -101,6 +144,11 @@ inline void apply_side_effects(registry_t& registry,
         });
     registry.view<component::is_skill_trigger>().each(
         [&](entity_t skill_trigger_entity, component::is_skill_trigger& is_skill_trigger) {
+            if constexpr (every_tick_only) {
+                if (!can_apply_on_every_tick(is_skill_trigger.skill_trigger.condition)) {
+                    return;
+                }
+            }
             auto owner_entity = utils::get_owner(skill_trigger_entity, registry);
             if (owner_entity != source_entity_owner) {
                 return;
@@ -116,6 +164,11 @@ inline void apply_side_effects(registry_t& registry,
     registry.view<component::is_unchained_skill_trigger>().each(
         [&](entity_t skill_trigger_entity,
             const component::is_unchained_skill_trigger& is_unchained_skill_trigger) {
+            if constexpr (every_tick_only) {
+                if (!can_apply_on_every_tick(is_unchained_skill_trigger.skill_trigger.condition)) {
+                    return;
+                }
+            }
             auto owner_entity = utils::get_owner(skill_trigger_entity, registry);
             if (owner_entity != source_entity_owner) {
                 return;
@@ -128,6 +181,12 @@ inline void apply_side_effects(registry_t& registry,
     registry.view<component::is_source_actor_skill_trigger>().each(
         [&](entity_t skill_trigger_entity,
             const component::is_source_actor_skill_trigger& is_source_actor_skill_trigger) {
+            if constexpr (every_tick_only) {
+                if (!can_apply_on_every_tick(
+                        is_source_actor_skill_trigger.skill_trigger.condition)) {
+                    return;
+                }
+            }
             auto owner_entity = utils::get_owner(skill_trigger_entity, registry);
             if (owner_entity != source_entity_owner) {
                 return;

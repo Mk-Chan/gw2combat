@@ -17,6 +17,8 @@ struct condition_result_t {
     std::string reason;
 };
 
+[[nodiscard]] extern bool can_apply_on_every_tick(const configuration::condition_t& condition);
+
 [[nodiscard]] extern condition_result_t independent_conditions_satisfied(
     const configuration::condition_t& condition,
     entity_t entity,

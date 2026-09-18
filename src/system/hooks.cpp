@@ -99,7 +99,7 @@ void on_every_tick_hooks(registry_t& registry) {
                            condition, actor_entity, std::nullopt, registry)
                     .satisfied;
             };
-            utils::apply_side_effects(registry, actor_entity, side_effect_condition_fn);
+            utils::apply_side_effects<true>(registry, actor_entity, side_effect_condition_fn);
         });
 }
 
