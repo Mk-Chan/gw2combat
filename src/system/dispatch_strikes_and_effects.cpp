@@ -88,7 +88,7 @@ void dispatch_effects(registry_t& registry) {
 
                     registry.view<component::team>(entt::exclude<component::owner_component>)
                         .each([&](entity_t other_entity, const component::team& other_team) {
-                            if (application.num_targets <= 0 || other_entity == source_entity ||
+                            if (application.num_targets <= 0 || other_entity == actual_source_entity ||
                                 other_team.id != source_team.id ||
                                 !utils::independent_conditions_satisfied(application.condition,
                                                                          actual_source_entity,
