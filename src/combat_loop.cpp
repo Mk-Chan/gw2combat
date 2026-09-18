@@ -360,9 +360,13 @@ std::string combat_loop(const configuration::encounter_t& encounter, bool enable
     bool succeeded = false;
     try {
         system::setup_combat_stats(registry);
-        save_checkpoint();
+        // Fresh encounters start at zero; cached snapshots have already completed their tick.
+        bool is_first_tick = is_cache_miss;
         while (continue_combat_loop(registry, encounter)) {
-            registry.ctx().get<tick_t>() += 1;
+            if (!is_first_tick) {
+                registry.ctx().get<tick_t>() += 1;
+            }
+            is_first_tick = false;
             tick(registry);
             save_checkpoint();
         }
