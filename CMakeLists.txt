@@ -16,7 +16,7 @@ include(FetchContent)
 FetchContent_Declare(
     Boost
     GIT_REPOSITORY https://github.com/boostorg/boost.git
-    GIT_TAG boost-1.83.0
+    GIT_TAG boost-1.92.0
 )
 FetchContent_MakeAvailable(Boost)
 ###
@@ -40,7 +40,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 if (WIN32)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lwsock32 -lws2_32 -m64 -Wa,-mbig-obj")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -Wa,-mbig-obj")
 endif ()
 
 set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
@@ -63,6 +63,10 @@ file(GLOB gw2combat_http_src CONFIGURE_DEPENDS "src/main_http.cpp" "src/combat_l
 add_executable(gw2combat ${gw2combat_src})
 add_executable(gw2combat_http ${gw2combat_http_src})
 target_link_libraries(gw2combat_http Boost::beast Boost::url)
+if (WIN32)
+    target_link_libraries(gw2combat wsock32 ws2_32)
+    target_link_libraries(gw2combat_http wsock32 ws2_32)
+endif ()
 if (NOT APPLE)
     target_link_libraries(gw2combat "-static")
     target_link_libraries(gw2combat_http "-static")
